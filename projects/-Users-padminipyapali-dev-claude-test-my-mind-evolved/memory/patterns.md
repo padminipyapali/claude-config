@@ -126,3 +126,36 @@ When a query param accepts a fixed set of values (e.g., `starred=true|false`, `t
 ### 6. Resource lifecycle symmetry
 If a service creates a resource (e.g., `pg.Pool`, connection, timer), it should expose a `shutdown()` or `close()` method. Even if the current app doesn't call it, the absence makes testing harder and creates resource leaks in future multi-service setups.
 **Note:** This is a known gap in the current codebase (no service has `shutdown()`). Flag it in PR comments but don't block on it until a refactoring pass addresses all services together.
+
+### From PR #59 (Morning Brief + Google Calendar)
+
+### 21. Timezone consistency: resolve once, pass through
+When a codepath needs both a timezone string and a "today" date string, derive them from a SINGLE source. In PR #59, `getLocalToday()` had a hardcoded `"UTC"` fallback while `this.deps.userTimezone` read from env vars — they could disagree. Fix: resolve timezone first, then compute `todayStr` from it.
+**Check:** Grep for multiple timezone sources in the same function/handler. Only one should be authoritative.
+
+### 22. Reuse existing DB pools — don't create ad-hoc pg.Pool
+The server bootstrap created a one-off `pg.Pool` just to look up a Telegram chat ID, when `PostgresEntryService` already held a pool. This leaks connections and bypasses service abstractions. Fix: add `getTelegramChatId()` to the `EntryService` interface.
+**Check:** Grep for `new Pool(` outside of service constructors. If found, the query should be a service method instead.
+
+### 23. Off-by-one in time boundaries
+`timeMax = "${date}T23:59:59Z"` misses events in the final second of the day. Use start-of-next-day as an exclusive upper bound: `timeMax = "${nextDay}T00:00:00Z"`.
+**Check:** Grep for `T23:59:59` — almost always an off-by-one bug.
+
+### 24. Filter external API data before mapping
+Google Calendar API can return events with missing `start`/`end` or null `dateTime`. Calling `.map()` directly produces `Invalid Date`. Fix: `.filter()` to exclude malformed entries, then `.map()`.
+**Check:** Every `.map()` on external API response arrays should consider whether a `.filter()` is needed first.
+
+### 25. UTC suffix in test Date strings
+`new Date("2026-02-14T10:00:00")` (no Z) is parsed in the server's local timezone, making tests pass locally (UTC) but fail on CI runners in other timezones. Always use `new Date("2026-02-14T10:00:00Z")`.
+**Check:** Grep for `new Date("` in test files — every ISO string must end with `Z` unless testing timezone-specific behavior.
+
+### 26. JSON.parse on external config must be try/caught
+`JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY!)` throws a generic `SyntaxError` if the env var is malformed. Wrap in try/catch with a descriptive error: `"Invalid JSON in GOOGLE_SERVICE_ACCOUNT_KEY"`.
+**Check:** Every `JSON.parse` on an env var or external input needs try/catch with a named error.
+
+### From BUG-T015 (Scheduler restart spam)
+
+### 27. In-memory dedup markers don't survive server restarts
+`MorningBriefScheduler` and `DailyReviewScheduler` both used `lastSentDate: string | null` initialized to `null`. On every server restart (triggered by each deploy on Railway), the marker reset and the scheduler re-sent within 60 seconds. This caused ~8 duplicate briefs + reviews during deploy churn.
+**Fix:** Constructor checks if `currentHour >= scheduledHour` and pre-sets the marker. Restarts after the scheduled hour no longer re-trigger.
+**Check:** Every new scheduler or notification service that uses in-memory dedup — ask: "What happens when the server restarts after this already ran today?"

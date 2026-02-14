@@ -40,3 +40,32 @@ telegram.start().then(() => reminderScheduler.start());
 `new Date(date.toLocaleString("en-US", { timeZone: tz }))` looks correct but the `new Date()` constructor parses the string using the server's local timezone, not the target timezone. It only works when the server is in UTC.
 
 **Correct approach:** Use `Intl.DateTimeFormat("en-US", { timeZone: tz }).formatToParts(date)` to extract year/month/day/hour/minute components, then construct the date from those parts. This is deterministic regardless of server timezone.
+
+### Variant: Date constructor without Z suffix (PR #59)
+`new Date("2026-02-14T00:00:00")` (no Z) is also server-timezone-dependent — the JS engine parses it as local time. Adding `Z` forces UTC: `new Date("2026-02-14T00:00:00Z")`. This bit us in calendar.ts (day boundaries) and test helpers (flaky on CI).
+
+### Corollary: resolve timezone once
+When a handler needs both a timezone string and a "today" date string, derive the date FROM the timezone. Don't use two independent sources (e.g., `getLocalToday()` with its own default vs. `this.deps.userTimezone`). They can silently diverge, producing "today" in one timezone and event queries in another.
+
+## Exclusive upper bounds for time ranges
+When querying events/records for a date range, use start-of-next-day as the exclusive upper bound:
+```
+timeMin = "2026-02-14T00:00:00Z"   // inclusive
+timeMax = "2026-02-15T00:00:00Z"   // exclusive
+```
+NOT `T23:59:59Z`, which misses the last second. This applies to Google Calendar API, SQL `BETWEEN`, and any time-bounded query.
+
+## External API data defensiveness
+External APIs (Google Calendar, etc.) can return malformed entries — missing required fields, null nested objects, unexpected types. Never trust the shape.
+- Use `.filter()` before `.map()` to exclude entries missing required fields.
+- Prefer optional chaining (`event.start?.dateTime`) over non-null assertions (`event.start!.dateTime`).
+- Wrap `JSON.parse()` on external config/env vars in try/catch with descriptive errors.
+
+## In-memory state doesn't survive restarts (BUG-T015)
+Schedulers using in-memory dedup markers (e.g., `lastSentDate: string | null`) will re-trigger on every server restart. On deploy-on-push platforms (Railway, Vercel, Heroku), every deploy is a restart — multiple deploys in a session can cause spam.
+
+**Options (increasing robustness):**
+1. **Defensive initialization** (simple, no schema change): In the constructor, check if the scheduled time has already passed. If so, pre-set the marker. Trade-off: cold starts after the scheduled time skip that day's notification.
+2. **DB-persisted marker** (robust): Store `(scheduler_name, last_run_date)` in a `scheduler_state` table. Survives restarts and distinguishes "first run today" from "restart after already sent."
+
+We used option 1 for `MorningBriefScheduler` and `DailyReviewScheduler`. If we add more schedulers or need guaranteed first-run delivery, upgrade to option 2.

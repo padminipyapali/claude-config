@@ -92,6 +92,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Async initialization ordering.** New services depend on others being ready? Await them.
 - [ ] **Timezone consistency: resolve once, pass through.** When a codepath needs both a timezone and a today-string, derive them from a SINGLE source. If `getLocalToday()` uses one default and `this.deps.userTimezone` uses another, they can silently diverge. Resolve timezone first, then derive the date from it.
 - [ ] **Reuse existing DB pools.** Don't create ad-hoc `pg.Pool` for a single query when a service already has a pool. Add the method to the service interface instead. Ad-hoc pools leak connections and bypass service abstractions.
+- [ ] **In-memory state survives restarts?** If a scheduler or service uses in-memory state for dedup (e.g., `lastSentDate`), verify it handles server restarts. On deploy-on-push platforms, every deploy clears memory. Either persist to DB or initialize defensively (e.g., pre-set the marker if the scheduled time has passed).
 - [ ] **Documentation sync.** JSDoc matches code. Step counts updated. Module headers mention new capabilities.
 
 ---

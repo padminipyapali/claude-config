@@ -23,6 +23,7 @@ Cross-project learnings for Telegram bots (grammY, Bot API).
 
 - **Entry-less responses break reply-to chains.** Response types that don't create DB entries (TODO_LIST, CHAT) have no entry to link replies to. Solution: use a lightweight `bot_responses` table to track outbound messages.
 - **Store matched IDs in metadata, reuse directly.** When a search matches entries, store the IDs — don't re-search and risk discarding them.
+- **Reply context takes precedence over content-based search.** When a user replies to a specific message, they are referring to that message's subject — not whatever a keyword search might return. Use the parent entry directly (e.g., `findByIds([parentEntry.id])`) instead of searching all items by keyword. Fall back to search only when no parent context exists.
 
 ---
 *Sources: second-brain, command-center*

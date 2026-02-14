@@ -13,13 +13,14 @@
 - **pg returns DATE columns as JS Date objects, not strings.** TypeScript generic params on `pool.query<T>()` don't enforce runtime types — pg returns what it returns. Always verify pg's actual JS type for new columns (DATE→Date, TIMESTAMPTZ→Date, JSONB→object, TEXT→string). Mocks using strings will pass but production breaks.
 - When adding a new DB column to a query result, the adversarial review should ask: "Does the TypeScript type match what pg actually returns at runtime?"
 
-## PR Review Anti-Patterns (from PR #23, #50, #55, #58)
-- See `patterns.md` section "Common PR Review Anti-Patterns" for the full checklist (items #1-20).
-- See `architecture.md` for async initialization ordering and timezone computation patterns.
+## PR Review Anti-Patterns (from PR #23, #50, #55, #58, #59)
+- See `patterns.md` section "Common PR Review Anti-Patterns" for the full checklist (items #1-26).
+- See `architecture.md` for async initialization ordering, timezone computation, and external API patterns.
 - Key items: dead code cleanup, server-timezone-dependent date parsing, loose parameter typing, async startup ordering, LLM prompt example consistency.
 - **From PR #50:** Input type validation at API boundaries (`typeof` before `.trim()`), guard after create→reload patterns, CSS modern color notation (`rgb()` not `rgba()`), JSDoc on test helper factories.
 - **From PR #55:** Correlated subqueries must include `user_id` scoping (defense in depth). Shared type changes require updating all test mock factories.
 - **From PR #58:** Optimistic UI must capture prev state (not invert). Business logic in service not route. Env var range validation. Fail-fast timezone validation. SVG `<title>` for a11y. Semantic `<button>` not `<div role="button">`. Surface hook error states. At-most-once dedup markers before action. Validate enum query params with 400.
+- **From PR #59:** Timezone consistency (resolve once, pass through). Reuse existing DB pools (no ad-hoc `new Pool()`). Off-by-one time boundaries (exclusive upper bound, not T23:59:59). Filter external API data before mapping. UTC `Z` suffix in test Date strings. JSON.parse try/catch on external config.
 
 ## Planning Discipline
 - **Always adversarial-review plans before presenting them.** The first plan is often not the best. After generating a plan, run a cost/risk/tradeoff analysis asking: "What are the downsides? What costs (monetary, complexity, accuracy) are we not thinking about? Is there a simpler alternative with similar benefits?"
