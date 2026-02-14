@@ -6,6 +6,10 @@ Stack-specific sections (marked "When Applicable") apply only when the project u
 
 ---
 
+## New Projects
+
+When creating a new project or initializing a new codebase, always run `/project-setup`. This injects cross-project knowledge, sets up docs, hooks, and the adversarial review skill. Never skip this — even if the user doesn't explicitly ask for it.
+
 ## Process
 
 - All changes via PRs — never commit directly to main.
