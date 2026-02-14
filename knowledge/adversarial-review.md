@@ -2,6 +2,8 @@
 
 Shared mechanical review checklist for all projects. Run this before every PR.
 
+**IMPORTANT: This review should be run by a DIFFERENT agent than the one that wrote the code.** The authoring agent has blind spots to its own mistakes — it wrote `catch { return [] }` and won't question it. A separate reviewer agent, whose sole job is this checklist, catches what the author misses. This was learned from multiple PRs where the same agent did both fix + review and missed the same issues across all rounds.
+
 **IMPORTANT: Execute each step mechanically. The most common failure mode is reading a checklist item, glancing at the code, and moving on. Follow the verification steps literally.**
 
 ---
@@ -72,6 +74,10 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Hook error states surfaced in UI.** `{ data, loading, error }` — error MUST be rendered.
 - [ ] **Env var validation.** NaN check, valid range, fallback logging for numeric vars. Timezone vars validated via `Intl.DateTimeFormat`.
 - [ ] **Guard after create → reload.** Check for null after DB insert + reload.
+- [ ] **JSON.parse on external config.** `JSON.parse()` on env vars or external config must be in try/catch with a descriptive error (e.g., "Invalid JSON in GOOGLE_SERVICE_ACCOUNT_KEY").
+- [ ] **Off-by-one in time boundaries.** When querying events/records for a date range, use start-of-next-day as exclusive upper bound (`< nextDay T00:00:00`), not `<= T23:59:59` which misses the final second.
+- [ ] **Filter external API data before mapping.** External APIs can return malformed entries (missing fields, null values). Use `.filter()` to skip invalid entries before `.map()`, rather than producing `NaN`/`Invalid Date` downstream.
+- [ ] **UTC suffix in test Date strings.** `new Date("2026-02-14T10:00:00")` parses in server-local timezone, making tests flaky on CI. Always append `Z` for UTC: `new Date("2026-02-14T10:00:00Z")`.
 
 ---
 
@@ -84,6 +90,8 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Business logic in service, not routes.** Route does more than extract → call → return? Refactor.
 - [ ] **At-most-once dedup markers BEFORE the action.**
 - [ ] **Async initialization ordering.** New services depend on others being ready? Await them.
+- [ ] **Timezone consistency: resolve once, pass through.** When a codepath needs both a timezone and a today-string, derive them from a SINGLE source. If `getLocalToday()` uses one default and `this.deps.userTimezone` uses another, they can silently diverge. Resolve timezone first, then derive the date from it.
+- [ ] **Reuse existing DB pools.** Don't create ad-hoc `pg.Pool` for a single query when a service already has a pool. Add the method to the service interface instead. Ad-hoc pools leak connections and bypass service abstractions.
 - [ ] **Documentation sync.** JSDoc matches code. Step counts updated. Module headers mention new capabilities.
 
 ---
@@ -103,4 +111,4 @@ git rev-parse HEAD > .claude/.adversarial-review-passed
 ```
 
 ---
-*Sources: second-brain (20 mechanical checks from PR #23-#58), lexica, command-center*
+*Sources: second-brain (26 mechanical checks from PR #23-#59), lexica, command-center*
