@@ -1,0 +1,29 @@
+# Track: knowledge system, rules, commands, project memory
+# Ignore: ephemeral session data, caches, history
+
+# Session/cache data
+cache/
+debug/
+downloads/
+file-history/
+paste-cache/
+plans/
+plugins/
+session-env/
+shell-snapshots/
+statsig/
+tasks/
+teams/
+telemetry/
+todos/
+
+# All project data (memory/ dirs force-added)
+projects/
+
+# Sensitive/large files
+history.jsonl
+stats-cache.json
+*.lock
+
+# OS files
+.DS_Store
