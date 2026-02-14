@@ -1,3 +1,9 @@
+---
+description: Capture a learning and add it to the knowledge base
+allowed-tools: Read, Write, Edit, Glob, Grep
+argument-hint: [learning description]
+---
+
 Capture a new learning and add it to the appropriate location in the knowledge base.
 
 The user will describe a learning, bug pattern, decision, or preference. Your job:

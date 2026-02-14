@@ -1,3 +1,8 @@
+---
+description: Display the cross-project learning system guide
+model: haiku
+---
+
 Display the cross-project learning system guide.
 
 Print the following guide directly (do NOT read any files, just output this):

@@ -1,3 +1,8 @@
+---
+description: Bootstrap a new project with docs, CLAUDE.md, hooks, and knowledge injection
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion
+---
+
 Bootstrap a new project with the standard documentation structure, Claude Code configuration, and relevant cross-project knowledge.
 
 ## Steps

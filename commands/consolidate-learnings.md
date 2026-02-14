@@ -1,3 +1,8 @@
+---
+description: Scan all projects and consolidate new patterns into shared knowledge
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
+---
+
 Scan all projects under ~/dev/ for learning documents and consolidate new patterns into the shared knowledge base.
 
 ## Steps
