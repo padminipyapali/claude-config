@@ -19,6 +19,11 @@ Cross-project learnings for Telegram bots (grammY, Bot API).
 - **Keepalive self-ping prevents cold starts.** On PaaS platforms, periodic self-pings keep the service warm.
 - **Polling mode for development.** Use polling during development, webhooks in production.
 
+## HTML-Mode Safety
+
+- **Escape user content in HTML-mode replies.** When using `parse_mode: "HTML"`, always escape `<`, `>`, `&` in user-provided strings (`task`, `displayName`, any input). This is the Telegram equivalent of XSS — Telegram will reject malformed HTML or render it incorrectly. <!-- Source: PR review, command-center #3, 2026-02-14 -->
+- **Truncate raw text BEFORE escaping, not after.** `slice()` after `escapeHtml()` can break entities mid-sequence (e.g., `&amp;` becomes `&am`). Always: (1) truncate raw string, (2) escape, (3) verify total length fits. <!-- Source: PR review, command-center #3, 2026-02-14 -->
+
 ## Message Handling
 
 - **Entry-less responses break reply-to chains.** Response types that don't create DB entries (TODO_LIST, CHAT) have no entry to link replies to. Solution: use a lightweight `bot_responses` table to track outbound messages.

@@ -26,10 +26,11 @@ Cross-project learnings for React and React Native development.
 ## UI Patterns
 
 - **Explicit `type` on every `<button>`.** `type="button"` (default) or `type="submit"` (forms only). Prevents accidental form submission.
-- **Use semantic `<button>` not `<div role="button">`.** Native buttons provide keyboard handling for free.
+- **Use semantic `<button>` not `<div role="button">`.** Native buttons provide keyboard handling (Enter/Space activation, tab focus) for free. This is the #1 most common a11y review finding in web dashboards — every clickable `<div>` must become a `<button>`. Also add `aria-current="page"` on active nav items and `aria-label` on icon-only buttons. <!-- Strengthened: PR review, command-center #3, 2026-02-14 -->
 - **Don't hardcode line limits on variable-length content.** Avoid `numberOfLines` truncation — use expandable content instead.
 - **SVG `<title>` for accessibility.** Every inline `<svg>` must have a `<title>` child for screen readers.
 - **`aria-hidden` on decorative indicators + `aria-label` for state.** Visual-only elements (notification dots, status icons) need `aria-hidden="true"` to avoid screen reader noise. Communicate the state via `aria-label` on the parent interactive element instead (e.g., `aria-label="Inbox, unread items"`). <!-- Source: PR review, second-brain #75, 2026-02-14 -->
+- **Decorative SVG icons: `aria-hidden="true"` + `focusable="false"`.** When SVGs are inside labeled buttons/links, mark them decorative so screen readers don't announce them separately. Only add `<title>` to standalone meaningful SVGs. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 - **Don't rely on Unicode for icons.** Use SVG for consistent sizing across platforms.
 - **CSS viewport units don't account for virtual keyboards.** Use `visualViewport` API for panels with fixed-position input fields.
 - **CSS modern color notation.** Use `rgb(R G B / alpha%)` not `rgba(R, G, B, decimal)`.

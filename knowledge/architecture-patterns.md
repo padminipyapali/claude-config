@@ -31,6 +31,7 @@ Cross-project learnings for service design, error handling, and system architect
 - **Global error handlers on long-running services.** Per-request handling is necessary but not sufficient — add `process.on('uncaughtException')` and `process.on('unhandledRejection')`.
 - **Fire-and-forget needs visibility.** Log at the decision point ("split returned N items"), not just the error path. Silent success is as bad as silent failure for debugging.
 - **Wrap post-stream persistence in its own try/catch.** When DB writes happen after SSE data is already sent, catch failures and emit a warning event.
+- **Split try/catch for non-transactional sequential DB operations.** When two DB writes aren't wrapped in a transaction, use separate try/catch blocks so users get accurate feedback about what succeeded. If op A succeeds but op B fails, returning a generic "failed" error is misleading — the first write already committed. <!-- Source: PR review, my_mind_evolved #76, 2026-02-14 -->
 
 ## Pipeline Design
 

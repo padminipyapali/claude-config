@@ -62,6 +62,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Input validation at boundaries.** `typeof` guard before `.trim()` or string methods on request body fields.
 - [ ] **Shell command validation.** Regex: no prefix injection bypass (`\b` not `^`); no suffix injection bypass (`(\s|$)` not `\b`); extracted variables validated non-empty.
 - [ ] **Escape user content in AI prompts.** Escape `<`/`>` with `&lt;`/`&gt;` in XML-tagged prompts. This includes DB-stored values.
+- [ ] **No token-like placeholders in UI.** Avoid `ghp_`, `sk-`, `Bearer ey...`, `xoxb-` prefixes in placeholder/mock/demo data — secret scanners (CI, GitHub) will flag them. Use generic bullets `"••••••••"` or `"(hidden)"`. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 
 ---
 
@@ -94,6 +95,22 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Reuse existing DB pools.** Don't create ad-hoc `pg.Pool` for a single query when a service already has a pool. Add the method to the service interface instead. Ad-hoc pools leak connections and bypass service abstractions.
 - [ ] **In-memory state survives restarts?** If a scheduler or service uses in-memory state for dedup (e.g., `lastSentDate`), verify it handles server restarts. On deploy-on-push platforms, every deploy clears memory. Either persist to DB or initialize defensively (e.g., pre-set the marker if the scheduled time has passed).
 - [ ] **Documentation sync.** JSDoc matches code. Step counts updated. Module headers mention new capabilities.
+
+---
+
+## Tier 5: Product Adversarial Review (Plans Only)
+
+Run this on every non-trivial feature plan before implementation. Code-level adversarial review catches bugs; product adversarial review catches wasted effort.
+
+- [ ] **Regex/pattern coverage.** List 10 realistic user phrasings. Do ALL match? List 5 non-promotion phrasings. Do NONE match? Flag false positives and false negatives.
+- [ ] **Content quality after the action.** What does the user see? Is the resulting content (TODO text, converted entry, promoted item) useful as-is, or does it need user editing? Would the user be confused by what was created?
+- [ ] **Missing entry points.** Does the feature work from ALL surfaces (Telegram, web dashboard, future channels)? If not, is the gap intentional and documented?
+- [ ] **Missing modifiers.** Can the user customize the action? (custom title, due date, tags) If not, will they expect to?
+- [ ] **Undo path.** Can the user reverse the action? If not, is the action low-risk enough that undo isn't needed?
+- [ ] **Edge case phrasings.** Test the exact failing phrase from the bug report against the detection logic. Then test 5 more realistic variations.
+- [ ] **Downstream effects.** After the action, do related features still work? (daily summary, search, /todos list, thread panel)
+
+<!-- Source: second-brain planning review, 2026-02-14 -->
 
 ---
 

@@ -23,6 +23,7 @@ Cross-project learnings for TypeScript and Node.js development.
 - **Input type validation.** `(content ?? "").trim()` silently coerces `null` but crashes on `42` or `{obj: true}`. Use `typeof content !== "string"` guard before `.trim()`.
 - **Validate query param enum values.** Reject invalid values with 400, don't silently fall back to `undefined`.
 - **Guard API response shape before destructuring.** Even with TypeScript generics on `api.get<T>()`, check `Array.isArray()` before `.filter()/.map()`.
+- **Validate date strings before formatting.** `new Date(str)` can produce `NaN` timestamps. Always check `isNaN(d.getTime())` and return a fallback (`""`, `"—"`) instead of displaying `"NaN ago"` or `"Invalid Date"`. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 - **Always `?? []` when mapping API response arrays.** Servers can return unexpected shapes even when TypeScript says the field is required.
 
 ## Environment Variables
@@ -36,6 +37,10 @@ Cross-project learnings for TypeScript and Node.js development.
 - **Broad vs. narrow try/catch scope.** Don't wrap entire methods in one try/catch. If multiple awaits fail for different reasons, split the try blocks.
 - **Register global error handlers on long-running services.** Per-request error handling is necessary but not sufficient.
 - **Log errors with context (request ID, user ID, operation) but never secrets or PII.** Log `error.name`, not `error.message` (may contain user content).
+
+## Observer / Pub-Sub Patterns
+
+- **Snapshot callback arrays before iteration.** When callbacks can unsubscribe during invocation (observer/event-emitter patterns), iterate over `[...callbacks]` not the live array. `splice()` during iteration skips entries. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 
 ## Code Hygiene
 
