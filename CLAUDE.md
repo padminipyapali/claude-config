@@ -85,6 +85,35 @@ Every feature plan must:
 - For CI/CD: prefer vendor's official GitHub Action over manual CLI installation.
 - Single deployment for tightly coupled services at single-user scale — don't prematurely split.
 
+## Repo Conflict Detection & Task Queue
+
+Before making code changes to any repo (not just reading/exploring), check for active work:
+
+**Detection steps:**
+1. Run `git -C <repo-path> status --porcelain` — if output is non-empty, there are uncommitted changes.
+2. Run `ps aux | grep -E 'claude|claude-code' | grep -v grep | grep '<repo-path>'` — check for other Claude sessions targeting that repo.
+3. Check for lock files: `ls <repo-path>/.git/index.lock 2>/dev/null` — indicates an active git operation.
+
+**If active work is detected:**
+- Do NOT make code changes to that repo.
+- Tell the user what was detected (uncommitted files, running agents, etc.).
+- Add the task to `~/.claude/task-queue.md` with this format:
+  ```
+  ## [PENDING] <short task title>
+  - **Repo:** <repo path>
+  - **Queued:** <date>
+  - **Context:** <what the user asked for — enough detail to execute later>
+  - **Detection:** <what was detected — e.g., "3 modified files on branch feat/streaming">
+  ```
+- Exploration and read-only analysis of the repo is still fine — only code changes are blocked.
+
+**On session start:**
+- Check if `~/.claude/task-queue.md` exists and has `[PENDING]` entries.
+- For each pending entry, check if the repo is now free (re-run detection steps).
+- If free, prompt the user: "There's a queued task for <repo>: <title>. The repo is now free. Want me to execute it?"
+- When a queued task is completed, change `[PENDING]` to `[DONE]` and add a completion date.
+- Periodically prune `[DONE]` entries older than 7 days.
+
 ## Config Repo Auto-Sync
 
 The `~/.claude/` directory is a git repo (`claude-config`) with remote at `origin/main`. Whenever you modify any file in `~/.claude/` (knowledge, commands, memory, settings, CLAUDE.md, etc.), commit and push the changes before the session ends. Do this automatically — don't ask for confirmation.
