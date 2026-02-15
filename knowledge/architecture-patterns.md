@@ -61,6 +61,7 @@ Cross-project learnings for service design, error handling, and system architect
 - **Adversarial-review plans before presenting them.** The first plan is often not the best. Run cost/risk/tradeoff analysis.
 - **Performance & Cost Impact section in every plan.** Cover: latency, API call costs, DB query load, code path frequency, mitigations.
 - **Test locally before pushing PRs.** Make changes → run the app → verify behavior → only then commit/push. A premature push can get merged before testing reveals the approach is wrong, requiring a follow-up PR to fix. Local testing catches these in a single iteration. <!-- Source: second-brain #96→#97, TODO link cleanup, 2026-02-15 -->
+- **Cross-channel regression testing.** When modifying shared data formats consumed by multiple output channels (web, Telegram, email), verify ALL channels still work. Same data, different display constraints — web can render rich HTML while Telegram has a 4096-char text limit. Add this to the PR checklist for multi-channel apps. <!-- Source: BUG-022, second-brain #101, 2026-02-15 -->
 
 ## Scheduling & At-Most-Once Delivery
 

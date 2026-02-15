@@ -141,6 +141,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Reuse existing DB pools.** Don't create ad-hoc `pg.Pool` for a single query when a service already has a pool. Add the method to the service interface instead. Ad-hoc pools leak connections and bypass service abstractions.
 - [ ] **In-memory state survives restarts?** If a scheduler or service uses in-memory state for dedup (e.g., `lastSentDate`), verify it handles server restarts. On deploy-on-push platforms, every deploy clears memory. Either persist to DB or initialize defensively (e.g., pre-set the marker if the scheduled time has passed).
 - [ ] **Documentation sync.** JSDoc matches code. Step counts updated. Module headers mention new capabilities.
+- [ ] **Cross-channel output regression.** If changed code touches shared data consumed by multiple output channels (web, Telegram, email, API), verify all channels still render correctly. Same data, different display constraints (HTML vs 4096-char text vs JSON). <!-- Source: BUG-022, second-brain #101, 2026-02-15 -->
 
 ---
 
