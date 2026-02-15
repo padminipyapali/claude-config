@@ -11,6 +11,8 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 - **SQL ↔ TypeScript type sync.** CHECK constraints and TypeScript unions must match. Document which is source of truth. Add SQL comments referencing the TS type.
 - **Partial unique indexes for nullable columns.** `CREATE UNIQUE INDEX ... WHERE col IS NOT NULL` enforces uniqueness only for non-null values.
 - **Schema changes need migration reminders.** Schema files are documentation, not deployment, without an automated runner.
+- **Canonicalized bidirectional links.** For bidirectional links between entities, store with `CHECK (source_id < target_id)` constraint. This prevents duplicate pairs (A→B and B→A) without application-level dedup. The service always sorts the two IDs before inserting. <!-- Source: my_mind_evolved-slip-box DECISIONS -->
+- **Metadata JSONB for type-specific context.** When storing type-specific data (response metadata, bot context, channel-specific fields), use a JSONB column rather than type-specific columns. Avoids schema bloat and is extensible to future types. Trade-off: weaker DB-level type safety, but the TypeScript layer enforces shape. <!-- Source: second-brain DECISIONS -->
 
 ## Index Design
 

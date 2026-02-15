@@ -44,6 +44,11 @@ Cross-project learnings for TypeScript and Node.js development.
 
 - **Snapshot callback arrays before iteration.** When callbacks can unsubscribe during invocation (observer/event-emitter patterns), iterate over `[...callbacks]` not the live array. `splice()` during iteration skips entries. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 
+## Input Validation
+
+- **Whitespace-only strings are truthy in JavaScript.** `!text` does NOT catch `"   "` — whitespace-only strings are truthy and bypass empty guards. Always `.trim()` at the earliest pipeline point so downstream logic operates on normalized input. Guard on `!text.trim()` not `!text`. <!-- Source: BUG-T014, second-brain -->
+- **Narrow try/catch to I/O only; guard `Invalid Date` from external APIs.** A broad try/catch around fetch + JSON transform means a formatting bug silently drops all fetched data. Wrap only the network call in try/catch. Then guard each data transformation separately — especially `new Date()` on external strings, which can produce `Invalid Date` that propagates silently through formatters. <!-- Source: BUG-T016, second-brain -->
+
 ## Code Hygiene
 
 - **Early return before dead computation.** If a branch exits early, place it before computing values it won't use.

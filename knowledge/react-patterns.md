@@ -36,6 +36,12 @@ Cross-project learnings for React and React Native development.
 - **CSS modern color notation.** Use `rgb(R G B / alpha%)` not `rgba(R, G, B, decimal)`.
 - **Use placeholder hints, not default values** for user-configurable settings.
 - **stopPropagation() for stacked dismissible layers.** When a modal sits over a panel, or a drawer over an overlay, keyboard events (Escape) and click-outside handlers fire on ALL layers simultaneously. Call `e.stopPropagation()` in the topmost layer's handler to prevent cascading dismissals. <!-- Source: BUG-W008, second-brain, 2026-02-14 -->
+- **`white-space: pre-wrap` for newline-formatted text.** Any container rendering user-facing text with `\n` line breaks needs `white-space: pre-wrap`. HTML collapses newlines by default. Easy to miss because text appears correct in channels that preserve newlines natively (Telegram, terminal). <!-- Source: BUG-W003, second-brain -->
+- **Grid headers need `grid-column: 1 / -1`.** When a non-card element (header, label) lives inside a CSS grid container, it must explicitly span all columns or it consumes a grid cell and creates a visual gap. <!-- Source: BUG-W004, second-brain -->
+- **Truncated text needs `title` attribute.** When using `text-overflow: ellipsis`, always pair with a `title` attribute or tooltip so users can access the full value on hover. Especially important for URLs. <!-- Source: BUG-020, second-brain -->
+- **Modal stacking: sibling overlay+dialog need independent `z-index`.** When overlay and dialog are siblings (not parent-child), both need `position` and explicit `z-index`. Flex centering only works if the dialog is a child of the overlay. <!-- Source: BUG-019, second-brain -->
+- **Scroll preservation on DOM height changes.** When injected content changes height (skeleton → real text, lazy-loaded section), use `useLayoutEffect` to capture `scrollTop` before the change and restore it via `requestAnimationFrame` after DOM settles. Prevents jarring scroll jumps. <!-- Source: second-brain DECISIONS -->
+- **Mutual exclusion between overlapping panels.** When two panels can occupy the same screen area (thread detail + sidebar), keep them mutually exclusive: opening one closes the other. Prevents visual clutter and simplifies state management. <!-- Source: second-brain DECISIONS -->
 
 ## Testing React Components
 

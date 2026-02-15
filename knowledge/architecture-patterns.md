@@ -36,6 +36,12 @@ Cross-project learnings for service design, error handling, and system architect
 - **Wrap post-stream persistence in its own try/catch.** When DB writes happen after SSE data is already sent, catch failures and emit a warning event.
 - **Split try/catch for non-transactional sequential DB operations.** When two DB writes aren't wrapped in a transaction, use separate try/catch blocks so users get accurate feedback about what succeeded. If op A succeeds but op B fails, returning a generic "failed" error is misleading — the first write already committed. <!-- Source: PR review, my_mind_evolved #76, 2026-02-14 -->
 
+## Result Types & Dependency Injection
+
+- **Discriminated unions for expected failures.** For expected failures (bad auth, invalid payload, not found), return `{ ok: true, payload }` or `{ ok: false, status, error }` rather than throwing. This makes expected failures explicit in the type system. Pattern-match on `result.ok` — no catch blocks for control flow. Reserve exceptions for truly unexpected errors. <!-- Source: second-brain DECISIONS -->
+- **Context injection: config via constructor, not `process.env`.** Services receive configuration (HMAC secret, API key, DB pool) through their constructor, not by reading `process.env` directly. Keeps wiring concerns in the composition root (`server.ts`). Makes services trivially testable without env var manipulation. <!-- Source: second-brain DECISIONS -->
+- **Composition over inheritance for similar services.** When two services share patterns but differ significantly (same polling interval, different data sources/formats), copy the pattern rather than extracting a base class. Inheritance creates fragile coupling. If the shared logic is truly identical, extract a utility function — not a base class. <!-- Source: second-brain DECISIONS -->
+
 ## Pipeline Design
 
 - **Order operations by dependency.** Map dependencies before implementing — if step B needs step A's result, A runs first.
@@ -54,6 +60,10 @@ Cross-project learnings for service design, error handling, and system architect
 - **State reset effects must re-populate for ALL paths.** When `useEffect` clears state on dependency change, every path that sets the dependency must ensure re-population.
 - **Adversarial-review plans before presenting them.** The first plan is often not the best. Run cost/risk/tradeoff analysis.
 - **Performance & Cost Impact section in every plan.** Cover: latency, API call costs, DB query load, code path frequency, mitigations.
+
+## Scheduling & At-Most-Once Delivery
+
+- **State update BEFORE side effect for at-most-once delivery.** In schedulers that deliver notifications, update persistent state (e.g., `lastSentDate`) BEFORE the side effect (sending the message). If the server crashes after marking but before delivery, the user misses one notification rather than getting duplicates on every restart. At-most-once > at-least-once-with-spam for non-critical notifications. <!-- Source: BUG-T017, second-brain -->
 
 ## Debugging Process
 
