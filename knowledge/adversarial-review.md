@@ -8,6 +8,52 @@ Shared mechanical review checklist for all projects. Run this before every PR.
 
 ---
 
+## Targeted Review — Classify First, Then Run Only What Applies
+
+Do NOT run the full 30+ item checklist on every PR. Classify the changed files first, then run only the sections relevant to those categories. Running database checks on a CSS-only change is waste that blocks the PR with no value.
+
+### Step 1: Classify changed files
+
+Run `git diff main...HEAD --name-only` and classify each file:
+
+| Category | File patterns |
+|---|---|
+| **async-ts** | `.ts`/`.js` files containing `async`, `await`, `.catch`, `.then`, `Promise` |
+| **routes-api** | Files in `routes/`, `commands/`, `controllers/`, or HTTP/bot request handlers |
+| **db-sql** | Files with SQL queries, schema files, migration files, pg/Knex/Prisma usage |
+| **ui-react** | `.tsx`/`.jsx` files, React components, CSS/styled-components |
+| **shell** | `.sh` files, or `.ts`/`.js` that spawn child processes / run shell commands |
+| **llm** | Files that call LLM APIs, build prompts, or parse LLM output |
+| **config-env** | `.env*` files, config modules that read `process.env` |
+| **test-only** | Files only in `__tests__/`, `*.test.*`, `*.spec.*` |
+
+A file can belong to multiple categories.
+
+### Step 2: Run only matching sections
+
+| Category | Checklist sections to run |
+|---|---|
+| **async-ts** | Tier 1: all (1.1–1.3). Tier 3: null guards, error message specificity |
+| **routes-api** | Tier 2: all. Tier 4: business logic in service not routes |
+| **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create→reload |
+| **ui-react** | Tier 1: 1.4 (grammar), 1.5 (optimistic UI). Tier 3: SVG/a11y, hook error states |
+| **shell** | Tier 2: shell command validation |
+| **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
+| **config-env** | Tier 3: env var validation, JSON.parse on external config |
+| **test-only** | Tier 3: UTC suffix in test Date strings. No other tiers needed. |
+
+**Always run regardless of category:** Tier 4: pattern siblings, documentation sync. Learning Capture Gate.
+
+**Always skip for code review:** Tier 5 (plans only).
+
+If no categories match (e.g., docs-only change), skip directly to the Learning Capture Gate.
+
+### Step 3: Report transparency
+
+In the review output, state which categories were detected and which checklist sections were skipped, so the author can verify coverage.
+
+---
+
 ## Tier 1: Recurring Blindspots (ALWAYS verify mechanically)
 
 These patterns have been missed on multiple PRs despite being in the checklist.

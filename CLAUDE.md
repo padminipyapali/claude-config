@@ -33,14 +33,14 @@ Every PR should update the relevant living documents, if the project maintains t
 
 ## Adversarial Self-Review
 
-Before every PR, perform these universal checks:
+Before every PR, run `/adversarial-review`. The review is **targeted, not exhaustive** — classify changed files by category (async, routes, DB, UI, LLM, shell, config, test-only) and run only the matching checklist sections. See `~/.claude/knowledge/adversarial-review.md` for the category-to-tier mapping. Don't block PRs on checklist items that don't apply to the files changed.
+
+These universal checks always apply regardless of category:
 
 - **Pattern siblings.** When fixing a bug class, grep the ENTIRE codebase for other instances.
 - **Walk full access chains.** Check every dereference for null/undefined/nil — not just the first level.
 - **Fire-and-forget contract.** Every async operation inside a fire-and-forget method must be error-handled.
 - **Error message specificity.** Add specific branches for edge cases — don't let them fall through to generic handlers.
-
-For database projects, also review every item in the "Schema & Database" section below.
 
 ## Code Quality
 
