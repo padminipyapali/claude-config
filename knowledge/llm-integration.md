@@ -39,6 +39,7 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 
 - **Use user's timezone, not UTC.** `extractDueDate` must use the user's timezone. The `en-CA` locale trick produces YYYY-MM-DD format.
 - **Server-timezone parsing is broken.** `new Date(someDate.toLocaleString("en-US", { timeZone: tz }))` — the `new Date()` constructor uses the server's timezone. Use `Intl.DateTimeFormat.formatToParts()` instead.
+- **Strip URLs before date extraction.** When content has URLs appended (e.g., email-promoted TODOs), date-like URL paths (`/2024/01/article`, `?session=spring2026`) can produce incorrect due dates. Always pass the clean title text to date/time extraction, not the full content with URLs. <!-- Source: PR review, second-brain #97, 2026-02-15 -->
 
 ---
 *Sources: second-brain, lexica*
