@@ -4,7 +4,8 @@ Tasks queued because the target repo had active work in progress. Check `[PENDIN
 
 ---
 
-## [PENDING] Delete entries from web dashboard
+## [DONE] Delete entries from web dashboard
+- **Completed:** 2026-02-15 (PR #83 merged)
 - **Repo:** /Users/padminipyapali/dev/claude_test/my_mind_evolved
 - **Queued:** 2026-02-15
 - **Context:** Add ability to delete entries from the web dashboard. Each entry card should have a × button that triggers a confirmation dialog before deleting. Requires: backend DELETE endpoint, frontend UI (× button + confirmation modal), and tests.
