@@ -85,6 +85,10 @@ Every feature plan must:
 - For CI/CD: prefer vendor's official GitHub Action over manual CLI installation.
 - Single deployment for tightly coupled services at single-user scale — don't prematurely split.
 
+## Config Repo Auto-Sync
+
+The `~/.claude/` directory is a git repo (`claude-config`) with remote at `origin/main`. Whenever you modify any file in `~/.claude/` (knowledge, commands, memory, settings, CLAUDE.md, etc.), commit and push the changes before the session ends. Do this automatically — don't ask for confirmation.
+
 ## Cross-Project Knowledge
 
 A shared knowledge base lives at `~/.claude/knowledge/`. It contains topic-organized learnings from ALL projects.

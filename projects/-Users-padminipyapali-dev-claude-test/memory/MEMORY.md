@@ -38,6 +38,10 @@ Commands: `/consolidate-learnings`, `/capture-learning`, `/project-setup`, `/mem
 - Has adversarial review hook (.claude/hooks/require-adversarial-review.sh)
 - Key patterns: thin command dispatchers to services, interface-first (AgentRunner, TaskQueue), env-driven project paths
 
+## User Preferences
+
+- **Auto-commit ~/.claude changes:** Whenever files in `~/.claude/` are modified (knowledge, commands, memory, settings, CLAUDE.md, etc.), always commit and push to `origin/main` of the `claude-config` repo before the session ends. Don't ask — just do it.
+
 ## Cross-Project Learnings
 
 Detailed patterns now live in `~/.claude/knowledge/*.md` topic files (no longer duplicated here).
