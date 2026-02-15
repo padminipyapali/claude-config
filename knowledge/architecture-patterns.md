@@ -8,6 +8,7 @@ Cross-project learnings for service design, error handling, and system architect
 - **Separate app initialization from server binding.** Tests shouldn't open ports.
 - **Clean abstractions.** Each external dependency behind an interface for testability.
 - **Single deployment for tightly coupled services at single-user scale.** Don't prematurely split.
+- **Optional services via env var presence.** When a feature depends on external credentials (bot token, API key, calendar service account), check env var presence at startup and skip initialization entirely when missing. Log the mode ("starting in dashboard-only mode") but don't fail. This enables deployment flexibility (bot-only, API-only, full-stack) without code changes or feature flags. <!-- Source: command-center D8, dashboard-only mode, 2026-02-15 -->
 - **For single-user apps, service accounts > OAuth for external API access.** No consent screen, no token refresh, no callback URLs. The user shares their resource (calendar, drive) with the service account email. OAuth can be added later behind the same service interface.
 
 ## Async Initialization
@@ -25,6 +26,7 @@ Cross-project learnings for service design, error handling, and system architect
 
 - **Pass all relevant fields at document/record creation time.** Don't assume data can be looked up later or leave fields empty for future population. The record should be complete when created — empty fields create permanent data inconsistencies that require manual data fixes.
 - **Consistent treatment of related domain types across ALL calculation paths.** When multiple types share the same semantics (e.g., sick/vacation/holiday hours all count as PTO), ensure ALL paths (canonical calculation, PDF export, UI summary) treat them identically. Independent calculation paths drift apart over time — adding a new type to one path but not others is a common source of bugs.
+- **Consolidate entity creation into a single shared service method.** When multiple code paths create the same entity type (e.g., entries from Telegram, web, or promotion), use one shared creation function. Independent creation paths inevitably diverge — some will miss required fields (status initialization, embeddings, metadata). This complements the "complete at creation" rule by providing a structural enforcement mechanism. <!-- Source: BUG-W007, second-brain, 2026-02-14 -->
 
 ## Error Handling Strategy
 

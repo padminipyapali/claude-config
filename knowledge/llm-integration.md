@@ -12,6 +12,7 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 - **Silent fallbacks hide real bugs.** `try { JSON.parse(output) } catch { return [content] }` makes parse failures invisible. Log before any fallback, at least during development.
 - **Validate/filter LLM structured output against source of truth.** When an LLM returns structured data (evaluations, word lists), validate against the authoritative source (word bank, user data) server-side. Models may reference items not in the input set.
 - **Defensive type checks on parsed fields.** Never use `event.text as string` on parsed LLM/SSE data. Guard with `typeof event.field === 'string'` before using.
+- **AI summarization is lossy — preserve originals.** Never make AI-transformed content the only path to original data. Email summarization, content extraction, and paraphrasing all discard information (URLs, formatting, exact wording). Always store and expose the original alongside any AI-processed version. <!-- Source: BUG-W006, second-brain, 2026-02-14 -->
 
 ## Prompt Design
 
@@ -20,6 +21,7 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 - **Classifier prompts need explicit negative examples.** Day plans and schedules look like TODO lists — without explicit negative examples, classifiers miscategorize them.
 - **Prompt rules can over-generalize.** A rule like `"buy milk and eggs" → single item` may cause the LLM to merge ALL grocery items. Test with diverse real inputs, not just prompt examples.
 - **Classification intents designed for one input mode may not apply in another.** Intents for standalone messages may not make sense for thread replies. Verify each outcome per input context.
+- **Custom persona constraints often reduce quality.** System prompts with heavy persona rules (e.g., "you are a pirate teacher") typically produce worse responses than the model's natural voice. Validate that persona customization actually improves task performance before shipping it — the constraint overhead often outweighs the benefit. <!-- Source: lexica personality removal decision, 2026-02-14 -->
 
 ## Safety & Prompt Injection
 

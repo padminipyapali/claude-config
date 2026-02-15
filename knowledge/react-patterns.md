@@ -35,6 +35,7 @@ Cross-project learnings for React and React Native development.
 - **CSS viewport units don't account for virtual keyboards.** Use `visualViewport` API for panels with fixed-position input fields.
 - **CSS modern color notation.** Use `rgb(R G B / alpha%)` not `rgba(R, G, B, decimal)`.
 - **Use placeholder hints, not default values** for user-configurable settings.
+- **stopPropagation() for stacked dismissible layers.** When a modal sits over a panel, or a drawer over an overlay, keyboard events (Escape) and click-outside handlers fire on ALL layers simultaneously. Call `e.stopPropagation()` in the topmost layer's handler to prevent cascading dismissals. <!-- Source: BUG-W008, second-brain, 2026-02-14 -->
 
 ## Testing React Components
 
