@@ -17,7 +17,7 @@ When creating a new project or initializing a new codebase, always run `/project
 - Keep PRs focused on one concern — don't mix refactoring with features.
 - Tests required for every feature and bug fix. Docs-only or config PRs may skip with justification.
 - Commit messages: complete sentences with periods.
-- Pre-PR checks: run all relevant CI checks (build, lint, test) locally before opening a PR.
+- Pre-PR pipeline (in order): (1) code-simplifier on changed files, (2) `/adversarial-review`, (3) CI checks (build, lint, test).
 - Sort config files (.env.example, etc.) alphabetically.
 - Never commit secrets, API keys, or credentials. Use environment variables.
 - For projects with releases, follow semantic versioning (MAJOR.MINOR.PATCH).
@@ -31,9 +31,13 @@ Every PR should update the relevant living documents, if the project maintains t
 - `docs/PRODUCT_SPEC.md` — New features and context for why they're added.
 - `docs/QA.md` — Technical Q&A to sharpen the human's intuition.
 
+## Pre-PR Code Simplification
+
+Before adversarial review, run the code-simplifier agent on all changed files. This refines code for clarity, consistency, and maintainability without changing functionality. Scope: only files modified in the current branch (vs main). Do not simplify unchanged files.
+
 ## Adversarial Self-Review
 
-Before every PR, run `/adversarial-review`. The review is **targeted, not exhaustive** — classify changed files by category (async, routes, DB, UI, LLM, shell, config, test-only) and run only the matching checklist sections. See `~/.claude/knowledge/adversarial-review.md` for the category-to-tier mapping. Don't block PRs on checklist items that don't apply to the files changed.
+After code simplification, run `/adversarial-review`. The review is **targeted, not exhaustive** — classify changed files by category (async, routes, DB, UI, LLM, shell, config, test-only) and run only the matching checklist sections. See `~/.claude/knowledge/adversarial-review.md` for the category-to-tier mapping. Don't block PRs on checklist items that don't apply to the files changed.
 
 These universal checks always apply regardless of category:
 
