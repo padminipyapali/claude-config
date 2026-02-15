@@ -27,6 +27,7 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 - **Never use OR in WHERE clauses that defeat index usage.** Split into two separate queries.
 - **Filter by authoritative state, not cross-referencing result sets.** When two queries feed separate display sections and can overlap.
 - **FTS + vector search are complementary, not alternatives.** FTS excels at exact/stemmed word matching but fails on conceptual similarity ("colors" won't find "yellow", "blue"). Use FTS as primary with vector similarity fallback when FTS returns 0 results. This avoids the cost of embedding every query while catching semantic matches.
+- **FTS: use OR semantics for personal knowledge retrieval.** `plainto_tsquery` (AND) fails when users search with metadata terms — proper nouns, category labels, or concept names that don't appear verbatim in the stored text (e.g., "Bene Gesserit fear mantra" for an entry containing only the Litany text). Use `websearch_to_tsquery` with OR-joined terms so entries matching ANY term surface, ranked by `ts_rank_cd`. AND semantics is only appropriate when false positives are dangerous (e.g., matching TODOs for completion).
 
 ## node-postgres (pg) Driver
 
