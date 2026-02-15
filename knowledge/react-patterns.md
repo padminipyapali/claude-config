@@ -7,6 +7,7 @@ Cross-project learnings for React and React Native development.
 - **Always place hooks before early returns.** `useMemo`, `useCallback`, `useEffect`, `useState` must be called unconditionally at the top of the component, before any `if (...) return` guards. React requires hooks in the same order on every render.
 - **Surface hook error states in UI.** When a hook returns `{ data, loading, error }`, always destructure and render the error. Ignoring errors creates silent failures.
 - **Consolidate related effects sharing dependencies.** When two `useEffect` hooks depend on the same value and one must run before the other, merge into a single effect. Implicit ordering between separate effects is fragile.
+- **Unmount guard on useEffect async fetches.** When a `useEffect` fires an async call (fetch, API call), use a `let active = true` flag with a cleanup that sets `active = false`. Check `if (active)` before calling any state setter. Prevents React state-after-unmount warnings and stale updates. <!-- Source: PR review, second-brain #75, 2026-02-14 -->
 
 ## State Management
 
@@ -28,6 +29,7 @@ Cross-project learnings for React and React Native development.
 - **Use semantic `<button>` not `<div role="button">`.** Native buttons provide keyboard handling for free.
 - **Don't hardcode line limits on variable-length content.** Avoid `numberOfLines` truncation — use expandable content instead.
 - **SVG `<title>` for accessibility.** Every inline `<svg>` must have a `<title>` child for screen readers.
+- **`aria-hidden` on decorative indicators + `aria-label` for state.** Visual-only elements (notification dots, status icons) need `aria-hidden="true"` to avoid screen reader noise. Communicate the state via `aria-label` on the parent interactive element instead (e.g., `aria-label="Inbox, unread items"`). <!-- Source: PR review, second-brain #75, 2026-02-14 -->
 - **Don't rely on Unicode for icons.** Use SVG for consistent sizing across platforms.
 - **CSS viewport units don't account for virtual keyboards.** Use `visualViewport` API for panels with fixed-position input fields.
 - **CSS modern color notation.** Use `rgb(R G B / alpha%)` not `rgba(R, G, B, decimal)`.
