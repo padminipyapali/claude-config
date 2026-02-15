@@ -60,6 +60,7 @@ Cross-project learnings for service design, error handling, and system architect
 - **State reset effects must re-populate for ALL paths.** When `useEffect` clears state on dependency change, every path that sets the dependency must ensure re-population.
 - **Adversarial-review plans before presenting them.** The first plan is often not the best. Run cost/risk/tradeoff analysis.
 - **Performance & Cost Impact section in every plan.** Cover: latency, API call costs, DB query load, code path frequency, mitigations.
+- **Test locally before pushing PRs.** Make changes → run the app → verify behavior → only then commit/push. A premature push can get merged before testing reveals the approach is wrong, requiring a follow-up PR to fix. Local testing catches these in a single iteration. <!-- Source: second-brain #96→#97, TODO link cleanup, 2026-02-15 -->
 
 ## Scheduling & At-Most-Once Delivery
 
