@@ -34,6 +34,7 @@ Cross-project learnings for React and React Native development.
 - **Decorative SVG icons: `aria-hidden="true"` + `focusable="false"`.** When SVGs are inside labeled buttons/links, mark them decorative so screen readers don't announce them separately. Only add `<title>` to standalone meaningful SVGs. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 - **Don't rely on Unicode for icons.** Use SVG for consistent sizing across platforms.
 - **CSS viewport units don't account for virtual keyboards.** Use `visualViewport` API for panels with fixed-position input fields.
+- **UTC for date bucketing in multi-client dashboards.** When grouping items by day ("Today", "Yesterday", etc.) in a web dashboard, use UTC dates for comparison — not local timezone. Local timezone creates inconsistent grouping across clients. Compare using `getUTCFullYear()`/`getUTCMonth()`/`getUTCDate()` and pass `timeZone: "UTC"` to `toLocaleDateString`. Also hoist reference dates (today, yesterday) outside loops. <!-- Source: PR review, command-center #12, 2026-02-15 -->
 - **CSS modern color notation.** Use `rgb(R G B / alpha%)` not `rgba(R, G, B, decimal)`.
 - **Use placeholder hints, not default values** for user-configurable settings.
 - **stopPropagation() for stacked dismissible layers.** When a modal sits over a panel, or a drawer over an overlay, keyboard events (Escape) and click-outside handlers fire on ALL layers simultaneously. Call `e.stopPropagation()` in the topmost layer's handler to prevent cascading dismissals. <!-- Source: BUG-W008, second-brain, 2026-02-14 -->

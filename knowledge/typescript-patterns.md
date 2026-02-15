@@ -9,6 +9,7 @@ Cross-project learnings for TypeScript and Node.js development.
 - **Fire-and-forget try/catch granularity.** When a method is called with `.catch()` at a call site, EVERY `await` inside that method must have its own try/catch. A single outer try/catch doesn't satisfy the contract — one failure skips all subsequent awaits.
 - **Async initialization ordering.** Map the dependency graph of `start()` calls. If service B can trigger work depending on service A, await A before starting B. Anti-pattern: `telegram.start(); reminderScheduler.start();` (not awaited).
 - **Async state: merge, don't replace.** When loading data asynchronously, never use `prev.length === 0 ? loaded : prev` — this drops loaded data if the user acts fast. Dedup-merge instead: `[...loaded, ...prev.filter(m => !seen.has(m.id))]`.
+- **Batch concurrent external API calls with a cap.** When fetching details for N items from an external API, use `Promise.allSettled` with `.slice(0, MAX)` rather than a sequential loop. Sequential loops are slow; unbounded `Promise.all` risks rate limits. Pattern: filter new items, `.slice(0, 10)`, `Promise.allSettled(items.map(...))`, then collect fulfilled results and log rejected ones. <!-- Source: PR review, command-center #12, 2026-02-15 -->
 
 ## Type Safety
 
