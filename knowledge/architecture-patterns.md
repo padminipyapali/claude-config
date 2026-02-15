@@ -14,6 +14,7 @@ Cross-project learnings for service design, error handling, and system architect
 
 - **Map the dependency graph of startup calls.** If service B can immediately fire work depending on service A, await A before starting B.
 - **Async initialization ordering matters.** Anti-pattern: `telegram.start(); scheduler.start()` (scheduler fires before telegram is ready).
+- **Bind HTTP listener before slow async init on container platforms.** Railway, Kubernetes, and ECS health check probes expect the port to accept connections within seconds. Call `app.listen()` right after creating the app (with health/readiness routes already registered), then initialize services (bot connections, external APIs) afterward. Express/Fastify/Koa all support adding routes dynamically after the server is listening. <!-- Source: command-center fix/railway-host-bind, 2026-02-15 -->
 
 ## In-Memory State & Process Restarts
 
