@@ -17,6 +17,8 @@ Cross-project learnings for TypeScript and Node.js development.
 - **Exhaustive `never` checks should throw, not return.** Fail fast on unhandled types.
 - **Prefer `as UnionType` over `as any`.** When the type is known (e.g., DB string field with a CHECK constraint matching a TS union), cast precisely.
 - **Shared type changes require test mock updates.** After adding a field to a shared interface, grep for all `createMock*` factories.
+- **Use `as const` on lookup objects when using `keyof typeof`.** `Record<string, V>` erases literal key types, so `keyof typeof OBJ` resolves to `string` — defeating the purpose of type narrowing. Declare with `as const` to preserve a concrete union of keys. <!-- Source: PR review, command-center #3, 2026-02-14 -->
+- **Import types directly under automatic JSX transform.** With `jsx: "react-jsx"`, `React` is not in scope. Use `import type { ComponentType } from 'react'` not `React.ComponentType`, or the type reference will fail at compile time. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 
 ## API Boundaries
 
