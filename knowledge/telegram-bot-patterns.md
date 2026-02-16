@@ -10,14 +10,12 @@ Cross-project learnings for Telegram bots (grammY, Bot API).
 ## Bot Architecture
 
 - **Thin command dispatchers to services.** Bot command handlers should extract params and delegate to service methods. No business logic in handlers.
-- **Interface-first design.** Put external dependencies (AgentRunner, TaskQueue) behind interfaces for testability and swappability.
 - **Env-driven project paths.** Configure project directories via environment variables, not hardcoded paths.
 
 ## Webhook & Polling
 
 - **Webhook latency: decouple processing from response.** Respond 200 to the webhook immediately, then process the message asynchronously. Long processing blocks subsequent updates.
 - **Keepalive self-ping prevents cold starts.** On PaaS platforms, periodic self-pings keep the service warm.
-- **Polling mode for development.** Use polling during development, webhooks in production.
 
 ## HTML-Mode Safety
 

@@ -4,17 +4,11 @@ Cross-project learnings for service design, error handling, and system architect
 
 ## Service Layer Design
 
-- **Thin, stateless API layer.** Routes validate input and delegate to services. If a route assembles data from multiple service calls, maps/transforms results, or has conditional logic beyond auth/validation — that belongs in a service method.
-- **Separate app initialization from server binding.** Tests shouldn't open ports.
-- **Clean abstractions.** Each external dependency behind an interface for testability.
-- **Single deployment for tightly coupled services at single-user scale.** Don't prematurely split.
 - **Optional services via env var presence.** When a feature depends on external credentials (bot token, API key, calendar service account), check env var presence at startup and skip initialization entirely when missing. Log the mode ("starting in dashboard-only mode") but don't fail. This enables deployment flexibility (bot-only, API-only, full-stack) without code changes or feature flags. <!-- Source: command-center D8, dashboard-only mode, 2026-02-15 -->
 - **For single-user apps, service accounts > OAuth for external API access.** No consent screen, no token refresh, no callback URLs. The user shares their resource (calendar, drive) with the service account email. OAuth can be added later behind the same service interface.
 
 ## Async Initialization
 
-- **Map the dependency graph of startup calls.** If service B can immediately fire work depending on service A, await A before starting B.
-- **Async initialization ordering matters.** Anti-pattern: `telegram.start(); scheduler.start()` (scheduler fires before telegram is ready).
 - **Bind HTTP listener before slow async init on container platforms.** Railway, Kubernetes, and ECS health check probes expect the port to accept connections within seconds. Call `app.listen()` right after creating the app (with health/readiness routes already registered), then initialize services (bot connections, external APIs) afterward. Express/Fastify/Koa all support adding routes dynamically after the server is listening. <!-- Source: command-center fix/railway-host-bind, 2026-02-15 -->
 
 ## In-Memory State & Process Restarts
@@ -30,8 +24,6 @@ Cross-project learnings for service design, error handling, and system architect
 
 ## Error Handling Strategy
 
-- **Graceful degradation at every layer.** Independent error handling around each operation.
-- **Global error handlers on long-running services.** Per-request handling is necessary but not sufficient — add `process.on('uncaughtException')` and `process.on('unhandledRejection')`.
 - **Fire-and-forget needs visibility.** Log at the decision point ("split returned N items"), not just the error path. Silent success is as bad as silent failure for debugging.
 - **Wrap post-stream persistence in its own try/catch.** When DB writes happen after SSE data is already sent, catch failures and emit a warning event.
 - **Split try/catch for non-transactional sequential DB operations.** When two DB writes aren't wrapped in a transaction, use separate try/catch blocks so users get accurate feedback about what succeeded. If op A succeeds but op B fails, returning a generic "failed" error is misleading — the first write already committed. <!-- Source: PR review, my_mind_evolved #76, 2026-02-14 -->
@@ -41,13 +33,9 @@ Cross-project learnings for service design, error handling, and system architect
 
 - **Discriminated unions for expected failures.** For expected failures (bad auth, invalid payload, not found), return `{ ok: true, payload }` or `{ ok: false, status, error }` rather than throwing. This makes expected failures explicit in the type system. Pattern-match on `result.ok` — no catch blocks for control flow. Reserve exceptions for truly unexpected errors. <!-- Source: second-brain DECISIONS -->
 - **Context injection: config via constructor, not `process.env`.** Services receive configuration (HMAC secret, API key, DB pool) through their constructor, not by reading `process.env` directly. Keeps wiring concerns in the composition root (`server.ts`). Makes services trivially testable without env var manipulation. <!-- Source: second-brain DECISIONS -->
-- **Composition over inheritance for similar services.** When two services share patterns but differ significantly (same polling interval, different data sources/formats), copy the pattern rather than extracting a base class. Inheritance creates fragile coupling. If the shared logic is truly identical, extract a utility function — not a base class. <!-- Source: second-brain DECISIONS -->
 
 ## Pipeline Design
 
-- **Order operations by dependency.** Map dependencies before implementing — if step B needs step A's result, A runs first.
-- **Propagate context to ALL consumers.** If parent context exists, pass it to ALL functions that could use it, not just one.
-- **Decouple processing from external responses.** Respond to webhooks/requests immediately, process asynchronously.
 - **Dedup after normalization must check both raw and cleaned text.** When a pipeline normalizes content before storage (LLM cleanup, trimming, prefix stripping), dedup checks must run on BOTH the original input AND the normalized output. Two different raw inputs can normalize to the same cleaned text, creating duplicates if only the raw text is checked. <!-- Source: PR review, second-brain #109, 2026-02-15 -->
 
 ## Sub-Agent Delegation
@@ -58,11 +46,7 @@ Cross-project learnings for service design, error handling, and system architect
 
 ## Planning Discipline
 
-- **Always trace ALL entry points.** New vs resume, create vs update, empty vs populated state. The resume bug happened because the plan only traced "new session."
 - **State reset effects must re-populate for ALL paths.** When `useEffect` clears state on dependency change, every path that sets the dependency must ensure re-population.
-- **Adversarial-review plans before presenting them.** The first plan is often not the best. Run cost/risk/tradeoff analysis.
-- **Performance & Cost Impact section in every plan.** Cover: latency, API call costs, DB query load, code path frequency, mitigations.
-- **Test locally before pushing PRs.** Make changes → run the app → verify behavior → only then commit/push. A premature push can get merged before testing reveals the approach is wrong, requiring a follow-up PR to fix. Local testing catches these in a single iteration. <!-- Source: second-brain #96→#97, TODO link cleanup, 2026-02-15 -->
 - **Cross-channel regression testing.** When modifying shared data formats consumed by multiple output channels (web, Telegram, email), verify ALL channels still work. Same data, different display constraints — web can render rich HTML while Telegram has a 4096-char text limit. Add this to the PR checklist for multi-channel apps. <!-- Source: BUG-022, second-brain #101, 2026-02-15 -->
 
 ## Scheduling & At-Most-Once Delivery
@@ -71,8 +55,6 @@ Cross-project learnings for service design, error handling, and system architect
 
 ## Debugging Process
 
-- **Ask for exact repro steps immediately.** Don't speculate through theories when the user is available.
-- **Don't dismiss theories based on framework internals you aren't certain about.** Design for correctness regardless of scheduler/batching behavior.
 - **For race conditions: list observable states.** Write out the state tuple at each step and check which intermediate states trigger effects.
 
 ---
