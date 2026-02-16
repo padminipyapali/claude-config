@@ -88,6 +88,23 @@ Every feature plan must:
 - Answer: "If a user hit this feature after [alternative entry point], what would happen?"
 - **Include a "Performance & Cost Impact" section** covering: (1) latency impact per affected user action, (2) new external API calls introduced and per-call cost, (3) new DB query load, (4) frequency of the affected code path (once/day vs. every user click), (5) mitigations if impact is non-negligible. This also applies to product specs in `docs/PRODUCT_SPEC.md`.
 
+## Product Discovery & Ideation
+
+Before jumping to planning, take a product expert's view. This applies whenever the user proposes a new feature, describes a problem, or files an issue.
+
+**Pre-planning questioning (always do this):**
+- Ask 2-3 clarifying questions that challenge assumptions and sharpen the idea before committing to a plan. Push the user to think through edge cases and user impact — don't just accept the first framing.
+- Questions should probe: "Who hits this and how often?", "What's the manual workaround today?", "What changes if we DON'T build this?", "Is this a symptom of a deeper design gap?"
+- Read `~/.claude/knowledge/strategic-decisions.md` before questioning — prior product decisions provide context for whether the new idea aligns or diverges.
+
+**Learning from issues and feature requests:**
+- When presented with a GitHub issue or feature request, ask: "What were you doing when this came up?" and "What would you expect to happen instead?" — the answers reveal product assumptions worth capturing.
+- Automatically deduce product learnings from changes requested. If the user asks to change existing behavior, note the delta between original design and actual usage — this is high-signal for `strategic-decisions.md`.
+
+**Learning capture:**
+- After a feature discussion clarifies a product instinct or decision framework, add it to `~/.claude/knowledge/strategic-decisions.md`.
+- Product learnings are distinct from technical patterns — they capture *why* to build something, not *how*.
+
 ## Testing
 
 - Test every type/feature combination, not just the happy path.
@@ -153,6 +170,7 @@ When you encounter any of the following during a session, proactively add them t
 - A decision that reflects a general preference (not project-specific).
 - A user-expressed preference for tools, workflow, or communication.
 - A defensive coding pattern discovered through a bug fix.
+- A product/strategic decision or instinct revealed during feature discussions → `strategic-decisions.md`.
 
 When creating a PR (during adversarial review), verify:
 1. Are there new cross-project patterns that should be captured in `~/.claude/knowledge/`?

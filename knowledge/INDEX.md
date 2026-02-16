@@ -20,6 +20,7 @@ Cross-project learnings organized by topic. These files contain detailed pattern
 | [architecture-patterns.md](architecture-patterns.md) | All | Service layers, async init, testing, error handling |
 | [adversarial-review.md](adversarial-review.md) | All | The shared mechanical review checklist |
 | [testing-patterns.md](testing-patterns.md) | Vitest, testing in general | Test strategy, mocking pitfalls, assertion patterns |
+| [strategic-decisions.md](strategic-decisions.md) | All | Product thinking, MVP strategy, feature scope, decision frameworks |
 
 ## Stack Matching Guide
 
@@ -33,6 +34,7 @@ When starting work on a project, load files matching these stacks:
 - **Telegram bot** → telegram-bot-patterns, architecture-patterns
 - **LLM/AI features** → llm-integration
 - **Any project pre-PR** → adversarial-review
+- **Any project pre-plan** → strategic-decisions
 
 ## Last Updated
 
