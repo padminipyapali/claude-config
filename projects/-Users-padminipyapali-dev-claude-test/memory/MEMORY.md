@@ -42,6 +42,11 @@ Commands: `/consolidate-learnings`, `/capture-learning`, `/project-setup`, `/mem
 
 - **Auto-commit ~/.claude changes:** Whenever files in `~/.claude/` are modified (knowledge, commands, memory, settings, CLAUDE.md, etc.), always commit and push to `origin/main` of the `claude-config` repo before the session ends. Don't ask — just do it.
 
+## Hard Lessons
+
+- **ALWAYS run repo conflict detection before making code changes.** This is in global CLAUDE.md and is NOT optional. Check `git status --porcelain`, `ps aux | grep claude`, and `.git/index.lock` BEFORE any edits. Skipping this caused an entire session of wasted work when concurrent agents were reverting edits (second-brain feat/calendar-command, 2026-02-16).
+- **When concurrent agents are detected: use Task agent with `bypassPermissions` for atomic edits.** Apply all changes + build + test in one burst via a delegated agent. This prevents interference from concurrent linters/builds. But this is a workaround — prefer avoiding conflicts in the first place.
+
 ## Cross-Project Learnings
 
 Detailed patterns now live in `~/.claude/knowledge/*.md` topic files (no longer duplicated here).

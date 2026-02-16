@@ -43,6 +43,7 @@ Cross-project learnings for service design, error handling, and system architect
 - **Always include adversarial review instructions for delegated agents.** Agents follow feature correctness but skip security/robustness review unless explicitly prompted.
 - **Parallel agents must use separate branches/worktrees.** Shared checkouts cause "file modified since read" errors.
 - **Separate fixer and reviewer agents.** The agent that wrote a `catch-all return []` won't question its own code. Use two-agent pipeline: fixer commits, then reviewer reviews.
+- **When concurrent agents may be active in a repo, use a Task agent with `bypassPermissions` to apply all edits atomically.** Concurrent agents running builds, linters, or formatters can revert uncommitted file edits between individual Edit tool calls. Delegating all changes to a single Task agent that applies edits + builds + tests in one burst prevents interference. This is a workaround — the real fix is to always run the CLAUDE.md repo conflict detection protocol before starting work. <!-- Source: second-brain feat/calendar-command, 2026-02-16 -->
 
 ## Planning Discipline
 
