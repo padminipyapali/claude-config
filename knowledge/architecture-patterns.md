@@ -48,6 +48,7 @@ Cross-project learnings for service design, error handling, and system architect
 - **Order operations by dependency.** Map dependencies before implementing — if step B needs step A's result, A runs first.
 - **Propagate context to ALL consumers.** If parent context exists, pass it to ALL functions that could use it, not just one.
 - **Decouple processing from external responses.** Respond to webhooks/requests immediately, process asynchronously.
+- **Dedup after normalization must check both raw and cleaned text.** When a pipeline normalizes content before storage (LLM cleanup, trimming, prefix stripping), dedup checks must run on BOTH the original input AND the normalized output. Two different raw inputs can normalize to the same cleaned text, creating duplicates if only the raw text is checked. <!-- Source: PR review, second-brain #109, 2026-02-15 -->
 
 ## Sub-Agent Delegation
 

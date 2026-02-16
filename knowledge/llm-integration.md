@@ -13,6 +13,7 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 - **Validate/filter LLM structured output against source of truth.** When an LLM returns structured data (evaluations, word lists), validate against the authoritative source (word bank, user data) server-side. Models may reference items not in the input set.
 - **Defensive type checks on parsed fields.** Never use `event.text as string` on parsed LLM/SSE data. Guard with `typeof event.field === 'string'` before using.
 - **AI summarization is lossy — preserve originals.** Never make AI-transformed content the only path to original data. Email summarization, content extraction, and paraphrasing all discard information (URLs, formatting, exact wording). Always store and expose the original alongside any AI-processed version. <!-- Source: BUG-W006, second-brain, 2026-02-14 -->
+- **Embedding content must match stored content.** When a pipeline cleans/transforms text before storage, generate embeddings from the CLEANED text, not the raw input. If stored content says "buy milk" but the embedding vector represents "todo: buy milk please", semantic search returns results whose text doesn't match the query context. Any transform-then-store pipeline must use the same text for both storage and embedding. <!-- Source: PR review, second-brain #109, 2026-02-15 -->
 
 ## Prompt Design
 
