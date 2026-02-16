@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Development Loop Analysis</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+    background: #F8F7F4;
+    color: #1a1a1a;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 64px 40px 80px;
+  }
+
+  /* --- Header --- */
+  .header {
+    margin-bottom: 56px;
+    padding-bottom: 32px;
+    border-bottom: 2px solid #1a1a1a;
+  }
+
+  .header h1 {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+  }
+
+  .header .dateline {
+    font-size: 13px;
+    color: #6b6b6b;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* --- Empty state --- */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .empty-state .empty-message {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+  }
+
+  .empty-state .empty-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: #888;
+    line-height: 1.8;
+  }
+
+  .empty-state .empty-hint code {
+    background: #eeeee8;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+  }
+
+  /* --- Hero metrics row --- */
+  .hero-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: #d4d3cf;
+    margin-bottom: 56px;
+  }
+
+  .hero-metric {
+    background: #F8F7F4;
+    padding: 24px 20px;
+  }
+
+  .hero-metric .metric-label {
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  .hero-metric .metric-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    color: #1a1a1a;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .hero-metric .metric-change {
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .metric-change.positive { color: #16794A; }
+  .metric-change.negative { color: #b91c1c; }
+  .metric-change.neutral { color: #888; }
+
+  /* --- Sections --- */
+  .section {
+    margin-bottom: 56px;
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #888;
+    margin-bottom: 4px;
+  }
+
+  .section-title {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+  }
+
+  .section-rule {
+    border: none;
+    border-top: 1px solid #d4d3cf;
+    margin-bottom: 24px;
+  }
+
+  .chart-canvas-wrap {
+    position: relative;
+    height: 260px;
+  }
+
+  .chart-canvas-wrap canvas {
+    display: block;
+  }
+
+  /* --- Two-column pair --- */
+  .chart-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    margin-bottom: 56px;
+  }
+
+  .chart-pair .section { margin-bottom: 0; }
+
+  /* --- Annotation --- */
+  .chart-annotation {
+    font-size: 12px;
+    color: #888;
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  /* --- Categories grid (small multiples) --- */
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: #d4d3cf;
+  }
+
+  .category-cell {
+    background: #F8F7F4;
+    padding: 16px;
+    position: relative;
+  }
+
+  .category-cell .cat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+
+  .category-cell .cat-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #1a1a1a;
+  }
+
+  .category-cell .cat-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .category-cell .cat-trend {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #888;
+  }
+
+  .category-cell .cat-spark-wrap {
+    height: 40px;
+    margin-top: 4px;
+  }
+
+  /* --- Scorecard table --- */
+  .scorecard-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scorecard {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 540px;
+  }
+
+  .scorecard th {
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #888;
+    padding: 12px 16px;
+    border-bottom: 2px solid #1a1a1a;
+    white-space: nowrap;
+  }
+
+  .scorecard th.r { text-align: right; }
+
+  .scorecard td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e4e0;
+    color: #1a1a1a;
+    white-space: nowrap;
+  }
+
+  .scorecard td.r {
+    text-align: right;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+  }
+
+  .scorecard td.project-name {
+    font-weight: 500;
+  }
+
+  .scorecard .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  .scorecard tr:last-child td {
+    border-bottom: 2px solid #1a1a1a;
+  }
+
+  /* --- Dashboard content container (hidden when empty) --- */
+  .dashboard-content { display: block; }
+  .dashboard-content.hidden { display: none; }
+  .empty-state.hidden { display: none; }
+
+  /* =============================================
+     RESPONSIVE BREAKPOINTS
+     ============================================= */
+
+  /* Tablet: 600px - 960px */
+  @media (max-width: 960px) {
+    .page {
+      padding: 32px 20px 48px;
+    }
+
+    .header {
+      margin-bottom: 40px;
+    }
+
+    .hero-row {
+      grid-template-columns: repeat(2, 1fr);
+      margin-bottom: 40px;
+    }
+
+    .chart-pair {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    .categories-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+  }
+
+  /* Phone: < 600px */
+  @media (max-width: 600px) {
+    .page {
+      padding: 24px 16px 40px;
+    }
+
+    .header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+    }
+
+    .header h1 {
+      font-size: 26px;
+    }
+
+    .header .dateline {
+      font-size: 12px;
+    }
+
+    .hero-row {
+      grid-template-columns: repeat(2, 1fr);
+      margin-bottom: 32px;
+    }
+
+    .hero-metric {
+      padding: 18px 14px;
+    }
+
+    .hero-metric .metric-value {
+      font-size: 22px;
+    }
+
+    .hero-metric .metric-change {
+      font-size: 11px;
+    }
+
+    .chart-pair {
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .chart-canvas-wrap {
+      height: 220px;
+    }
+
+    .categories-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+
+    .chart-annotation {
+      font-size: 11px;
+    }
+
+    .scorecard th {
+      font-size: 10px;
+      padding: 10px 12px;
+    }
+
+    .scorecard td {
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+
+    .scorecard td.r {
+      font-size: 12px;
+    }
+
+    .empty-state {
+      min-height: 300px;
+      padding: 40px 16px;
+    }
+
+    .empty-state .empty-message {
+      font-size: 18px;
+    }
+
+    .empty-state .empty-hint {
+      font-size: 12px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header">
+    <h1>Development Loop Analysis</h1>
+    <div class="dateline" id="dateline"></div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-message">No post-mortem data yet.</div>
+    <div class="empty-hint">
+      Run <code>/post-mortem [PR-number]</code> after merging a PR to start tracking.
+    </div>
+  </div>
+
+  <!-- Dashboard content (hidden when no data) -->
+  <div class="dashboard-content hidden" id="dashboardContent">
+
+    <!-- Hero metrics -->
+    <div class="hero-row" id="heroRow"></div>
+
+    <!-- North stars: Comments + Rounds -->
+    <div class="chart-pair">
+      <div class="section">
+        <div class="section-label">North Star</div>
+        <div class="section-title">Review Comments</div>
+        <div class="chart-canvas-wrap"><canvas id="commentsChart"></canvas></div>
+        <div class="chart-annotation">Dashed line shows linear trend. Fewer comments = less rework.</div>
+      </div>
+      <div class="section">
+        <div class="section-label">North Star</div>
+        <div class="section-title">Review Rounds</div>
+        <div class="chart-canvas-wrap"><canvas id="roundsChart"></canvas></div>
+        <div class="chart-annotation">Recent 3 PRs highlighted. Target: single-round approval.</div>
+      </div>
+    </div>
+
+    <!-- Comment Categories -- Small Multiples -->
+    <div class="section">
+      <hr class="section-rule">
+      <div class="section-label">Breakdown</div>
+      <div class="section-title">Comment Categories</div>
+      <div class="categories-grid" id="categoriesGrid"></div>
+      <div class="chart-annotation">Current value shown. Sparkline traces per-PR trend.</div>
+    </div>
+
+    <!-- Catch Rate + Time to Merge -->
+    <div class="chart-pair">
+      <div class="section">
+        <hr class="section-rule">
+        <div class="section-label">System Health</div>
+        <div class="section-title">Adversarial Catch Rate</div>
+        <div class="chart-canvas-wrap"><canvas id="catchRateChart"></canvas></div>
+        <div class="chart-annotation">Dashed red line at 80% target. Higher = more issues caught pre-review.</div>
+      </div>
+      <div class="section">
+        <hr class="section-rule">
+        <div class="section-label">Velocity</div>
+        <div class="section-title">Time to Merge</div>
+        <div class="chart-canvas-wrap"><canvas id="mergeChart"></canvas></div>
+        <div class="chart-annotation">Hours from PR open to merge. Dashed line at 24h target.</div>
+      </div>
+    </div>
+
+    <!-- Project Scorecard -->
+    <div class="section">
+      <hr class="section-rule">
+      <div class="section-label">Per Project</div>
+      <div class="section-title">Scorecard</div>
+      <div class="scorecard-wrap">
+        <table class="scorecard">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th class="r">PRs</th>
+              <th class="r">Avg Comments</th>
+              <th class="r">Avg Rounds</th>
+              <th class="r">Avg Merge</th>
+              <th class="r">Catch Rate</th>
+            </tr>
+          </thead>
+          <tbody id="scorecardBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// --- DATA (replaced programmatically by /post-mortem command) ---
+const METRICS_DATA = {"version":1,"prs":[]};
+
+// --- Utilities ---
+const ABBREV = { 'second-brain': 'SB', 'lexica': 'LX', 'nanny-app': 'NA', 'command-center': 'CC' };
+const PROJECT_COLORS = { 'second-brain': '#2563EB', 'lexica': '#7C3AED', 'nanny-app': '#D97706', 'command-center': '#059669' };
+const prs = METRICS_DATA.prs;
+
+function linReg(data) {
+  const n = data.length;
+  if (n < 2) return data.slice();
+  let sx = 0, sy = 0, sxy = 0, sx2 = 0;
+  data.forEach((y, x) => { sx += x; sy += y; sxy += x * y; sx2 += x * x; });
+  const denom = n * sx2 - sx * sx;
+  if (denom === 0) return data.map(() => data[0]);
+  const m = (n * sxy - sx * sy) / denom;
+  const b = (sy - m * sx) / n;
+  return data.map((_, x) => +(m * x + b).toFixed(2));
+}
+
+function avg(arr) {
+  if (arr.length === 0) return 0;
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
+}
+
+// --- Check for empty data ---
+const emptyState = document.getElementById('emptyState');
+const dashboardContent = document.getElementById('dashboardContent');
+const dateline = document.getElementById('dateline');
+
+if (prs.length === 0) {
+  emptyState.classList.remove('hidden');
+  dashboardContent.classList.add('hidden');
+  dateline.textContent = 'No data yet';
+} else {
+  emptyState.classList.add('hidden');
+  dashboardContent.classList.remove('hidden');
+  renderDashboard();
+}
+
+function renderDashboard() {
+  const labels = prs.map(p => ABBREV[p.project] + '#' + p.prNumber);
+
+  // Compute unique projects count
+  const uniqueProjects = new Set(prs.map(p => p.project)).size;
+
+  // Find the latest merge date for "Updated" text
+  const latestDate = prs.reduce((latest, p) => {
+    const d = p.dateMerged ? p.dateMerged.split('T')[0] : '';
+    return d > latest ? d : latest;
+  }, '');
+
+  dateline.textContent = prs.length + ' pull request' + (prs.length !== 1 ? 's' : '') +
+    ' \u00b7 ' + uniqueProjects + ' project' + (uniqueProjects !== 1 ? 's' : '') +
+    ' \u00b7 Updated ' + latestDate;
+
+  // --- Chart.js Defaults ---
+  const MONO = "'IBM Plex Mono', 'Menlo', monospace";
+  const SANS = "'IBM Plex Sans', sans-serif";
+  const BLUE = '#2563EB';
+  const RED_MUTED = '#C53030';
+
+  Chart.defaults.animation = false;
+  Chart.defaults.responsive = true;
+  Chart.defaults.maintainAspectRatio = false;
+  Chart.defaults.font.family = SANS;
+  Chart.defaults.font.size = 11;
+  Chart.defaults.plugins.legend.display = false;
+  Chart.defaults.plugins.tooltip.backgroundColor = '#1a1a1a';
+  Chart.defaults.plugins.tooltip.titleColor = '#fff';
+  Chart.defaults.plugins.tooltip.bodyColor = '#ccc';
+  Chart.defaults.plugins.tooltip.borderWidth = 0;
+  Chart.defaults.plugins.tooltip.cornerRadius = 2;
+  Chart.defaults.plugins.tooltip.padding = { top: 8, bottom: 8, left: 12, right: 12 };
+  Chart.defaults.plugins.tooltip.titleFont = { family: MONO, size: 11 };
+  Chart.defaults.plugins.tooltip.bodyFont = { family: MONO, size: 11 };
+  Chart.defaults.plugins.tooltip.displayColors = false;
+
+  function scales(opts) {
+    opts = opts || {};
+    return {
+      x: {
+        grid: { display: false },
+        ticks: { color: '#999', font: { family: MONO, size: 10 }, maxRotation: 45 },
+        border: { color: '#d4d3cf' }
+      },
+      y: {
+        grid: { color: '#eeeee8', drawTicks: false },
+        ticks: Object.assign(
+          { color: '#999', font: { family: MONO, size: 10 }, padding: 8 },
+          opts.yTicks || {}
+        ),
+        border: { display: false },
+        beginAtZero: opts.beginAtZero !== false,
+        max: opts.yMax !== undefined ? opts.yMax : undefined
+      }
+    };
+  }
+
+  // Mobile-friendly hover/touch radius
+  var hoverRadius = window.innerWidth <= 600 ? 8 : 6;
+  var pointRadius = window.innerWidth <= 600 ? 5 : 4;
+
+  // --- Hero Metrics ---
+  (function() {
+    var comments = prs.map(function(p) { return p.totalComments; });
+    var rounds = prs.map(function(p) { return p.reviewRounds; });
+    var mergeH = prs.map(function(p) { return p.timeToMergeHours; });
+    var catchR = prs.map(function(p) { return p.adversarialCatchRate; });
+
+    var first3 = function(arr) { return avg(arr.slice(0, Math.min(3, arr.length))); };
+    var last3 = function(arr) { return avg(arr.slice(-Math.min(3, arr.length))); };
+
+    var metrics = [
+      {
+        label: 'Avg Comments',
+        value: last3(comments).toFixed(1),
+        change: first3(comments) === 0 ? 0 : ((last3(comments) - first3(comments)) / first3(comments) * 100).toFixed(0),
+        invert: true
+      },
+      {
+        label: 'Avg Rounds',
+        value: last3(rounds).toFixed(1),
+        change: first3(rounds) === 0 ? 0 : ((last3(rounds) - first3(rounds)) / first3(rounds) * 100).toFixed(0),
+        invert: true
+      },
+      {
+        label: 'Avg Merge Time',
+        value: last3(mergeH).toFixed(0) + 'h',
+        change: first3(mergeH) === 0 ? 0 : ((last3(mergeH) - first3(mergeH)) / first3(mergeH) * 100).toFixed(0),
+        invert: true
+      },
+      {
+        label: 'Catch Rate',
+        value: (last3(catchR) * 100).toFixed(0) + '%',
+        change: first3(catchR) === 0 ? 0 : ((last3(catchR) - first3(catchR)) / first3(catchR) * 100).toFixed(0),
+        invert: false
+      }
+    ];
+
+    var row = document.getElementById('heroRow');
+    metrics.forEach(function(m) {
+      var pct = parseFloat(m.change);
+      var improving = m.invert ? pct < 0 : pct > 0;
+      var cls = pct === 0 ? 'neutral' : improving ? 'positive' : 'negative';
+      var arrow = pct > 0 ? '+' : '';
+
+      var div = document.createElement('div');
+      div.className = 'hero-metric';
+      div.innerHTML =
+        '<div class="metric-label">' + m.label + '</div>' +
+        '<div class="metric-value">' + m.value + '</div>' +
+        '<div class="metric-change ' + cls + '">' + arrow + m.change + '% vs first 3 PRs</div>';
+      row.appendChild(div);
+    });
+  })();
+
+  // --- 1. Review Comments ---
+  (function() {
+    var data = prs.map(function(p) { return p.totalComments; });
+    var trend = linReg(data);
+
+    new Chart(document.getElementById('commentsChart'), {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            data: data,
+            borderColor: BLUE,
+            borderWidth: 2,
+            pointBackgroundColor: '#F8F7F4',
+            pointBorderColor: BLUE,
+            pointBorderWidth: 2,
+            pointRadius: pointRadius,
+            pointHoverRadius: hoverRadius,
+            tension: 0.25,
+            fill: { target: 'origin', above: 'rgba(37, 99, 235, 0.06)' }
+          },
+          {
+            data: trend,
+            borderColor: '#bbb',
+            borderWidth: 1.5,
+            borderDash: [6, 4],
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            tension: 0,
+            fill: false
+          }
+        ]
+      },
+      options: { scales: scales() }
+    });
+  })();
+
+  // --- 2. Review Rounds ---
+  (function() {
+    var data = prs.map(function(p) { return p.reviewRounds; });
+    var colors = data.map(function(_, i) { return i >= data.length - 3 ? BLUE : '#d4d3cf'; });
+
+    new Chart(document.getElementById('roundsChart'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: data,
+          backgroundColor: colors,
+          borderWidth: 0,
+          barPercentage: 0.55,
+          categoryPercentage: 0.7
+        }]
+      },
+      options: {
+        scales: scales({ yTicks: { stepSize: 1 } })
+      }
+    });
+  })();
+
+  // --- 3. Comment Categories (Small Multiples Grid) ---
+  (function() {
+    var cats = [
+      { key: 'correctness', name: 'Correctness', color: '#E65100' },
+      { key: 'security', name: 'Security', color: '#C53030' },
+      { key: 'architecture', name: 'Architecture', color: '#B45309' },
+      { key: 'style', name: 'Style', color: '#0E7490' },
+      { key: 'testing', name: 'Testing', color: '#2563EB' },
+      { key: 'performance', name: 'Performance', color: '#6D28D9' },
+      { key: 'documentation', name: 'Docs', color: '#047857' },
+      { key: 'other', name: 'Other', color: '#999' }
+    ];
+
+    var grid = document.getElementById('categoriesGrid');
+
+    cats.forEach(function(cat) {
+      var data = prs.map(function(p) { return p.commentCategories[cat.key] || 0; });
+      var current = data[data.length - 1];
+      var peak = Math.max.apply(null, data);
+      var trendDir = current < data[0] ? 'from ' + data[0] : current > data[0] ? 'from ' + data[0] : 'stable';
+
+      var cell = document.createElement('div');
+      cell.className = 'category-cell';
+
+      var canvas = document.createElement('canvas');
+
+      cell.innerHTML =
+        '<div class="cat-header">' +
+          '<span class="cat-name">' + cat.name + '</span>' +
+          '<span class="cat-value" style="color:' + cat.color + '">' + current + '</span>' +
+        '</div>' +
+        '<div class="cat-trend">' + trendDir + ' &middot; peak ' + peak + '</div>' +
+        '<div class="cat-spark-wrap"></div>';
+
+      cell.querySelector('.cat-spark-wrap').appendChild(canvas);
+      grid.appendChild(cell);
+
+      new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            borderColor: cat.color,
+            borderWidth: 1.5,
+            pointRadius: 0,
+            pointHoverRadius: Math.max(hoverRadius - 2, 4),
+            pointBackgroundColor: cat.color,
+            tension: 0.3,
+            fill: { target: 'origin', above: cat.color + '18' }
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: function(items) { return items[0].label; },
+                label: function(item) { return cat.name + ': ' + item.raw; }
+              }
+            }
+          },
+          scales: {
+            x: { display: false },
+            y: { display: false, beginAtZero: true }
+          }
+        }
+      });
+    });
+  })();
+
+  // --- 4. Adversarial Catch Rate ---
+  (function() {
+    var data = prs.map(function(p) { return +(p.adversarialCatchRate * 100).toFixed(1); });
+    var threshold = prs.map(function() { return 80; });
+
+    new Chart(document.getElementById('catchRateChart'), {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            data: data,
+            borderColor: BLUE,
+            borderWidth: 2,
+            pointBackgroundColor: '#F8F7F4',
+            pointBorderColor: BLUE,
+            pointBorderWidth: 2,
+            pointRadius: pointRadius,
+            pointHoverRadius: hoverRadius,
+            tension: 0.25,
+            fill: { target: 'origin', above: 'rgba(37, 99, 235, 0.06)' }
+          },
+          {
+            data: threshold,
+            borderColor: RED_MUTED,
+            borderWidth: 1.5,
+            borderDash: [6, 4],
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        scales: scales({ yMax: 100, yTicks: { callback: function(v) { return v + '%'; } } }),
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(item) { return item.datasetIndex === 1 ? 'Target: 80%' : item.raw + '%'; }
+            }
+          }
+        }
+      }
+    });
+  })();
+
+  // --- 5. Time to Merge ---
+  (function() {
+    var data = prs.map(function(p) { return p.timeToMergeHours; });
+    var target = prs.map(function() { return 24; });
+
+    new Chart(document.getElementById('mergeChart'), {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            data: data,
+            borderColor: BLUE,
+            borderWidth: 2,
+            pointBackgroundColor: '#F8F7F4',
+            pointBorderColor: BLUE,
+            pointBorderWidth: 2,
+            pointRadius: pointRadius,
+            pointHoverRadius: hoverRadius,
+            tension: 0.25,
+            fill: { target: 'origin', above: 'rgba(37, 99, 235, 0.06)' }
+          },
+          {
+            data: target,
+            borderColor: RED_MUTED,
+            borderWidth: 1.5,
+            borderDash: [6, 4],
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            fill: false
+          }
+        ]
+      },
+      options: {
+        scales: scales({ yTicks: { callback: function(v) { return v + 'h'; } } }),
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(item) { return item.datasetIndex === 1 ? 'Target: 24h' : item.raw + ' hours'; }
+            }
+          }
+        }
+      }
+    });
+  })();
+
+  // --- 6. Scorecard Table ---
+  (function() {
+    var agg = {};
+    prs.forEach(function(pr) {
+      if (!agg[pr.project]) agg[pr.project] = { n: 0, comments: 0, rounds: 0, merge: 0, catches: [], size: 0 };
+      var a = agg[pr.project];
+      a.n++; a.comments += pr.totalComments; a.rounds += pr.reviewRounds;
+      a.merge += pr.timeToMergeHours; a.catches.push(pr.adversarialCatchRate); a.size += pr.prSize;
+    });
+
+    // Build ordered project list from data (preserving discovery order, deduped)
+    var seen = {};
+    var projectOrder = [];
+    prs.forEach(function(pr) {
+      if (!seen[pr.project]) {
+        seen[pr.project] = true;
+        projectOrder.push(pr.project);
+      }
+    });
+
+    var tbody = document.getElementById('scorecardBody');
+    projectOrder.forEach(function(name) {
+      var a = agg[name];
+      if (!a) return;
+      var latestCatch = a.catches[a.catches.length - 1];
+      var color = PROJECT_COLORS[name] || '#888';
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td class="project-name"><span class="dot" style="background:' + color + '"></span>' + name + '</td>' +
+        '<td class="r">' + a.n + '</td>' +
+        '<td class="r">' + (a.comments / a.n).toFixed(1) + '</td>' +
+        '<td class="r">' + (a.rounds / a.n).toFixed(1) + '</td>' +
+        '<td class="r">' + (a.merge / a.n).toFixed(0) + 'h</td>' +
+        '<td class="r">' + Math.round(latestCatch * 100) + '%</td>';
+      tbody.appendChild(tr);
+    });
+  })();
+}
+</script>
+
+</body>
+</html>

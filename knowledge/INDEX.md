@@ -21,6 +21,7 @@ Cross-project learnings organized by topic. These files contain detailed pattern
 | [adversarial-review.md](adversarial-review.md) | All | The shared mechanical review checklist |
 | [testing-patterns.md](testing-patterns.md) | Vitest, testing in general | Test strategy, mocking pitfalls, assertion patterns |
 | [strategic-decisions.md](strategic-decisions.md) | All | Product thinking, MVP strategy, feature scope, decision frameworks |
+| [process-patterns.md](process-patterns.md) | All | Development process: review efficiency, planning, iteration velocity |
 
 ## Stack Matching Guide
 
@@ -35,6 +36,7 @@ When starting work on a project, load files matching these stacks:
 - **LLM/AI features** → llm-integration
 - **Any project pre-PR** → adversarial-review
 - **Any project pre-plan** → strategic-decisions
+- **Any project post-merge** → process-patterns
 
 ## Last Updated
 

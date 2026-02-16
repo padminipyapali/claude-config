@@ -1,0 +1,172 @@
+---
+description: Analyze a merged PR's full development loop and extract process-level learnings
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep
+argument-hint: [PR number or "recent"]
+---
+
+Analyze the full development loop of a merged PR and extract process-level learnings. Updates the shared knowledge base and regenerates the self-improvement dashboard.
+
+## Resolve the PR
+
+1. If `$ARGUMENTS` is a number, use it as the PR number.
+2. If `$ARGUMENTS` is "recent" or empty, run:
+   ```bash
+   gh pr list --state merged --limit 1 --json number --jq '.[0].number'
+   ```
+3. Validate the PR exists and is merged:
+   ```bash
+   gh pr view $PR --json state --jq '.state'
+   ```
+   If not `MERGED`, report the current state and stop.
+4. Check `~/.claude/knowledge/metrics/post-mortem-metrics.json` — if this PR number + project combo already exists in the `prs` array, report "Already analyzed" and stop.
+
+## Step 1: Gather PR Data
+
+Fetch all data:
+
+```bash
+# Full PR metadata with commits, reviews, comments, and CI status
+gh pr view $PR --json number,title,body,author,createdAt,mergedAt,mergedBy,headRefName,baseRefName,reviewDecision,additions,deletions,changedFiles,commits,reviews,comments,labels,state,statusCheckRollup
+
+# Get repo name for API calls
+REPO=$(gh repo view --json nameWithOwner --jq '.nameWithOwner')
+
+# Inline review comments (per-file, per-line)
+gh api repos/$REPO/pulls/$PR/comments --paginate
+```
+
+Parse and organize:
+- Group inline comments by `pull_request_review_id` to reconstruct review rounds.
+- Sort all events chronologically to build a timeline.
+- Determine the project name from the repo name or current directory.
+
+## Step 2: Review Friction Analysis
+
+Compute these metrics:
+- **Review rounds**: Count distinct `CHANGES_REQUESTED` events. Rounds = N changes_requested + 1 (or 1 if only APPROVED/COMMENTED).
+- **Comment volume**: Total inline comments + general comments. Exclude bot comments (author login containing `[bot]`).
+- **Comment categories**: Classify each substantive comment as one of: `security`, `correctness`, `architecture`, `style`, `performance`, `testing`, `documentation`, `other`. Use keyword matching on the comment body:
+  - security: "security", "injection", "user scoping", "auth", "permission", "XSS", "CSRF"
+  - correctness: "null", "undefined", "crash", "race", "bug", "error", "wrong", "incorrect", "missing check"
+  - architecture: "extract", "service", "route", "thin", "layer", "refactor", "abstraction", "separation"
+  - style: "naming", "convention", "format", "readability", "DRY", "simplify", "cleanup"
+  - performance: "performance", "slow", "cache", "optimize", "N+1", "query", "index"
+  - testing: "test", "coverage", "assertion", "mock", "fixture"
+  - documentation: "doc", "comment", "README", "description", "JSDoc"
+  - other: anything that doesn't match above
+- **Timeline**: Time from PR created to first review, first review to merge, total elapsed.
+- **Self-merge check**: If `mergedBy == author` and no reviews exist, flag as "no peer review."
+
+## Step 3: Adversarial Review Effectiveness
+
+1. Read `~/.claude/knowledge/adversarial-review.md` to load the checklist.
+2. For each review comment that requested a concrete change:
+   - Does this issue class appear in the adversarial review checklist? If yes → "covered but missed" (the adversarial review should have caught this).
+   - Is this issue class absent from the checklist? If yes → "not covered" (a potential addition).
+3. Calculate pre-push catch rate: what percentage of issues the checklist could have caught.
+4. Look for "Address PR review" or "review" fix commits. Count fix commits vs. feature commits to measure iteration overhead.
+
+## Step 4: Planning Quality Assessment
+
+Analyze:
+- **PR description completeness**: Does the body contain: Summary, Test Plan sections?
+- **Scope creep**: Branch lifetime > 48 hours? More than 500 lines changed? Commits with divergent themes?
+- **Redesign indicators**: Commit messages with "revert", "undo", "redesign", "try different approach".
+- **Planning checklist coverage** (from CLAUDE.md Planning Requirements): entry points enumerated? Performance/cost section?
+
+## Step 5: Code Quality Signals
+
+- **Recurring comment categories**: Any category with 2+ comments is a recurring pattern.
+- **Fix-up ratio**: Count commits with "fix", "address", "resolve" in the title after the main feature commits. Ratio = fix commits / total commits.
+- **New patterns**: Cross-reference review comments against `~/.claude/knowledge/INDEX.md` topic files. Are there patterns not already captured?
+
+## Step 6: Process Efficiency
+
+- **Automation potential**: Could any feedback have been caught by the adversarial review, a linter, or a CI check?
+- **Iteration assessment**: 1 round = efficient, 2 rounds = normal, 3+ rounds = high friction.
+- **CI check results**: Were there failed CI checks during the PR lifecycle?
+
+## Step 7: Update Knowledge
+
+1. **Read** `~/.claude/knowledge/process-patterns.md`.
+2. For each finding from Steps 2-6:
+   - New process pattern? → Add to `process-patterns.md` under the matching section.
+   - Adversarial review gap? → Add to `~/.claude/knowledge/adversarial-review.md` with source comment.
+   - New code pattern not already in a topic file? → Add to the relevant `~/.claude/knowledge/*.md` file.
+   - Check for duplicates before adding. If a pattern already exists, strengthen it with new context.
+3. Use format: `- **Pattern name.** Description. <!-- Source: post-mortem, [project] #[PR], [date] -->`
+
+## Step 8: Append Metrics & Regenerate Dashboard
+
+1. Read `~/.claude/knowledge/metrics/post-mortem-metrics.json`.
+2. Append a new entry to the `prs` array:
+   ```json
+   {
+     "project": "<project-name>",
+     "prNumber": <number>,
+     "title": "<PR title>",
+     "dateMerged": "<ISO 8601>",
+     "reviewRounds": <count>,
+     "totalComments": <count>,
+     "commentCategories": {
+       "security": <n>, "correctness": <n>, "architecture": <n>,
+       "style": <n>, "performance": <n>, "testing": <n>,
+       "documentation": <n>, "other": <n>
+     },
+     "adversarialCatchRate": <0-1 float>,
+     "fixupCommitRatio": <0-1 float>,
+     "timeToMergeHours": <number>,
+     "planningQuality": "<complete|partial|missing>",
+     "prSize": <additions + deletions>
+   }
+   ```
+3. Write back the JSON file.
+4. **Regenerate the dashboard**: Read `~/.claude/knowledge/metrics/dashboard.html`, find the `const METRICS_DATA = ` line, replace the entire JSON object with the updated metrics data. This embeds the fresh data into the HTML file so opening it shows all PRs.
+
+## Step 9: Generate Report
+
+Print a structured report to the conversation:
+
+```
+POST-MORTEM: [project] PR #[number] — [title]
+Branch: [head] → [base] | Author: [author] | [duration]
+Size: +[additions] -[deletions] across [changedFiles] files, [N] commits
+
+REVIEW FRICTION
+  Review rounds: N (M CHANGES_REQUESTED before APPROVED)
+  Comments: N inline, M general
+  Categories: { security: N, correctness: N, architecture: N, ... }
+  Timeline: created → first review: Xh | first review → merge: Yh | total: Zh
+
+ADVERSARIAL REVIEW EFFECTIVENESS
+  Pre-push catch potential: X%
+  Covered but missed: [list with tier references]
+  Not covered (new categories): [list]
+  Fix commits: N of M total (X% fix-up ratio)
+
+PLANNING QUALITY
+  Description: [complete / partial / missing]
+  Scope: [clean / scope creep / redesign detected]
+  Branch lifetime: X hours
+  Planning checklist: [covered / gaps: list]
+
+CODE QUALITY SIGNALS
+  Recurring issues: [list]
+  Fix-up ratio: X%
+  New unrecorded patterns: [list or "none"]
+
+PROCESS EFFICIENCY
+  Automation opportunities: [list or "none"]
+  Iteration: [efficient / normal / high friction]
+  CI status: [all passed / failures: list]
+
+KNOWLEDGE UPDATES
+  [Files updated and entries added/strengthened]
+
+RECOMMENDATIONS
+  [Ranked, actionable process improvements based on findings]
+```
+
+## Step 10: Auto-Commit
+
+The `~/.claude/` directory changes (metrics JSON, dashboard HTML, knowledge files) will be auto-committed per the Config Repo Auto-Sync rule in CLAUDE.md. No special handling needed here.

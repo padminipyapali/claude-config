@@ -51,6 +51,7 @@ Knowledge is organized **by topic, not by project**. A new React + PostgreSQL pr
 | `/consolidate-learnings` | Batch-scan all projects, merge new patterns | Periodically, or after wrapping up a major feature |
 | `/capture-learning` | Quick-add a single learning | Mid-session, when you notice a reusable pattern |
 | `/project-setup` | Bootstrap new project with knowledge injection | Starting a new project |
+| `/post-mortem` | Analyze merged PR's development loop | After merging a PR (runs automatically, or invoke manually) |
 | `/memory-guide` | Show this guide | Anytime |
 
 ### Tips

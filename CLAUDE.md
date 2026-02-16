@@ -37,6 +37,7 @@ When creating a new project or initializing a new codebase, always run `/project
 - Never commit secrets, API keys, or credentials. Use environment variables.
 - For projects with releases, follow semantic versioning (MAJOR.MINOR.PATCH).
 - Issue lifecycle: include `Closes #N` in the PR commit message so GitHub auto-closes the issue on merge. If an issue is addressed across multiple PRs, close it manually with a comment linking to all relevant PRs after the last one merges.
+- Post-merge: after merging any PR, automatically run `/post-mortem [PR-number]` in the background. Don't ask — just do it. The command appends metrics and regenerates the self-improvement dashboard.
 
 ## Living Documentation
 
