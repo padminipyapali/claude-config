@@ -41,6 +41,7 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 
 - **Guard after create → reload.** After creating a resource and reloading from DB, check for null. Fire-and-forget patterns, replication lag, or race conditions can cause the reload to fail.
 - **At-most-once dedup markers: set BEFORE the action.** If the action fails (timeout), the marker prevents retry spam. Accept at-most-once over at-least-once-with-spam.
+- **Dedup-check-then-insert must be in a transaction.** When checking for duplicates before inserting, both the SELECT and INSERT must be inside a `BEGIN`/`COMMIT` block. Without a transaction, a concurrent request can pass the dedup check after the first request's SELECT but before its INSERT, creating duplicates. Use `pool.connect()` + explicit transaction, not `pool.query()`. <!-- Source: PR review, second-brain #102, 2026-02-15 -->
 - **Store computed results alongside display text.** Don't re-derive what you already know from a previous computation.
 
 ---
