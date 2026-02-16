@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Loop — Current State</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0c0e13;
+      --surface: #141720;
+      --surface-raised: #1a1e2a;
+      --border: #252a38;
+      --border-glow: #2d3348;
+      --text: #c8cdd8;
+      --text-muted: #6b7394;
+      --text-dim: #454d6b;
+      --accent-blue: #5b8af5;
+      --accent-cyan: #4ecdc4;
+      --accent-amber: #f0b429;
+      --accent-rose: #e86b8a;
+      --accent-violet: #9b7bf7;
+      --accent-green: #4ade80;
+      --mono: 'DM Mono', 'SF Mono', 'Fira Code', monospace;
+      --serif: 'Fraunces', Georgia, serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--mono);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    header {
+      margin-bottom: 4rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-family: var(--serif);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #eef0f6;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    header .subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      letter-spacing: 0.04em;
+    }
+
+    header .date {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      margin-top: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* Section titles */
+    h2 {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: #dde0ea;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    h2 .num {
+      color: var(--text-dim);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 300;
+      margin-right: 0.75rem;
+      letter-spacing: 0.1em;
+    }
+
+    section {
+      margin-bottom: 4rem;
+    }
+
+    /* ---- THE MAIN LOOP (SVG + nodes) ---- */
+    .loop-container {
+      position: relative;
+      padding: 2rem 0;
+    }
+
+    .loop-ring {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 1.5rem 3rem;
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* Connection lines */
+    .loop-ring::before {
+      content: '';
+      position: absolute;
+      inset: 50px 80px;
+      border: 1px dashed var(--border-glow);
+      border-radius: 20px;
+      pointer-events: none;
+    }
+
+    .loop-node {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .loop-node:hover {
+      border-color: var(--border-glow);
+    }
+
+    .loop-node .phase-num {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .loop-node h3 {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #eef0f6;
+      margin-bottom: 0.5rem;
+    }
+
+    .loop-node p {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .loop-node .trigger-badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      margin-top: 0.75rem;
+      font-weight: 500;
+    }
+
+    .badge-auto {
+      background: rgb(78 205 196 / 0.1);
+      color: var(--accent-cyan);
+      border: 1px solid rgb(78 205 196 / 0.2);
+    }
+
+    .badge-hook {
+      background: rgb(240 180 41 / 0.1);
+      color: var(--accent-amber);
+      border: 1px solid rgb(240 180 41 / 0.2);
+    }
+
+    /* Node accent colors */
+    .node-plan { border-left: 3px solid var(--accent-blue); }
+    .node-plan .phase-num { color: var(--accent-blue); }
+    .node-plan:hover { box-shadow: 0 0 30px rgb(91 138 245 / 0.08); }
+
+    .node-build { border-left: 3px solid var(--accent-cyan); }
+    .node-build .phase-num { color: var(--accent-cyan); }
+    .node-build:hover { box-shadow: 0 0 30px rgb(78 205 196 / 0.08); }
+
+    .node-review { border-left: 3px solid var(--accent-amber); }
+    .node-review .phase-num { color: var(--accent-amber); }
+    .node-review:hover { box-shadow: 0 0 30px rgb(240 180 41 / 0.08); }
+
+    .node-capture { border-left: 3px solid var(--accent-rose); }
+    .node-capture .phase-num { color: var(--accent-rose); }
+    .node-capture:hover { box-shadow: 0 0 30px rgb(232 107 138 / 0.08); }
+
+    /* Flow arrows between nodes */
+    .arrow {
+      position: absolute;
+      color: var(--text-dim);
+      font-size: 1.2rem;
+      z-index: 2;
+    }
+    .arrow-right { top: 25%; right: -1.8rem; transform: translateY(-50%); }
+    .arrow-down-right { top: calc(50% + 0.75rem); right: -0.5rem; }
+    .arrow-left { bottom: 25%; left: -1.8rem; transform: translateY(50%); }
+    .arrow-down-left { top: calc(50% + 0.75rem); left: -0.5rem; }
+
+    .loop-center-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .loop-center-label .icon {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 0.25rem;
+      opacity: 0.4;
+    }
+
+    .loop-center-label span {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* ---- SIDE CHANNELS ---- */
+    .channels {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .channel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      position: relative;
+    }
+
+    .channel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 1.5rem;
+      right: 1.5rem;
+      height: 1px;
+    }
+
+    .channel h3 {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #dde0ea;
+      margin-bottom: 0.4rem;
+    }
+
+    .channel p {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .channel .cmd {
+      display: inline-block;
+      font-size: 0.65rem;
+      color: var(--accent-violet);
+      background: rgb(155 123 247 / 0.08);
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      margin-top: 0.5rem;
+      border: 1px solid rgb(155 123 247 / 0.15);
+    }
+
+    .channel-pr::before { background: var(--accent-rose); }
+    .channel-adhoc::before { background: var(--accent-violet); }
+    .channel-new::before { background: var(--accent-green); }
+
+    /* ---- FILE ARCHITECTURE ---- */
+    .file-tree {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      font-size: 0.72rem;
+      line-height: 2;
+      overflow-x: auto;
+    }
+
+    .file-tree .dir { color: var(--accent-blue); }
+    .file-tree .file { color: var(--text); }
+    .file-tree .note { color: var(--text-dim); font-style: italic; }
+    .file-tree .hl { color: var(--accent-amber); font-weight: 500; }
+    .file-tree .section-label {
+      color: var(--text-dim);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    /* ---- PRECEDENCE ---- */
+    .precedence {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .prec-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      font-size: 0.72rem;
+      text-align: center;
+    }
+
+    .prec-item .label { color: #dde0ea; font-weight: 500; }
+    .prec-item .sub { color: var(--text-dim); font-size: 0.6rem; margin-top: 0.15rem; }
+
+    .prec-arrow {
+      color: var(--text-dim);
+      padding: 0 0.6rem;
+      font-size: 0.9rem;
+    }
+
+    .prec-highest .label { color: var(--accent-amber); }
+    .prec-lowest .label { color: var(--text-muted); }
+
+    /* ---- PROJECTS ---- */
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+
+    .project {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    .project h3 {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #dde0ea;
+      margin-bottom: 0.35rem;
+    }
+
+    .project .stack {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .project .status {
+      font-size: 0.58rem;
+      margin-top: 0.5rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .status-full {
+      color: var(--accent-green);
+      background: rgb(74 222 128 / 0.08);
+      border: 1px solid rgb(74 222 128 / 0.15);
+    }
+
+    /* ---- STATS ---- */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .stat .value {
+      font-family: var(--serif);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #eef0f6;
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+
+    .stat .label {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ---- PRINCIPLE BOX ---- */
+    .principle {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 10px 10px 0;
+      padding: 1.25rem 1.5rem;
+      font-size: 0.78rem;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .principle em {
+      color: var(--accent-blue);
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    /* ---- AUTOMATION TABLE ---- */
+    .auto-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.72rem;
+    }
+
+    .auto-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      color: var(--text-dim);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 400;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .auto-table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .auto-table td:first-child {
+      color: var(--text);
+    }
+
+    .auto-table .tag-auto {
+      color: var(--accent-cyan);
+      font-weight: 500;
+    }
+
+    .auto-table .tag-manual {
+      color: var(--text-dim);
+    }
+
+    .auto-table code {
+      color: var(--accent-violet);
+      background: rgb(155 123 247 / 0.06);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-size: 0.68rem;
+    }
+
+    /* ---- GAPS / OPPORTUNITIES ---- */
+    .gaps {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .gap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+
+    .gap h3 {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--accent-amber);
+      margin-bottom: 0.4rem;
+    }
+
+    .gap p {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .gap .deferred {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 768px) {
+      .loop-ring { grid-template-columns: 1fr; }
+      .loop-ring::before { display: none; }
+      .loop-center-label { display: none; }
+      .arrow { display: none; }
+      .channels { grid-template-columns: 1fr; }
+      .projects { grid-template-columns: 1fr 1fr; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      .gaps { grid-template-columns: 1fr; }
+      .precedence { flex-direction: column; align-items: stretch; }
+      .prec-arrow { text-align: center; transform: rotate(90deg); padding: 0.3rem 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <h1>The Learning Loop</h1>
+      <div class="subtitle">How Claude agents compound intelligence across projects</div>
+      <div class="date">Snapshot &mdash; February 16, 2026 &mdash; Post-cleanup state</div>
+    </header>
+
+    <!-- Stats -->
+    <section>
+      <div class="stats">
+        <div class="stat">
+          <div class="value">4</div>
+          <div class="label">Projects connected</div>
+        </div>
+        <div class="stat">
+          <div class="value">9</div>
+          <div class="label">Topic files</div>
+        </div>
+        <div class="stat">
+          <div class="value">~120</div>
+          <div class="label">Bug-derived patterns</div>
+        </div>
+        <div class="stat">
+          <div class="value">459</div>
+          <div class="label">Lines of knowledge</div>
+        </div>
+      </div>
+
+      <div class="principle">
+        Knowledge is organized by <em>topic</em>, not by project. A new React + PostgreSQL project automatically inherits all React and database learnings from every previous project &mdash; no manual cross-pollination needed.
+      </div>
+    </section>
+
+    <!-- The Core Loop -->
+    <section>
+      <h2><span class="num">01</span>The Core Loop</h2>
+
+      <div class="loop-container">
+        <div class="loop-ring">
+          <div class="loop-node node-plan">
+            <span class="arrow arrow-right">&rarr;</span>
+            <div class="phase-num">Phase 1</div>
+            <h3>Plan</h3>
+            <p>Agent reads <code>INDEX.md</code>, loads topic files matching project stack. Global CLAUDE.md rules + project CLAUDE.md supplement.</p>
+            <span class="trigger-badge badge-auto">automatic &mdash; CLAUDE.md directive</span>
+          </div>
+
+          <div class="loop-node node-build">
+            <div class="phase-num">Phase 2</div>
+            <h3>Build</h3>
+            <p>Implementation informed by all sibling project learnings. Patterns already in context &mdash; agent applies them naturally.</p>
+            <span class="trigger-badge badge-auto">automatic &mdash; patterns loaded</span>
+          </div>
+
+          <div class="loop-node node-capture" style="order: 4;">
+            <span class="arrow arrow-left">&larr;</span>
+            <div class="phase-num">Phase 4</div>
+            <h3>Capture</h3>
+            <p>Learning capture gate: new patterns written to <code>knowledge/*.md</code>. Project docs updated (BUGS, DECISIONS). Knowledge synced to git.</p>
+            <span class="trigger-badge badge-auto">automatic &mdash; review step 7</span>
+          </div>
+
+          <div class="loop-node node-review" style="order: 3;">
+            <div class="phase-num">Phase 3</div>
+            <h3>Review</h3>
+            <p>Code simplifier runs on changed files. Adversarial review: classify files by category, run matching checklist tiers only.</p>
+            <span class="trigger-badge badge-hook">hook-enforced &mdash; blocks push</span>
+          </div>
+
+          <div class="loop-center-label">
+            <span class="icon">&circlearrowright;</span>
+            <span>every pr</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Side Channels -->
+    <section>
+      <h2><span class="num">02</span>Side Channels Into the Loop</h2>
+
+      <div class="channels">
+        <div class="channel channel-pr">
+          <h3>PR Review Feedback</h3>
+          <p>CodeRabbit or human leaves review comments. Skill validates each comment, fixes issues, and extracts durable learnings into shared knowledge.</p>
+          <span class="cmd">/review-fix &lt;pr&gt;</span>
+        </div>
+
+        <div class="channel channel-adhoc">
+          <h3>Mid-Session Capture</h3>
+          <p>Pattern discovered during work that isn't tied to a PR. Capture immediately to the matching topic file without waiting for review.</p>
+          <span class="cmd">/capture-learning</span>
+        </div>
+
+        <div class="channel channel-new">
+          <h3>New Project Bootstrap</h3>
+          <p>Reads declared stack, injects matching knowledge topics, sets up hooks, skills, and docs structure. Zero-config inheritance.</p>
+          <span class="cmd">/project-setup</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Precedence -->
+    <section>
+      <h2><span class="num">03</span>Rule Precedence</h2>
+
+      <div class="precedence">
+        <div class="prec-item prec-highest">
+          <div class="label">Project CLAUDE.md</div>
+          <div class="sub">Project-specific only</div>
+        </div>
+        <span class="prec-arrow">&rsaquo;</span>
+        <div class="prec-item">
+          <div class="label">Global CLAUDE.md</div>
+          <div class="sub">Universal rules</div>
+        </div>
+        <span class="prec-arrow">&rsaquo;</span>
+        <div class="prec-item">
+          <div class="label">Knowledge Files</div>
+          <div class="sub">Bug-derived patterns</div>
+        </div>
+        <span class="prec-arrow">&rsaquo;</span>
+        <div class="prec-item prec-lowest">
+          <div class="label">Project Memory</div>
+          <div class="sub">Session context</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Automation Table -->
+    <section>
+      <h2><span class="num">04</span>What's Automated vs. Manual</h2>
+
+      <table class="auto-table">
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Trigger</th>
+            <th>Mechanism</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Load knowledge at plan time</td>
+            <td><span class="tag-auto">Automatic</span></td>
+            <td>CLAUDE.md directive &rarr; reads <code>INDEX.md</code> + stack-matched topics</td>
+          </tr>
+          <tr>
+            <td>Capture learnings at PR time</td>
+            <td><span class="tag-auto">Automatic</span></td>
+            <td>Adversarial review learning gate (hook blocks push without it)</td>
+          </tr>
+          <tr>
+            <td>Update project docs</td>
+            <td><span class="tag-auto">Automatic</span></td>
+            <td>CLAUDE.md Living Documentation directive</td>
+          </tr>
+          <tr>
+            <td>Inject knowledge into new project</td>
+            <td><span class="tag-auto">Automatic</span></td>
+            <td><code>/project-setup</code> reads topics matching declared stack</td>
+          </tr>
+          <tr>
+            <td>Sync ~/.claude to git</td>
+            <td><span class="tag-auto">Automatic</span></td>
+            <td>CLAUDE.md Config Repo Auto-Sync directive</td>
+          </tr>
+          <tr>
+            <td>Fix PR review comments</td>
+            <td><span class="tag-manual">Manual</span></td>
+            <td><code>/review-fix &lt;pr&gt;</code> &mdash; validates, fixes, captures learnings</td>
+          </tr>
+          <tr>
+            <td>Full consolidation sweep</td>
+            <td><span class="tag-manual">Manual</span></td>
+            <td><code>/consolidate-learnings</code> &mdash; periodic safety net</td>
+          </tr>
+          <tr>
+            <td>Ad-hoc pattern capture</td>
+            <td><span class="tag-manual">Manual</span></td>
+            <td><code>/capture-learning</code> &mdash; mid-session</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- File Architecture -->
+    <section>
+      <h2><span class="num">05</span>File Architecture</h2>
+
+      <div class="file-tree">
+        <span class="section-label">Global (all projects)</span>
+        <span class="dir">~/.claude/</span><br>
+        &nbsp;&nbsp;<span class="hl">CLAUDE.md</span> <span class="note">&larr; universal rules, loaded every session</span><br>
+        &nbsp;&nbsp;<span class="dir">knowledge/</span> <span class="note">&larr; shared knowledge, organized by topic</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">INDEX.md</span> <span class="note">&larr; topic list + stack matching guide</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">typescript-patterns.md</span> <span class="note">51 lines</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">react-patterns.md</span> <span class="note">44 lines</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">architecture-patterns.md</span> <span class="note">61 lines</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">database-patterns.md</span> <span class="note">24 lines</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">llm-integration.md</span> <span class="note">33 lines</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">testing-patterns.md</span> <span class="note">15 lines</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">telegram-bot-patterns.md</span> <span class="note">32 lines</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">firebase-patterns.md</span> <span class="note">20 lines</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">adversarial-review.md</span> <span class="note">179 lines &mdash; mechanical checklist</span><br>
+        &nbsp;&nbsp;<span class="dir">commands/</span> <span class="note">&larr; /consolidate-learnings, /capture-learning, /project-setup</span><br>
+        &nbsp;&nbsp;<span class="dir">docs/</span> <span class="note">&larr; plans, visualizations (this file)</span><br>
+        &nbsp;&nbsp;<span class="dir">projects/*/memory/</span> <span class="note">&larr; per-project session context</span><br>
+
+        <span class="section-label">Per project</span>
+        <span class="dir">&lt;project&gt;/</span><br>
+        &nbsp;&nbsp;<span class="hl">CLAUDE.md</span> <span class="note">&larr; project-specific rules only (structure, stack, pre-PR commands)</span><br>
+        &nbsp;&nbsp;<span class="dir">.claude/skills/adversarial-review/</span> <span class="note">&larr; references shared checklist</span><br>
+        &nbsp;&nbsp;<span class="dir">.claude/skills/review-fix/</span> <span class="note">&larr; PR comment &rarr; learning pipeline</span><br>
+        &nbsp;&nbsp;<span class="dir">.claude/hooks/</span> <span class="note">&larr; require-adversarial-review.sh (blocks push)</span><br>
+        &nbsp;&nbsp;<span class="dir">docs/</span> <span class="note">&larr; BUGS.md, DECISIONS.md, PRODUCT_SPEC.md, QA.md</span><br>
+      </div>
+    </section>
+
+    <!-- Connected Projects -->
+    <section>
+      <h2><span class="num">06</span>Connected Projects</h2>
+
+      <div class="projects">
+        <div class="project">
+          <h3>second-brain</h3>
+          <div class="stack">TS, Express, React, Supabase, pgvector, Claude API, Telegram</div>
+          <span class="status status-full">full loop</span>
+        </div>
+        <div class="project">
+          <h3>lexica</h3>
+          <div class="stack">TS, Hono, React Native, Expo, PostgreSQL, Claude API</div>
+          <span class="status status-full">full loop</span>
+        </div>
+        <div class="project">
+          <h3>command-center</h3>
+          <div class="stack">TS, Express, grammY, Octokit, Claude CLI</div>
+          <span class="status status-full">full loop</span>
+        </div>
+        <div class="project">
+          <h3>nanny-app</h3>
+          <div class="stack">React, TS, Firebase, Firestore, Vite, Vitest</div>
+          <span class="status status-full">full loop</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Identified Gaps -->
+    <section>
+      <h2><span class="num">07</span>Known Gaps &amp; Future Opportunities</h2>
+
+      <div class="gaps">
+        <div class="gap">
+          <h3>No effectiveness measurement</h3>
+          <p>No A/B test has compared agent performance with vs. without the knowledge base. "Compounding intelligence" is a narrative, not a measured outcome.</p>
+          <div class="deferred">Deferred &mdash; run minimal test when 5th project starts</div>
+        </div>
+        <div class="gap">
+          <h3>No decision/strategic memory</h3>
+          <p>Knowledge captures technical patterns but not product judgment ("Padmini prefers X approach") or strategic memory ("we tried Z and it failed because...").</p>
+          <div class="deferred">Deferred &mdash; add once system value is proven</div>
+        </div>
+        <div class="gap">
+          <h3>Consumption is unverified</h3>
+          <p>No way to confirm agents actually read and applied knowledge files. The CLAUDE.md directive says "read them" but there's no mechanical enforcement.</p>
+          <div class="deferred">Deferred &mdash; no good enforcement mechanism exists yet</div>
+        </div>
+        <div class="gap">
+          <h3>PR rejection feedback is manual</h3>
+          <p>When you reject a PR or say "wrong approach," that judgment doesn't automatically flow into knowledge. The /review-fix skill helps, but requires manual invocation.</p>
+          <div class="deferred">Deferred &mdash; add PR outcome logging (5 lines) when ready</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
