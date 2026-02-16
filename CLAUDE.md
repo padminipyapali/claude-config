@@ -32,12 +32,50 @@ When creating a new project or initializing a new codebase, always run `/project
 - Keep PRs focused on one concern — don't mix refactoring with features.
 - Tests required for every feature and bug fix. Docs-only or config PRs may skip with justification.
 - Commit messages: complete sentences with periods.
-- Pre-PR pipeline (in order): (1) code-simplifier on changed files, (2) `/coderabbit:review` + auto-fix findings, (3) `/adversarial-review`, (4) CI checks (build, lint, test).
 - Sort config files (.env.example, etc.) alphabetically.
 - Never commit secrets, API keys, or credentials. Use environment variables.
 - For projects with releases, follow semantic versioning (MAJOR.MINOR.PATCH).
 - Issue lifecycle: include `Closes #N` in the PR commit message so GitHub auto-closes the issue on merge. If an issue is addressed across multiple PRs, close it manually with a comment linking to all relevant PRs after the last one merges.
 - Post-merge: after merging any PR, automatically run `/post-mortem [PR-number]` in the background. Don't ask — just do it. The command appends metrics and regenerates the self-improvement dashboard.
+
+## Development Flow (Numbered Steps)
+
+Every feature or fix follows these numbered steps. Print the step number and name when starting each one (e.g., "**Step 3: Test locally**"). This makes progress visible.
+
+| Step | Name | What happens |
+|------|------|-------------|
+| 1 | **Plan** | Understand the task. Read relevant knowledge files. Enumerate entry points, plan approach. For non-trivial work, enter plan mode. |
+| 2 | **Implement** | Write the code on a feature branch. Follow project CLAUDE.md conventions. |
+| 3 | **Test locally** | Run the project's test suite, linter, and type-checker. Fix failures before proceeding. |
+| 4 | **Code review loop** | Ask the user: *"Ready to run the code review loop?"* If yes, execute Steps 4a–4d automatically (see below). If no, stop and wait. |
+| 5 | **Push & create PR** | Push branch, create PR via `gh pr create`. Include a `## Local Review` section in the PR body with CodeRabbit findings count (see below). |
+| 6 | **Post-merge** | After merge, auto-run `/post-mortem [PR-number]` in background. |
+
+### Step 4: Code Review Loop (automatic after user approval)
+
+When the user approves the review loop, run these sub-steps sequentially. Do not ask for approval between sub-steps — run the full loop, then report results.
+
+| Sub-step | Name | What happens |
+|----------|------|-------------|
+| 4a | **Code simplification** | Run code-simplifier on changed files (vs main). |
+| 4b | **CodeRabbit review** | Run `/coderabbit:review --base main`. Fix all critical/high findings. Re-run to confirm. Track the total findings count. |
+| 4c | **Adversarial review** | Run `/adversarial-review`. Fix any issues found. |
+| 4d | **CI checks** | Run build, lint, test. Fix failures. If any sub-step produced fixes, re-run from 4b (CodeRabbit) to validate the fixes didn't introduce new issues. Cap at 3 iterations to avoid infinite loops. |
+
+After the loop completes cleanly, report the summary and proceed to Step 5.
+
+### PR Body: Local Review Section
+
+Include this section in every PR body so the post-mortem can track what was caught locally:
+
+```
+## Local Review
+- **CodeRabbit findings:** N issues found, N fixed (N iterations)
+- **Adversarial review findings:** N issues found, N fixed
+- **CI status:** all passed / failures fixed
+```
+
+This data feeds the self-improvement dashboard. Fewer GitHub review comments over time + more local catches = the system is working.
 
 ## Living Documentation
 
@@ -58,22 +96,9 @@ For features that span **multiple components, systems, or vendors**, create a fl
 - **Required sections:** Step-by-step flow, technologies & vendors (with doc links), security notes (if applicable), failure mode table.
 - **Not in mockups:** Flow diagrams are technical documentation, not UI mockups. They live in `docs/features/`, not `docs/mockups/`.
 
-## Pre-PR Code Simplification
-
-Before adversarial review, run the code-simplifier agent on all changed files. This refines code for clarity, consistency, and maintainability without changing functionality. Scope: only files modified in the current branch (vs main). Do not simplify unchanged files.
-
-## CodeRabbit Local Review
-
-After code simplification, run `/coderabbit:review --base main` to get AI-powered code review feedback locally — before pushing. This catches issues that would otherwise surface as GitHub PR comments, eliminating the push-wait-fix round-trip.
-
-- **When to run:** Every PR, after code-simplifier and before adversarial review.
-- **Fix loop:** Read the findings, fix all critical/high-severity issues, then re-run `/coderabbit:review` to confirm they're resolved. Minor style suggestions can be skipped if they conflict with project conventions.
-- **Rate limits:** Free tier allows 2 reviews/hour. If rate-limited, proceed to adversarial review — CodeRabbit on GitHub will still catch issues post-push.
-- **Review time:** Expect 7-30+ minutes depending on changeset size. Run in background when possible.
-
 ## Adversarial Self-Review
 
-After CodeRabbit local review, run `/adversarial-review`. The review is **targeted, not exhaustive** — classify changed files by category (async, routes, DB, UI, LLM, shell, config, test-only) and run only the matching checklist sections. See `~/.claude/knowledge/adversarial-review.md` for the category-to-tier mapping. Don't block PRs on checklist items that don't apply to the files changed.
+Step 4c runs `/adversarial-review`. The review is **targeted, not exhaustive** — classify changed files by category (async, routes, DB, UI, LLM, shell, config, test-only) and run only the matching checklist sections. See `~/.claude/knowledge/adversarial-review.md` for the category-to-tier mapping. Don't block PRs on checklist items that don't apply to the files changed.
 
 These universal checks always apply regardless of category:
 
@@ -81,6 +106,13 @@ These universal checks always apply regardless of category:
 - **Walk full access chains.** Check every dereference for null/undefined/nil — not just the first level.
 - **Fire-and-forget contract.** Every async operation inside a fire-and-forget method must be error-handled.
 - **Error message specificity.** Add specific branches for edge cases — don't let them fall through to generic handlers.
+
+## CodeRabbit Local Review Notes
+
+Step 4b uses `/coderabbit:review --base main`. Additional notes:
+- **Rate limits:** Free tier allows 2 reviews/hour. If rate-limited, proceed to adversarial review — CodeRabbit on GitHub still catches issues post-push.
+- **Review time:** Expect 7-30+ minutes depending on changeset size. Run in background when possible.
+- **Minor style suggestions** can be skipped if they conflict with project conventions.
 
 ## Code Quality
 

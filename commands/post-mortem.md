@@ -40,7 +40,16 @@ Parse and organize:
 - Sort all events chronologically to build a timeline.
 - Determine the project name from the repo name or current directory.
 
-## Step 2: Review Friction Analysis
+## Step 2: Local Review Extraction
+
+Parse the PR body for the `## Local Review` section (added by the code review loop). Extract:
+- **CodeRabbit findings count**: total issues found locally, total fixed, number of review iterations.
+- **Adversarial review findings count**: total issues found locally, total fixed.
+- **CI status**: passed or failures fixed.
+
+If the section is missing (older PRs or PRs created before the local review flow), set all local review fields to `null` — don't default to 0. Null means "not tracked," 0 means "tracked and none found."
+
+## Step 3: Review Friction Analysis
 
 Compute these metrics:
 - **Review rounds**: Count distinct `CHANGES_REQUESTED` events. Rounds = N changes_requested + 1 (or 1 if only APPROVED/COMMENTED).
@@ -57,7 +66,7 @@ Compute these metrics:
 - **Timeline**: Time from PR created to first review, first review to merge, total elapsed.
 - **Self-merge check**: If `mergedBy == author` and no reviews exist, flag as "no peer review."
 
-## Step 3: Adversarial Review Effectiveness
+## Step 4: Adversarial Review Effectiveness
 
 1. Read `~/.claude/knowledge/adversarial-review.md` to load the checklist.
 2. For each review comment that requested a concrete change:
@@ -66,7 +75,7 @@ Compute these metrics:
 3. Calculate pre-push catch rate: what percentage of issues the checklist could have caught.
 4. Look for "Address PR review" or "review" fix commits. Count fix commits vs. feature commits to measure iteration overhead.
 
-## Step 4: Planning Quality Assessment
+## Step 5: Planning Quality Assessment
 
 Analyze:
 - **PR description completeness**: Does the body contain: Summary, Test Plan sections?
@@ -74,29 +83,29 @@ Analyze:
 - **Redesign indicators**: Commit messages with "revert", "undo", "redesign", "try different approach".
 - **Planning checklist coverage** (from CLAUDE.md Planning Requirements): entry points enumerated? Performance/cost section?
 
-## Step 5: Code Quality Signals
+## Step 6: Code Quality Signals
 
 - **Recurring comment categories**: Any category with 2+ comments is a recurring pattern.
 - **Fix-up ratio**: Count commits with "fix", "address", "resolve" in the title after the main feature commits. Ratio = fix commits / total commits.
 - **New patterns**: Cross-reference review comments against `~/.claude/knowledge/INDEX.md` topic files. Are there patterns not already captured?
 
-## Step 6: Process Efficiency
+## Step 7: Process Efficiency
 
 - **Automation potential**: Could any feedback have been caught by the adversarial review, a linter, or a CI check?
 - **Iteration assessment**: 1 round = efficient, 2 rounds = normal, 3+ rounds = high friction.
 - **CI check results**: Were there failed CI checks during the PR lifecycle?
 
-## Step 7: Update Knowledge
+## Step 8: Update Knowledge
 
 1. **Read** `~/.claude/knowledge/process-patterns.md`.
-2. For each finding from Steps 2-6:
+2. For each finding from Steps 2-7:
    - New process pattern? → Add to `process-patterns.md` under the matching section.
    - Adversarial review gap? → Add to `~/.claude/knowledge/adversarial-review.md` with source comment.
    - New code pattern not already in a topic file? → Add to the relevant `~/.claude/knowledge/*.md` file.
    - Check for duplicates before adding. If a pattern already exists, strengthen it with new context.
 3. Use format: `- **Pattern name.** Description. <!-- Source: post-mortem, [project] #[PR], [date] -->`
 
-## Step 8: Append Metrics & Regenerate Dashboard
+## Step 9: Append Metrics & Regenerate Dashboard
 
 1. Read `~/.claude/knowledge/metrics/post-mortem-metrics.json`.
 2. Append a new entry to the `prs` array:
@@ -113,6 +122,13 @@ Analyze:
        "style": <n>, "performance": <n>, "testing": <n>,
        "documentation": <n>, "other": <n>
      },
+     "localReview": {
+       "coderabbitFindings": <n or null>,
+       "coderabbitFixed": <n or null>,
+       "coderabbitIterations": <n or null>,
+       "adversarialFindings": <n or null>,
+       "adversarialFixed": <n or null>
+     },
      "adversarialCatchRate": <0-1 float>,
      "fixupCommitRatio": <0-1 float>,
      "timeToMergeHours": <number>,
@@ -120,10 +136,11 @@ Analyze:
      "prSize": <additions + deletions>
    }
    ```
+   Note: `localReview` fields are `null` for PRs created before the local review flow was added. This distinguishes "not tracked" from "tracked, zero findings."
 3. Write back the JSON file.
 4. **Regenerate the dashboard**: Read `~/.claude/knowledge/metrics/dashboard.html`, find the `const METRICS_DATA = ` line, replace the entire JSON object with the updated metrics data. This embeds the fresh data into the HTML file so opening it shows all PRs.
 
-## Step 9: Generate Report
+## Step 10: Generate Report
 
 Print a structured report to the conversation:
 
@@ -132,7 +149,12 @@ POST-MORTEM: [project] PR #[number] — [title]
 Branch: [head] → [base] | Author: [author] | [duration]
 Size: +[additions] -[deletions] across [changedFiles] files, [N] commits
 
-REVIEW FRICTION
+LOCAL REVIEW (pre-push)
+  CodeRabbit: N findings, N fixed (N iterations) [or "not tracked"]
+  Adversarial: N findings, N fixed [or "not tracked"]
+  Shift-left rate: X% of total issues caught locally [or "n/a"]
+
+REVIEW FRICTION (post-push)
   Review rounds: N (M CHANGES_REQUESTED before APPROVED)
   Comments: N inline, M general
   Categories: { security: N, correctness: N, architecture: N, ... }
@@ -167,6 +189,6 @@ RECOMMENDATIONS
   [Ranked, actionable process improvements based on findings]
 ```
 
-## Step 10: Auto-Commit
+## Step 11: Auto-Commit
 
 The `~/.claude/` directory changes (metrics JSON, dashboard HTML, knowledge files) will be auto-committed per the Config Repo Auto-Sync rule in CLAUDE.md. No special handling needed here.
