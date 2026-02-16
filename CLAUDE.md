@@ -4,6 +4,8 @@ These rules apply to every project. Project-specific CLAUDE.md files supplement 
 
 Stack-specific sections (marked "When Applicable") apply only when the project uses that technology.
 
+**Precedence**: When rules conflict: project CLAUDE.md > global CLAUDE.md > knowledge files > project memory.
+
 ---
 
 ## New Projects
