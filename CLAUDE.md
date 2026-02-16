@@ -8,6 +8,19 @@ Stack-specific sections (marked "When Applicable") apply only when the project u
 
 ---
 
+## Session Start Protocol
+
+On EVERY session start — including continuations from previous sessions — run these checks before any code changes:
+
+1. **Repo conflict detection.** For each repo you plan to modify, run:
+   - `git -C <path> status --porcelain` — check for uncommitted changes.
+   - `ps aux | grep -E 'claude|claude-code' | grep -v grep | grep '<path>'` — check for active agents.
+   - `ls <path>/.git/index.lock 2>/dev/null` — check for git lock files.
+2. **Do NOT trust continuation summaries about repo state.** The summary reflects the *previous* session. Other agents may have started, files may have changed, branches may have moved. Verify it yourself.
+3. **If conflicts are detected**, follow the Repo Conflict Detection rules below (queue the task, don't edit).
+
+This is non-negotiable. Skipping this check has caused entire sessions of wasted work when concurrent agents were modifying the same repo.
+
 ## New Projects
 
 When creating a new project or initializing a new codebase, always run `/project-setup`. This injects cross-project knowledge, sets up docs, hooks, and the adversarial review skill. Never skip this — even if the user doesn't explicitly ask for it.
