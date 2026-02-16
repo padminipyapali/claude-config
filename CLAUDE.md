@@ -32,7 +32,7 @@ When creating a new project or initializing a new codebase, always run `/project
 - Keep PRs focused on one concern — don't mix refactoring with features.
 - Tests required for every feature and bug fix. Docs-only or config PRs may skip with justification.
 - Commit messages: complete sentences with periods.
-- Pre-PR pipeline (in order): (1) code-simplifier on changed files, (2) `/adversarial-review`, (3) CI checks (build, lint, test).
+- Pre-PR pipeline (in order): (1) code-simplifier on changed files, (2) `/coderabbit:review` + auto-fix findings, (3) `/adversarial-review`, (4) CI checks (build, lint, test).
 - Sort config files (.env.example, etc.) alphabetically.
 - Never commit secrets, API keys, or credentials. Use environment variables.
 - For projects with releases, follow semantic versioning (MAJOR.MINOR.PATCH).
@@ -62,9 +62,18 @@ For features that span **multiple components, systems, or vendors**, create a fl
 
 Before adversarial review, run the code-simplifier agent on all changed files. This refines code for clarity, consistency, and maintainability without changing functionality. Scope: only files modified in the current branch (vs main). Do not simplify unchanged files.
 
+## CodeRabbit Local Review
+
+After code simplification, run `/coderabbit:review --base main` to get AI-powered code review feedback locally — before pushing. This catches issues that would otherwise surface as GitHub PR comments, eliminating the push-wait-fix round-trip.
+
+- **When to run:** Every PR, after code-simplifier and before adversarial review.
+- **Fix loop:** Read the findings, fix all critical/high-severity issues, then re-run `/coderabbit:review` to confirm they're resolved. Minor style suggestions can be skipped if they conflict with project conventions.
+- **Rate limits:** Free tier allows 2 reviews/hour. If rate-limited, proceed to adversarial review — CodeRabbit on GitHub will still catch issues post-push.
+- **Review time:** Expect 7-30+ minutes depending on changeset size. Run in background when possible.
+
 ## Adversarial Self-Review
 
-After code simplification, run `/adversarial-review`. The review is **targeted, not exhaustive** — classify changed files by category (async, routes, DB, UI, LLM, shell, config, test-only) and run only the matching checklist sections. See `~/.claude/knowledge/adversarial-review.md` for the category-to-tier mapping. Don't block PRs on checklist items that don't apply to the files changed.
+After CodeRabbit local review, run `/adversarial-review`. The review is **targeted, not exhaustive** — classify changed files by category (async, routes, DB, UI, LLM, shell, config, test-only) and run only the matching checklist sections. See `~/.claude/knowledge/adversarial-review.md` for the category-to-tier mapping. Don't block PRs on checklist items that don't apply to the files changed.
 
 These universal checks always apply regardless of category:
 
