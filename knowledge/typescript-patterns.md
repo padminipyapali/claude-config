@@ -43,6 +43,11 @@ Cross-project learnings for TypeScript and Node.js development.
 - **Whitespace-only strings are truthy in JavaScript.** `!text` does NOT catch `"   "` — whitespace-only strings are truthy and bypass empty guards. Always `.trim()` at the earliest pipeline point so downstream logic operates on normalized input. Guard on `!text.trim()` not `!text`. <!-- Source: BUG-T014, second-brain -->
 - **Narrow try/catch to I/O only; guard `Invalid Date` from external APIs.** A broad try/catch around fetch + JSON transform means a formatting bug silently drops all fetched data. Wrap only the network call in try/catch. Then guard each data transformation separately — especially `new Date()` on external strings, which can produce `Invalid Date` that propagates silently through formatters. <!-- Source: BUG-T016, second-brain -->
 
+## Date / Timezone Pitfalls
+
+- **`new Date("YYYY-MM-DDT00:00:00")` without `Z` suffix parses as server local time.** This silently shifts dates when the server timezone differs from the user's. Always append `Z` for UTC, or use `localToUtc()` / `Date.UTC()` when the date represents a specific timezone. Affects both production code and test helpers — flaky CI tests are the first symptom. <!-- Source: PR review, second-brain #131, 2026-02-16 -->
+- **When truncating strings to a max length with a suffix, subtract the suffix length from the limit.** `str.slice(0, 4090) + "\n[truncated]"` produces 4102 chars, exceeding a 4096 limit. Use `str.slice(0, limit - suffix.length) + suffix`. <!-- Source: PR review, second-brain #131, 2026-02-16 -->
+
 ## Code Hygiene
 
 - **Remove unnecessary `as const`.** String literals assigned to typed fields don't need `as const` — TS infers from context.
