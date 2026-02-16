@@ -17,6 +17,7 @@ Bootstrap a new project with the standard documentation structure, Claude Code c
    - `docs/DECISIONS.md` — Header + note to log decisions from human-Claude discussions.
    - `docs/PRODUCT_SPEC.md` — Header + sections for project overview, features, and architecture.
    - `docs/QA.md` — Header + note for technical Q&A.
+   - `docs/features/` — Empty directory for feature flow diagrams (created via `/flow-diagram` when features span multiple components/vendors).
 
 3. **Inject relevant cross-project knowledge.** Read `~/.claude/knowledge/INDEX.md` and match the declared stack against available topic files using the Stack Matching Guide. For each matching topic file:
    - Read the file.

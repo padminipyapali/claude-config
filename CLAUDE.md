@@ -34,6 +34,16 @@ Every PR should update the relevant living documents, if the project maintains t
 - `docs/PRODUCT_SPEC.md` — New features and context for why they're added.
 - `docs/QA.md` — Technical Q&A to sharpen the human's intuition.
 
+## Feature Flow Diagrams
+
+For features that span **multiple components, systems, or vendors**, create a flow diagram in `docs/features/<feature-name>/flow-diagram.html`. Use `/flow-diagram` to generate these.
+
+- **When to create:** The feature involves 3+ systems (e.g., external vendor → backend → DB → notification channel), crosses network boundaries, or has non-obvious failure modes.
+- **When NOT to create:** Single-component features, simple CRUD, UI-only changes.
+- **Location:** `docs/features/<feature-name>/flow-diagram.html` — self-contained HTML, no external dependencies.
+- **Required sections:** Step-by-step flow, technologies & vendors (with doc links), security notes (if applicable), failure mode table.
+- **Not in mockups:** Flow diagrams are technical documentation, not UI mockups. They live in `docs/features/`, not `docs/mockups/`.
+
 ## Pre-PR Code Simplification
 
 Before adversarial review, run the code-simplifier agent on all changed files. This refines code for clarity, consistency, and maintainability without changing functionality. Scope: only files modified in the current branch (vs main). Do not simplify unchanged files.
