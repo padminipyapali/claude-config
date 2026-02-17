@@ -106,6 +106,7 @@ These universal checks always apply regardless of category:
 - **Walk full access chains.** Check every dereference for null/undefined/nil — not just the first level.
 - **Fire-and-forget contract.** Every async operation inside a fire-and-forget method must be error-handled.
 - **Error message specificity.** Add specific branches for edge cases — don't let them fall through to generic handlers.
+- **Architecture self-review.** For PRs with 100+ LOC or 3+ directories changed: right location? right abstraction? right boundary? right scope? See adversarial-review.md Tier 4 for full checklist.
 
 ## CodeRabbit Local Review Notes
 

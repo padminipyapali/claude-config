@@ -35,7 +35,7 @@ Bootstrap a new project with the standard documentation structure, Claude Code c
 5. **Create .claude/ directory** with:
    - `settings.json` if the adversarial review hook is enabled.
    - Copy `require-adversarial-review.sh` hook from an existing project or create from template.
-   - If adversarial review is enabled, create `.claude/skills/adversarial-review/SKILL.md` that references the shared checklist at `~/.claude/knowledge/adversarial-review.md` and includes project-specific checks.
+   - If adversarial review is enabled, create `.claude/skills/adversarial-review/SKILL.md` that references the shared checklist at `~/.claude/knowledge/adversarial-review.md` and includes project-specific checks. The SKILL.md must include a Tier 0 step that runs automated grep checks from the shared checklist before manual review.
    - Create `.claude/skills/review-fix/SKILL.md` — the standard review-fix skill with all 5 steps (fetch comments, validate, fix, report, **extract learnings to shared knowledge base**). Use an existing project's review-fix as the template (e.g., lexica), adapting the build/test commands to the new project's stack. The Step 5 "Extract Learnings to Shared Knowledge Base" is critical — it ensures PR review feedback automatically flows into `~/.claude/knowledge/*.md` topic files.
 
 6. **Initialize auto-memory.** Create the project's memory directory structure:

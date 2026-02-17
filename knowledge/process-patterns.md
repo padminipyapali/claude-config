@@ -20,7 +20,7 @@ planning discipline, iteration velocity, and automation opportunities.
 
 ## Automation Opportunities
 
-- **UTC suffix enforcement via lint rule.** A custom ESLint rule or grep check for `new Date("...:00")` without trailing `Z` would catch the most common timezone bug class automatically. Multiple PRs have hit this. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
+- **UTC suffix enforcement via lint rule.** A custom ESLint rule or grep check for `new Date("...:00")` without trailing `Z` would catch the most common timezone bug class automatically. Multiple PRs have hit this. **Decision:** Deferred CI-level lint rules. Instead, Tier 0 automated grep checks in the adversarial review checklist serve the same purpose without per-project setup cost. If patterns are still missed after Tier 0 is live, escalate to GitHub Actions workflows. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 
 ## Iteration Velocity
 

@@ -42,7 +42,7 @@ A file can belong to multiple categories.
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
 | **test-only** | Tier 3: UTC suffix in test Date strings. No other tiers needed. |
 
-**Always run regardless of category:** Tier 4: pattern siblings, documentation sync. Learning Capture Gate.
+**Always run:** Tier 0 automated grep checks (every review). Tier 4: pattern siblings, documentation sync, architecture self-review (100+ LOC). Learning Capture Gate.
 
 **Always skip for code review:** Tier 5 (plans only).
 
@@ -51,6 +51,34 @@ If no categories match (e.g., docs-only change), skip directly to the Learning C
 ### Step 3: Report transparency
 
 In the review output, state which categories were detected and which checklist sections were skipped, so the author can verify coverage.
+
+---
+
+## Tier 0: Automated Grep Checks (Run FIRST on every review)
+
+Before manual review, run these grep patterns against changed files. Any match is a finding — fix before proceeding.
+
+### 0.1 UTC suffix on Date strings
+```bash
+git diff main...HEAD --name-only -- '*.ts' '*.tsx' | xargs grep -nE 'new Date\("[^"]*T[0-9]{2}:[0-9]{2}:[0-9]{2}"\)' 2>/dev/null
+```
+Catches: `new Date("2026-02-14T10:00:00")` without `Z`. Fix: append `Z`.
+
+### 0.2 Fire-and-forget without .catch()
+```bash
+git diff main...HEAD -U0 -- '*.ts' '*.tsx' | grep -E '^\+.*\b(then|finally)\(' | grep -vE '\.catch\(' 2>/dev/null
+```
+Heuristic — `.catch()` may be on another line. Flag for manual review.
+
+### 0.3 Generic error swallowing
+```bash
+git diff main...HEAD -U3 -- '*.ts' '*.tsx' | grep -B3 -A1 'catch' | grep -E 'return \[\]|return null|return undefined' 2>/dev/null
+```
+Heuristic — some defaults are legitimate. Flag for review.
+
+### Adding new patterns
+When a bug class is caught 2+ times across PRs, add a grep pattern here.
+Requirements: expressible as regex on changed lines, low false-positive rate (<20%).
 
 ---
 
@@ -124,7 +152,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **JSON.parse on external config.** `JSON.parse()` on env vars or external config must be in try/catch with a descriptive error (e.g., "Invalid JSON in GOOGLE_SERVICE_ACCOUNT_KEY").
 - [ ] **Off-by-one in time boundaries.** When querying events/records for a date range, use start-of-next-day as exclusive upper bound (`< nextDay T00:00:00`), not `<= T23:59:59` which misses the final second.
 - [ ] **Filter external API data before mapping.** External APIs can return malformed entries (missing fields, null values). Use `.filter()` to skip invalid entries before `.map()`, rather than producing `NaN`/`Invalid Date` downstream.
-- [ ] **UTC suffix in test Date strings.** `new Date("2026-02-14T10:00:00")` parses in server-local timezone, making tests flaky on CI. Always append `Z` for UTC: `new Date("2026-02-14T10:00:00Z")`. **Enforcement:** grep for `/new Date\("[^"]*T\d{2}:\d{2}:\d{2}"\)/` — any match missing `Z` before the closing quote is a bug.
+- [ ] **UTC suffix in test Date strings.** `new Date("2026-02-14T10:00:00")` parses in server-local timezone, making tests flaky on CI. Always append `Z` for UTC: `new Date("2026-02-14T10:00:00Z")`. **Enforcement:** Covered by Tier 0 check 0.1.
 - [ ] **String truncation arithmetic.** When slicing a string to fit a max length and appending a suffix, verify `slice_length + suffix_length <= limit`. Pattern: `str.slice(0, limit - suffix.length) + suffix`. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 - [ ] **Compound text decoration.** When a format helper returns decorated text (e.g., parentheses, brackets), check all call sites — callers adding their own decoration can compound: `((all day))`. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 
@@ -144,6 +172,12 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **In-memory state survives restarts?** If a scheduler or service uses in-memory state for dedup (e.g., `lastSentDate`), verify it handles server restarts. On deploy-on-push platforms, every deploy clears memory. Either persist to DB or initialize defensively (e.g., pre-set the marker if the scheduled time has passed).
 - [ ] **Documentation sync.** JSDoc matches code. Step counts updated. Module headers mention new capabilities.
 - [ ] **Cross-channel output regression.** If changed code touches shared data consumed by multiple output channels (web, Telegram, email, API), verify all channels still render correctly. Same data, different display constraints (HTML vs 4096-char text vs JSON). <!-- Source: BUG-022, second-brain #101, 2026-02-15 -->
+- [ ] **Architecture self-review (100+ LOC or 3+ directories changed).**
+  1. **Right location?** Would a new contributor find each new file/function by grepping for the feature name?
+  2. **Right abstraction?** Would you still extract this helper if the feature were never extended?
+  3. **Right boundary?** Does any layer reach into non-adjacent layers? (UI→DB, service→Telegram format)
+  4. **Right scope?** Could this PR be split into independent concerns?
+  5. **Understand in 30 days?** Read the diff cold — is intent clear from code + comments?
 
 ---
 

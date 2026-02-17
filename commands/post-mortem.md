@@ -86,7 +86,12 @@ Analyze:
 ## Step 6: Code Quality Signals
 
 - **Recurring comment categories**: Any category with 2+ comments is a recurring pattern.
-- **Fix-up ratio**: Count commits with "fix", "address", "resolve" in the title after the main feature commits. Ratio = fix commits / total commits.
+- **Fix-up ratio** (CRITICAL — compute accurately):
+  1. Get all commits: `gh pr view $PR --json commits --jq '.commits[].messageHeadline'`
+  2. Classify each: **fix** if message contains "fix", "address", "resolve", "review", "feedback", "nit" (case-insensitive); **feature** otherwise.
+  3. Compute: `fixupCommitRatio = fix_commits / total_commits` (0.0–1.0). If 1 commit, ratio is 0.0.
+  4. **Report the classification** so the user can verify.
+  5. If ratio >= 0.5, flag: "HIGH fix-up ratio — adversarial review may need improvement."
 - **New patterns**: Cross-reference review comments against `~/.claude/knowledge/INDEX.md` topic files. Are there patterns not already captured?
 
 ## Step 7: Process Efficiency
@@ -140,9 +145,14 @@ Analyze:
 3. Write back the JSON file.
 4. **Regenerate the dashboard**: Read `~/.claude/knowledge/metrics/dashboard.html`, find the `const METRICS_DATA = ` line, replace the entire JSON object with the updated metrics data. This embeds the fresh data into the HTML file so opening it shows all PRs.
 
-## Step 10: Generate Report
+## Step 10: Save Raw Report & Generate Report
 
-Print a structured report to the conversation:
+**Save the report to disk:**
+1. Create `~/.claude/knowledge/metrics/post-mortems/` if it doesn't exist.
+2. Write the full report to `~/.claude/knowledge/metrics/post-mortems/{project}-{prNumber}.md`.
+3. This preserves the narrative analysis (which issues were covered but missed, recommendations, etc.) for future pattern analysis across PRs.
+
+**Print a structured report to the conversation:**
 
 ```
 POST-MORTEM: [project] PR #[number] — [title]
