@@ -15,6 +15,10 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 - **FTS + vector search are complementary, not alternatives.** FTS excels at exact/stemmed word matching but fails on conceptual similarity ("colors" won't find "yellow", "blue"). Use FTS as primary with vector similarity fallback when FTS returns 0 results. This avoids the cost of embedding every query while catching semantic matches.
 - **FTS: use OR semantics for personal knowledge retrieval.** `plainto_tsquery` (AND) fails when users search with metadata terms — proper nouns, category labels, or concept names that don't appear verbatim in the stored text (e.g., "Bene Gesserit fear mantra" for an entry containing only the Litany text). Use `websearch_to_tsquery` with OR-joined terms so entries matching ANY term surface, ranked by `ts_rank_cd`. AND semantics is only appropriate when false positives are dangerous (e.g., matching TODOs for completion).
 
+## Connection Management
+
+- **Set `connectionTimeoutMillis` on every pg.Pool.** The default of `0` means connection attempts wait indefinitely. A single slow connection (transient network issue, cold start after idle) makes the entire service appear dead with no error logged. Use `connectionTimeoutMillis: 5_000` (5s) — normal connections establish in 50-200ms, so 5s has no impact on healthy operations but ensures hung attempts fail fast. <!-- Source: BUG-023, second-brain, 2026-02-15 -->
+
 ## Data Integrity
 
 - **Guard after create → reload.** After creating a resource and reloading from DB, check for null. Fire-and-forget patterns, replication lag, or race conditions can cause the reload to fail.

@@ -22,6 +22,10 @@ Cross-project learnings for Telegram bots (grammY, Bot API).
 - **Escape user content in HTML-mode replies.** When using `parse_mode: "HTML"`, always escape `<`, `>`, `&` in user-provided strings (`task`, `displayName`, any input). This is the Telegram equivalent of XSS — Telegram will reject malformed HTML or render it incorrectly. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 - **Truncate raw text BEFORE escaping, not after.** `slice()` after `escapeHtml()` can break entities mid-sequence (e.g., `&amp;` becomes `&am`). Always: (1) truncate raw string, (2) escape, (3) verify total length fits. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 
+## Command Matching
+
+- **Account for `@botname` suffix in group chats.** Telegram appends `@botname` to slash commands in group chats (e.g., `/todos@my_bot`). Don't use bare `startsWith("/cmd")` (matches `/cmdxyz`) or strict `=== "/cmd"` (misses group suffix). Use explicit three-way matching: `text === "/cmd" || text.startsWith("/cmd ") || text.startsWith("/cmd@")`. For argument extraction, normalize with a `stripBotMention(text, command)` utility: `/command@botname args` → `/command args`. <!-- Source: BUG-024, second-brain, 2026-02-15 -->
+
 ## Message Handling
 
 - **Entry-less responses break reply-to chains.** Response types that don't create DB entries (TODO_LIST, CHAT) have no entry to link replies to. Solution: use a lightweight `bot_responses` table to track outbound messages.
