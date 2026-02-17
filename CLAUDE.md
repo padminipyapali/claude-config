@@ -45,11 +45,33 @@ Every feature or fix follows these numbered steps. Print the step number and nam
 | Step | Name | What happens |
 |------|------|-------------|
 | 1 | **Plan** | Understand the task. Read relevant knowledge files. Enumerate entry points, plan approach. For non-trivial work, enter plan mode. |
+| 1a | **Adversarial plan review** | Spawn a separate agent to adversarially review the plan. The reviewing agent challenges assumptions, identifies missed entry points, questions scope, and flags risks — before any code is written. See sub-step details below. |
 | 2 | **Implement** | Write the code on a feature branch. Follow project CLAUDE.md conventions. |
 | 3 | **Test locally** | Run the project's test suite, linter, and type-checker. Fix failures before proceeding. |
 | 4 | **Code review loop** | Ask the user: *"Ready to run the code review loop?"* If yes, execute Steps 4a–4d automatically (see below). If no, stop and wait. |
 | 5 | **Push & create PR** | Push branch, create PR via `gh pr create`. Include a `## Local Review` section in the PR body with CodeRabbit findings count (see below). |
 | 6 | **Post-merge** | After merge, auto-run `/post-mortem [PR-number]` in background. |
+
+### Step 1a: Adversarial Plan Review (automatic after plan is written)
+
+After writing the plan in Step 1, spawn a separate agent (subagent_type: `Plan`) to adversarially review it. The reviewing agent receives the plan and checks:
+
+- **Missed entry points.** Are there user paths, edge cases, or state transitions the plan doesn't account for?
+- **Assumption challenges.** Does the plan assume things about existing code that haven't been verified? Are there implicit dependencies?
+- **Scope creep or under-scoping.** Is the plan doing too much for one PR, or missing something that will cause a follow-up?
+- **Alternative approaches.** Is there a simpler or more robust way to achieve the same goal?
+- **Risk flags.** Data loss potential, breaking changes, performance concerns, security gaps.
+- **Knowledge file gaps.** Does the plan contradict or ignore patterns from `~/.claude/knowledge/`?
+
+The reviewing agent also performs a **product-level adversarial review**:
+
+- **Is this worth building?** Challenge whether the feature justifies the complexity. What's the user impact vs. engineering cost?
+- **Simpler alternatives.** Are there lighter-weight solutions — config changes, existing library features, UI copy tweaks, or manual workarounds — that achieve 80% of the value at 20% of the cost?
+- **User frequency & urgency.** How often will users actually hit this? Is it solving a daily pain point or a once-a-month inconvenience?
+- **Build vs. defer.** Would it be better to ship a minimal version now and iterate, or is the full plan necessary to be useful at all?
+- **Second-order effects.** Does this feature create maintenance burden, user confusion, or lock in a design direction that's hard to reverse?
+
+The reviewing agent returns a verdict: **approve**, **approve with notes**, or **revise**. If "revise", address the feedback and re-run 1a. Cap at 2 revision rounds — if still contested, present both perspectives to the user for a decision.
 
 ### Step 4: Code Review Loop (automatic after user approval)
 
