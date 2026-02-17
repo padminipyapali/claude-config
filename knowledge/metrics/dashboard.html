@@ -233,6 +233,62 @@
     border-bottom: 2px solid #1a1a1a;
   }
 
+  /* --- Needs-more-data overlay --- */
+  .needs-data-wrap {
+    position: relative;
+  }
+
+  .needs-data-wrap.insufficient .chart-canvas-wrap {
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  .needs-data-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .needs-data-wrap.insufficient .needs-data-overlay {
+    display: flex;
+  }
+
+  .needs-data-overlay .nd-title {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+  }
+
+  .needs-data-overlay .nd-hint {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #888;
+  }
+
+  .nd-progress {
+    width: 120px;
+    height: 4px;
+    background: #e5e4e0;
+    border-radius: 2px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+
+  .nd-progress-bar {
+    height: 100%;
+    background: #2563EB;
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
   /* --- Dashboard content container (hidden when empty) --- */
   .dashboard-content { display: block; }
   .dashboard-content.hidden { display: none; }
@@ -402,6 +458,38 @@
       <div class="section-title">Time to Merge</div>
       <div class="chart-canvas-wrap"><canvas id="mergeChart"></canvas></div>
       <div class="chart-annotation">Hours from PR open to merge. Dashed line at 24h target.</div>
+    </div>
+
+    <!-- Adversarial Review Effectiveness -->
+    <div class="chart-pair">
+      <div class="section">
+        <hr class="section-rule">
+        <div class="section-label">Shift Left</div>
+        <div class="section-title">Local Catch Rate</div>
+        <div class="needs-data-wrap" id="shiftLeftWrap">
+          <div class="needs-data-overlay">
+            <div class="nd-title">Collecting data&hellip;</div>
+            <div class="nd-hint" id="shiftLeftHint">0 of 5 PRs with local review</div>
+            <div class="nd-progress"><div class="nd-progress-bar" id="shiftLeftBar"></div></div>
+          </div>
+          <div class="chart-canvas-wrap"><canvas id="shiftLeftChart"></canvas></div>
+        </div>
+        <div class="chart-annotation">% of total issues caught before push. Higher is better.</div>
+      </div>
+      <div class="section">
+        <hr class="section-rule">
+        <div class="section-label">Adversarial Review</div>
+        <div class="section-title">Findings per PR</div>
+        <div class="needs-data-wrap" id="advFindingsWrap">
+          <div class="needs-data-overlay">
+            <div class="nd-title">Collecting data&hellip;</div>
+            <div class="nd-hint" id="advFindingsHint">0 of 5 PRs with adversarial data</div>
+            <div class="nd-progress"><div class="nd-progress-bar" id="advFindingsBar"></div></div>
+          </div>
+          <div class="chart-canvas-wrap"><canvas id="advFindingsChart"></canvas></div>
+        </div>
+        <div class="chart-annotation">Issues caught by adversarial review (green) vs. slipped to GitHub (red).</div>
+      </div>
     </div>
 
     <!-- Project Scorecard -->
@@ -3554,7 +3642,113 @@ function renderDashboard() {
     });
   })();
 
-  // --- 3. Scorecard Table ---
+  // --- 3. Adversarial Review Effectiveness ---
+  (function() {
+    var MIN_DATA = 5;
+    var GREEN = '#16794A';
+
+    // Filter PRs that have real local review data (not null).
+    var tracked = prs.filter(function(p) {
+      return p.localReview && p.localReview.adversarialFindings !== null;
+    });
+    var n = tracked.length;
+
+    // --- Shift-Left Rate ---
+    var slWrap = document.getElementById('shiftLeftWrap');
+    if (n < MIN_DATA) {
+      slWrap.classList.add('insufficient');
+      document.getElementById('shiftLeftHint').textContent = n + ' of ' + MIN_DATA + ' PRs with local review';
+      document.getElementById('shiftLeftBar').style.width = (n / MIN_DATA * 100) + '%';
+    } else {
+      var slLabels = tracked.map(function(p) { return ABBREV[p.project] + '#' + p.prNumber; });
+      var slData = tracked.map(function(p) {
+        var local = (p.localReview.adversarialFindings || 0) + (p.localReview.coderabbitFindings || 0);
+        var gh = p.totalComments || 0;
+        var total = local + gh;
+        return total === 0 ? 100 : Math.round(local / total * 100);
+      });
+
+      new Chart(document.getElementById('shiftLeftChart'), {
+        type: 'line',
+        data: {
+          labels: slLabels,
+          datasets: [{
+            data: slData,
+            borderColor: GREEN,
+            borderWidth: 2,
+            pointBackgroundColor: '#F8F7F4',
+            pointBorderColor: GREEN,
+            pointBorderWidth: 2,
+            pointRadius: pointRadius,
+            pointHoverRadius: hoverRadius,
+            tension: 0.25,
+            fill: { target: 'origin', above: 'rgba(22, 121, 74, 0.08)' }
+          }]
+        },
+        options: {
+          scales: scales({
+            yTicks: { callback: function(v) { return v + '%'; } },
+            yMax: 100
+          }),
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(item) { return item.raw + '% caught locally'; }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // --- Adversarial Findings per PR ---
+    var afWrap = document.getElementById('advFindingsWrap');
+    if (n < MIN_DATA) {
+      afWrap.classList.add('insufficient');
+      document.getElementById('advFindingsHint').textContent = n + ' of ' + MIN_DATA + ' PRs with adversarial data';
+      document.getElementById('advFindingsBar').style.width = (n / MIN_DATA * 100) + '%';
+    } else {
+      var afLabels = tracked.map(function(p) { return ABBREV[p.project] + '#' + p.prNumber; });
+      var caught = tracked.map(function(p) { return p.localReview.adversarialFindings || 0; });
+      var slipped = tracked.map(function(p) { return p.totalComments || 0; });
+
+      new Chart(document.getElementById('advFindingsChart'), {
+        type: 'bar',
+        data: {
+          labels: afLabels,
+          datasets: [
+            {
+              label: 'Caught locally',
+              data: caught,
+              backgroundColor: GREEN,
+              barPercentage: 0.55,
+              categoryPercentage: 0.7
+            },
+            {
+              label: 'Slipped to GitHub',
+              data: slipped,
+              backgroundColor: RED_MUTED,
+              barPercentage: 0.55,
+              categoryPercentage: 0.7
+            }
+          ]
+        },
+        options: {
+          scales: scales({ yTicks: { stepSize: 1 } }),
+          plugins: {
+            legend: { display: true, position: 'bottom', labels: { font: { family: MONO, size: 10 }, boxWidth: 10, padding: 16 } },
+            tooltip: {
+              callbacks: {
+                label: function(item) { return item.dataset.label + ': ' + item.raw; }
+              }
+            }
+          }
+        }
+      });
+    }
+  })();
+
+  // --- 4. Scorecard Table ---
   (function() {
     var agg = {};
     prs.forEach(function(pr) {
