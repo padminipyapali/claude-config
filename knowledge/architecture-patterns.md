@@ -22,6 +22,10 @@ Cross-project learnings for service design, error handling, and system architect
 - **Consistent treatment of related domain types across ALL calculation paths.** When multiple types share the same semantics (e.g., sick/vacation/holiday hours all count as PTO), ensure ALL paths (canonical calculation, PDF export, UI summary) treat them identically. Independent calculation paths drift apart over time — adding a new type to one path but not others is a common source of bugs.
 - **Consolidate entity creation into a single shared service method.** When multiple code paths create the same entity type (e.g., entries from Telegram, web, or promotion), use one shared creation function. Independent creation paths inevitably diverge — some will miss required fields (status initialization, embeddings, metadata). This complements the "complete at creation" rule by providing a structural enforcement mechanism. <!-- Source: BUG-W007, second-brain, 2026-02-14 -->
 
+## Auth & Security Boundaries
+
+- **Scope auth fallbacks to the specific routes that need them.** When adding an alternative auth mechanism (query param token, cookie, API key header), restrict it to the exact route that requires it — never apply it globally in middleware. The temptation is to add the fallback once in shared middleware for simplicity, but this broadens the attack surface to every route. Use route path matching (`req.path`) and method checks (`req.method`) in the middleware to gate the fallback. <!-- Source: PR review, second-brain #152, 2026-02-17 -->
+
 ## Error Handling Strategy
 
 - **Fire-and-forget needs visibility.** Log at the decision point ("split returned N items"), not just the error path. Silent success is as bad as silent failure for debugging.

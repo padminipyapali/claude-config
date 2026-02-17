@@ -152,6 +152,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Shell command validation.** Regex: no prefix injection bypass (`\b` not `^`); no suffix injection bypass (`(\s|$)` not `\b`); extracted variables validated non-empty.
 - [ ] **Escape user content in AI prompts.** Escape `<`/`>` with `&lt;`/`&gt;` in XML-tagged prompts. This includes DB-stored values.
 - [ ] **No token-like placeholders in UI.** Avoid `ghp_`, `sk-`, `Bearer ey...`, `xoxb-` prefixes in placeholder/mock/demo data — secret scanners (CI, GitHub) will flag them. Use generic bullets `"••••••••"` or `"(hidden)"`. <!-- Source: PR review, command-center #3, 2026-02-14 -->
+- [ ] **Auth fallbacks scoped to specific routes.** When adding alternative auth (query param token, cookie), verify it only applies to the exact route that needs it — not globally in shared middleware. Check: does the middleware gate the fallback on `req.method` + `req.path`? <!-- Source: PR review, second-brain #152, 2026-02-17 -->
 
 ---
 
