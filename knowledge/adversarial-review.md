@@ -146,7 +146,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **LLM output parsing.** `JSON.parse()` on LLM output must strip code fences. Handle empty/malformed.
 - [ ] **Error message specificity.** Edge cases get specific messages, not generic fallthrough.
 - [ ] **Semantic elements.** Grep changed `.tsx` files for `role="button"` — every match on a non-`<button>` element (`<span>`, `<div>`, `<a>`) must be replaced with `<button type="button">`. Also: every `<svg>` needs a `<title>` child.
-- [ ] **Escape in edit-within-panel.** If an inline edit mode lives inside a dismissible panel/modal, verify Escape is caught via `onKeyDownCapture` on the edit container — not just `onKeyDown` on the textarea. Focus can move to Save/Cancel buttons where textarea handlers don't fire.
+- [ ] **Escape in edit-within-panel.** If an inline edit mode lives inside a dismissible panel/modal, verify Escape is caught via `onKeyDownCapture` on the edit container — not just `onKeyDown` on the textarea. Focus can move to Save/Cancel buttons where textarea handlers don't fire. Also: guard `if (saving) return` so Escape during an in-flight save doesn't discard the error state.
 - [ ] **Hook error states surfaced in UI.** `{ data, loading, error }` — error MUST be rendered.
 - [ ] **Env var validation.** NaN check, valid range, fallback logging for numeric vars. Timezone vars validated via `Intl.DateTimeFormat`.
 - [ ] **Guard after create → reload.** Check for null after DB insert + reload.
