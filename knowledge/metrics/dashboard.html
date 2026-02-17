@@ -492,6 +492,22 @@
       </div>
     </div>
 
+    <!-- Step Compliance Rate -->
+    <div class="section">
+      <hr class="section-rule">
+      <div class="section-label">Process</div>
+      <div class="section-title">Step Compliance Rate</div>
+      <div class="needs-data-wrap" id="complianceWrap">
+        <div class="needs-data-overlay">
+          <div class="nd-title">Collecting data&hellip;</div>
+          <div class="nd-hint" id="complianceHint">0 of 3 PRs with compliance data</div>
+          <div class="nd-progress"><div class="nd-progress-bar" id="complianceBar"></div></div>
+        </div>
+        <div class="chart-canvas-wrap"><canvas id="complianceChart"></canvas></div>
+      </div>
+      <div class="chart-annotation">% of development flow steps completed per PR. Target: 100%.</div>
+    </div>
+
     <!-- Project Scorecard -->
     <div class="section">
       <hr class="section-rule">
@@ -505,6 +521,7 @@
               <th class="r">PRs</th>
               <th class="r">Avg Rounds</th>
               <th class="r">Avg Merge</th>
+              <th class="r">Avg Compliance</th>
             </tr>
           </thead>
           <tbody id="scorecardBody"></tbody>
@@ -3595,7 +3612,14 @@ const METRICS_DATA = {
       "fixupCommitRatio": 0.0,
       "timeToMergeHours": 0.02,
       "planningQuality": "partial",
-      "prSize": 6
+      "prSize": 6,
+      "stepCompliance": {
+        "stepsRun": ["2", "5"],
+        "stepsSkipped": ["1", "3", "4a", "4b", "4c", "4d"],
+        "skipReasons": "minimal change — all quality gates skipped",
+        "complianceRate": 0.25,
+        "skipAssessment": "neutral"
+      }
     }
   ]
 };
@@ -3709,6 +3733,13 @@ function renderDashboard() {
     var first3 = function(arr) { return avg(arr.slice(0, Math.min(3, arr.length))); };
     var last3 = function(arr) { return avg(arr.slice(-Math.min(3, arr.length))); };
 
+    // Compute skip accuracy: % of skips assessed as "good" out of all assessed (excluding neutral/null)
+    var assessedSkips = prs.filter(function(p) {
+      return p.stepCompliance && (p.stepCompliance.skipAssessment === 'good' || p.stepCompliance.skipAssessment === 'bad');
+    });
+    var goodSkips = assessedSkips.filter(function(p) { return p.stepCompliance.skipAssessment === 'good'; });
+    var skipAccuracyVal = assessedSkips.length > 0 ? Math.round(goodSkips.length / assessedSkips.length * 100) : null;
+
     var metrics = [
       {
         label: 'Total PRs',
@@ -3729,10 +3760,10 @@ function renderDashboard() {
         invert: true
       },
       {
-        label: 'Avg PR Size',
-        value: last3(prSize).toFixed(0),
-        change: first3(prSize) === 0 ? 0 : ((last3(prSize) - first3(prSize)) / first3(prSize) * 100).toFixed(0),
-        invert: true
+        label: 'Skip Accuracy',
+        value: skipAccuracyVal !== null ? skipAccuracyVal + '%' : 'n/a',
+        change: 0,
+        invert: false
       }
     ];
 
@@ -3928,14 +3959,80 @@ function renderDashboard() {
     }
   })();
 
-  // --- 4. Scorecard Table ---
+  // --- 4. Step Compliance Rate ---
+  (function() {
+    var MIN_DATA = 3;
+    var TEAL = '#0D9488';
+
+    var tracked = prs.filter(function(p) { return p.stepCompliance != null; });
+    var n = tracked.length;
+
+    var cWrap = document.getElementById('complianceWrap');
+    if (n < MIN_DATA) {
+      cWrap.classList.add('insufficient');
+      document.getElementById('complianceHint').textContent = n + ' of ' + MIN_DATA + ' PRs with compliance data';
+      document.getElementById('complianceBar').style.width = (n / MIN_DATA * 100) + '%';
+    } else {
+      var cLabels = tracked.map(function(p) { return ABBREV[p.project] + '#' + p.prNumber; });
+      var cData = tracked.map(function(p) { return Math.round(p.stepCompliance.complianceRate * 100); });
+      var cColors = cData.map(function(v) {
+        return v === 100 ? '#16794A' : v >= 50 ? '#D97706' : '#C53030';
+      });
+      var target100 = tracked.map(function() { return 100; });
+
+      new Chart(document.getElementById('complianceChart'), {
+        type: 'bar',
+        data: {
+          labels: cLabels,
+          datasets: [
+            {
+              data: cData,
+              backgroundColor: cColors,
+              borderWidth: 0,
+              barPercentage: 0.55,
+              categoryPercentage: 0.7
+            },
+            {
+              data: target100,
+              type: 'line',
+              borderColor: TEAL,
+              borderWidth: 1.5,
+              borderDash: [6, 4],
+              pointRadius: 0,
+              pointHoverRadius: 0,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          scales: scales({
+            yTicks: { callback: function(v) { return v + '%'; } },
+            yMax: 100
+          }),
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(item) { return item.datasetIndex === 1 ? 'Target: 100%' : item.raw + '% compliance'; }
+              }
+            }
+          }
+        }
+      });
+    }
+  })();
+
+  // --- 5. Scorecard Table ---
   (function() {
     var agg = {};
     prs.forEach(function(pr) {
-      if (!agg[pr.project]) agg[pr.project] = { n: 0, rounds: 0, merge: 0, size: 0 };
+      if (!agg[pr.project]) agg[pr.project] = { n: 0, rounds: 0, merge: 0, size: 0, complianceSum: 0, complianceCount: 0 };
       var a = agg[pr.project];
       a.n++; a.rounds += pr.reviewRounds;
       a.merge += pr.timeToMergeHours; a.size += pr.prSize;
+      if (pr.stepCompliance != null) {
+        a.complianceSum += pr.stepCompliance.complianceRate;
+        a.complianceCount++;
+      }
     });
 
     // Build ordered project list from data (preserving discovery order, deduped)
@@ -3954,11 +4051,15 @@ function renderDashboard() {
       if (!a) return;
       var color = PROJECT_COLORS[name] || '#888';
       var tr = document.createElement('tr');
+      var complianceCell = a.complianceCount > 0
+        ? Math.round(a.complianceSum / a.complianceCount * 100) + '%'
+        : 'n/a';
       tr.innerHTML =
         '<td class="project-name"><span class="dot" style="background:' + color + '"></span>' + name + '</td>' +
         '<td class="r">' + a.n + '</td>' +
         '<td class="r">' + (a.rounds / a.n).toFixed(1) + '</td>' +
-        '<td class="r">' + (a.merge / a.n).toFixed(0) + 'h</td>';
+        '<td class="r">' + (a.merge / a.n).toFixed(0) + 'h</td>' +
+        '<td class="r">' + complianceCell + '</td>';
       tbody.appendChild(tr);
     });
   })();

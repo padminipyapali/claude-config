@@ -3075,7 +3075,14 @@
       "fixupCommitRatio": 0.0,
       "timeToMergeHours": 0.02,
       "planningQuality": "partial",
-      "prSize": 6
+      "prSize": 6,
+      "stepCompliance": {
+        "stepsRun": ["2", "5"],
+        "stepsSkipped": ["1", "3", "4a", "4b", "4c", "4d"],
+        "skipReasons": "minimal change — all quality gates skipped",
+        "complianceRate": 0.25,
+        "skipAssessment": "neutral"
+      }
     }
   ]
 }

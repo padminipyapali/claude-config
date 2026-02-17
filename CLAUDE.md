@@ -51,6 +51,8 @@ Every feature or fix follows these numbered steps. Print the step number and nam
 | 5 | **Push & create PR** | Push branch, create PR via `gh pr create`. Include a `## Local Review` section in the PR body with CodeRabbit findings count (see below). |
 | 6 | **Post-merge** | After merge, auto-run `/post-mortem [PR-number]` in background. |
 
+> **Recording requirement:** When any step is skipped, record it in the PR body's Local Review section with the reason. The post-mortem uses this data. Skipping without recording is itself a process violation.
+
 ### Step 1: Plan (sub-steps)
 
 #### Step 1a: Ask Clarifying Questions
@@ -108,6 +110,7 @@ Include this section in every PR body so the post-mortem can track what was caug
 
 ```
 ## Local Review
+- **Steps skipped:** none | list of skipped steps with reason (e.g., "3 (lint+test): minimal change, 4a-4d: skipped")
 - **CodeRabbit findings:** N issues found, N fixed (N iterations)
 - **Adversarial review findings:** N issues found, N fixed
 - **CI status:** all passed / failures fixed

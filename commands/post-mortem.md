@@ -49,6 +49,18 @@ Parse the PR body for the `## Local Review` section (added by the code review lo
 
 If the section is missing (older PRs or PRs created before the local review flow), set all local review fields to `null` — don't default to 0. Null means "not tracked," 0 means "tracked and none found."
 
+## Step 2.5: Step Compliance Extraction
+
+Parse the PR body for the `Steps skipped:` line in the `## Local Review` section. Extract step compliance data:
+
+1. If the line says "none" → all 8 trackable steps ran (1, 2, 3, 4a, 4b, 4c, 4d, 5). Set `complianceRate = 1.0`.
+2. If the line lists specific steps → extract step numbers and reasons. Compute `complianceRate = stepsRun / 8`.
+3. If the `Steps skipped:` line is missing → set `stepCompliance` to `null` (older PR, not tracked).
+
+The 8 trackable steps are: 1 (plan), 2 (implement), 3 (test), 4a (simplification), 4b (CodeRabbit), 4c (adversarial), 4d (CI), 5 (push+PR). Steps 2 and 5 are always implicitly run if the PR exists.
+
+Store the extracted data for use in Step 9 (metrics append).
+
 ## Step 3: Review Friction Analysis
 
 Compute these metrics:
@@ -74,6 +86,13 @@ Compute these metrics:
    - Is this issue class absent from the checklist? If yes → "not covered" (a potential addition).
 3. Calculate pre-push catch rate: what percentage of issues the checklist could have caught.
 4. Look for "Address PR review" or "review" fix commits. Count fix commits vs. feature commits to measure iteration overhead.
+5. **Skip assessment** (uses Step 2.5 data): Cross-reference skipped steps against post-push review findings to classify each skip:
+   - **bad**: Post-merge review found issues that a skipped step would have caught. Mapping:
+     - Skipped lint/test (step 3) + review found a11y/style/correctness issue → bad
+     - Skipped adversarial (step 4c) + review found issue in adversarial checklist → bad
+     - Skipped CodeRabbit (step 4b) + CodeRabbit found issues post-push → bad
+   - **good**: No post-merge issues related to any skipped step.
+   - **neutral**: Can't determine (e.g., no review happened, CodeRabbit rate-limited, no review data).
 
 ## Step 5: Planning Quality Assessment
 
@@ -138,10 +157,17 @@ Analyze:
      "fixupCommitRatio": <0-1 float>,
      "timeToMergeHours": <number>,
      "planningQuality": "<complete|partial|missing>",
-     "prSize": <additions + deletions>
+     "prSize": <additions + deletions>,
+     "stepCompliance": {
+       "stepsRun": ["1", "2", "3", "4a", "4b", "4c", "4d", "5"],
+       "stepsSkipped": [],
+       "skipReasons": "",
+       "complianceRate": <0-1 float>,
+       "skipAssessment": "<good|bad|neutral|null>"
+     }
    }
    ```
-   Note: `localReview` fields are `null` for PRs created before the local review flow was added. This distinguishes "not tracked" from "tracked, zero findings."
+   Note: `localReview` fields are `null` for PRs created before the local review flow was added. This distinguishes "not tracked" from "tracked, zero findings." The `stepCompliance` object is `null` for older PRs that predate step compliance tracking.
 3. Write back the JSON file.
 4. **Regenerate the dashboard**: Read `~/.claude/knowledge/metrics/dashboard.html`, find the `const METRICS_DATA = ` line, replace the entire JSON object with the updated metrics data. This embeds the fresh data into the HTML file so opening it shows all PRs.
 
@@ -163,6 +189,19 @@ LOCAL REVIEW (pre-push)
   CodeRabbit: N findings, N fixed (N iterations) [or "not tracked"]
   Adversarial: N findings, N fixed [or "not tracked"]
   Shift-left rate: X% of total issues caught locally [or "n/a"]
+
+STEP COMPLIANCE
+  Steps run: 1, 2, 3, 4a, 4b, 4c, 4d, 5 (8/8)
+  Steps skipped: none
+  Compliance rate: 100%
+  Skip assessment: n/a
+  [or when steps are skipped:]
+  Steps run: 1, 2, 5 (3/8)
+  Steps skipped: 3 (lint+test), 4a-4d (code review loop) — reason: "minimal change"
+  Compliance rate: 37.5%
+  Skip assessment: neutral (no review data to compare against)
+  [or when not tracked:]
+  Step compliance: not tracked (pre-dates tracking)
 
 REVIEW FRICTION (post-push)
   Review rounds: N (M CHANGES_REQUESTED before APPROVED)
