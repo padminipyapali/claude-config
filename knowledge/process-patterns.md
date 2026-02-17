@@ -23,6 +23,10 @@ planning discipline, iteration velocity, and automation opportunities.
 - **New gap: Test env variable isolation.** When tests mutate `process.env.*` (set in `beforeEach`, deleted in a test), the adversarial review should verify cleanup in `afterEach`. Without restore, env mutations leak to subsequent test files. The test-only category in the checklist lacks test isolation checks. <!-- Source: post-mortem, second-brain #148, 2026-02-17 -->
 - **New gap: Missing error branch test coverage.** When a route has distinct error paths (timeout/AbortError -> 504, non-404 error -> 502), tests should cover each branch. The adversarial review should verify that all catch/error branches in new route handlers have corresponding test cases. <!-- Source: post-mortem, second-brain #148, 2026-02-17 -->
 
+## Process Compliance
+
+- **Small changes are not exempt from the development flow.** PR #153 (6 LOC, 1 file) skipped steps 3 (lint + test), 4 (code review loop), and went straight to push. The CLAUDE.md development flow applies regardless of change size — the steps exist for consistency, not just for catching bugs in large PRs. The agent rationalized skipping as "minimal change" but the process doesn't have a size-based exemption. <!-- Source: post-mortem, second-brain #153, 2026-02-17 -->
+
 ## Automation Opportunities
 
 - **UTC suffix enforcement via lint rule.** A custom ESLint rule or grep check for `new Date("...:00")` without trailing `Z` would catch the most common timezone bug class automatically. Multiple PRs have hit this. **Decision:** Deferred CI-level lint rules. Instead, Tier 0 automated grep checks in the adversarial review checklist serve the same purpose without per-project setup cost. If patterns are still missed after Tier 0 is live, escalate to GitHub Actions workflows. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->

@@ -3046,6 +3046,36 @@
       "timeToMergeHours": 0.17,
       "planningQuality": "complete",
       "prSize": 16
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 153,
+      "title": "Hide redundant content and AI response on MEDIA entry cards",
+      "dateMerged": "2026-02-17T07:52:09Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.02,
+      "planningQuality": "partial",
+      "prSize": 6
     }
   ]
 }
