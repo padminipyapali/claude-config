@@ -2956,6 +2956,36 @@
       "timeToMergeHours": 0.12,
       "planningQuality": "complete",
       "prSize": 44
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 146,
+      "title": "Skip storing ai_response for THOUGHT entries",
+      "dateMerged": "2026-02-17T06:32:38Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 0,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.04,
+      "planningQuality": "partial",
+      "prSize": 20
     }
   ]
 }
