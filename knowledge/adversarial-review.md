@@ -36,7 +36,7 @@ A file can belong to multiple categories.
 | **async-ts** | Tier 1: all (1.1–1.3). Tier 3: null guards, error message specificity |
 | **routes-api** | Tier 2: all. Tier 4: business logic in service not routes |
 | **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create→reload |
-| **ui-react** | Tier 1: 1.4 (grammar), 1.5 (optimistic UI). Tier 3: SVG/a11y, hook error states |
+| **ui-react** | Tier 1: 1.4 (grammar), 1.5 (optimistic UI). Tier 3: SVG/a11y, hook error states, stale closure in background refresh |
 | **shell** | Tier 2: shell command validation |
 | **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
@@ -155,6 +155,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **UTC suffix in test Date strings.** `new Date("2026-02-14T10:00:00")` parses in server-local timezone, making tests flaky on CI. Always append `Z` for UTC: `new Date("2026-02-14T10:00:00Z")`. **Enforcement:** Covered by Tier 0 check 0.1.
 - [ ] **String truncation arithmetic.** When slicing a string to fit a max length and appending a suffix, verify `slice_length + suffix_length <= limit`. Pattern: `str.slice(0, limit - suffix.length) + suffix`. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 - [ ] **Compound text decoration.** When a format helper returns decorated text (e.g., parentheses, brackets), check all call sites — callers adding their own decoration can compound: `((all day))`. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
+- [ ] **Stale closure in background refresh.** When a React hook fires a background fetch (cache-then-refresh pattern), the `.then()` closure captures the filter/key at call time. If the user switches tabs before the fetch resolves, `setEntries`/`setCursor` updates shared state with stale data. Guard with a `currentKeyRef` that tracks the active filter, and skip state updates when `currentKeyRef.current !== capturedKey`. Cache updates are safe; only setState calls need the guard. <!-- Source: post-mortem, second-brain #136, 2026-02-17 -->
 
 ---
 

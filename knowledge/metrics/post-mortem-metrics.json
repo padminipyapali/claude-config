@@ -2737,6 +2737,75 @@
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 174
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 135,
+      "title": "Improve /summary: sort TODOs by due date, limit to 5 items",
+      "dateMerged": "2026-02-17T00:34:27Z",
+      "reviewRounds": 2,
+      "totalComments": 2,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 1,
+        "documentation": 0,
+        "other": 1
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.3,
+      "planningQuality": "complete",
+      "prSize": 137
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 136,
+      "title": "Add in-memory cache to useEntries for instant tab switching",
+      "dateMerged": "2026-02-17T00:38:59Z",
+      "reviewRounds": 1,
+      "totalComments": 1,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.3,
+      "planningQuality": "complete",
+      "prSize": 84
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 137,
+      "title": "Suppress related entries for TODO entries in thread panel",
+      "dateMerged": "2026-02-17T00:36:03Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "adversarialCatchRate": 0.5,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.2,
+      "planningQuality": "complete",
+      "prSize": 15
     }
   ]
 }

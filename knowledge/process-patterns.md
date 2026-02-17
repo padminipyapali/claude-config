@@ -25,6 +25,13 @@ planning discipline, iteration velocity, and automation opportunities.
 ## Iteration Velocity
 
 - **75% fix-up ratio on first tracked PR.** 3 of 4 commits were review fixes. All mechanical, all fast — but the ratio indicates the adversarial review is not catching enough pre-push. Target: <50% fix-up ratio. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
+- **0% fix-up ratio across PRs #135-#137.** Three consecutive clean PRs with no review-driven fix commits. However, PR #136 had a legitimate correctness finding that was left unaddressed (merged 1 min after CHANGES_REQUESTED). Zero fix-up ratio can mask ignored findings. <!-- Source: post-mortem, second-brain #135-137, 2026-02-17 -->
+
+## Review Discipline
+
+- **Merging immediately after CHANGES_REQUESTED bypasses review purpose.** PR #136 was merged 1 minute after CodeRabbit flagged a race condition (stale closure in background refresh). The finding was legitimate and could cause stale data to flash on rapid tab switching. Even for bot reviews, acknowledge findings explicitly before merging: dismiss with a reason, or fix. <!-- Source: post-mortem, second-brain #136, 2026-02-17 -->
+- **CodeRabbit rate limits cause review gaps.** Three PRs submitted within minutes (#135, #136, #137) hit the hourly review limit. PR #137 received no code review at all before merge. Mitigation: space out PR submissions by 10+ minutes, or wait for rate limit expiry (~8 min) before merging. <!-- Source: post-mortem, second-brain #136-137, 2026-02-17 -->
+- **CodeRabbit monorepo false positives are recurring noise.** CodeRabbit's sandbox runs `npm test` without building shared packages first, producing false test failures on every monorepo PR. This adds review rounds without value. Consider documenting as known limitation or configuring CodeRabbit to skip test execution. <!-- Source: post-mortem, second-brain #135, 2026-02-17 -->
 
 ---
 *Sources: post-mortem analysis across all projects*
