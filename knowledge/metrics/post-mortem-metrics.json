@@ -2836,6 +2836,36 @@
       "timeToMergeHours": 2.25,
       "planningQuality": "complete",
       "prSize": 29
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 141,
+      "title": "Clean up /brief format for better scannability",
+      "dateMerged": "2026-02-17T04:21:38Z",
+      "reviewRounds": 2,
+      "totalComments": 2,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 1,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 1,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 1,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.5,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.76,
+      "planningQuality": "complete",
+      "prSize": 514
     }
   ]
 }

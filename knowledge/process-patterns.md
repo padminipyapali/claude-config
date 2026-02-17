@@ -29,6 +29,10 @@ planning discipline, iteration velocity, and automation opportunities.
 - **0% fix-up ratio across PRs #135-#137.** Three consecutive clean PRs with no review-driven fix commits. However, PR #136 had a legitimate correctness finding that was left unaddressed (merged 1 min after CHANGES_REQUESTED). Zero fix-up ratio can mask ignored findings. <!-- Source: post-mortem, second-brain #135-137, 2026-02-17 -->
 - **50% fix-up ratio on small focused PR.** PR #140 had 2 commits, 1 feature + 1 review fix. On small PRs (29 LOC), one review finding immediately produces a high ratio. Context matters more than the absolute number for small changesets. <!-- Source: post-mortem, second-brain #140, 2026-02-17 -->
 
+## Documentation Review Noise
+
+- **Markdownlint findings inflate review rounds on docs PRs.** PR #141 had 2 review rounds, both on a README.md file: missing blank lines around headings/tables and missing fence language. These are mechanical lint issues, not code quality problems. When a PR includes docs, expect 1 extra CodeRabbit round for markdown lint. Mitigation: run markdownlint locally before push, or accept the noise as baseline. <!-- Source: post-mortem, second-brain #141, 2026-02-17 -->
+
 ## Review Discipline
 
 - **Merging immediately after CHANGES_REQUESTED bypasses review purpose.** PR #136 was merged 1 minute after CodeRabbit flagged a race condition (stale closure in background refresh). The finding was legitimate and could cause stale data to flash on rapid tab switching. Even for bot reviews, acknowledge findings explicitly before merging: dismiss with a reason, or fix. <!-- Source: post-mortem, second-brain #136, 2026-02-17 -->
