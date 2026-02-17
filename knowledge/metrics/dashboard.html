@@ -3620,6 +3620,43 @@ const METRICS_DATA = {
         "complianceRate": 0.25,
         "skipAssessment": "neutral"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 155,
+      "title": "Upgrade /summary to HTML formatting",
+      "dateMerged": "2026-02-17T08:39:54Z",
+      "reviewRounds": 1,
+      "totalComments": 1,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 2,
+        "coderabbitFixed": 1,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 0.5,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.16,
+      "planningQuality": "partial",
+      "prSize": 142,
+      "stepCompliance": {
+        "stepsRun": ["1", "2", "3", "4a", "4b", "4c", "4d", "5"],
+        "stepsSkipped": ["1c"],
+        "skipReasons": "1c (adversarial plan review): straightforward formatting change",
+        "complianceRate": 0.875,
+        "skipAssessment": "good"
+      }
     }
   ]
 };
