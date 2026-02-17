@@ -15,6 +15,7 @@ planning discipline, iteration velocity, and automation opportunities.
 ## Adversarial Review Gaps
 
 - **Checklist items present but not mechanically executed.** "UTC suffix in test Date strings" was literally in Tier 3 of the adversarial review checklist, yet test dates without Z suffix shipped. The bottleneck is execution discipline, not checklist coverage. Fix: run grep patterns, not just read items. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
+- **Unmount guard pattern known but not applied to new code.** PR #140's adversarial review reported 0 findings, but CodeRabbit caught a missing `isMountedRef` unmount guard — a pattern already documented in `react-patterns.md` and used by 3 sibling hooks in the same file. The adversarial review needs to cross-reference new async hooks against sibling patterns in the same file. <!-- Source: post-mortem, second-brain #140, 2026-02-17 -->
 - **New gap: String truncation arithmetic.** When slicing + appending to fit a max length, verify `slice_length + suffix_length <= limit`. Added to knowledge but not yet in adversarial checklist. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 - **New gap: User-facing text compound wrapping.** When a helper function adds decoration (e.g., parentheses) and callers add more, the result compounds (e.g., `((all day))`). Review all format helper return values against their call sites. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 
@@ -26,6 +27,7 @@ planning discipline, iteration velocity, and automation opportunities.
 
 - **75% fix-up ratio on first tracked PR.** 3 of 4 commits were review fixes. All mechanical, all fast — but the ratio indicates the adversarial review is not catching enough pre-push. Target: <50% fix-up ratio. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 - **0% fix-up ratio across PRs #135-#137.** Three consecutive clean PRs with no review-driven fix commits. However, PR #136 had a legitimate correctness finding that was left unaddressed (merged 1 min after CHANGES_REQUESTED). Zero fix-up ratio can mask ignored findings. <!-- Source: post-mortem, second-brain #135-137, 2026-02-17 -->
+- **50% fix-up ratio on small focused PR.** PR #140 had 2 commits, 1 feature + 1 review fix. On small PRs (29 LOC), one review finding immediately produces a high ratio. Context matters more than the absolute number for small changesets. <!-- Source: post-mortem, second-brain #140, 2026-02-17 -->
 
 ## Review Discipline
 

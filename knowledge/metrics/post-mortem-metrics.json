@@ -2806,6 +2806,36 @@
       "timeToMergeHours": 0.2,
       "planningQuality": "complete",
       "prSize": 15
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 140,
+      "title": "Fix stale closure race condition in useEntries",
+      "dateMerged": "2026-02-17T03:23:57Z",
+      "reviewRounds": 2,
+      "totalComments": 1,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 2.25,
+      "planningQuality": "complete",
+      "prSize": 29
     }
   ]
 }
