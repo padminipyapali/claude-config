@@ -2986,6 +2986,36 @@
       "timeToMergeHours": 0.04,
       "planningQuality": "partial",
       "prSize": 20
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 148,
+      "title": "Display images in web dashboard via Supabase Storage",
+      "dateMerged": "2026-02-17T07:10:49Z",
+      "reviewRounds": 2,
+      "totalComments": 6,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 2,
+        "architecture": 0,
+        "style": 1,
+        "performance": 0,
+        "testing": 2,
+        "documentation": 1,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 3,
+        "coderabbitFixed": 1,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 3,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 0.25,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.23,
+      "planningQuality": "complete",
+      "prSize": 601
     }
   ]
 }

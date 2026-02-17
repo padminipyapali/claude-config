@@ -40,7 +40,7 @@ A file can belong to multiple categories.
 | **shell** | Tier 2: shell command validation |
 | **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
-| **test-only** | Tier 3: UTC suffix in test Date strings. No other tiers needed. |
+| **test-only** | Tier 3: UTC suffix in test Date strings, test env isolation, error branch coverage. No other tiers needed. |
 
 **Always run:** Tier 0 automated grep checks (every review). Tier 4: pattern siblings, documentation sync, architecture self-review (100+ LOC). Learning Capture Gate.
 
@@ -169,6 +169,8 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Off-by-one in time boundaries.** When querying events/records for a date range, use start-of-next-day as exclusive upper bound (`< nextDay T00:00:00`), not `<= T23:59:59` which misses the final second.
 - [ ] **Filter external API data before mapping.** External APIs can return malformed entries (missing fields, null values). Use `.filter()` to skip invalid entries before `.map()`, rather than producing `NaN`/`Invalid Date` downstream.
 - [ ] **UTC suffix in test Date strings.** `new Date("2026-02-14T10:00:00")` parses in server-local timezone, making tests flaky on CI. Always append `Z` for UTC: `new Date("2026-02-14T10:00:00Z")`. **Enforcement:** Covered by Tier 0 check 0.1.
+- [ ] **Test env variable isolation.** When tests mutate `process.env.*` (set in `beforeEach`, deleted in a test), verify cleanup in `afterEach` that captures and restores the original value. Without restore, env mutations leak across test files. Also: `vi.restoreAllMocks()` / `vi.resetAllMocks()` should be in `afterEach`, not inline — inline cleanup is skipped if the test fails before reaching it. <!-- Source: post-mortem, second-brain #148, 2026-02-17 -->
+- [ ] **Error branch test coverage.** When a route has distinct error paths (e.g., timeout -> 504, upstream error -> 502, not found -> 404), verify each branch has a dedicated test case. List all `catch` blocks and conditional error responses in new handlers, then check for corresponding test assertions. <!-- Source: post-mortem, second-brain #148, 2026-02-17 -->
 - [ ] **String truncation arithmetic.** When slicing a string to fit a max length and appending a suffix, verify `slice_length + suffix_length <= limit`. Pattern: `str.slice(0, limit - suffix.length) + suffix`. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 - [ ] **Compound text decoration.** When a format helper returns decorated text (e.g., parentheses, brackets), check all call sites — callers adding their own decoration can compound: `((all day))`. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 - [ ] **Stale closure in background refresh.** When a React hook fires a background fetch (cache-then-refresh pattern), the `.then()` closure captures the filter/key at call time. If the user switches tabs before the fetch resolves, `setEntries`/`setCursor` updates shared state with stale data. Guard with a `currentKeyRef` that tracks the active filter, and skip state updates when `currentKeyRef.current !== capturedKey`. Cache updates are safe; only setState calls need the guard. <!-- Source: post-mortem, second-brain #136, 2026-02-17 -->
