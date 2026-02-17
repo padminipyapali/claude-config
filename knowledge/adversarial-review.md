@@ -145,7 +145,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Null/undefined guards.** Walk every `!`, `[]`, `.` chain. Check if any intermediate value could be null.
 - [ ] **LLM output parsing.** `JSON.parse()` on LLM output must strip code fences. Handle empty/malformed.
 - [ ] **Error message specificity.** Edge cases get specific messages, not generic fallthrough.
-- [ ] **SVG `<title>` for accessibility.** Buttons must be `<button>`, not `<div role="button">`.
+- [ ] **Semantic elements.** Grep changed `.tsx` files for `role="button"` — every match on a non-`<button>` element (`<span>`, `<div>`, `<a>`) must be replaced with `<button type="button">`. Also: every `<svg>` needs a `<title>` child.
 - [ ] **Hook error states surfaced in UI.** `{ data, loading, error }` — error MUST be rendered.
 - [ ] **Env var validation.** NaN check, valid range, fallback logging for numeric vars. Timezone vars validated via `Intl.DateTimeFormat`.
 - [ ] **Guard after create → reload.** Check for null after DB insert + reload.
