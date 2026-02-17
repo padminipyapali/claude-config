@@ -44,17 +44,33 @@ Every feature or fix follows these numbered steps. Print the step number and nam
 
 | Step | Name | What happens |
 |------|------|-------------|
-| 1 | **Plan** | Understand the task. Read relevant knowledge files. Enumerate entry points, plan approach. For non-trivial work, enter plan mode. |
-| 1a | **Adversarial plan review** | Spawn a separate agent to adversarially review the plan. The reviewing agent challenges assumptions, identifies missed entry points, questions scope, and flags risks — before any code is written. See sub-step details below. |
+| 1 | **Plan** | Three sub-steps: ask clarifying questions (1a), write the plan (1b), adversarial plan review (1c). See details below. |
 | 2 | **Implement** | Write the code on a feature branch. Follow project CLAUDE.md conventions. |
 | 3 | **Test locally** | Run the project's test suite, linter, and type-checker. Fix failures before proceeding. |
 | 4 | **Code review loop** | Ask the user: *"Ready to run the code review loop?"* If yes, execute Steps 4a–4d automatically (see below). If no, stop and wait. |
 | 5 | **Push & create PR** | Push branch, create PR via `gh pr create`. Include a `## Local Review` section in the PR body with CodeRabbit findings count (see below). |
 | 6 | **Post-merge** | After merge, auto-run `/post-mortem [PR-number]` in background. |
 
-### Step 1a: Adversarial Plan Review (automatic after plan is written)
+### Step 1: Plan (sub-steps)
 
-After writing the plan in Step 1, spawn a separate agent (subagent_type: `Plan`) to adversarially review it. The reviewing agent receives the plan and checks:
+#### Step 1a: Ask Clarifying Questions
+
+Before writing any plan, ask the user 2-4 clarifying questions. Don't accept the first framing — probe deeper.
+
+- **Scope & intent.** "What's the core problem? What does success look like?"
+- **Entry points & edge cases.** "Who hits this and how? What about [alternative path]?"
+- **Constraints.** "Are there performance, cost, or timeline constraints I should know about?"
+- **Prior art.** "Have you tried anything already? Is there a manual workaround today?"
+
+Read `~/.claude/knowledge/strategic-decisions.md` before questioning — prior product decisions provide context. Wait for answers before proceeding to 1b.
+
+#### Step 1b: Write the Plan
+
+With the user's answers in hand, write the plan. Read relevant knowledge files from `~/.claude/knowledge/`. Enumerate all entry points, trace each path end-to-end, plan the approach. For non-trivial work, enter plan mode.
+
+#### Step 1c: Adversarial Plan Review (automatic after plan is written)
+
+After writing the plan in Step 1b, spawn a separate agent (subagent_type: `Plan`) to adversarially review it. The reviewing agent receives the plan and checks:
 
 - **Missed entry points.** Are there user paths, edge cases, or state transitions the plan doesn't account for?
 - **Assumption challenges.** Does the plan assume things about existing code that haven't been verified? Are there implicit dependencies?
@@ -71,7 +87,7 @@ The reviewing agent also performs a **product-level adversarial review**:
 - **Build vs. defer.** Would it be better to ship a minimal version now and iterate, or is the full plan necessary to be useful at all?
 - **Second-order effects.** Does this feature create maintenance burden, user confusion, or lock in a design direction that's hard to reverse?
 
-The reviewing agent returns a verdict: **approve**, **approve with notes**, or **revise**. If "revise", address the feedback and re-run 1a. Cap at 2 revision rounds — if still contested, present both perspectives to the user for a decision.
+The reviewing agent returns a verdict: **approve**, **approve with notes**, or **revise**. If "revise", address the feedback and re-run 1c. Cap at 2 revision rounds — if still contested, present both perspectives to the user for a decision.
 
 ### Step 4: Code Review Loop (automatic after user approval)
 
