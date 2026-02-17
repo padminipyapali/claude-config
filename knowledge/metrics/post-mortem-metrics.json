@@ -2896,6 +2896,36 @@
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 654
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 143,
+      "title": "Fix TODO panel missing inline edit",
+      "dateMerged": "2026-02-17T06:13:11Z",
+      "reviewRounds": 3,
+      "totalComments": 3,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 3,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 1,
+        "coderabbitFixed": 1,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 3,
+        "adversarialFixed": 3
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.75,
+      "timeToMergeHours": 0.35,
+      "planningQuality": "complete",
+      "prSize": 242
     }
   ]
 }
