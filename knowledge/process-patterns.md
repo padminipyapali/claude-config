@@ -25,6 +25,7 @@ planning discipline, iteration velocity, and automation opportunities.
 
 ## Iteration Velocity
 
+- **0% fix-up ratio with full local review loop.** PR #142 (650 LOC, 18 files) achieved zero post-push findings and zero fix commits by running the complete code review loop (simplifier → CodeRabbit → adversarial → CI) before push. CodeRabbit found 4 real issues locally; all were fixed before the PR was created. This is the target outcome — shift all quality catches to pre-push. <!-- Source: post-mortem, second-brain #142, 2026-02-17 -->
 - **75% fix-up ratio on first tracked PR.** 3 of 4 commits were review fixes. All mechanical, all fast — but the ratio indicates the adversarial review is not catching enough pre-push. Target: <50% fix-up ratio. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 - **0% fix-up ratio across PRs #135-#137.** Three consecutive clean PRs with no review-driven fix commits. However, PR #136 had a legitimate correctness finding that was left unaddressed (merged 1 min after CHANGES_REQUESTED). Zero fix-up ratio can mask ignored findings. <!-- Source: post-mortem, second-brain #135-137, 2026-02-17 -->
 - **50% fix-up ratio on small focused PR.** PR #140 had 2 commits, 1 feature + 1 review fix. On small PRs (29 LOC), one review finding immediately produces a high ratio. Context matters more than the absolute number for small changesets. <!-- Source: post-mortem, second-brain #140, 2026-02-17 -->

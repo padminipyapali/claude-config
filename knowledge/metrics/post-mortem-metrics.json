@@ -2866,6 +2866,36 @@
       "timeToMergeHours": 0.76,
       "planningQuality": "complete",
       "prSize": 514
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 142,
+      "title": "Add inline edit for entries on web dashboard",
+      "dateMerged": "2026-02-17T05:08:10Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 4,
+        "coderabbitFixed": 4,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 7,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.1,
+      "planningQuality": "complete",
+      "prSize": 654
     }
   ]
 }
