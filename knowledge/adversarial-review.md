@@ -36,7 +36,7 @@ A file can belong to multiple categories.
 | **async-ts** | Tier 1: all (1.1–1.3). Tier 3: null guards, error message specificity |
 | **routes-api** | Tier 2: all. Tier 4: business logic in service not routes |
 | **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create→reload |
-| **ui-react** | Tier 1: 1.4 (grammar), 1.5 (optimistic UI). Tier 3: SVG/a11y, hook error states, stale closure in background refresh |
+| **ui-react** | Tier 0: 0.4 (semantic elements), 0.5 (escape handler). Tier 1: 1.4 (grammar), 1.5 (optimistic UI). Tier 3: SVG/a11y, hook error states, escape in edit-within-panel, stale closure in background refresh |
 | **shell** | Tier 2: shell command validation |
 | **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
@@ -75,6 +75,21 @@ Heuristic — `.catch()` may be on another line. Flag for manual review.
 git diff main...HEAD -U3 -- '*.ts' '*.tsx' | grep -B3 -A1 'catch' | grep -E 'return \[\]|return null|return undefined' 2>/dev/null
 ```
 Heuristic — some defaults are legitimate. Flag for review.
+
+### 0.4 Non-semantic interactive elements (a11y)
+```bash
+git diff main...HEAD --name-only -- '*.tsx' | xargs grep -nE 'role=\{?.*"button"' 2>/dev/null
+```
+Catches: `<span role="button">`, `<div role="button">`. Fix: replace with `<button type="button">`.
+Exception: elements containing `<a>` children (HTML content model violation).
+
+### 0.5 Escape handler only on textarea (not container)
+```bash
+git diff main...HEAD --name-only -- '*.tsx' | xargs grep -lE 'onKeyDown.*Escape|Escape.*handleEdit' 2>/dev/null | while read f; do
+  grep -L 'onKeyDownCapture' "$f" 2>/dev/null
+done
+```
+Heuristic — if a file handles Escape on a textarea/input but has no `onKeyDownCapture`, the Escape handler may not fire when focus is on sibling buttons. Flag for review.
 
 ### Adding new patterns
 When a bug class is caught 2+ times across PRs, add a grep pattern here.
