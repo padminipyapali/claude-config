@@ -175,51 +175,6 @@
     font-style: italic;
   }
 
-  /* --- Categories grid (small multiples) --- */
-  .categories-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: #d4d3cf;
-  }
-
-  .category-cell {
-    background: #F8F7F4;
-    padding: 16px;
-    position: relative;
-  }
-
-  .category-cell .cat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 8px;
-  }
-
-  .category-cell .cat-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: #1a1a1a;
-  }
-
-  .category-cell .cat-value {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 20px;
-    font-weight: 500;
-    line-height: 1;
-  }
-
-  .category-cell .cat-trend {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: #888;
-  }
-
-  .category-cell .cat-spark-wrap {
-    height: 40px;
-    margin-top: 4px;
-  }
-
   /* --- Scorecard table --- */
   .scorecard-wrap {
     overflow-x: auto;
@@ -432,56 +387,21 @@
     <!-- Hero metrics -->
     <div class="hero-row" id="heroRow"></div>
 
-    <!-- North stars: Comments + Rounds -->
-    <div class="chart-pair">
-      <div class="section">
-        <div class="section-label">North Star</div>
-        <div class="section-title">Review Comments</div>
-        <div class="chart-canvas-wrap"><canvas id="commentsChart"></canvas></div>
-        <div class="chart-annotation">Dashed line shows linear trend. Fewer comments = less rework.</div>
-      </div>
-      <div class="section">
-        <div class="section-label">North Star</div>
-        <div class="section-title">Review Rounds</div>
-        <div class="chart-canvas-wrap"><canvas id="roundsChart"></canvas></div>
-        <div class="chart-annotation">Recent 3 PRs highlighted. Target: single-round approval.</div>
-      </div>
+    <!-- North star: Review Rounds -->
+    <div class="section">
+      <div class="section-label">North Star</div>
+      <div class="section-title">Review Rounds</div>
+      <div class="chart-canvas-wrap"><canvas id="roundsChart"></canvas></div>
+      <div class="chart-annotation">Recent 3 PRs highlighted. Target: single-round approval.</div>
     </div>
 
-    <!-- Comment Categories -- Small Multiples -->
+    <!-- Time to Merge -->
     <div class="section">
       <hr class="section-rule">
-      <div class="section-label">Breakdown</div>
-      <div class="section-title">Comment Categories</div>
-      <div class="categories-grid" id="categoriesGrid"></div>
-      <div class="chart-annotation">Current value shown. Sparkline traces per-PR trend.</div>
-    </div>
-
-    <!-- Catch Rate + Time to Merge -->
-    <div class="chart-pair">
-      <div class="section">
-        <hr class="section-rule">
-        <div class="section-label">System Health</div>
-        <div class="section-title">Adversarial Catch Rate</div>
-        <div class="chart-canvas-wrap"><canvas id="catchRateChart"></canvas></div>
-        <div class="chart-annotation">Dashed red line at 80% target. Higher = more issues caught pre-review.</div>
-      </div>
-      <div class="section">
-        <hr class="section-rule">
-        <div class="section-label">Velocity</div>
-        <div class="section-title">Time to Merge</div>
-        <div class="chart-canvas-wrap"><canvas id="mergeChart"></canvas></div>
-        <div class="chart-annotation">Hours from PR open to merge. Dashed line at 24h target.</div>
-      </div>
-    </div>
-
-    <!-- Fix-up Ratio -->
-    <div class="section">
-      <hr class="section-rule">
-      <div class="section-label">Code Quality</div>
-      <div class="section-title">Fix-up Ratio</div>
-      <div class="chart-canvas-wrap"><canvas id="fixupChart"></canvas></div>
-      <div class="chart-annotation">Dashed red line at 50% threshold. Lower = fewer review-driven fixes. Null values (historical) filtered out.</div>
+      <div class="section-label">Velocity</div>
+      <div class="section-title">Time to Merge</div>
+      <div class="chart-canvas-wrap"><canvas id="mergeChart"></canvas></div>
+      <div class="chart-annotation">Hours from PR open to merge. Dashed line at 24h target.</div>
     </div>
 
     <!-- Project Scorecard -->
@@ -495,11 +415,8 @@
             <tr>
               <th>Project</th>
               <th class="r">PRs</th>
-              <th class="r">Avg Comments</th>
               <th class="r">Avg Rounds</th>
               <th class="r">Avg Merge</th>
-              <th class="r">Catch Rate</th>
-              <th class="r">Fix-up</th>
             </tr>
           </thead>
           <tbody id="scorecardBody"></tbody>
@@ -617,21 +534,19 @@ function renderDashboard() {
 
   // --- Hero Metrics ---
   (function() {
-    var comments = prs.map(function(p) { return p.totalComments; });
     var rounds = prs.map(function(p) { return p.reviewRounds; });
     var mergeH = prs.map(function(p) { return p.timeToMergeHours; });
-    var catchR = prs.map(function(p) { return p.adversarialCatchRate; });
-    var fixup = prs.map(function(p) { return p.fixupCommitRatio; }).filter(function(v) { return v != null; });
+    var prSize = prs.map(function(p) { return p.prSize; });
 
     var first3 = function(arr) { return avg(arr.slice(0, Math.min(3, arr.length))); };
     var last3 = function(arr) { return avg(arr.slice(-Math.min(3, arr.length))); };
 
     var metrics = [
       {
-        label: 'Avg Comments',
-        value: last3(comments).toFixed(1),
-        change: first3(comments) === 0 ? 0 : ((last3(comments) - first3(comments)) / first3(comments) * 100).toFixed(0),
-        invert: true
+        label: 'Total PRs',
+        value: prs.length,
+        change: 0,
+        invert: false
       },
       {
         label: 'Avg Rounds',
@@ -640,16 +555,16 @@ function renderDashboard() {
         invert: true
       },
       {
-        label: 'Fix-up Ratio',
-        value: (last3(fixup) * 100).toFixed(0) + '%',
-        change: first3(fixup) === 0 ? 0 : ((last3(fixup) - first3(fixup)) / first3(fixup) * 100).toFixed(0),
+        label: 'Avg Merge Time',
+        value: last3(mergeH).toFixed(0) + 'h',
+        change: first3(mergeH) === 0 ? 0 : ((last3(mergeH) - first3(mergeH)) / first3(mergeH) * 100).toFixed(0),
         invert: true
       },
       {
-        label: 'Catch Rate',
-        value: (last3(catchR) * 100).toFixed(0) + '%',
-        change: first3(catchR) === 0 ? 0 : ((last3(catchR) - first3(catchR)) / first3(catchR) * 100).toFixed(0),
-        invert: false
+        label: 'Avg PR Size',
+        value: last3(prSize).toFixed(0),
+        change: first3(prSize) === 0 ? 0 : ((last3(prSize) - first3(prSize)) / first3(prSize) * 100).toFixed(0),
+        invert: true
       }
     ];
 
@@ -670,45 +585,7 @@ function renderDashboard() {
     });
   })();
 
-  // --- 1. Review Comments ---
-  (function() {
-    var data = prs.map(function(p) { return p.totalComments; });
-    var trend = linReg(data);
-
-    new Chart(document.getElementById('commentsChart'), {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            data: data,
-            borderColor: BLUE,
-            borderWidth: 2,
-            pointBackgroundColor: '#F8F7F4',
-            pointBorderColor: BLUE,
-            pointBorderWidth: 2,
-            pointRadius: pointRadius,
-            pointHoverRadius: hoverRadius,
-            tension: 0.25,
-            fill: { target: 'origin', above: 'rgba(37, 99, 235, 0.06)' }
-          },
-          {
-            data: trend,
-            borderColor: '#bbb',
-            borderWidth: 1.5,
-            borderDash: [6, 4],
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            tension: 0,
-            fill: false
-          }
-        ]
-      },
-      options: { scales: scales() }
-    });
-  })();
-
-  // --- 2. Review Rounds ---
+  // --- 1. Review Rounds ---
   (function() {
     var data = prs.map(function(p) { return p.reviewRounds; });
     var colors = data.map(function(_, i) { return i >= data.length - 3 ? BLUE : '#d4d3cf'; });
@@ -731,126 +608,7 @@ function renderDashboard() {
     });
   })();
 
-  // --- 3. Comment Categories (Small Multiples Grid) ---
-  (function() {
-    var cats = [
-      { key: 'correctness', name: 'Correctness', color: '#E65100' },
-      { key: 'security', name: 'Security', color: '#C53030' },
-      { key: 'architecture', name: 'Architecture', color: '#B45309' },
-      { key: 'style', name: 'Style', color: '#0E7490' },
-      { key: 'testing', name: 'Testing', color: '#2563EB' },
-      { key: 'performance', name: 'Performance', color: '#6D28D9' },
-      { key: 'documentation', name: 'Docs', color: '#047857' },
-      { key: 'other', name: 'Other', color: '#999' }
-    ];
-
-    var grid = document.getElementById('categoriesGrid');
-
-    cats.forEach(function(cat) {
-      var data = prs.map(function(p) { return p.commentCategories[cat.key] || 0; });
-      var current = data[data.length - 1];
-      var peak = Math.max.apply(null, data);
-      var trendDir = current < data[0] ? 'from ' + data[0] : current > data[0] ? 'from ' + data[0] : 'stable';
-
-      var cell = document.createElement('div');
-      cell.className = 'category-cell';
-
-      var canvas = document.createElement('canvas');
-
-      cell.innerHTML =
-        '<div class="cat-header">' +
-          '<span class="cat-name">' + cat.name + '</span>' +
-          '<span class="cat-value" style="color:' + cat.color + '">' + current + '</span>' +
-        '</div>' +
-        '<div class="cat-trend">' + trendDir + ' &middot; peak ' + peak + '</div>' +
-        '<div class="cat-spark-wrap"></div>';
-
-      cell.querySelector('.cat-spark-wrap').appendChild(canvas);
-      grid.appendChild(cell);
-
-      new Chart(canvas, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: data,
-            borderColor: cat.color,
-            borderWidth: 1.5,
-            pointRadius: 0,
-            pointHoverRadius: Math.max(hoverRadius - 2, 4),
-            pointBackgroundColor: cat.color,
-            tension: 0.3,
-            fill: { target: 'origin', above: cat.color + '18' }
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                title: function(items) { return items[0].label; },
-                label: function(item) { return cat.name + ': ' + item.raw; }
-              }
-            }
-          },
-          scales: {
-            x: { display: false },
-            y: { display: false, beginAtZero: true }
-          }
-        }
-      });
-    });
-  })();
-
-  // --- 4. Adversarial Catch Rate ---
-  (function() {
-    var data = prs.map(function(p) { return +(p.adversarialCatchRate * 100).toFixed(1); });
-    var threshold = prs.map(function() { return 80; });
-
-    new Chart(document.getElementById('catchRateChart'), {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            data: data,
-            borderColor: BLUE,
-            borderWidth: 2,
-            pointBackgroundColor: '#F8F7F4',
-            pointBorderColor: BLUE,
-            pointBorderWidth: 2,
-            pointRadius: pointRadius,
-            pointHoverRadius: hoverRadius,
-            tension: 0.25,
-            fill: { target: 'origin', above: 'rgba(37, 99, 235, 0.06)' }
-          },
-          {
-            data: threshold,
-            borderColor: RED_MUTED,
-            borderWidth: 1.5,
-            borderDash: [6, 4],
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            fill: false
-          }
-        ]
-      },
-      options: {
-        scales: scales({ yMax: 100, yTicks: { callback: function(v) { return v + '%'; } } }),
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: function(item) { return item.datasetIndex === 1 ? 'Target: 80%' : item.raw + '%'; }
-            }
-          }
-        }
-      }
-    });
-  })();
-
-  // --- 5. Time to Merge ---
+  // --- 2. Time to Merge ---
   (function() {
     var data = prs.map(function(p) { return p.timeToMergeHours; });
     var target = prs.map(function() { return 24; });
@@ -896,73 +654,14 @@ function renderDashboard() {
     });
   })();
 
-  // --- 6. Fix-up Ratio ---
-  (function() {
-    var fixupData = prs.map(function(p) { return p.fixupCommitRatio; });
-    var validIndices = [];
-    var validData = [];
-    var validLabels = [];
-    fixupData.forEach(function(v, i) {
-      if (v != null) {
-        validIndices.push(i);
-        validData.push(+(v * 100).toFixed(1));
-        validLabels.push(labels[i]);
-      }
-    });
-
-    if (validData.length === 0) return;
-
-    var threshold = validData.map(function() { return 50; });
-
-    new Chart(document.getElementById('fixupChart'), {
-      type: 'line',
-      data: {
-        labels: validLabels,
-        datasets: [
-          {
-            data: validData,
-            borderColor: BLUE,
-            borderWidth: 2,
-            pointBackgroundColor: '#F8F7F4',
-            pointBorderColor: BLUE,
-            pointBorderWidth: 2,
-            pointRadius: pointRadius,
-            pointHoverRadius: hoverRadius,
-            tension: 0.25,
-            fill: { target: 'origin', above: 'rgba(37, 99, 235, 0.06)' }
-          },
-          {
-            data: threshold,
-            borderColor: RED_MUTED,
-            borderWidth: 1.5,
-            borderDash: [6, 4],
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            fill: false
-          }
-        ]
-      },
-      options: {
-        scales: scales({ yMax: 100, yTicks: { callback: function(v) { return v + '%'; } } }),
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: function(item) { return item.datasetIndex === 1 ? 'Threshold: 50%' : item.raw + '%'; }
-            }
-          }
-        }
-      }
-    });
-  })();
-
-  // --- 7. Scorecard Table ---
+  // --- 3. Scorecard Table ---
   (function() {
     var agg = {};
     prs.forEach(function(pr) {
-      if (!agg[pr.project]) agg[pr.project] = { n: 0, comments: 0, rounds: 0, merge: 0, catches: [], fixup: [], size: 0 };
+      if (!agg[pr.project]) agg[pr.project] = { n: 0, rounds: 0, merge: 0, size: 0 };
       var a = agg[pr.project];
-      a.n++; a.comments += pr.totalComments; a.rounds += pr.reviewRounds;
-      a.merge += pr.timeToMergeHours; a.catches.push(pr.adversarialCatchRate); a.fixup.push(pr.fixupCommitRatio); a.size += pr.prSize;
+      a.n++; a.rounds += pr.reviewRounds;
+      a.merge += pr.timeToMergeHours; a.size += pr.prSize;
     });
 
     // Build ordered project list from data (preserving discovery order, deduped)
@@ -979,17 +678,13 @@ function renderDashboard() {
     projectOrder.forEach(function(name) {
       var a = agg[name];
       if (!a) return;
-      var latestCatch = a.catches[a.catches.length - 1];
       var color = PROJECT_COLORS[name] || '#888';
       var tr = document.createElement('tr');
       tr.innerHTML =
         '<td class="project-name"><span class="dot" style="background:' + color + '"></span>' + name + '</td>' +
         '<td class="r">' + a.n + '</td>' +
-        '<td class="r">' + (a.comments / a.n).toFixed(1) + '</td>' +
         '<td class="r">' + (a.rounds / a.n).toFixed(1) + '</td>' +
-        '<td class="r">' + (a.merge / a.n).toFixed(0) + 'h</td>' +
-        '<td class="r">' + Math.round(latestCatch * 100) + '%</td>' +
-        '<td class="r">' + Math.round(avg(a.fixup.filter(function(v) { return v != null; })) * 100) + '%</td>';
+        '<td class="r">' + (a.merge / a.n).toFixed(0) + 'h</td>';
       tbody.appendChild(tr);
     });
   })();
