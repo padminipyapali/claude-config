@@ -124,7 +124,9 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **JSON.parse on external config.** `JSON.parse()` on env vars or external config must be in try/catch with a descriptive error (e.g., "Invalid JSON in GOOGLE_SERVICE_ACCOUNT_KEY").
 - [ ] **Off-by-one in time boundaries.** When querying events/records for a date range, use start-of-next-day as exclusive upper bound (`< nextDay T00:00:00`), not `<= T23:59:59` which misses the final second.
 - [ ] **Filter external API data before mapping.** External APIs can return malformed entries (missing fields, null values). Use `.filter()` to skip invalid entries before `.map()`, rather than producing `NaN`/`Invalid Date` downstream.
-- [ ] **UTC suffix in test Date strings.** `new Date("2026-02-14T10:00:00")` parses in server-local timezone, making tests flaky on CI. Always append `Z` for UTC: `new Date("2026-02-14T10:00:00Z")`.
+- [ ] **UTC suffix in test Date strings.** `new Date("2026-02-14T10:00:00")` parses in server-local timezone, making tests flaky on CI. Always append `Z` for UTC: `new Date("2026-02-14T10:00:00Z")`. **Enforcement:** grep for `/new Date\("[^"]*T\d{2}:\d{2}:\d{2}"\)/` — any match missing `Z` before the closing quote is a bug.
+- [ ] **String truncation arithmetic.** When slicing a string to fit a max length and appending a suffix, verify `slice_length + suffix_length <= limit`. Pattern: `str.slice(0, limit - suffix.length) + suffix`. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
+- [ ] **Compound text decoration.** When a format helper returns decorated text (e.g., parentheses, brackets), check all call sites — callers adding their own decoration can compound: `((all day))`. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 
 ---
 

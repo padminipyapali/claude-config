@@ -1,1 +1,1 @@
-{"version": 2, "prs": []}
+{"version": 2, "prs": [{"project": "second-brain", "prNumber": 131, "title": "Add /calendar command for weekly calendar view", "dateMerged": "2026-02-16T23:57:25Z", "reviewRounds": 2, "totalComments": 6, "commentCategories": {"security": 0, "correctness": 3, "architecture": 0, "style": 1, "performance": 0, "testing": 1, "documentation": 0, "other": 1}, "adversarialCatchRate": 0.6, "fixupCommitRatio": 0.75, "timeToMergeHours": 0.54, "planningQuality": "complete", "prSize": 638}]}
