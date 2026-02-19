@@ -33,9 +33,9 @@
 
 ## Adversarial Review Effectiveness
 
-- **Pre-push catch potential:** 50%
-- **Covered but missed:** sinceDate UTC normalization — date/timezone checks exist in Tier 3 but the specific "normalize date ranges to midnight" pattern wasn't part of the mechanical grep. The adversarial review should have caught this given the UTC section exists.
-- **Covered and deferred:** IVelocityService interface — the local adversarial review identified "interface-first" as applicable but deferred it as "scope creep." CodeRabbit then flagged it. Deferral was reasonable but the interface is small enough to include.
+- **Pre-push catch potential:** 0% (for the 1 actual correctness bug)
+- **Not covered (and that's fine):** sinceDate UTC normalization — existing Tier 3 date checks cover different bugs (string parsing without `Z`, query boundary off-by-one). This pattern (date arithmetic preserving time-of-day when day-level bucketing is intended) is too specific for a checklist item. Captured in `typescript-patterns.md` knowledge base instead.
+- **Covered and deferred:** IVelocityService interface — the local adversarial review identified "interface-first" as applicable but deferred it as "scope creep." CodeRabbit then flagged it. Not a bug class — architecture suggestion.
 - **Not covered:** GraphQL query documentation — documentation requests aren't a bug class and don't belong in the adversarial checklist.
 - **Fix commits:** 4 of 5 total (80% fix-up ratio). 2 are marker updates, 2 are substantive fixes.
 
@@ -53,7 +53,7 @@
 
 ## Process Efficiency
 
-- **Automation opportunities:** None identified. The UTC normalization bug is too context-specific for a generic linter. The adversarial checklist now covers it.
+- **Automation opportunities:** None identified. The UTC normalization bug is too context-specific for either a linter or an adversarial checklist item. The knowledge base entry is the right capture mechanism.
 - **Iteration:** Normal (2 rounds, both from CodeRabbit bot, all fixed within 28 min)
 - **CI status:** All passed (Vercel SUCCESS)
 
