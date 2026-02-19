@@ -19,7 +19,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 63
@@ -42,7 +42,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 11.8,
       "planningQuality": "complete",
       "prSize": 4084
@@ -50,7 +50,7 @@
     {
       "project": "second-brain",
       "prNumber": 3,
-      "title": "Phase 1: Core pipeline \u2014 classify, embed, store, respond",
+      "title": "Phase 1: Core pipeline — classify, embed, store, respond",
       "dateMerged": "2026-02-08T06:36:18Z",
       "reviewRounds": 2,
       "totalComments": 0,
@@ -65,7 +65,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.6,
       "planningQuality": "complete",
       "prSize": 1081
@@ -88,7 +88,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 1.1,
       "planningQuality": "complete",
       "prSize": 677
@@ -111,7 +111,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.4,
       "planningQuality": "complete",
       "prSize": 722
@@ -134,7 +134,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.7,
       "planningQuality": "complete",
       "prSize": 737
@@ -157,7 +157,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 15.5,
       "planningQuality": "complete",
       "prSize": 1015
@@ -180,7 +180,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 295
@@ -203,7 +203,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 393
@@ -226,7 +226,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 518
@@ -249,7 +249,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 217
@@ -272,7 +272,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 4.3,
       "planningQuality": "complete",
       "prSize": 537
@@ -295,7 +295,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 72
@@ -318,7 +318,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.8,
       "planningQuality": "complete",
       "prSize": 594
@@ -341,7 +341,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.2,
       "planningQuality": "complete",
       "prSize": 154
@@ -364,7 +364,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 73
@@ -387,7 +387,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 124
@@ -410,7 +410,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.6,
       "planningQuality": "complete",
       "prSize": 1400
@@ -433,7 +433,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 118
@@ -456,7 +456,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 331
@@ -479,7 +479,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.6,
       "planningQuality": "complete",
       "prSize": 1394
@@ -502,7 +502,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 224
@@ -525,7 +525,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 880
@@ -548,7 +548,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 12.4,
       "planningQuality": "complete",
       "prSize": 185
@@ -571,7 +571,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 12.9,
       "planningQuality": "complete",
       "prSize": 326
@@ -594,7 +594,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 670
@@ -617,7 +617,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.6,
       "planningQuality": "complete",
       "prSize": 381
@@ -640,7 +640,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 6.6,
       "planningQuality": "complete",
       "prSize": 981
@@ -663,7 +663,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 43
@@ -686,7 +686,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 362
@@ -709,8 +709,8 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
-      "timeToMergeHours": 0.0,
+      "fixupCommitRatio": 0,
+      "timeToMergeHours": 0,
       "planningQuality": "complete",
       "prSize": 4
     },
@@ -732,7 +732,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 11.5,
       "planningQuality": "complete",
       "prSize": 513
@@ -755,7 +755,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 1.6,
       "planningQuality": "complete",
       "prSize": 18
@@ -778,7 +778,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.7,
       "planningQuality": "complete",
       "prSize": 397
@@ -801,7 +801,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 41
@@ -824,8 +824,8 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
-      "timeToMergeHours": 0.0,
+      "fixupCommitRatio": 0,
+      "timeToMergeHours": 0,
       "planningQuality": "complete",
       "prSize": 12
     },
@@ -847,7 +847,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 302
@@ -870,7 +870,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 817
@@ -893,8 +893,8 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
-      "timeToMergeHours": 0.0,
+      "fixupCommitRatio": 0,
+      "timeToMergeHours": 0,
       "planningQuality": "complete",
       "prSize": 24
     },
@@ -916,7 +916,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 142
@@ -939,7 +939,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 2.3,
       "planningQuality": "complete",
       "prSize": 37
@@ -962,7 +962,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 20
@@ -985,7 +985,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 213
@@ -1008,7 +1008,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 43
@@ -1031,7 +1031,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.2,
       "planningQuality": "complete",
       "prSize": 918
@@ -1054,7 +1054,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.7,
       "planningQuality": "complete",
       "prSize": 761
@@ -1077,7 +1077,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.2,
       "planningQuality": "complete",
       "prSize": 145
@@ -1100,7 +1100,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.7,
       "planningQuality": "complete",
       "prSize": 1670
@@ -1123,7 +1123,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 7
@@ -1146,7 +1146,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 33
@@ -1169,7 +1169,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "minimal",
       "prSize": 1
@@ -1192,7 +1192,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 7
@@ -1215,7 +1215,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 10.1,
       "planningQuality": "complete",
       "prSize": 86
@@ -1238,7 +1238,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 75
@@ -1261,8 +1261,8 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
-      "timeToMergeHours": 0.0,
+      "fixupCommitRatio": 0,
+      "timeToMergeHours": 0,
       "planningQuality": "complete",
       "prSize": 4
     },
@@ -1284,7 +1284,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.7,
       "planningQuality": "complete",
       "prSize": 1046
@@ -1307,7 +1307,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 1981
@@ -1330,7 +1330,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 7
@@ -1376,7 +1376,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.4,
       "planningQuality": "complete",
       "prSize": 106
@@ -1399,7 +1399,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 76
@@ -1422,7 +1422,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 4.7,
       "planningQuality": "complete",
       "prSize": 52
@@ -1445,7 +1445,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 1.5,
       "planningQuality": "complete",
       "prSize": 958
@@ -1468,7 +1468,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 1.5,
       "planningQuality": "complete",
       "prSize": 1154
@@ -1491,7 +1491,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.2,
       "planningQuality": "complete",
       "prSize": 26
@@ -1514,7 +1514,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 3.7,
       "planningQuality": "complete",
       "prSize": 1319
@@ -1537,7 +1537,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 2.8,
       "planningQuality": "complete",
       "prSize": 537
@@ -1560,7 +1560,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.2,
       "planningQuality": "complete",
       "prSize": 612
@@ -1583,7 +1583,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.7,
       "planningQuality": "complete",
       "prSize": 1865
@@ -1606,7 +1606,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 56
@@ -1629,7 +1629,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 13
@@ -1652,7 +1652,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 48
@@ -1675,7 +1675,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.8,
       "planningQuality": "complete",
       "prSize": 959
@@ -1744,7 +1744,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.2,
       "planningQuality": "complete",
       "prSize": 421
@@ -1767,7 +1767,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 49
@@ -1836,7 +1836,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 57
@@ -1951,7 +1951,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.8,
       "planningQuality": "complete",
       "prSize": 602
@@ -2020,8 +2020,8 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
-      "timeToMergeHours": 0.0,
+      "fixupCommitRatio": 0,
+      "timeToMergeHours": 0,
       "planningQuality": "complete",
       "prSize": 2
     },
@@ -2043,8 +2043,8 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
-      "timeToMergeHours": 6.0,
+      "fixupCommitRatio": 0,
+      "timeToMergeHours": 6,
       "planningQuality": "complete",
       "prSize": 1362
     },
@@ -2066,7 +2066,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 338
@@ -2089,7 +2089,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 363
@@ -2112,7 +2112,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.5,
       "planningQuality": "complete",
       "prSize": 19
@@ -2135,8 +2135,8 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
-      "timeToMergeHours": 0.0,
+      "fixupCommitRatio": 0,
+      "timeToMergeHours": 0,
       "planningQuality": "complete",
       "prSize": 24
     },
@@ -2158,7 +2158,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 30
@@ -2181,7 +2181,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 271
@@ -2250,7 +2250,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.2,
       "planningQuality": "complete",
       "prSize": 289
@@ -2296,7 +2296,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 1.5,
       "planningQuality": "complete",
       "prSize": 178
@@ -2342,7 +2342,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 13
@@ -2365,7 +2365,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.2,
       "planningQuality": "complete",
       "prSize": 48
@@ -2388,7 +2388,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 77
@@ -2411,7 +2411,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.2,
       "planningQuality": "complete",
       "prSize": 31
@@ -2434,7 +2434,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.6,
       "planningQuality": "complete",
       "prSize": 710
@@ -2457,7 +2457,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 14
@@ -2480,7 +2480,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.5,
       "planningQuality": "complete",
       "prSize": 357
@@ -2503,7 +2503,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.6,
       "planningQuality": "complete",
       "prSize": 199
@@ -2526,7 +2526,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 165
@@ -2549,7 +2549,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 170
@@ -2572,7 +2572,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 22
@@ -2595,7 +2595,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 87
@@ -2618,7 +2618,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 72
@@ -2641,7 +2641,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 143
@@ -2664,7 +2664,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.2,
       "planningQuality": "complete",
       "prSize": 126
@@ -2687,7 +2687,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 191
@@ -2710,7 +2710,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.5,
       "planningQuality": "complete",
       "prSize": 638
@@ -2733,7 +2733,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 174
@@ -2755,8 +2755,8 @@
         "documentation": 0,
         "other": 1
       },
-      "adversarialCatchRate": 1.0,
-      "fixupCommitRatio": 0.0,
+      "adversarialCatchRate": 1,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 137
@@ -2778,8 +2778,8 @@
         "documentation": 0,
         "other": 0
       },
-      "adversarialCatchRate": 0.0,
-      "fixupCommitRatio": 0.0,
+      "adversarialCatchRate": 0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.3,
       "planningQuality": "complete",
       "prSize": 84
@@ -2802,7 +2802,7 @@
         "other": 0
       },
       "adversarialCatchRate": 0.5,
-      "fixupCommitRatio": 0.0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.2,
       "planningQuality": "complete",
       "prSize": 15
@@ -2831,7 +2831,7 @@
         "adversarialFindings": 0,
         "adversarialFixed": 0
       },
-      "adversarialCatchRate": 0.0,
+      "adversarialCatchRate": 0,
       "fixupCommitRatio": 0.5,
       "timeToMergeHours": 2.25,
       "planningQuality": "complete",
@@ -2891,8 +2891,8 @@
         "adversarialFindings": 7,
         "adversarialFixed": 2
       },
-      "adversarialCatchRate": 1.0,
-      "fixupCommitRatio": 0.0,
+      "adversarialCatchRate": 1,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.1,
       "planningQuality": "complete",
       "prSize": 654
@@ -2921,7 +2921,7 @@
         "adversarialFindings": 3,
         "adversarialFixed": 3
       },
-      "adversarialCatchRate": 0.0,
+      "adversarialCatchRate": 0,
       "fixupCommitRatio": 0.75,
       "timeToMergeHours": 0.35,
       "planningQuality": "complete",
@@ -2951,8 +2951,8 @@
         "adversarialFindings": 1,
         "adversarialFixed": 1
       },
-      "adversarialCatchRate": 0.0,
-      "fixupCommitRatio": 0.0,
+      "adversarialCatchRate": 0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.12,
       "planningQuality": "complete",
       "prSize": 44
@@ -2981,8 +2981,8 @@
         "adversarialFindings": 0,
         "adversarialFixed": 0
       },
-      "adversarialCatchRate": 1.0,
-      "fixupCommitRatio": 0.0,
+      "adversarialCatchRate": 1,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.04,
       "planningQuality": "partial",
       "prSize": 20
@@ -3041,7 +3041,7 @@
         "adversarialFindings": null,
         "adversarialFixed": null
       },
-      "adversarialCatchRate": 0.0,
+      "adversarialCatchRate": 0,
       "fixupCommitRatio": 0.25,
       "timeToMergeHours": 0.17,
       "planningQuality": "complete",
@@ -3071,14 +3071,24 @@
         "adversarialFindings": null,
         "adversarialFixed": null
       },
-      "adversarialCatchRate": 0.0,
-      "fixupCommitRatio": 0.0,
+      "adversarialCatchRate": 0,
+      "fixupCommitRatio": 0,
       "timeToMergeHours": 0.02,
       "planningQuality": "partial",
       "prSize": 6,
       "stepCompliance": {
-        "stepsRun": ["2", "5"],
-        "stepsSkipped": ["1", "3", "4a", "4b", "4c", "4d"],
+        "stepsRun": [
+          "2",
+          "5"
+        ],
+        "stepsSkipped": [
+          "1",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
         "skipReasons": "minimal change — all quality gates skipped",
         "complianceRate": 0.25,
         "skipAssessment": "neutral"
@@ -3114,11 +3124,68 @@
       "planningQuality": "partial",
       "prSize": 142,
       "stepCompliance": {
-        "stepsRun": ["1", "2", "3", "4a", "4b", "4c", "4d", "5"],
-        "stepsSkipped": ["1c"],
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "1c"
+        ],
         "skipReasons": "1c (adversarial plan review): straightforward formatting change",
         "complianceRate": 0.875,
         "skipAssessment": "good"
+      }
+    },
+    {
+      "project": "command-center",
+      "prNumber": 21,
+      "title": "Add velocity dashboard to Activity view",
+      "dateMerged": "2026-02-19T12:56:01Z",
+      "reviewRounds": 2,
+      "totalComments": 3,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 1,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 1,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 6,
+        "coderabbitFixed": 4,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 9,
+        "adversarialFixed": 3
+      },
+      "adversarialCatchRate": 0.5,
+      "fixupCommitRatio": 0.8,
+      "timeToMergeHours": 0.46,
+      "planningQuality": "complete",
+      "prSize": 1073,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1,
+        "skipAssessment": null
       }
     }
   ]
