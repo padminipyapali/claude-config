@@ -1,11 +1,11 @@
 #!/bin/bash
-# pump-sessions — Track coding productivity across repos by session.
+# sessions — Track coding productivity across repos by session.
 #
 # Groups git commits + manual notes into sessions based on time gaps.
 # A new session starts after 60+ minutes of inactivity.
 #
 # Usage:
-#   pump-sessions [options] [lookback]
+#   sessions [options] [lookback]
 #
 # Options:
 #   --html [file]     Generate HTML report (default: ~/Desktop/sessions-report.html)
@@ -63,7 +63,7 @@ SINCE_TS=$(date -v-${HOURS}H +%s 2>/dev/null || date -d "$SINCE" +%s)
 # === Note logging mode ===
 if [ "$MODE" = "note" ]; then
   if [ -z "$NOTE_TEXT" ]; then
-    echo "Usage: pump-sessions --note \"your note here\""
+    echo "Usage: sessions --note \"your note here\""
     exit 1
   fi
   TS=$(date +%s)
@@ -166,7 +166,7 @@ if [ ! -s "$ALL_ENTRIES" ]; then
   if [ "$OUTPUT_FORMAT" = "text" ]; then
     echo ""
     echo "  No activity found in the last ${HOURS}h."
-    echo "  Log a note: pump-sessions --note \"what you're working on\""
+    echo "  Log a note: sessions --note \"what you're working on\""
     echo ""
   fi
   exit 0

@@ -82,7 +82,7 @@ All 8 steps run (1, 2, 3, 4a, 4b, 4c, 4d, 5). Compliance rate: 100%.
 Skip assessment: n/a (no steps skipped).
 
 ## Process Efficiency
-- **Iteration:** 2 rounds = normal. Consistent with expectation for large cross-cutting PRs.
+- **Iteration:** 4 rounds total (1 local pre-push + 3 GitHub: 2 CHANGES_REQUESTED + 1 COMMENTED). Consistent with expectation for large cross-cutting PRs.
 - **Self-merge:** Yes, self-merged after addressing both rounds of CodeRabbit findings.
 - **Automation opportunities:** The two new checklist items (mock target verification, full shape assertions) could potentially be enforced via custom ESLint rules that check vitest mock targets against imports, but complexity likely exceeds value. Manual checklist enforcement is appropriate.
 
