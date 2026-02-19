@@ -50,7 +50,7 @@
     {
       "project": "second-brain",
       "prNumber": 3,
-      "title": "Phase 1: Core pipeline — classify, embed, store, respond",
+      "title": "Phase 1: Core pipeline \u2014 classify, embed, store, respond",
       "dateMerged": "2026-02-08T06:36:18Z",
       "reviewRounds": 2,
       "totalComments": 0,
@@ -3089,7 +3089,7 @@
           "4c",
           "4d"
         ],
-        "skipReasons": "minimal change — all quality gates skipped",
+        "skipReasons": "minimal change \u2014 all quality gates skipped",
         "complianceRate": 0.25,
         "skipAssessment": "neutral"
       }
@@ -3185,6 +3185,52 @@
         "stepsSkipped": [],
         "skipReasons": "",
         "complianceRate": 1,
+        "skipAssessment": null
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 157,
+      "title": "Optimize dashboard feed loading with lightweight endpoint and skeleton UI",
+      "dateMerged": "2026-02-19T12:58:37Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 2,
+        "coderabbitFixed": 2,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 3,
+        "adversarialFixed": 3
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.05,
+      "planningQuality": "complete",
+      "prSize": 587,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
         "skipAssessment": null
       }
     }
