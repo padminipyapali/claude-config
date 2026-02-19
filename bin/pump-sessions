@@ -32,7 +32,7 @@ REPOS=(
 
 # === Argument parsing ===
 OUTPUT_FORMAT="text"
-HTML_FILE="$HOME/Desktop/sessions-report.html"
+HTML_FILE="$HOME/.claude/reports/sessions-report.html"
 NOTE_TEXT=""
 MODE="report"
 LOOKBACK=""
@@ -86,7 +86,7 @@ touch "$ALL_ENTRIES"
 
 # Helper: JSON-escape a string (outputs quoted string)
 json_str() {
-  python3 -c "import sys,json; sys.stdout.write(json.dumps(sys.stdin.read()))" <<< "$1"
+  printf '%s' "$1" | python3 -c "import sys,json; sys.stdout.write(json.dumps(sys.stdin.read()))"
 }
 
 # === Step 1: Collect git commits ===
@@ -203,8 +203,9 @@ for s in $SESSION_NUMS; do
   SESSION_DATA="$TMPDIR_WORK/session_${s}"
   grep "^${s}|" "$SESSIONS_FILE" > "$SESSION_DATA"
 
+  # SESSION_DATA format: session|timestamp|type|repo|hash|subject
   # Process commits (need diff stats)
-  COMMIT_REPOS=$(awk -F'|' -v s="$s" '$2 == "commit" {print $4}' "$SESSION_DATA" | sort -u)
+  COMMIT_REPOS=$(awk -F'|' '$3 == "commit" {print $4}' "$SESSION_DATA" | sort -u)
   for repo_name in $COMMIT_REPOS; do
     repo_path=""
     for entry in "${REPOS[@]}"; do
@@ -212,7 +213,7 @@ for s in $SESSION_NUMS; do
     done
     [ -z "$repo_path" ] && continue
 
-    REPO_HASHES=$(awk -F'|' -v s="$s" -v r="$repo_name" '$2=="commit" && $4==r {print $5}' "$SESSION_DATA")
+    REPO_HASHES=$(awk -F'|' -v r="$repo_name" '$3=="commit" && $4==r {print $5}' "$SESSION_DATA")
     while IFS= read -r hash; do
       STATS=$(git -C "$repo_path" show --shortstat --format="" "$hash" 2>/dev/null || echo "")
       A=$(echo "$STATS" | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+' || true)
@@ -224,10 +225,10 @@ for s in $SESSION_NUMS; do
   done
 
   # Process notes (no stats needed)
-  awk -F'|' '$2 == "note" {print $1 "|note|" $2 "|__note__|" $5 "|" $6 "|0|0"}' "$SESSION_DATA" >> "$ENRICHED"
+  awk -F'|' '$3 == "note" {print $1 "|note|" $2 "|__note__|" $5 "|" $6 "|0|0"}' "$SESSION_DATA" >> "$ENRICHED"
 
   # Process PR events (no stats needed)
-  awk -F'|' '$2 == "pr" || $2 == "pr-merge" || $2 == "comment" {print $1 "|" $3 "|" $2 "|" $4 "|" $5 "|" $6 "|0|0"}' "$SESSION_DATA" >> "$ENRICHED"
+  awk -F'|' '$3 == "pr" || $3 == "pr-merge" || $3 == "comment" {print $1 "|" $3 "|" $2 "|" $4 "|" $5 "|" $6 "|0|0"}' "$SESSION_DATA" >> "$ENRICHED"
 done
 
 # Enriched format: session|type|timestamp|repo|hash|subject|added|removed

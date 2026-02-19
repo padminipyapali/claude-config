@@ -58,6 +58,11 @@ Cross-project learnings for service design, error handling, and system architect
 
 - **State update BEFORE side effect for at-most-once delivery.** In schedulers that deliver notifications, update persistent state (e.g., `lastSentDate`) BEFORE the side effect (sending the message). If the server crashes after marking but before delivery, the user misses one notification rather than getting duplicates on every restart. At-most-once > at-least-once-with-spam for non-critical notifications. <!-- Source: BUG-T017, second-brain -->
 
+## Shell & Data Pipeline Pitfalls
+
+- **Off-by-one field indexes when prepending columns in awk pipelines.** When an awk script prepends a new field (e.g., `print session "|" $0`), all downstream awk commands that reference the original fields must shift their indexes by +1. If the original line had `timestamp|type|repo` as `$1|$2|$3`, after prepending session it becomes `session|timestamp|type|repo` = `$1|$2|$3|$4`. Missing this shift causes type-checking conditions (like `$2 == "commit"`) to compare against the wrong field (timestamp instead of type), silently producing zero matches and empty output. **Mitigation:** Comment the field layout at the top of each pipeline stage (`# Format: session|timestamp|type|repo|hash|subject`), and grep-verify one record before building the full pipeline. <!-- Source: pump-sessions off-by-one bug, 2026-02-19 -->
+- **`<<<` (here-string) appends a trailing newline.** In bash, `func <<< "$var"` feeds `$var` plus `\n` to stdin. If the function encodes stdin verbatim (e.g., `json.dumps(sys.stdin.read())`), the output includes the newline as data. Use `printf '%s' "$var" | func` instead to avoid the invisible trailing newline. This is especially insidious with JSON encoding — `json.dumps("hello\n")` produces `"hello\n"` which looks correct until it breaks downstream parsing. <!-- Source: pump-sessions json_str bug, 2026-02-19 -->
+
 ## Debugging Process
 
 - **For race conditions: list observable states.** Write out the state tuple at each step and check which intermediate states trigger effects.

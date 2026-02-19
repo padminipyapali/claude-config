@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session Tracker</title>
+<style>
+  :root {
+    --bg: #060608;
+    --surface: #111114;
+    --surface-2: #18181c;
+    --surface-hover: #1e1e24;
+    --border: #222228;
+    --border-subtle: #1a1a1f;
+    --text: #e8e8ed;
+    --text-dim: #8888a0;
+    --text-muted: #555566;
+    --accent: #b4a0ff;
+    --second-brain: #818cf8;
+    --lexica: #22d3ee;
+    --command-center: #fbbf24;
+    --nanny-app: #34d399;
+    --claude-test: #a78bfa;
+    --note-color: #e0b0ff;
+    --pr-color: #f0883e;
+    --added: #3fb950;
+    --removed: #f85149;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
+    padding: 2rem 2.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+  }
+  .header .date-range {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  /* Stats */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1rem;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+  }
+  .stat-label {
+    color: var(--text-muted);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.15rem;
+  }
+
+  /* Sections */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .toggle-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.65rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+  }
+  .toggle-btn:hover { border-color: var(--text-muted); color: var(--text); }
+
+  /* Chart */
+  .chart-container { position: relative; }
+  .chart-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    height: 20px;
+  }
+  .chart-row.hidden { display: none; }
+  .chart-label {
+    width: 2.5rem;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-align: right;
+    margin-right: 0.6rem;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+  }
+  .chart-bar-track {
+    flex: 1;
+    height: 16px;
+    display: flex;
+    border-radius: 3px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .chart-bar-track:hover { opacity: 0.8; }
+  .chart-bar-track.note-only {
+    border: 1px dashed var(--note-color);
+    opacity: 0.5;
+    height: 14px;
+    margin: 1px 0;
+  }
+  .chart-bar-segment { height: 100%; min-width: 2px; }
+  .chart-meta {
+    width: 6.5rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-left: 0.6rem;
+    flex-shrink: 0;
+  }
+  .chart-meta span {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .chart-meta .commits-count { color: var(--text-dim); font-weight: 500; }
+
+  .legend {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-subtle);
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+  }
+  .legend-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 2px;
+  }
+
+  /* Table */
+  .table-wrap {
+    overflow-x: auto;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+  thead th {
+    text-align: left;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    z-index: 1;
+  }
+  thead th.r { text-align: right; }
+  tbody td {
+    padding: 0.5rem 0.65rem;
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: middle;
+  }
+  tbody td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody td.mono { font-variant-numeric: tabular-nums; }
+  tbody tr.session-row {
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  tbody tr.session-row:hover { background: var(--surface-hover); }
+  .current-badge {
+    display: inline-block;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    padding: 0 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+    opacity: 0.8;
+  }
+  .repo-pills { display: flex; gap: 3px; flex-wrap: wrap; }
+  .repo-pill {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.6rem;
+    font-weight: 500;
+  }
+  .note-pill {
+    border: 1px dashed var(--note-color);
+    color: var(--note-color);
+    opacity: 0.7;
+  }
+  .pr-pill {
+    border: 1px dashed var(--pr-color);
+    color: var(--pr-color);
+    opacity: 0.7;
+  }
+  .expand-ind {
+    color: var(--text-muted);
+    font-size: 0.6rem;
+    transition: transform 0.15s;
+    display: inline-block;
+    width: 0.8rem;
+  }
+  .expanded .expand-ind { transform: rotate(90deg); }
+
+  .detail-row { display: none; }
+  .detail-row.open { display: table-row; }
+  .detail-row td {
+    padding: 0.6rem 0.65rem 0.8rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+  .detail-section { margin-bottom: 0.6rem; }
+  .detail-section:last-child { margin-bottom: 0; }
+  .detail-section-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
+  }
+  .detail-note {
+    font-size: 0.72rem;
+    color: var(--note-color);
+    padding: 0.2rem 0 0.2rem 0.65rem;
+    border-left: 2px solid var(--note-color);
+    margin: 0.15rem 0;
+    opacity: 0.85;
+    font-style: italic;
+  }
+  .detail-pr {
+    font-size: 0.72rem;
+    color: var(--pr-color);
+    padding: 0.2rem 0 0.2rem 0.65rem;
+    border-left: 2px solid var(--pr-color);
+    margin: 0.15rem 0;
+    opacity: 0.85;
+  }
+  .detail-repo { margin-bottom: 0.5rem; }
+  .detail-repo:last-child { margin-bottom: 0; }
+  .detail-repo-header {
+    font-size: 0.68rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .detail-repo-stats { font-weight: 400; color: var(--text-muted); font-size: 0.65rem; }
+  .detail-msg {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    padding: 0.12rem 0 0.12rem 0.65rem;
+    border-left: 2px solid var(--border);
+    margin: 0.12rem 0;
+  }
+  .c-added { color: var(--added); }
+  .c-removed { color: var(--removed); }
+
+  @media (max-width: 640px) {
+    body { padding: 1rem; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .chart-meta { width: 4.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Session Tracker</h1>
+  <div class="date-range" id="date-range"></div>
+</div>
+<div class="stats" id="stats"></div>
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">Activity per Session</div>
+    <button class="toggle-btn" id="chart-toggle" onclick="toggleChart()">Show all</button>
+  </div>
+  <div class="chart-container" id="chart"></div>
+  <div class="legend" id="legend"></div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">Session Details</div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th></th><th>#</th><th>Date</th><th>Time</th><th>Duration</th>
+        <th>Activity</th><th class="r">Commits</th><th class="r">Lines</th>
+      </tr></thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const SESSIONS = [{"number":1,"date":"Feb 12","start":"8:12 AM","end":"8:15 AM","start_ts":1770912779,"end_ts":1770912937,"duration":2,"current":false,"notes":[],"ghEvents":[{"type":"pr","repo":"lexica","text":"opened PR #3: Add review-fix, fix-bug, and pr-status Claude skills"},{"type":"pr-merge","repo":"lexica","text":"merged PR #3: Add review-fix, fix-bug, and pr-status Claude skills"}],"repos":[{"name":"lexica","commits":5,"added":578,"removed":1,"messages":["Add review-fix, fix-bug, and pr-status Claude skills.","Merge pull request #3 from padminipyapali/chore/add-claude-skills","Merge remote-tracking branch 'origin/main' into feat/eval-word-cards","Merge remote-tracking branch 'origin/main' into fix/token-auto-refresh","Address PR review: logout on retry 401 and refresh rejection."]},{"name":"second-brain","commits":3,"added":305,"removed":16,"messages":["Fix classifier misclassifying day plans as TODOs.","Merge pull request #42 from padminipyapali/fix/classifier-schedule-vs-todo","Deduplicate TODOs in /summary that appear in both Added and Completed."]}]},{"number":2,"date":"Feb 12","start":"9:59 AM","end":"11:54 AM","start_ts":1770919196,"end_ts":1770926079,"duration":114,"current":false,"notes":[],"ghEvents":[{"type":"pr-merge","repo":"lexica","text":"merged PR #1: Fix evaluation attribution and add AI word cards"},{"type":"pr","repo":"nanny-app","text":"opened PR #17: Add pay period PDF export"},{"type":"pr-merge","repo":"lexica","text":"merged PR #2: Fix token auto-refresh for SSE streaming"},{"type":"pr-merge","repo":"nanny-app","text":"merged PR #17: Add pay period PDF export"},{"type":"pr","repo":"nanny-app","text":"opened PR #18: Fix vacation and sick hours not counting toward total hours"}],"repos":[{"name":"lexica","commits":9,"added":1086,"removed":88,"messages":["Address PR review: abort XHR on session change, dedupe word cards, escape XML delimiters.","Address PR review: import MASTERY_STAGES from shared, catch session_words SSE write.","Address PR review: guard refresh token handlers against unmount.","Address PR review: replace as-any cast with MasteryStage type.","Merge pull request #1 from padminipyapali/feat/eval-word-cards","Merge main into fix/token-auto-refresh after PR #1 merge.","Address PR review: add isMountedRef guard to retryXhr.onprogress.","Address PR review: add isMountedRef guards to initial XHR handlers and remove unnecessary async.","Merge pull request #2 from padminipyapali/fix/token-auto-refresh"]},{"name":"nanny-app","commits":4,"added":3412,"removed":18,"messages":["Add pay period PDF export with direct deposit vs Zelle breakdown.","Fix issues found in adversarial review of PDF export.","Merge pull request #17 from padminipyapali/feature/pay-period-pdf-export","Fix vacation and sick hours not counting toward total hours."]},{"name":"second-brain","commits":11,"added":2559,"removed":152,"messages":["Merge pull request #43 from padminipyapali/fix/summary-dedup-todos","Fix /summary dedup: use TODO status instead of ID cross-reference.","Merge pull request #44 from padminipyapali/fix/summary-dedup-todos-v2","Update living docs for PRs #19-#44 and bump to v0.3.0.","Remove dead code, add missing CSS class, fix stale comment and unsafe cast.","Add unit tests for entry.ts and mock-based classifier tests.","Merge pull request #45 from padminipyapali/fix/docs-update","Merge pull request #46 from padminipyapali/fix/code-cleanup","Merge branch 'main' into fix/add-entry-tests","Address PR review: wrap env mutation in try/finally.","Merge pull request #47 from padminipyapali/fix/add-entry-tests"]}]},{"number":3,"date":"Feb 12","start":"1:36 PM","end":"1:36 PM","start_ts":1770932167,"end_ts":1770932168,"duration":1,"current":false,"notes":[],"ghEvents":[{"type":"pr-merge","repo":"nanny-app","text":"merged PR #18: Fix vacation and sick hours not counting toward total hours"}],"repos":[{"name":"nanny-app","commits":1,"added":68,"removed":10,"messages":["Merge pull request #18 from padminipyapali/fix/count-pto-toward-total-hours"]}]},{"number":4,"date":"Feb 12","start":"3:58 PM","end":"5:04 PM","start_ts":1770940681,"end_ts":1770944661,"duration":66,"current":false,"notes":[],"ghEvents":[{"type":"pr","repo":"lexica","text":"opened PR #4: Add ESM exports to shared package and update review-fix skill"},{"type":"comment","repo":"lexica","text":"PR #3: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #42: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"nanny-app","text":"opened PR #19: Improve PDF Hours Summary grid layout to 2 rows"},{"type":"comment","repo":"second-brain","text":"PR #43: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"nanny-app","text":"merged PR #19: Improve PDF Hours Summary grid layout to 2 rows"},{"type":"pr","repo":"lexica","text":"opened PR #5: Fix 4 chat UI bugs from testing session"},{"type":"pr-merge","repo":"lexica","text":"merged PR #4: Add ESM exports to shared package and update review-fix skill"},{"type":"pr-merge","repo":"lexica","text":"merged PR #5: Fix 4 chat UI bugs from testing session"},{"type":"pr","repo":"lexica","text":"opened PR #6: Add AI welcome message and word bank bar"}],"repos":[{"name":"lexica","commits":4,"added":208,"removed":6,"messages":["Add ESM exports to shared package and update review-fix skill with learnings step.","Fix 4 chat UI bugs: evaluation filtering, text truncation, word highlighting, word cards.","Merge pull request #4 from padminipyapali/chore/shared-esm-exports","Merge pull request #5 from padminipyapali/fix/chat-ui-bugs"]},{"name":"nanny-app","commits":4,"added":159,"removed":52,"messages":["Add developer onboarding guide.","Improve PDF Hours Summary grid to use two rows (3+4) instead of three.","Address review: add JSDoc to drawCellRow and simplify color selection.","Merge pull request #19 from padminipyapali/fix/pdf-hours-grid-layout"]},{"name":"second-brain","commits":2,"added":875,"removed":31,"messages":["Add TODO sidebar panel with open/completed tabs (#48)","Add developer onboarding guide with local setup and prod deployment info. (#49)"]}]},{"number":5,"date":"Feb 12","start":"7:51 PM","end":"10:00 PM","start_ts":1770954684,"end_ts":1770962400,"duration":128,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"second-brain","text":"PR #44: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #45: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #46: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #47: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"nanny-app","text":"PR #17: [vc]: #iMC8b5BbXU1Kwc3iQrpPA7+PuqLEvl1CBHU0aksR2YA=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"nanny-app","text":"PR #17: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"lexica","text":"merged PR #6: Add AI welcome message and word bank bar"},{"type":"comment","repo":"nanny-app","text":"PR #18: [vc]: #R4rzQ66lrdeeRD3bTwZmP8r5wpB8wP7BwIMHMksflFc=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"nanny-app","text":"PR #18: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"lexica","text":"opened PR #7: Fix resumed sessions stuck on loading screen"},{"type":"pr","repo":"lexica","text":"opened PR #8: Add planning requirements, testing levels, and feature completeness checklist"},{"type":"pr","repo":"lexica","text":"opened PR #9: Add integration test infrastructure and route-level tests"},{"type":"pr-merge","repo":"lexica","text":"merged PR #7: Fix resumed sessions stuck on loading screen"},{"type":"pr-merge","repo":"lexica","text":"merged PR #8: Add planning requirements, testing levels, and feature completeness checklist"},{"type":"pr","repo":"nanny-app","text":"opened PR #20: Add Dashboard home tab and consolidate navigation"},{"type":"pr-merge","repo":"lexica","text":"merged PR #9: Add integration test infrastructure and route-level tests"},{"type":"pr-merge","repo":"nanny-app","text":"merged PR #20: Add Dashboard home tab and consolidate navigation"},{"type":"pr","repo":"nanny-app","text":"opened PR #21: Fix family owner unable to remove members"},{"type":"pr-merge","repo":"nanny-app","text":"merged PR #21: Fix family owner unable to remove members"},{"type":"pr","repo":"lexica","text":"opened PR #10: Add priority word styling and restart conversation button"},{"type":"pr","repo":"lexica","text":"opened PR #11: Add living document requirements to PR guidelines"},{"type":"pr-merge","repo":"lexica","text":"merged PR #11: Add living document requirements to PR guidelines"}],"repos":[{"name":"lexica","commits":5,"added":1629,"removed":135,"messages":["Add AI welcome message and word bank bar (#6)","Fix resumed sessions stuck on loading screen (#7)","Add planning requirements, testing levels, and feature completeness checklist. (#8)","Add integration test infrastructure and route-level tests for sessions, words, and auth. (#9)","Add living document requirements to PR documentation guidelines. (#11)"]},{"name":"nanny-app","commits":4,"added":1842,"removed":158,"messages":["Add Dashboard home tab and consolidate navigation to 5 tabs.","Merge pull request #20 from padminipyapali/feature/dashboard-home-tab","Fix family owner unable to remove members due to security rules.","Merge pull request #21 from padminipyapali/fix/remove-member-permissions"]},{"name":"second-brain","commits":5,"added":1676,"removed":42,"messages":["Add reply from web dashboard with full pipeline processing (#50)","Fix CORS preflight blocked by auth middleware. (#51)","Move TODOs button to header row and restyle for mobile. (#52)","Remove TODO filter chip since TODOs button covers it. (#53)","Fix mobile reply box accessibility on iOS and Android. (#54)"]}]},{"number":6,"date":"Feb 12","start":"11:59 PM","end":"1:04 AM","start_ts":1770969540,"end_ts":1770973484,"duration":65,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"second-brain","text":"PR #48: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #4: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"nanny-app","text":"PR #19: [vc]: #HkjgMBIxx9GDlm7s4FzFsmaTyhUI0oRvVPDVqIakEVw=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"nanny-app","text":"PR #19: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #49: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #5: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #6: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"}],"repos":[]},{"number":7,"date":"Feb 13","start":"4:02 AM","end":"6:07 AM","start_ts":1770984127,"end_ts":1770991676,"duration":125,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"lexica","text":"PR #7: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #50: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #8: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #9: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"nanny-app","text":"PR #20: [vc]: #3NvjoJK3Z1BbZlIhCDwx09kwB114stiXFeTxjg1o9SE=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"nanny-app","text":"PR #20: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #50: Someone is attempting to deploy this pull request to the **padminipyapali's proj"},{"type":"comment","repo":"nanny-app","text":"PR #21: [vc]: #VnUk+nspPALMZz6yPmoZhoE0jsOTJQgvwKkxyInegiw=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"nanny-app","text":"PR #21: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #10: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #51: Someone is attempting to deploy this pull request to the **padminipyapali's proj"},{"type":"comment","repo":"second-brain","text":"PR #51: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #52: [vc]: #T+NMzB6RxpEyxXHyYJXNsncdJXTIciJ7DM1xGbTsGbE=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #52: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #53: [vc]: #6LhW3RFV5mXMqncD4B0w23rbRMTM47zutIAWOcbRhj8=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #53: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #54: [vc]: #T2cEGfSnlFekF7qGJxO9nKd9WM3SCr3JRuIT25g13dk=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #54: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #11: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #55: [vc]: #YGY2RkIYWtlVMue0p/aLs/M1OQcHDZiuDWDUsnspNoE=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #55: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"}],"repos":[]},{"number":8,"date":"Feb 13","start":"8:06 AM","end":"8:39 AM","start_ts":1770998781,"end_ts":1771000798,"duration":33,"current":false,"notes":[],"ghEvents":[{"type":"pr-merge","repo":"lexica","text":"merged PR #10: Add priority word styling and restart conversation button"},{"type":"pr","repo":"lexica","text":"opened PR #12: Fix unreadable user bubble text in dark mode"},{"type":"pr-merge","repo":"lexica","text":"merged PR #12: Fix unreadable user bubble text in dark mode"}],"repos":[{"name":"lexica","commits":2,"added":224,"removed":58,"messages":["Add priority word styling and restart conversation button (#10)","Fix unreadable user bubble text in dark mode. (#12)"]},{"name":"second-brain","commits":1,"added":80,"removed":6,"messages":["Add thread count badge to entry cards (#55)"]}]},{"number":9,"date":"Feb 13","start":"11:39 AM","end":"11:43 AM","start_ts":1771011567,"end_ts":1771011802,"duration":3,"current":false,"notes":[],"ghEvents":[{"type":"pr","repo":"lexica","text":"opened PR #13: Fix Words tab not syncing updated mastery levels"},{"type":"pr","repo":"lexica","text":"opened PR #14: Fix send button icon invisible in dark mode"},{"type":"pr","repo":"lexica","text":"opened PR #15: Fix word cards missing on session resume"},{"type":"pr-merge","repo":"lexica","text":"merged PR #14: Fix send button icon invisible in dark mode"},{"type":"pr-merge","repo":"lexica","text":"merged PR #13: Fix Words tab not syncing updated mastery levels"}],"repos":[{"name":"lexica","commits":2,"added":18,"removed":3,"messages":["Fix send button icon invisible in dark mode. (#14)","Fix Words tab not syncing updated mastery levels (#13)"]}]},{"number":10,"date":"Feb 13","start":"3:46 PM","end":"4:31 PM","start_ts":1771026367,"end_ts":1771029069,"duration":45,"current":false,"notes":[],"ghEvents":[{"type":"pr-merge","repo":"lexica","text":"merged PR #15: Fix word cards missing on session resume"},{"type":"pr","repo":"lexica","text":"opened PR #16: Add warm fill indicator on word bank pills for correct usage"},{"type":"comment","repo":"lexica","text":"PR #12: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"}],"repos":[{"name":"lexica","commits":1,"added":192,"removed":11,"messages":["Fix word cards missing on session resume (#15)"]},{"name":"second-brain","commits":2,"added":72,"removed":7,"messages":["Fix web reply persistence and mobile keyboard send button (#56)","Hide all TODOs from dashboard feed \u2014 they belong in the TODO panel. (#57)"]}]},{"number":11,"date":"Feb 13","start":"8:19 PM","end":"8:36 PM","start_ts":1771042766,"end_ts":1771043792,"duration":17,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"lexica","text":"PR #13: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #14: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #15: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"lexica","text":"merged PR #16: Add warm fill indicator on word bank pills for correct usage"},{"type":"pr","repo":"lexica","text":"opened PR #17: Replace warm fill with checkmark suffix for used-correctly indicator"}],"repos":[{"name":"lexica","commits":1,"added":40,"removed":9,"messages":["Add warm fill indicator on word bank pills for correct usage (#16)"]}]},{"number":12,"date":"Feb 13","start":"10:13 PM","end":"12:32 AM","start_ts":1771049587,"end_ts":1771057954,"duration":139,"current":false,"notes":[],"ghEvents":[{"type":"pr-merge","repo":"lexica","text":"merged PR #17: Replace warm fill with checkmark suffix for used-correctly indicator"},{"type":"pr","repo":"lexica","text":"opened PR #18: Add The Casual AI personality"},{"type":"pr-merge","repo":"lexica","text":"merged PR #18: Add The Casual AI personality"},{"type":"pr","repo":"lexica","text":"opened PR #19: Fix word cards for words AI didn't actually use (BUG-005)"},{"type":"pr","repo":"lexica","text":"opened PR #20: Add personality selection to chat header"},{"type":"pr","repo":"lexica","text":"opened PR #21: Add long-press to copy message text on chat bubbles"},{"type":"pr-merge","repo":"lexica","text":"merged PR #19: Fix word cards for words AI didn't actually use (BUG-005)"},{"type":"comment","repo":"second-brain","text":"PR #56: [vc]: #RINZ5rk0rOJb5k1SySc60P/qNdoKZhKfBmTB0hdA11Y=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #56: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"lexica","text":"merged PR #20: Add personality selection to chat header"},{"type":"comment","repo":"second-brain","text":"PR #57: [vc]: #Ln+t+R0Kj709aDT1mB2QFogUKbqL2jR/lo82A49fMJU=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #57: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"lexica","text":"merged PR #21: Add long-press to copy message text on chat bubbles"},{"type":"pr","repo":"lexica","text":"opened PR #22: Update adversarial review to use shared knowledge base"},{"type":"comment","repo":"lexica","text":"PR #16: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"lexica","text":"merged PR #22: Update adversarial review to use shared knowledge base"},{"type":"pr","repo":"command-center","text":"opened PR #1: Add adversarial review skill with shared knowledge base"},{"type":"pr","repo":"nanny-app","text":"opened PR #22: Add adversarial review hook and skill with shared knowledge base"},{"type":"pr-merge","repo":"command-center","text":"merged PR #1: Add adversarial review skill with shared knowledge base"},{"type":"pr-merge","repo":"nanny-app","text":"merged PR #22: Add adversarial review hook and skill with shared knowledge base"},{"type":"pr","repo":"command-center","text":"opened PR #2: Add natural language input and task completion alerts"}],"repos":[{"name":"command-center","commits":12,"added":7020,"removed":110,"messages":["Scaffold project with monorepo structure, shared types, and health endpoint.","Add GitHub poller with GraphQL batching and stale-on-error caching.","Add Telegram bot with /status, /prs, and /help commands.","Add agent runner, task queue, and session manager services.","Add /agent, /cancel, /queue commands and wire all services in server.ts.","Fix agent runner: add --verbose flag and strip CLAUDECODE env var.","Add README with setup instructions and architecture overview.","Add command-center to its own project registry.","Add adversarial review skill referencing shared knowledge base.","Add adversarial review skill referencing shared knowledge base. (#1)","Add natural language input and proactive task completion alerts.","Increase Anthropic SDK maxRetries to 3 for intent classifier."]},{"name":"lexica","commits":12,"added":864,"removed":191,"messages":["Replace warm fill with checkmark suffix for used-correctly indicator (#17)","Add The Casual personality for AI conversations. (#18)","Add long-press to copy message text to clipboard on chat bubbles.","Fix word cards appearing for words the AI didn't actually use in its response. (#19)","Add personality selection to chat header (#20)","Add useEffect cleanup to clear copy timer on unmount.","Update adversarial review skill to reference shared knowledge base and add learning capture gate.","Merge branch 'main' into feat/tap-to-copy","Add long-press to copy message text on chat bubbles (#21)","index on feat/tap-to-copy: 8770ad4 Merge branch 'main' into feat/tap-to-copy","WIP on feat/tap-to-copy: 8770ad4 Merge branch 'main' into feat/tap-to-copy","Update adversarial review to use shared knowledge base and add learning capture gate. (#22)"]},{"name":"nanny-app","commits":2,"added":252,"removed":0,"messages":["Add adversarial review hook and skill with shared knowledge base.","Add adversarial review hook and skill with shared knowledge base. (#22)"]},{"name":"second-brain","commits":4,"added":3067,"removed":73,"messages":["Add slip box precursor features: star, related entries, daily review (#58)","Add morning brief with Google Calendar and /brief command (#59)","Update adversarial review to use shared knowledge base (#60)","Fix scheduler restart spam: suppress re-send when hour has passed. (#61)"]}]},{"number":13,"date":"Feb 14","start":"4:36 AM","end":"4:36 AM","start_ts":1771072607,"end_ts":1771072607,"duration":1,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"lexica","text":"PR #17: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"}],"repos":[]},{"number":14,"date":"Feb 14","start":"8:42 AM","end":"8:13 AM","start_ts":1771087325,"end_ts":1771085596,"duration":1,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"second-brain","text":"PR #58: [vc]: #QqguS+PEz2G3MhHvT3TpxSiRxe9KZkfaXcWfghSG24Q=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #58: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #18: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #19: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #20: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #21: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #59: [vc]: #Jcx4Quxjx5EksNCOoeGuO2U4YU4YMH/V/WTYKoHjtfo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #59: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #60: [vc]: #8bxTX5HW4sDyQ823iOWlSSLZfyjDXosTMfdvU+qR9Ro=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #60: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"lexica","text":"PR #22: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"nanny-app","text":"PR #22: [vc]: #+80xpZSgWt5k2Nn5jGM0/OdLvjR4H+L7g/RxfOYzX2Q=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"nanny-app","text":"PR #22: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #61: [vc]: #14jLhSvMuPmsdFIQX+6MLyDv0oFTOxTxyogzf/8w9ko=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #61: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"}],"repos":[{"name":"second-brain","commits":1,"added":64,"removed":12,"messages":["Fix /brief missing calendar events and dashboard formatting. (#62)"]}]},{"number":15,"date":"Feb 14","start":"1:52 PM","end":"1:52 PM","start_ts":1771105943,"end_ts":1771105943,"duration":1,"current":false,"notes":[],"ghEvents":[],"repos":[{"name":"second-brain","commits":1,"added":46,"removed":6,"messages":["Fix duplicate reminder delivery on server restart. (#63)"]}]},{"number":16,"date":"Feb 14","start":"5:17 PM","end":"5:17 PM","start_ts":1771118261,"end_ts":1771118261,"duration":1,"current":false,"notes":[],"ghEvents":[{"type":"pr","repo":"lexica","text":"opened PR #23: Add morphological variation recognition to vocabulary evaluation"},{"type":"comment","repo":"second-brain","text":"PR #62: [vc]: #YaI1MONc0h5OppUkOwd7BwHgusPsZfzAAjrYoXj6UGk=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #62: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"lexica","text":"opened PR #24: Add topic suggestion and nudge escalation, remove personality system"},{"type":"comment","repo":"second-brain","text":"PR #63: [vc]: #fJsyq6YFlZggVAolJhk463RTTbHfprZ1s8/u+r/ogkk=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #63: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"lexica","text":"merged PR #23: Add morphological variation recognition to vocabulary evaluation"}],"repos":[{"name":"lexica","commits":1,"added":515,"removed":14,"messages":["Add morphological variation recognition to vocabulary evaluation pipeline. (#23)"]},{"name":"second-brain","commits":7,"added":4263,"removed":47,"messages":["Add inbox_items data model, InboxService, and shared types.","Add email pipeline, webhook endpoint, and Cloudflare Worker.","Address PR #64 review: add DB triggers and harden pagination.","Address PR #65 review: add env validation, fetch timeout, input hardening.","Merge pull request #64 from padminipyapali/feat/inbox-data-model","Address PR #65 review round 2: error handling, JSDoc, test coverage.","Merge pull request #65 from padminipyapali/feat/email-pipeline"]}]},{"number":17,"date":"Feb 14","start":"9:49 PM","end":"9:54 PM","start_ts":1771134563,"end_ts":1771134899,"duration":5,"current":false,"notes":[],"ghEvents":[{"type":"pr","repo":"lexica","text":"opened PR #25: Add shared knowledge base capture to review-fix skill"},{"type":"pr","repo":"nanny-app","text":"opened PR #23: Add confirmation before marking pay period as unpaid"},{"type":"pr-merge","repo":"nanny-app","text":"merged PR #23: Add confirmation before marking pay period as unpaid"},{"type":"pr-merge","repo":"lexica","text":"merged PR #24: Add topic suggestion and nudge escalation, remove personality system"},{"type":"pr-merge","repo":"lexica","text":"merged PR #25: Add shared knowledge base capture to review-fix skill"},{"type":"pr","repo":"command-center","text":"opened PR #3: Add web dashboard with backend API and React frontend"}],"repos":[{"name":"command-center","commits":3,"added":11601,"removed":54,"messages":["Add web dashboard with backend API and React frontend.","Fix issues from adversarial review.","Trigger CodeRabbit review."]},{"name":"lexica","commits":2,"added":413,"removed":273,"messages":["Add topic suggestion and nudge escalation, remove personality system (#24)","Add shared knowledge base capture to review-fix skill (#25)"]},{"name":"nanny-app","commits":2,"added":12,"removed":0,"messages":["Add confirmation dialog before marking a pay period as unpaid.","Merge pull request #23 from padminipyapali/fix/confirm-unpaid-toggle"]},{"name":"second-brain","commits":30,"added":6776,"removed":801,"messages":["Add shared knowledge base capture to review-fix skill.","Merge pull request #69 from padminipyapali/chore/review-fix-knowledge-capture","Add dashboard inbox UI with API endpoints (#66)","Add TODO/THOUGHT disambiguation with user-driven conversion. (#68)","Add web dashboard compose input with ghost card UI.","Add web dashboard compose input with ghost card UI.","Extract inbound email adapter abstraction layer.","Update adversarial review marker.","Address PR review: extract message service layer, fix wording.","Address PR review: extract message service layer, fix wording.","Update adversarial review marker.","Update adversarial review marker.","Update adversarial review marker.","Update adversarial review marker.","Merge pull request #72 from padminipyapali/refactor/email-adapter-abstraction","Merge main into feat/compose-ghost-card to resolve conflicts.","Merge remote feat/compose-ghost-card after history divergence.","Merge pull request #71 from padminipyapali/feat/compose-ghost-card","Switch FTS search from AND to OR semantics for better retrieval.","Update adversarial review marker.","Fix empty space in search results grid.","Merge pull request #73 from padminipyapali/fix/fts-or-semantics","Update adversarial review marker.","Merge remote-tracking branch 'origin/main' into fix/search-results-header-gap","Update adversarial review marker.","Merge pull request #74 from padminipyapali/fix/search-results-header-gap","Fix inbound email route ordering and add inbox unread dot.","Address PR review: unmount guard and accessibility for inbox dot.","Update adversarial review marker.","Merge pull request #75 from padminipyapali/fix/inbound-route-order-and-unread-dot"]}]},{"number":18,"date":"Feb 14","start":"11:07 PM","end":"6:33 AM","start_ts":1771139240,"end_ts":1771166035,"duration":446,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"second-brain","text":"PR #64: [vc]: #5bkZHefEke9f/KTedVc5fmaOFMLm+eev6E8zi/G8HgY=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #64: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"command-center","text":"merged PR #3: Add web dashboard with backend API and React frontend"},{"type":"pr-merge","repo":"command-center","text":"merged PR #2: Add natural language input and task completion alerts"},{"type":"comment","repo":"second-brain","text":"PR #65: [vc]: #CIvLOTHzND+Vaz7pjizc2HW/AUlYXiizRVo1U1l/8sk=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #65: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"command-center","text":"opened PR #4: Replace local git with GitHub API for Railway deployment"},{"type":"pr","repo":"second-brain","text":"opened PR #77: Add TODO dedup, classifier improvements, and junk entry cleanup"},{"type":"comment","repo":"second-brain","text":"PR #66: [vc]: #b7fla+uZNVZeFJAisV4GYBUmOZCti73dvlDRNZFLzK8=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #66: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #77: Add TODO dedup, classifier improvements, and junk entry cleanup"},{"type":"comment","repo":"lexica","text":"PR #23: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"second-brain","text":"opened PR #78: Restore masonry layout for entry feed"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #78: Restore masonry layout for entry feed"},{"type":"pr","repo":"second-brain","text":"opened PR #79: Fix inbox unread dot not clearing after reading all items"},{"type":"pr","repo":"second-brain","text":"opened PR #80: Fix email URL loss by showing original content"},{"type":"pr-merge","repo":"command-center","text":"merged PR #4: Replace local git with GitHub API for Railway deployment"},{"type":"comment","repo":"second-brain","text":"PR #67: [vc]: #OJhmkinhhk23S6hJ7lybGMIlm1SuTgOhjFPYj/FPD9s=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #67: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"command-center","text":"opened PR #5: Fix Railway build order: build shared before server"},{"type":"pr-merge","repo":"command-center","text":"merged PR #5: Fix Railway build order: build shared before server"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #79: Fix inbox unread dot not clearing after reading all items"},{"type":"comment","repo":"lexica","text":"PR #24: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"command-center","text":"opened PR #6: Bind to 0.0.0.0 for Railway health checks"},{"type":"pr-merge","repo":"command-center","text":"merged PR #6: Bind to 0.0.0.0 for Railway health checks"},{"type":"pr","repo":"command-center","text":"opened PR #7: Start HTTP server before service init for health checks"},{"type":"pr-merge","repo":"command-center","text":"merged PR #7: Start HTTP server before service init for health checks"},{"type":"pr","repo":"command-center","text":"opened PR #8: Skip adversarial review for low-risk changes, triage checklist by file type"},{"type":"pr-merge","repo":"command-center","text":"merged PR #8: Skip adversarial review for low-risk changes, triage checklist by file type"},{"type":"pr","repo":"command-center","text":"opened PR #9: Make bot startup non-fatal for Railway health checks"},{"type":"pr-merge","repo":"command-center","text":"merged PR #9: Make bot startup non-fatal for Railway health checks"},{"type":"comment","repo":"second-brain","text":"PR #68: [vc]: #5eZnHnWSeofSy55PKVyLRapw+eJ5b9g5RZ+dGFP+oj0=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #68: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #80: Fix email URL loss by showing original content"},{"type":"pr","repo":"command-center","text":"opened PR #10: Trigger redeploy"},{"type":"pr-merge","repo":"command-center","text":"merged PR #10: Trigger redeploy"},{"type":"pr","repo":"command-center","text":"opened PR #11: Fix white button backgrounds on sidebar icon rail"},{"type":"pr","repo":"second-brain","text":"opened PR #81: Limit inbox card links to user forwarding note region"},{"type":"pr-merge","repo":"command-center","text":"merged PR #11: Fix white button backgrounds on sidebar icon rail"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #81: Limit inbox card links to user forwarding note region"},{"type":"pr","repo":"second-brain","text":"opened PR #82: Add two-step TODO promotion with AI title suggestion"},{"type":"comment","repo":"second-brain","text":"PR #69: [vc]: #kb+acqdwBPC9AzYWshicKstBKmA3WVhaLZHhTMxiVtI=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #70: [vc]: #AF/+EUrAyZHNCNOssCs3mmEhKPzPLIZ9jzbQJPDSB3s=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"lexica","text":"PR #25: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #69: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #70: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"nanny-app","text":"PR #23: [vc]: #JPU1FxH+WnR493Z3gUcxIHfwLlIZol2G9WNOSlAyYxM=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"nanny-app","text":"PR #23: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #71: [vc]: #h6KG0rPqdzL6wOirFW0pWmxSWChC/4mAfp4woo9vqBk=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #71: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #72: [vc]: #t5IPHqnXeJV6S4Zxs7OZgcVqc9LFLh20nuX7zWt8qmc=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #72: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #73: [vc]: #xE8tcd0hfxpyAAp68OvoYZwrPHm4yQnQCY6T1pmsVdk=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #73: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #74: [vc]: #aXBrryvCBmIv0odFrKORgp2tFh2FPog+vd9ivO5gWP0=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #74: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #75: [vc]: #mKdoOaumziTDtO9nTouT2ergGGr+gU1SlX3n4yC3vP8=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #75: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"command-center","text":"PR #3: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #76: [vc]: #MOn8QvL/wyfyneh5CKxByw6A6l0AcJrsRoGxkMzrH1Y=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #76: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"}],"repos":[{"name":"command-center","commits":26,"added":14232,"removed":630,"messages":["Address PR review: fix correctness bugs, accessibility, and code quality issues.","Merge main into feat/dashboard, resolve SKILL.md conflict.","Address round 2 PR review: remove dead code, tighten types, add defensive guards.","Add web dashboard with backend API and React frontend.","Add Vercel deployment for web dashboard.","Replace local git commands with GitHub API for cloud deployment.","Address PR review: fix GraphQL field, safe date parsing, defensive guards, extract formatter.","Scope Vercel build to shared + web packages only.","Replace local git with GitHub API for Railway deployment (#4)","WIP on feat/vercel-deploy: 592f4dd Scope Vercel build to shared + web packages only.","index on feat/vercel-deploy: 592f4dd Scope Vercel build to shared + web packages only.","Fix Railway build order: build shared before server. (#5)","Bind to 0.0.0.0 for Railway health checks.","Merge pull request #6 from padminipyapali/fix/railway-host-bind","Start HTTP server before service initialization for Railway health checks.","Update docs for Railway health check fix.","Merge pull request #7 from padminipyapali/fix/railway-healthcheck-startup","Optimize adversarial review: skip low-risk changes, triage checklist by file type.","Merge pull request #8 from padminipyapali/fix/optimize-adversarial-review","Make bot startup non-fatal so health check survives service failures.","Merge pull request #9 from padminipyapali/fix/railway-resilient-startup","Trigger Vercel rebuild with VITE_API_URL.","Trigger redeploy.","Merge pull request #10 from padminipyapali/chore/trigger-rebuild","Fix white button backgrounds on sidebar icon rail.","Merge pull request #11 from padminipyapali/fix/sidebar-button-styling"]},{"name":"second-brain","commits":6,"added":1957,"removed":133,"messages":["Add promote-to-TODO feature for entry and inbox replies (#76)","Add TODO dedup, classifier improvements, and junk entry cleanup (#77)","Restore masonry layout for entry feed using react-masonry-css. (#78)","Fix inbox unread dot not clearing after reading all items (#79)","Fix email URL loss by showing original content (#80)","Limit inbox card URL extraction to first 500 chars of content. (#81)"]}]},{"number":19,"date":"Feb 15","start":"9:34 AM","end":"11:00 AM","start_ts":1771176889,"end_ts":1771182038,"duration":85,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"command-center","text":"PR #4: [vc]: #b02k6iWvXAiD5CtBQMiNu1B1UPmC7tjXQL/uRp1smZM=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"command-center","text":"PR #4: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #77: [vc]: #x2q0jSBh03WfKspJkqtQx/nt7kSrqBOX75uETiX3GAI=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #77: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #78: [vc]: #gENQUlwxFAiTv2S/E9E5G6yri0p5ehswLvRliSfJ3q0=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #78: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #82: Add two-step TODO promotion with AI title suggestion"},{"type":"comment","repo":"second-brain","text":"PR #79: [vc]: #iPuRLahPOFrneEeo6zYROdXbuvUO1jojv0zDYxo/HAQ=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #79: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #80: [vc]: #yx6sxfeCHCHvgTCGbSQ/9fztZCgn6QabEAa0Ne9WtV8=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #80: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"second-brain","text":"opened PR #83: Add entry deletion from web dashboard"},{"type":"comment","repo":"command-center","text":"PR #5: [vc]: #+8q1XFPfoVQ2TZq4Z0myqpdUUt7P/Q+pBCsX0O7Q1uE=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"pr","repo":"second-brain","text":"opened PR #84: Extract due dates from promoted TODOs"},{"type":"comment","repo":"command-center","text":"PR #5: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"second-brain","text":"opened PR #85: Fix TODO splitter splitting single tasks with prepositional context"},{"type":"comment","repo":"command-center","text":"PR #6: [vc]: #BoAxQcBLXrj32vjJDGAkjSTxpwE6fz2amRJWaVrf70M=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #83: Add entry deletion from web dashboard"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #84: Extract due dates from promoted TODOs"},{"type":"comment","repo":"command-center","text":"PR #7: [vc]: #jzBAVEuP4mx/9EshTjLnQ1M8sC6roGPOH9DCI2qLwzk=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"command-center","text":"PR #7: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"command-center","text":"PR #8: [vc]: #sWL49KMfxCcOkN3APof284Xe1id9gbm/Z+LshjLeoQU=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"command-center","text":"PR #8: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"command-center","text":"PR #9: [vc]: #9HrJqHyWiebAHKloIUEIGBK/RLLWPi3lA+PMNKj7c9w=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"command-center","text":"PR #9: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"second-brain","text":"opened PR #86: Fix promote modal invisible behind overlay"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #85: Fix TODO splitter splitting single tasks with prepositional context"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #86: Fix promote modal invisible behind overlay"},{"type":"pr","repo":"command-center","text":"opened PR #12: Add config changelog view for claude-config repo"},{"type":"pr","repo":"second-brain","text":"opened PR #89: Truncate long URLs in promote modal with hover tooltips"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #89: Truncate long URLs in promote modal with hover tooltips"},{"type":"pr","repo":"second-brain","text":"opened PR #90: Fix TODO panel auto-refresh after promote and add clickable links"},{"type":"comment","repo":"command-center","text":"PR #10: [vc]: #FJVSMLUsfp8ttvp0agnCLQqS1I+50e82WvMOoMqX7TM=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"pr","repo":"command-center","text":"opened PR #14: Add mobile responsiveness to web dashboard"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #90: Fix TODO panel auto-refresh after promote and add clickable links"},{"type":"comment","repo":"command-center","text":"PR #11: [vc]: #JlVi81skNJXa1v4vT6CUQpg2771q2IzDOKg2/oCFSzQ=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"command-center","text":"PR #11: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #81: [vc]: #wBYTe8BHvUMk50Cu+NwPZQKRR0lZ/HwvWS+l9GPf0mE=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #81: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"command-center","text":"merged PR #14: Add mobile responsiveness to web dashboard"},{"type":"comment","repo":"second-brain","text":"PR #82: [vc]: #UKczZ1+JWoIQJab4SObhDYSy0VTZTmCnvy6YlbVNhjM=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #82: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"command-center","text":"opened PR #17: Hide status bar on mobile"},{"type":"pr","repo":"second-brain","text":"opened PR #94: Add email sender whitelist (#91)"},{"type":"pr-merge","repo":"command-center","text":"merged PR #17: Hide status bar on mobile"},{"type":"pr","repo":"command-center","text":"opened PR #18: Fix bottom tab bar not visible on mobile phones"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #94: Add email sender whitelist (#91)"},{"type":"pr-merge","repo":"command-center","text":"merged PR #18: Fix bottom tab bar not visible on mobile phones"},{"type":"pr","repo":"second-brain","text":"opened PR #95: Consolidate link display into shared ExtractedLinks component"}],"repos":[{"name":"claude-test","commits":2,"added":13,"removed":0,"messages":["Add infra and tooling TODO tracker.","Add GitHub Issues setup to infra TODO."]},{"name":"command-center","commits":22,"added":1692,"removed":146,"messages":["Add config changelog view for claude-config repo.","Mark adversarial review passed.","Fix chicken-and-egg problem with adversarial review marker.","Mark adversarial review passed.","Trigger CodeRabbit review.","Trigger CodeRabbit review.","Add mobile responsiveness to web dashboard.","Update packages/web/src/styles/global.css","Update packages/web/src/styles/global.css","Merge pull request #14 from padminipyapali/feat/mobile-responsiveness","Address PR review: UTC day grouping, category validation, dedupe utils, remove dead code, concurrent fetches.","Update adversarial review marker.","Hide status bar on mobile and ensure main content fills space.","Address PR review round 2: semantic button, test coverage, exact assertions, hook validation.","Update adversarial review marker.","Update packages/web/src/styles/global.css","Merge pull request #17 from padminipyapali/fix/mobile-status-bar","Fix bottom tab bar not visible on real mobile devices.","Fix bottom tab bar not visible on real mobile devices.","Merge pull request #18 from padminipyapali/fix/mobile-tab-bar-viewport","Merge main into feat/config-changelog, resolve CSS conflict.","Update adversarial review marker."]},{"name":"nanny-app","commits":1,"added":3,"removed":0,"messages":["Add adversarial review marker file to .gitignore."]},{"name":"second-brain","commits":8,"added":2462,"removed":232,"messages":["Add two-step TODO promotion with AI title suggestion (#82)","Add entry deletion from web dashboard with confirmation dialog. (#83)","Extract due dates from promoted TODOs (#84)","Fix TODO splitter splitting single tasks with prepositional context (#85)","Fix promote modal invisible behind overlay due to missing CSS positioning. (#86)","Truncate long URLs in promote modal and add hover tooltips. (#89)","Fix TODO panel auto-refresh after promote and add clickable links (#90)","Add email sender whitelist (#91) (#94)"]}]},{"number":20,"date":"Feb 15","start":"12:26 PM","end":"2:40 PM","start_ts":1771187198,"end_ts":1771195201,"duration":133,"current":false,"notes":[],"ghEvents":[{"type":"pr-merge","repo":"second-brain","text":"merged PR #95: Consolidate link display into shared ExtractedLinks component"},{"type":"pr-merge","repo":"command-center","text":"merged PR #12: Add config changelog view for claude-config repo"},{"type":"pr","repo":"second-brain","text":"opened PR #96: Remove raw URLs from TODO titles"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #96: Remove raw URLs from TODO titles"},{"type":"pr","repo":"second-brain","text":"opened PR #97: Display TODO links cleanly instead of removing them"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #97: Display TODO links cleanly instead of removing them"},{"type":"pr","repo":"second-brain","text":"opened PR #100: Fix empty feed on initial load by filtering server-side"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #100: Fix empty feed on initial load by filtering server-side"},{"type":"pr","repo":"second-brain","text":"opened PR #101: Strip URLs from Telegram TODO display to fix message-too-long"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #101: Strip URLs from Telegram TODO display to fix message-too-long"}],"repos":[{"name":"command-center","commits":3,"added":1184,"removed":21,"messages":["Update packages/web/src/styles/global.css","Update packages/web/src/styles/global.css","Merge pull request #12 from padminipyapali/feat/config-changelog"]},{"name":"second-brain","commits":6,"added":225,"removed":123,"messages":["Consolidate extracted link display into shared ExtractedLinks component. (#95)","Remove adversarial review marker file from tracking.","Remove raw URLs from TODO titles when promoting emails. (#96)","Display TODO links cleanly instead of removing them (#97)","Fix empty feed on initial load by filtering server-side (#100)","Strip URLs from Telegram TODO display to fix message-too-long (#101)"]}]},{"number":21,"date":"Feb 15","start":"4:43 PM","end":"7:00 PM","start_ts":1771202619,"end_ts":1771210851,"duration":137,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"second-brain","text":"PR #83: [vc]: #exGxp/zVdmJn006QJh/rT5VK/4MfQE1H6jKO/OfzuEo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #83: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #84: [vc]: #u0f2TCn+hLN4OBTGVFDT0yS+yuj2HwkhuX6Ix05MAIE=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #84: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #85: [vc]: #FpjCRYuJFOwKWIWgs8Ux9w88IdjAvKNjlBb7GmJAZL4=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #85: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #85: Deployment failed with the following error:"},{"type":"comment","repo":"second-brain","text":"PR #86: Deployment failed with the following error:"},{"type":"comment","repo":"second-brain","text":"PR #86: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #86: [vc]: #6K6J9xpRC/fCBwyRUPssfFxhZJj2fxj4W17Yhtikkdc=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"command-center","text":"PR #12: [vc]: #SFMGBCsWz+bSO/6ZbkBpVO544b+QguJ4ru/swG482oM=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"command-center","text":"PR #12: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #89: [vc]: #ZKE6dV2yIItBQdbeEPa9s3jqlKbdkevu3P+PA0r3cjE=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #89: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #90: [vc]: #c8Zkf0vvzTsQvbs/HTkLYD92v1HyY7BOuhXasqdmYIo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #90: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"command-center","text":"PR #14: [vc]: #hWttFNqhfsuRxk9exWY5mqVZyqfYbpzWuDZ1lqSw+Vo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"command-center","text":"PR #14: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"command-center","text":"PR #17: [vc]: #TOuuSlg3APl1+KAj63dHxUdZLO2pXz2TZ/abQfyXfnQ=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"command-center","text":"PR #17: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #94: [vc]: #YSfbuIYmw3nCaNYN1D2QaLT/MvK5jEwuP5DWSANTSmI=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #94: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"command-center","text":"PR #18: [vc]: #OTd1I/gh6us7p2i8adsbSpad11BfNCtJMt6ngIpGMxg=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"command-center","text":"PR #18: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #95: [vc]: #tc0W9GcJlEgEfaeToC8LDTgJvb5EXf50D8wcI5x1cB8=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #95: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"}],"repos":[]},{"number":22,"date":"Feb 15","start":"9:29 PM","end":"10:52 PM","start_ts":1771219773,"end_ts":1771224752,"duration":82,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"second-brain","text":"PR #96: [vc]: #3VVaM+oY3Xp/u1xTBm9JJ5m/KMdqlqh3qhqrZTO8b3s=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #96: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"second-brain","text":"opened PR #102: Add TODO creation from web dashboard"},{"type":"comment","repo":"second-brain","text":"PR #97: [vc]: #cptwPlUrI63m7S5fp+lRnbNMfi7eKyKPI2TQ3xU5V0w=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #97: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #102: Add TODO creation from web dashboard"},{"type":"pr","repo":"second-brain","text":"opened PR #107: Fix /brief and sibling commands ignoring Telegram bot-mention suffix"},{"type":"pr","repo":"second-brain","text":"opened PR #109: Clean up raw TODO text before storing via LLM extraction"},{"type":"pr","repo":"second-brain","text":"opened PR #110: Fix /todos lag: add connection timeout to all DB pools"},{"type":"comment","repo":"second-brain","text":"PR #100: [vc]: #DsbQ5MOrcZoCYvhyhZcXDvHDmZSjUr7xAaHIKZCfRJY=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #100: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #110: Fix /todos lag: add connection timeout to all DB pools"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #109: Clean up raw TODO text before storing via LLM extraction"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #107: Fix /brief and sibling commands ignoring Telegram bot-mention suffix"},{"type":"pr","repo":"second-brain","text":"opened PR #112: Add /todo command for explicit TODO creation"},{"type":"comment","repo":"second-brain","text":"PR #101: [vc]: #d+ASupVSsBEosQDw8mO20UhMGKbOTXvBeOmKoxSf5JM=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #101: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #112: Add /todo command for explicit TODO creation"},{"type":"pr","repo":"second-brain","text":"opened PR #113: Shorten URLs to clickable domain links in morning brief"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #113: Shorten URLs to clickable domain links in morning brief"}],"repos":[{"name":"second-brain","commits":6,"added":1527,"removed":88,"messages":["Add TODO creation from web dashboard (#102)","Add connectionTimeoutMillis to all DB pool configurations. (#110)","Clean up raw TODO text before storing via LLM extraction (#109)","Fix /brief and sibling commands ignoring Telegram bot-mention suffix (#107)","Add /todo command for explicit TODO creation, bypassing classifier. (#112)","Shorten URLs to clickable domain links in morning brief HTML. (#113)"]}]},{"number":23,"date":"Feb 16","start":"4:54 AM","end":"6:45 AM","start_ts":1771246478,"end_ts":1771253136,"duration":110,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"second-brain","text":"PR #102: [vc]: #/KjVOfTTAx13qP4FTwZUowwE0wPNQvl/pd9ebI/bOHg=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #102: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #107: [vc]: #P0w6OyXjY0wVQ4usi2lWrItrHkXozJmHaBJW4DbV2W0=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #107: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #109: [vc]: #Yzp375IjVQ8rG2UVPDI6842Lqbuvf8e1HL0HEjzI6kQ=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #109: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #110: [vc]: #DuY+Q5PoIKPE6Xxp+njfze/fwWdOuEQIWvZxjP5yHn4=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #110: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #112: [vc]: #Stiyh+NelFBzFbMaaBX6jm2erTYhQIV3BWZTMALZlSc=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #112: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #113: [vc]: #eOkqRGpLm9vktExP5QUXRJ79TiuIYbwwQmDi5LcfrDw=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #113: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"}],"repos":[]},{"number":24,"date":"Feb 16","start":"2:26 PM","end":"5:09 PM","start_ts":1771280818,"end_ts":1771290545,"duration":162,"current":false,"notes":[],"ghEvents":[{"type":"pr","repo":"second-brain","text":"opened PR #120: Fix mobile input auto-zoom on iOS Safari"},{"type":"pr","repo":"second-brain","text":"opened PR #121: Fix TODO splitter incorrectly splitting trailing qualifiers"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #120: Fix mobile input auto-zoom on iOS Safari"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #121: Fix TODO splitter incorrectly splitting trailing qualifiers"},{"type":"pr","repo":"second-brain","text":"opened PR #122: Slim CLAUDE.md to project-specific rules only"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #122: Slim CLAUDE.md to project-specific rules only"},{"type":"pr","repo":"nanny-app","text":"opened PR #25: Add review-fix skill"},{"type":"pr-merge","repo":"nanny-app","text":"merged PR #25: Add review-fix skill"},{"type":"pr","repo":"second-brain","text":"opened PR #123: Add starred filter chip to entry feed"},{"type":"pr","repo":"second-brain","text":"opened PR #124: Refactor URL extraction into composePromotedContent helper"},{"type":"pr","repo":"second-brain","text":"opened PR #125: Add floating TODO button and starred filter on dashboard"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #124: Refactor URL extraction into composePromotedContent helper"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #125: Add floating TODO button and starred filter on dashboard"},{"type":"pr","repo":"second-brain","text":"opened PR #131: Add /calendar command for weekly calendar view"},{"type":"pr","repo":"second-brain","text":"opened PR #133: Fix extractDueDateTime over-extracting dates from ambiguous text"},{"type":"pr","repo":"second-brain","text":"opened PR #134: Accept emoji confirmation (thumbs-up, check-mark) across all flows"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #133: Fix extractDueDateTime over-extracting dates from ambiguous text"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #131: Add /calendar command for weekly calendar view"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #134: Accept emoji confirmation (thumbs-up, check-mark) across all flows"},{"type":"pr","repo":"second-brain","text":"opened PR #135: Improve /summary: sort TODOs by due date, limit to 5 items"},{"type":"pr","repo":"second-brain","text":"opened PR #136: Add in-memory cache to useEntries for instant tab switching"},{"type":"pr","repo":"second-brain","text":"opened PR #137: Suppress related entries for TODO entries in thread panel"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #135: Improve /summary: sort TODOs by due date, limit to 5 items"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #137: Suppress related entries for TODO entries in thread panel"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #136: Add in-memory cache to useEntries for instant tab switching"},{"type":"pr","repo":"second-brain","text":"opened PR #138: Register /calendar command and improve day formatting"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #138: Register /calendar command and improve day formatting"},{"type":"pr","repo":"second-brain","text":"opened PR #140: Fix stale closure race condition in useEntries"}],"repos":[{"name":"nanny-app","commits":2,"added":182,"removed":0,"messages":["Add review-fix skill for automated PR comment resolution.","Add review-fix skill for automated PR comment resolution. (#25)"]},{"name":"second-brain","commits":22,"added":1812,"removed":193,"messages":["Fix mobile text input auto-zoom by setting font-size to 1rem on all inputs. Closes #115. (#120)","Fix TODO splitter incorrectly splitting trailing qualifiers (#121)","Slim CLAUDE.md to project-specific rules only. (#122)","Refactor URL extraction logic from API route into service layer. Closes #98. (#124)","Add floating TODO button and starred filter on dashboard (#125)","Fix extractDueDateTime over-extracting dates from ambiguous text (#133)","Add /calendar command for weekly calendar view (#131)","Accept thumbs-up and check-mark emoji as confirmation across all flows. Closes #129. (#134)","Add in-memory cache to useEntries for instant tab switching. Closes #127.","Suppress related entries for TODO entries in thread panel. Closes #132.","Improve /summary: sort TODOs by due date, limit sections to 5 items. Closes #126.","Mark adversarial review passed.","Merge pull request #135 from padminipyapali/fix/summary-improvements","Mark adversarial review passed.","Merge pull request #137 from padminipyapali/fix/todo-related-entries","Mark adversarial review passed.","Merge pull request #136 from padminipyapali/feat/dashboard-prefetch","Register /calendar in Telegram command menu and handler list.","Mark adversarial review passed.","Expand calendar day format to bullet points for 2+ events.","Mark adversarial review passed.","Merge pull request #138 from padminipyapali/fix/calendar-command-registration"]}]},{"number":25,"date":"Feb 16","start":"7:23 PM","end":"1:09 AM","start_ts":1771298637,"end_ts":1771319384,"duration":345,"current":false,"notes":[],"ghEvents":[{"type":"pr-merge","repo":"second-brain","text":"merged PR #140: Fix stale closure race condition in useEntries"},{"type":"pr","repo":"second-brain","text":"opened PR #141: Clean up /brief format for better scannability"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #141: Clean up /brief format for better scannability"},{"type":"pr","repo":"second-brain","text":"opened PR #142: Add inline edit for entries on web dashboard"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #142: Add inline edit for entries on web dashboard"},{"type":"pr","repo":"second-brain","text":"opened PR #143: Fix TODO panel missing inline edit"},{"type":"pr","repo":"second-brain","text":"opened PR #145: Skip AI response generation for THOUGHT entries"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #143: Fix TODO panel missing inline edit"},{"type":"comment","repo":"second-brain","text":"PR #120: [vc]: #Q7NtuARW/mcXkRvBVXse99kVsj/PIHLPhP921NdFif0=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #120: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #121: [vc]: #0BldlJ7wZCJptYVKmOH7w0S+wFUnvc45cWOfDXOLNwA=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #121: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #145: Skip AI response generation for THOUGHT entries"},{"type":"comment","repo":"second-brain","text":"PR #122: [vc]: #YO12D8r6s4gea67OLD8AaZXjBVuZxG8nufTIDACcTXk=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #122: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"nanny-app","text":"PR #25: [vc]: #NsUdJV0D9Hb5xaUSWDnN8Vlq4sbEn7J+xcHAGDaGlBQ=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"nanny-app","text":"PR #25: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"second-brain","text":"opened PR #146: Skip storing ai_response for THOUGHT entries"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #146: Skip storing ai_response for THOUGHT entries"},{"type":"pr","repo":"second-brain","text":"opened PR #147: Add Biome linter for a11y and correctness checks"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #147: Add Biome linter for a11y and correctness checks"},{"type":"comment","repo":"second-brain","text":"PR #123: [vc]: #jB0m/yCS8HxhvuCRaJfWZ4x8sqvrQAvKxUZCv6n9zoA=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #123: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #124: [vc]: #NjJR6i1OODo++xj78gs3DIEgihktA/XGCCCBkuDYnp4=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #124: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"second-brain","text":"opened PR #148: Display images in web dashboard via Supabase Storage"},{"type":"comment","repo":"second-brain","text":"PR #125: [vc]: #jbluC4PsEycHKza98p+K+EBm0b7AbjGk2qkRD3rT33c=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #125: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #123: Closing in favor of #125 which includes both #119 (starred filter) and #114 (flo"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #148: Display images in web dashboard via Supabase Storage"},{"type":"pr","repo":"second-brain","text":"opened PR #151: Add prism shelf favicon to web dashboard"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #151: Add prism shelf favicon to web dashboard"},{"type":"comment","repo":"second-brain","text":"PR #131: [vc]: #DBkxRwc9iAO6AxAJMgbbf3mcHLrMMXPKxCKY2F/M0TE=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #131: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"pr","repo":"second-brain","text":"opened PR #152: Fix image display and proxy for legacy Telegram images"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #152: Fix image display and proxy for legacy Telegram images"},{"type":"pr","repo":"second-brain","text":"opened PR #153: Hide redundant content and AI response on MEDIA entry cards"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #153: Hide redundant content and AI response on MEDIA entry cards"},{"type":"comment","repo":"second-brain","text":"PR #133: [vc]: #kQMLhJxnt6ZEgIvcvVA2nn6Pf6lxQYTad37k6sH5LPU=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #133: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #134: [vc]: #/yR4A11C8M01zLbMQXRfRHqeWCAUy06a6ckPAGvGqCI=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #134: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #135: [vc]: #nulBogrJHfpYx7RFY84n3iwlpqbom2nTKeamPMVoyAI=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #135: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #136: [vc]: #0CatWMWq3egsVVMWm8byOsGoJZn//XJ36skn4Q2kf3U=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #136: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #137: [vc]: #1GdfM0S6J9eCWXiNR7r8IkFaTQYYVGerGGsn3sOdWOQ=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #137: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #135: The two CodeRabbit findings are false positives:"},{"type":"comment","repo":"second-brain","text":"PR #136: @coderabbitai review"},{"type":"comment","repo":"second-brain","text":"PR #137: @coderabbitai review"},{"type":"comment","repo":"second-brain","text":"PR #136: <!-- This is an auto-generated reply by CodeRabbit -->"},{"type":"comment","repo":"second-brain","text":"PR #137: <!-- This is an auto-generated reply by CodeRabbit -->"},{"type":"pr","repo":"second-brain","text":"opened PR #154: Fix TODO toggle a11y, due date format, and modifier key duplication"},{"type":"pr","repo":"second-brain","text":"opened PR #155: Upgrade /summary to HTML formatting"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #154: Fix TODO toggle a11y, due date format, and modifier key duplication"},{"type":"pr-merge","repo":"second-brain","text":"merged PR #155: Upgrade /summary to HTML formatting"},{"type":"comment","repo":"second-brain","text":"PR #138: [vc]: #DGggcGRLqkR42i34FMg5QsHDUlSNIddUX1acOQtCwmg=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #138: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #138: Both CodeRabbit findings are false positives:"},{"type":"comment","repo":"second-brain","text":"PR #140: [vc]: #qvUWaqTuXeb9p9aUDMXEFQrRl2gn1wJ5qQKtlJUYFZk=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #140: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"}],"repos":[{"name":"second-brain","commits":25,"added":3095,"removed":282,"messages":["Fix stale closure race condition in useEntries (#140)","Clean up /brief format for better scannability (#141)","Add inline edit for TODO, THOUGHT, and QUERY entries on web dashboard. Closes #104. (#142)","Fix TODO panel missing inline edit (#143)","Skip AI response generation for THOUGHT entries. (#145)","index on feat/display-images-dashboard: 5f087e7 Skip AI response generation for THOUGHT entries. (#145)","WIP on feat/display-images-dashboard: 5f087e7 Skip AI response generation for THOUGHT entries. (#145)","Address PR review: skip storing ai_response for THOUGHT entries. (#146)","Add Biome linter for a11y and correctness checks. (#147)","Display images in web dashboard via Supabase Storage. Closes #116.","Address PR review: fix test env leakage and track search TODO.","Display images in web dashboard via Supabase Storage (#148)","Add prism shelf favicon to web dashboard.","Add prism shelf favicon to web dashboard. (#151)","Fix image display: wire proxy endpoint for legacy images and fix StrictMode loading bug.","Stop tracking adversarial review marker file.","Trigger CodeRabbit review.","Address PR review: scope query-token auth to media proxy route only.","Fix image display and proxy for legacy Telegram images (#152)","Hide redundant content and AI response on MEDIA entry cards.","Hide redundant content and AI response on MEDIA entry cards. (#153)","Fix TODO toggle a11y, due date format, and modifier key duplication.","Upgrade /summary Telegram command to HTML formatting.","Merge pull request #154 from padminipyapali/fix/entrycard-fixes","Address PR review: truncate at line boundary for HTML safety."]}]},{"number":26,"date":"Feb 17","start":"3:35 AM","end":"3:36 AM","start_ts":1771328157,"end_ts":1771328170,"duration":1,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"second-brain","text":"PR #141: [vc]: #wX5j34+0L7i6Sl2c8s+bPqF2BmbJPzYptsAAVJO/BXI=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #141: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"}],"repos":[]},{"number":27,"date":"Feb 17","start":"4:59 AM","end":"8:30 AM","start_ts":1771333190,"end_ts":1771345831,"duration":210,"current":false,"notes":[],"ghEvents":[{"type":"comment","repo":"second-brain","text":"PR #142: [vc]: #totVARca/aqkUZATc00czwDWh6NShMUy6YpqYWDz+qg=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #142: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #143: [vc]: #PIKVYVuUuHDcg9HW5HTDydhpS+DH5RoZqfSWvBl0hDk=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #143: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #145: [vc]: #TdzrrXmfMUGT5QQvHcQdG14DlxigS5CLz1MFRb9oHBo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #145: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #146: [vc]: #2zD9QW32YKaJvFOgC3c/9vV91ft9dTi9hgYNyyYZmf8=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #146: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #147: [vc]: #cUC7KLMeOcZtbWFJwH1oHoG86pij6hOlo43QguS8Ius=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #147: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #148: [vc]: #jufe4nu/KkZNVIPMKC9rlbTs8F9TxXfJbSKTsWZmhRo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #148: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #151: [vc]: #f4RWq8YZInK0yRqe/4CkB06Q5ulWQ9I3StNZJcbLlTM=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #151: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #152: [vc]: #2a+ZqvvjyADvP5+Shs7xB0SWYrs8tg31Y9ov2g0FIJw=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #152: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #153: [vc]: #YcL6nmNLvtydAOVpgdyTTnd8PHregsqEgg2Cz3Uudm4=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #153: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #154: [vc]: #3mzmov00v7mn7T9daTFJNDreORvcoJqoFiwJgYbY4S4=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #154: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"},{"type":"comment","repo":"second-brain","text":"PR #155: [vc]: #NX7oeBgeQJZeyGKw4cF2mKo6KnabJqKDY8UuxBxQBJo=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"second-brain","text":"PR #155: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"}],"repos":[]},{"number":28,"date":"Feb 19","start":"4:28 AM","end":"4:28 AM","start_ts":1771504080,"end_ts":1771504109,"duration":1,"current":false,"notes":["Building session tracker tool with HTML reports","First pumping session!"],"ghEvents":[{"type":"pr","repo":"command-center","text":"opened PR #21: Add velocity dashboard to Activity view"}],"repos":[{"name":"command-center","commits":1,"added":1027,"removed":34,"messages":["Add velocity dashboard with metrics, sparklines, and per-project breakdown."]}]},{"number":29,"date":"Feb 19","start":"12:28 PM","end":"12:28 PM","start_ts":1771532913,"end_ts":1771532929,"duration":1,"current":true,"notes":[],"ghEvents":[{"type":"comment","repo":"command-center","text":"PR #21: [vc]: #kocOY/DrjkMOvXwc4su5LmhOCSgRQt2GpPnOjh1p1VY=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0"},{"type":"comment","repo":"command-center","text":"PR #21: <!-- This is an auto-generated comment: summarize by coderabbit.ai -->"}],"repos":[]}];
+const TOTALS = {sessions:29,minutes:2460,commits:273,added:79327,removed:4266,notes:2,prEvents:429,time:"41h 0m",addedFmt:"79.3K",removedFmt:"4.2K"};
+const DATE_RANGE = "Feb 12 – Feb 19, 2026";
+
+const COLORS = {
+  'second-brain': '#818cf8',
+  'lexica': '#22d3ee',
+  'command-center': '#fbbf24',
+  'nanny-app': '#34d399',
+  'claude-test': '#a78bfa'
+};
+
+const fmt = n => n >= 1000 ? (n/1000).toFixed(1) + 'K' : String(n);
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+// Reverse: newest first
+const sessions = [...SESSIONS].reverse();
+
+// Header
+document.getElementById('date-range').textContent = DATE_RANGE;
+
+// Stats
+document.getElementById('stats').innerHTML = [
+  { v: TOTALS.sessions, l: 'Sessions' },
+  { v: TOTALS.time, l: 'Total Time' },
+  { v: TOTALS.commits, l: 'Commits' },
+  { v: `+${TOTALS.addedFmt} / -${TOTALS.removedFmt}`, l: 'Lines Changed' },
+].map(c => `<div class="stat-card"><div class="stat-value">${c.v}</div><div class="stat-label">${c.l}</div></div>`).join('');
+
+// Chart (newest first, show first 10 by default)
+const CHART_LIMIT = 10;
+let chartExpanded = false;
+const maxCommits = Math.max(...sessions.map(s => s.repos.reduce((sum, r) => sum + r.commits, 0)), 1);
+const allRepos = new Set();
+sessions.forEach(s => s.repos.forEach(r => allRepos.add(r.name)));
+
+function renderChart() {
+  const chartEl = document.getElementById('chart');
+  chartEl.innerHTML = sessions.map((s, i) => {
+    const totalCommits = s.repos.reduce((sum, r) => sum + r.commits, 0);
+    const isNoteOnly = totalCommits === 0;
+    const pct = isNoteOnly ? 3 : (totalCommits / maxCommits) * 100;
+    const hidden = !chartExpanded && i >= CHART_LIMIT ? 'hidden' : '';
+    const currentMark = s.current ? ' *' : '';
+
+    let barContent;
+    if (isNoteOnly) {
+      barContent = `<div class="chart-bar-track note-only" onclick="toggleRow(${s.number})"></div>`;
+    } else {
+      const segments = s.repos.map(r => {
+        const segPct = (r.commits / totalCommits) * pct;
+        return `<div class="chart-bar-segment" style="width:${segPct}%;background:${COLORS[r.name]||'#666'}"></div>`;
+      }).join('');
+      barContent = `<div class="chart-bar-track" onclick="toggleRow(${s.number})">${segments}</div>`;
+    }
+
+    const metaText = isNoteOnly
+      ? `<span style="color:var(--note-color);opacity:0.6">notes</span><span>${s.duration}m</span>`
+      : `<span class="commits-count">${totalCommits}</span><span>${s.duration}m</span>`;
+
+    return `<div class="chart-row ${hidden}" data-chart-row>
+      <div class="chart-label">#${s.number}${currentMark}</div>
+      ${barContent}
+      <div class="chart-meta">${metaText}</div>
+    </div>`;
+  }).join('');
+
+  const btn = document.getElementById('chart-toggle');
+  if (sessions.length <= CHART_LIMIT) {
+    btn.style.display = 'none';
+  } else {
+    btn.textContent = chartExpanded ? `Show recent ${CHART_LIMIT}` : `Show all ${sessions.length}`;
+  }
+}
+
+function toggleChart() {
+  chartExpanded = !chartExpanded;
+  renderChart();
+}
+renderChart();
+
+// Legend
+document.getElementById('legend').innerHTML = [...allRepos].map(name =>
+  `<div class="legend-item"><div class="legend-dot" style="background:${COLORS[name]||'#666'}"></div>${name}</div>`
+).join('') + (TOTALS.notes > 0 ? `<div class="legend-item"><div class="legend-dot" style="background:var(--note-color);opacity:0.6"></div>notes</div>` : '');
+
+// Table (newest first)
+const tbody = document.getElementById('table-body');
+sessions.forEach(s => {
+  const totalCommits = s.repos.reduce((sum, r) => sum + r.commits, 0);
+  const totalAdded = s.repos.reduce((sum, r) => sum + r.added, 0);
+  const totalRemoved = s.repos.reduce((sum, r) => sum + r.removed, 0);
+
+  const pills = [];
+  if (s.notes && s.notes.length > 0) pills.push(`<span class="repo-pill note-pill">notes</span>`);
+  if (s.ghEvents && s.ghEvents.length > 0) pills.push(`<span class="repo-pill pr-pill">PRs</span>`);
+  s.repos.forEach(r => pills.push(
+    `<span class="repo-pill" style="background:${COLORS[r.name]||'#666'}18;color:${COLORS[r.name]||'#666'}">${r.name}</span>`
+  ));
+
+  const currentBadge = s.current ? '<span class="current-badge">now</span>' : '';
+
+  const row = document.createElement('tr');
+  row.className = 'session-row';
+  row.id = `row-${s.number}`;
+  row.onclick = () => toggleRow(s.number);
+  row.innerHTML = `
+    <td><span class="expand-ind">\u203A</span></td>
+    <td class="mono">${s.number}${currentBadge}</td>
+    <td>${s.date}</td>
+    <td style="white-space:nowrap">${s.start} – ${s.end}</td>
+    <td class="mono">${s.duration}m</td>
+    <td><div class="repo-pills">${pills.join('')}</div></td>
+    <td class="r">${totalCommits || '–'}</td>
+    <td class="r">${totalCommits ? `<span class="c-added">+${fmt(totalAdded)}</span> <span class="c-removed">-${fmt(totalRemoved)}</span>` : '–'}</td>
+  `;
+  tbody.appendChild(row);
+
+  // Detail row
+  const detailRow = document.createElement('tr');
+  detailRow.className = 'detail-row';
+  detailRow.id = `detail-${s.number}`;
+
+  let detailHtml = '';
+
+  if (s.notes && s.notes.length > 0) {
+    detailHtml += `<div class="detail-section">
+      <div class="detail-section-label">Notes</div>
+      ${s.notes.map(n => `<div class="detail-note">${esc(n)}</div>`).join('')}
+    </div>`;
+  }
+
+  if (s.ghEvents && s.ghEvents.length > 0) {
+    detailHtml += `<div class="detail-section">
+      <div class="detail-section-label">GitHub Activity</div>
+      ${s.ghEvents.map(e => `<div class="detail-pr">${esc(e.text)}</div>`).join('')}
+    </div>`;
+  }
+
+  if (s.repos.length > 0) {
+    detailHtml += s.repos.map(r => `
+      <div class="detail-repo">
+        <div class="detail-repo-header">
+          <span class="repo-pill" style="background:${COLORS[r.name]||'#666'}18;color:${COLORS[r.name]||'#666'}">${r.name}</span>
+          <span class="detail-repo-stats">${r.commits} commits · <span class="c-added">+${fmt(r.added)}</span> <span class="c-removed">-${fmt(r.removed)}</span></span>
+        </div>
+        ${r.messages.map(m => `<div class="detail-msg">${esc(m)}</div>`).join('')}
+      </div>
+    `).join('');
+  }
+
+  detailRow.innerHTML = `<td colspan="8">${detailHtml}</td>`;
+  tbody.appendChild(detailRow);
+});
+
+function toggleRow(n) {
+  document.getElementById(`detail-${n}`)?.classList.toggle('open');
+  document.getElementById(`row-${n}`)?.classList.toggle('expanded');
+}
+</script>
+</body>
+</html>
