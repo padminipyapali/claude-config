@@ -22,7 +22,7 @@ Cross-project learnings for TypeScript and Node.js development.
 - **Validate query param enum values.** Reject invalid values with 400, don't silently fall back to `undefined`.
 - **Guard API response shape before destructuring.** Even with TypeScript generics on `api.get<T>()`, check `Array.isArray()` before `.filter()/.map()`.
 - **Validate date strings before formatting.** `new Date(str)` can produce `NaN` timestamps. Always check `isNaN(d.getTime())` and return a fallback (`""`, `"—"`) instead of displaying `"NaN ago"` or `"Invalid Date"`. <!-- Source: PR review, command-center #3, 2026-02-14 -->
-- **Always `?? []` when mapping API response arrays.** Servers can return unexpected shapes even when TypeScript says the field is required.
+- **Always `?? []` when mapping API response arrays.** Servers can return unexpected shapes even when TypeScript says the field is required. This applies especially to GraphQL: the generated types may declare a field as non-optional, but the actual API can return `null` for nested fields (e.g., `repo.mergedPrs.nodes`). Always use optional chaining + nullish coalescing: `response?.nodes ?? []`. When fixing this in a service, grep the entire codebase for sibling services using the same GraphQL query shape — the same unguarded access is very likely to exist there too. <!-- Source: PR review, command-center #23, 2026-02-19 -->
 - **Reject non-string query params explicitly.** Express parses repeated query params (`?x=A&x=B`) as arrays. A `typeof x === "string"` check silently skips arrays, disabling the feature. Guard with `typeof x !== "string"` → 400 before parsing. <!-- Source: PR review, second-brain #100, 2026-02-15 -->
 
 ## Environment Variables
