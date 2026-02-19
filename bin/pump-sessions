@@ -118,35 +118,26 @@ for line in open(sys.argv[2]):
 " "$SINCE_TS" "$LOG_FILE" >> "$ALL_ENTRIES" 2>/dev/null || true
 fi
 
-# === Step 3: Collect GitHub PR activity ===
+# === Step 3: Collect GitHub PR activity (separate from session-defining entries) ===
+GH_EVENTS="$TMPDIR_WORK/gh_events"
+touch "$GH_EVENTS"
+
 collect_github_activity() {
   for entry in "${REPOS[@]}"; do
     repo_path="${entry%%:*}"
     repo_name="${entry##*:}"
     [ -d "$repo_path/.git" ] || continue
 
-    # Get GitHub remote owner/repo
     REMOTE_URL=$(git -C "$repo_path" remote get-url origin 2>/dev/null || true)
     [ -z "$REMOTE_URL" ] && continue
-    # Extract owner/repo from URL
     GH_REPO=$(echo "$REMOTE_URL" | sed -E 's|.*github\.com[:/]([^/]+/[^/.]+)(\.git)?$|\1|')
     [ -z "$GH_REPO" ] && continue
-
-    # Get PR events (created, merged, reviewed)
-    gh api "repos/${GH_REPO}/issues/comments" \
-      --paginate -q ".[] | select(.created_at > \"$(date -v-${HOURS}H -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -d \"$SINCE\" +%Y-%m-%dT%H:%M:%SZ)\") | .created_at + \"|comment|${repo_name}|pr-\" + (.issue_url | split(\"/\") | last) + \"|PR #\" + (.issue_url | split(\"/\") | last) + \": \" + (.body | split(\"\\n\") | first | .[:80])" \
-      2>/dev/null | while IFS='|' read -r created_at type repo hash subject; do
-      # Convert ISO date to epoch
-      TS=$(date -jf "%Y-%m-%dT%H:%M:%SZ" "$created_at" +%s 2>/dev/null || date -d "$created_at" +%s 2>/dev/null || true)
-      [ -z "$TS" ] && continue
-      echo "${TS}|comment|${repo}|${hash}|${subject}" >> "$ALL_ENTRIES"
-    done || true
 
     # Get PRs created/merged in timeframe
     gh pr list --repo "$GH_REPO" --state all --json number,title,createdAt,mergedAt \
       --limit 50 2>/dev/null | python3 -c "
-import json, sys, subprocess
-from datetime import datetime, timezone, timedelta
+import json, sys
+from datetime import datetime
 since_ts = int(sys.argv[1])
 repo_name = sys.argv[2]
 data = json.load(sys.stdin)
@@ -159,7 +150,7 @@ for pr in data:
         if ts >= since_ts:
             title = pr['title'].replace('|', '-')[:80]
             print(f'{ts}|{event_type}|{repo_name}|pr-{pr[\"number\"]}|{prefix} PR #{pr[\"number\"]}: {title}')
-" "$SINCE_TS" "$repo_name" >> "$ALL_ENTRIES" 2>/dev/null || true
+" "$SINCE_TS" "$repo_name" >> "$GH_EVENTS" 2>/dev/null || true
   done
 }
 
@@ -168,7 +159,7 @@ if command -v gh &>/dev/null && gh auth status &>/dev/null 2>&1; then
   collect_github_activity
 fi
 
-# === Step 4: Sort and group into sessions ===
+# === Step 4: Sort and group into sessions (commits + notes only, NOT GH events) ===
 sort -t'|' -k1 -n "$ALL_ENTRIES" -o "$ALL_ENTRIES"
 
 if [ ! -s "$ALL_ENTRIES" ]; then
@@ -227,9 +218,35 @@ for s in $SESSION_NUMS; do
   # Process notes (no stats needed)
   awk -F'|' '$3 == "note" {print $1 "|note|" $2 "|__note__|" $5 "|" $6 "|0|0"}' "$SESSION_DATA" >> "$ENRICHED"
 
-  # Process PR events (no stats needed)
-  awk -F'|' '$3 == "pr" || $3 == "pr-merge" || $3 == "comment" {print $1 "|" $3 "|" $2 "|" $4 "|" $5 "|" $6 "|0|0"}' "$SESSION_DATA" >> "$ENRICHED"
 done
+
+# Overlay GitHub events into matching sessions by time range.
+# GH events do NOT define sessions — they're supplementary context.
+if [ -s "$GH_EVENTS" ]; then
+  # Build session time ranges from SESSIONS_FILE (sorted, reliable timestamps)
+  # SESSIONS_FILE format: session|timestamp|type|repo|hash|subject
+  SESSION_RANGES="$TMPDIR_WORK/session_ranges"
+  for s in $SESSION_NUMS; do
+    S_FIRST=$(awk -F'|' -v s="$s" '$1 == s {print $2; exit}' "$SESSIONS_FILE")
+    S_LAST=$(awk -F'|' -v s="$s" '$1 == s {ts=$2} END {print ts}' "$SESSIONS_FILE")
+    [ -n "$S_FIRST" ] && echo "${s}|${S_FIRST}|${S_LAST}"
+  done > "$SESSION_RANGES"
+
+  # For each GH event, assign to the session whose range contains it
+  # GH_EVENTS format: timestamp|type|repo|hash|subject
+  while IFS='|' read -r gh_ts gh_type gh_repo gh_hash gh_subject; do
+    [ -z "$gh_ts" ] && continue
+    MATCHED=""
+    while IFS='|' read -r snum sfirst slast; do
+      if [ "$gh_ts" -ge "$sfirst" ] && [ "$gh_ts" -le "$slast" ]; then
+        MATCHED="$snum"
+        break
+      fi
+    done < "$SESSION_RANGES"
+    [ -z "$MATCHED" ] && continue
+    echo "${MATCHED}|${gh_type}|${gh_ts}|${gh_repo}|${gh_hash}|${gh_subject}|0|0" >> "$ENRICHED"
+  done < "$GH_EVENTS"
+fi
 
 # Enriched format: session|type|timestamp|repo|hash|subject|added|removed
 
@@ -254,8 +271,9 @@ output_text() {
   for s in $REVERSED_SESSIONS; do
     TOTAL_SESSIONS=$((TOTAL_SESSIONS + 1))
 
-    FIRST_TS=$(awk -F'|' -v s="$s" '$1 == s {print $3; exit}' "$ENRICHED")
-    LAST_TS=$(awk -F'|' -v s="$s" '$1 == s {ts=$3} END {print ts}' "$ENRICHED")
+    # Use SESSIONS_FILE for timestamps (sorted chronologically, includes all entries)
+    FIRST_TS=$(awk -F'|' -v s="$s" '$1 == s {print $2; exit}' "$SESSIONS_FILE")
+    LAST_TS=$(awk -F'|' -v s="$s" '$1 == s {ts=$2} END {print ts}' "$SESSIONS_FILE")
     [ -z "$FIRST_TS" ] && continue
     DURATION_MIN=$(( (LAST_TS - FIRST_TS) / 60 ))
     [ "$DURATION_MIN" -lt 1 ] && DURATION_MIN=1
@@ -344,8 +362,9 @@ output_html() {
   for s in $SESSION_NUMS; do
     SESSION_COUNT=$((SESSION_COUNT + 1))
 
-    FIRST_TS=$(awk -F'|' -v s="$s" '$1 == s {print $3; exit}' "$ENRICHED")
-    LAST_TS=$(awk -F'|' -v s="$s" '$1 == s {ts=$3} END {print ts}' "$ENRICHED")
+    # Use SESSIONS_FILE for timestamps (sorted chronologically, includes all entries)
+    FIRST_TS=$(awk -F'|' -v s="$s" '$1 == s {print $2; exit}' "$SESSIONS_FILE")
+    LAST_TS=$(awk -F'|' -v s="$s" '$1 == s {ts=$2} END {print ts}' "$SESSIONS_FILE")
     [ -z "$FIRST_TS" ] && continue
     DURATION_MIN=$(( (LAST_TS - FIRST_TS) / 60 ))
     [ "$DURATION_MIN" -lt 1 ] && DURATION_MIN=1
@@ -405,8 +424,8 @@ output_html() {
   JSON_SESSIONS="${JSON_SESSIONS%,}]"
 
   # Date range
-  FIRST_DATE=$(date -r "$(awk -F'|' 'NR==1 {print $3}' "$ENRICHED")" "+%b %-d")
-  LAST_DATE=$(date -r "$(awk -F'|' '{ts=$3} END {print ts}' "$ENRICHED")" "+%b %-d, %Y")
+  FIRST_DATE=$(date -r "$(awk -F'|' 'NR==1 {print $2}' "$SESSIONS_FILE")" "+%b %-d")
+  LAST_DATE=$(date -r "$(awk -F'|' '{ts=$2} END {print ts}' "$SESSIONS_FILE")" "+%b %-d, %Y")
 
   # Formatted totals
   TOTAL_HOURS=$((TOTAL_MINUTES / 60))
