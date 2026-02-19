@@ -1,13 +1,19 @@
 #!/bin/bash
-# pump-sessions — Track productivity across repos by session.
+# pump-sessions — Track coding productivity across repos by session.
 #
 # Groups git commits into sessions based on time gaps.
 # A new session starts after 60+ minutes of inactivity.
 #
 # Usage:
-#   pump-sessions           # Show today's sessions (last 24h)
-#   pump-sessions 48        # Show last 48 hours
-#   pump-sessions 7d        # Show last 7 days
+#   pump-sessions [options] [lookback]
+#
+# Options:
+#   --html [file]   Generate HTML report (default: ~/Desktop/sessions-report.html)
+#
+# Lookback:
+#   24              Last 24 hours (default)
+#   48              Last 48 hours
+#   7d              Last 7 days
 
 set -euo pipefail
 
@@ -24,7 +30,28 @@ REPOS=(
 )
 
 # --- Parse arguments ---
-LOOKBACK="${1:-24}"
+OUTPUT_FORMAT="text"
+HTML_FILE="$HOME/Desktop/sessions-report.html"
+LOOKBACK=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --html)
+      OUTPUT_FORMAT="html"
+      if [[ "${2:-}" != "" && "${2:-}" != --* && "${2:-}" != *d && "${2:-}" != *h && ! "${2:-}" =~ ^[0-9]+$ ]]; then
+        HTML_FILE="$2"
+        shift
+      fi
+      shift
+      ;;
+    *)
+      LOOKBACK="$1"
+      shift
+      ;;
+  esac
+done
+
+LOOKBACK="${LOOKBACK:-24}"
 case "$LOOKBACK" in
   *d) HOURS=$(( ${LOOKBACK%d} * 24 )) ;;
   *h) HOURS="${LOOKBACK%h}" ;;
@@ -38,161 +65,663 @@ trap "rm -rf $TMPDIR_WORK" EXIT
 ALL_COMMITS="$TMPDIR_WORK/commits"
 touch "$ALL_COMMITS"
 
+# --- Helper: JSON-escape a string ---
+json_str() {
+  python3 -c "import sys,json; sys.stdout.write(json.dumps(sys.stdin.read()))" <<< "$1"
+}
+
 # --- Step 1: Collect all commits across repos ---
 for entry in "${REPOS[@]}"; do
   repo_path="${entry%%:*}"
   repo_name="${entry##*:}"
   [ -d "$repo_path/.git" ] || continue
-
-  # Format: timestamp|repo_name|hash|subject
   git -C "$repo_path" log --all --branches \
     --format="%at|${repo_name}|%H|%s" \
     --since="$SINCE" 2>/dev/null >> "$ALL_COMMITS" || true
 done
 
-# Sort by timestamp
 sort -t'|' -k1 -n "$ALL_COMMITS" -o "$ALL_COMMITS"
 
-# Exit if no commits found
 if [ ! -s "$ALL_COMMITS" ]; then
-  echo ""
-  echo "  No commits found in the last ${HOURS}h."
-  echo "  (Try: pump-sessions 48 or pump-sessions 7d)"
-  echo ""
+  if [ "$OUTPUT_FORMAT" = "text" ]; then
+    echo ""
+    echo "  No commits found in the last ${HOURS}h."
+    echo "  (Try: pump-sessions 48 or pump-sessions 7d)"
+    echo ""
+  fi
   exit 0
 fi
 
-# --- Step 2: Assign commits to sessions based on time gaps ---
+# --- Step 2: Assign commits to sessions ---
 SESSIONS_FILE="$TMPDIR_WORK/sessions"
 awk -F'|' -v gap="$GAP_SECONDS" '
 BEGIN { session = 1; prev_ts = 0 }
 {
   ts = $1
-  if (prev_ts > 0 && (ts - prev_ts) > gap) {
-    session++
-  }
+  if (prev_ts > 0 && (ts - prev_ts) > gap) session++
   print session "|" $0
   prev_ts = ts
 }
 ' "$ALL_COMMITS" > "$SESSIONS_FILE"
 
-# --- Step 3: Process and display each session ---
+# --- Step 3: Compute stats per session ---
 SESSION_NUMS=$(cut -d'|' -f1 "$SESSIONS_FILE" | sort -un)
-TOTAL_SESSIONS=0
-GRAND_COMMITS=0
-GRAND_ADDED=0
-GRAND_REMOVED=0
-GRAND_MINUTES=0
-
-# Check if this is the most recent session (for "current" label)
 LAST_SESSION=$(echo "$SESSION_NUMS" | tail -1)
 NOW=$(date +%s)
 
-echo ""
-echo "  Pumping Session Tracker"
-echo "  ======================="
-echo ""
+# Enriched data file: session|timestamp|repo|hash|subject|added|removed
+ENRICHED="$TMPDIR_WORK/enriched"
+touch "$ENRICHED"
 
 for s in $SESSION_NUMS; do
-  TOTAL_SESSIONS=$((TOTAL_SESSIONS + 1))
-
-  # Extract commits for this session
   SESSION_DATA="$TMPDIR_WORK/session_${s}"
   grep "^${s}|" "$SESSIONS_FILE" > "$SESSION_DATA"
 
-  # Time range
-  FIRST_TS=$(head -1 "$SESSION_DATA" | cut -d'|' -f2)
-  LAST_TS=$(tail -1 "$SESSION_DATA" | cut -d'|' -f2)
-  DURATION_MIN=$(( (LAST_TS - FIRST_TS) / 60 ))
-  [ "$DURATION_MIN" -lt 1 ] && DURATION_MIN=1
-  GRAND_MINUTES=$((GRAND_MINUTES + DURATION_MIN))
-
-  START_TIME=$(date -r "$FIRST_TS" "+%-l:%M %p")
-  END_TIME=$(date -r "$LAST_TS" "+%-l:%M %p")
-  SESSION_DATE=$(date -r "$FIRST_TS" "+%b %-d")
-
-  # Current session marker
-  CURRENT_MARKER=""
-  if [ "$s" = "$LAST_SESSION" ] && [ $((NOW - LAST_TS)) -lt "$GAP_SECONDS" ]; then
-    CURRENT_MARKER="  <- current"
-  fi
-
-  echo "  Session #${TOTAL_SESSIONS}: ${SESSION_DATE}, ${START_TIME} - ${END_TIME} (${DURATION_MIN} min)${CURRENT_MARKER}"
-  echo "  $(printf '%0.s-' {1..50})"
-
-  # Process each repo in this session
-  SESSION_COMMITS=0
-  SESSION_ADDED=0
-  SESSION_REMOVED=0
   REPO_NAMES=$(cut -d'|' -f3 "$SESSION_DATA" | sort -u)
-
   for repo_name in $REPO_NAMES; do
-    # Find repo path
     repo_path=""
     for entry in "${REPOS[@]}"; do
-      if [ "${entry##*:}" = "$repo_name" ]; then
-        repo_path="${entry%%:*}"
-        break
-      fi
+      [ "${entry##*:}" = "$repo_name" ] && repo_path="${entry%%:*}" && break
     done
     [ -z "$repo_path" ] && continue
 
-    # Get hashes for this repo in this session
     REPO_HASHES=$(awk -F'|' -v r="$repo_name" '$3 == r {print $4}' "$SESSION_DATA")
-    COMMIT_COUNT=$(echo "$REPO_HASHES" | wc -l | tr -d ' ')
-    SESSION_COMMITS=$((SESSION_COMMITS + COMMIT_COUNT))
-
-    # Compute diff stats
-    REPO_ADDED=0
-    REPO_REMOVED=0
-    REPO_FILES=0
     while IFS= read -r hash; do
       STATS=$(git -C "$repo_path" show --shortstat --format="" "$hash" 2>/dev/null || echo "")
       A=$(echo "$STATS" | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+' || true)
       D=$(echo "$STATS" | grep -oE '[0-9]+ deletion' | grep -oE '[0-9]+' || true)
-      F=$(echo "$STATS" | grep -oE '[0-9]+ file' | grep -oE '[0-9]+' || true)
-      REPO_ADDED=$((REPO_ADDED + ${A:-0}))
-      REPO_REMOVED=$((REPO_REMOVED + ${D:-0}))
-      REPO_FILES=$((REPO_FILES + ${F:-0}))
-    done <<< "$REPO_HASHES"
-
-    SESSION_ADDED=$((SESSION_ADDED + REPO_ADDED))
-    SESSION_REMOVED=$((SESSION_REMOVED + REPO_REMOVED))
-
-    printf "  %-20s %2d commits   +%-5d -%d\n" "$repo_name" "$COMMIT_COUNT" "$REPO_ADDED" "$REPO_REMOVED"
-
-    # Show commit messages
-    while IFS= read -r hash; do
+      TS=$(awk -F'|' -v h="$hash" '$4 == h {print $2; exit}' "$SESSION_DATA")
       MSG=$(awk -F'|' -v h="$hash" '$4 == h {print $5; exit}' "$SESSION_DATA")
-      # Truncate long messages
-      if [ ${#MSG} -gt 58 ]; then
-        MSG="${MSG:0:55}..."
-      fi
-      printf "    * %s\n" "$MSG"
+      echo "${s}|${TS}|${repo_name}|${hash}|${MSG}|${A:-0}|${D:-0}" >> "$ENRICHED"
     done <<< "$REPO_HASHES"
-    echo ""
   done
-
-  GRAND_COMMITS=$((GRAND_COMMITS + SESSION_COMMITS))
-  GRAND_ADDED=$((GRAND_ADDED + SESSION_ADDED))
-  GRAND_REMOVED=$((GRAND_REMOVED + SESSION_REMOVED))
 done
 
-# --- Summary ---
-echo "  ======================="
-if [ "$HOURS" -le 24 ]; then
-  PERIOD="Today"
-elif [ "$HOURS" -le 48 ]; then
-  PERIOD="Last 2 days"
-else
-  PERIOD="Last ${HOURS}h"
-fi
-echo "  ${PERIOD}: ${TOTAL_SESSIONS} sessions | ${GRAND_MINUTES} min | ${GRAND_COMMITS} commits | +${GRAND_ADDED} -${GRAND_REMOVED}"
+# =====================================================
+# TEXT OUTPUT
+# =====================================================
+output_text() {
+  TOTAL_SESSIONS=0
+  GRAND_COMMITS=0
+  GRAND_ADDED=0
+  GRAND_REMOVED=0
+  GRAND_MINUTES=0
 
-# Fun per-session average
-if [ "$TOTAL_SESSIONS" -gt 1 ]; then
-  AVG_COMMITS=$((GRAND_COMMITS / TOTAL_SESSIONS))
-  AVG_MINUTES=$((GRAND_MINUTES / TOTAL_SESSIONS))
-  echo "  Avg per session: ${AVG_MINUTES} min | ${AVG_COMMITS} commits"
-fi
-echo ""
+  echo ""
+  echo "  Session Tracker"
+  echo "  ==============="
+  echo ""
+
+  for s in $SESSION_NUMS; do
+    TOTAL_SESSIONS=$((TOTAL_SESSIONS + 1))
+
+    FIRST_TS=$(awk -F'|' -v s="$s" '$1 == s {print $2; exit}' "$ENRICHED")
+    LAST_TS=$(awk -F'|' -v s="$s" '$1 == s {ts=$2} END {print ts}' "$ENRICHED")
+    DURATION_MIN=$(( (LAST_TS - FIRST_TS) / 60 ))
+    [ "$DURATION_MIN" -lt 1 ] && DURATION_MIN=1
+    GRAND_MINUTES=$((GRAND_MINUTES + DURATION_MIN))
+
+    START_TIME=$(date -r "$FIRST_TS" "+%-l:%M %p")
+    END_TIME=$(date -r "$LAST_TS" "+%-l:%M %p")
+    SESSION_DATE=$(date -r "$FIRST_TS" "+%b %-d")
+
+    CURRENT_MARKER=""
+    if [ "$s" = "$LAST_SESSION" ] && [ $((NOW - LAST_TS)) -lt "$GAP_SECONDS" ]; then
+      CURRENT_MARKER="  <- current"
+    fi
+
+    echo "  Session #${TOTAL_SESSIONS}: ${SESSION_DATE}, ${START_TIME} - ${END_TIME} (${DURATION_MIN} min)${CURRENT_MARKER}"
+    echo "  $(printf '%0.s-' {1..50})"
+
+    SESSION_REPOS=$(awk -F'|' -v s="$s" '$1 == s {print $3}' "$ENRICHED" | sort -u)
+    for repo_name in $SESSION_REPOS; do
+      COMMIT_COUNT=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r' "$ENRICHED" | wc -l | tr -d ' ')
+      REPO_ADDED=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r {sum+=$6} END {print sum+0}' "$ENRICHED")
+      REPO_REMOVED=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r {sum+=$7} END {print sum+0}' "$ENRICHED")
+
+      GRAND_COMMITS=$((GRAND_COMMITS + COMMIT_COUNT))
+      GRAND_ADDED=$((GRAND_ADDED + REPO_ADDED))
+      GRAND_REMOVED=$((GRAND_REMOVED + REPO_REMOVED))
+
+      printf "  %-20s %2d commits   +%-5d -%d\n" "$repo_name" "$COMMIT_COUNT" "$REPO_ADDED" "$REPO_REMOVED"
+
+      awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r {print $5}' "$ENRICHED" | while IFS= read -r MSG; do
+        [ ${#MSG} -gt 58 ] && MSG="${MSG:0:55}..."
+        printf "    * %s\n" "$MSG"
+      done
+      echo ""
+    done
+  done
+
+  echo "  ==============="
+  if [ "$HOURS" -le 24 ]; then PERIOD="Today"
+  elif [ "$HOURS" -le 48 ]; then PERIOD="Last 2 days"
+  else PERIOD="Last ${HOURS}h"; fi
+  echo "  ${PERIOD}: ${TOTAL_SESSIONS} sessions | ${GRAND_MINUTES} min | ${GRAND_COMMITS} commits | +${GRAND_ADDED} -${GRAND_REMOVED}"
+  if [ "$TOTAL_SESSIONS" -gt 1 ]; then
+    echo "  Avg per session: $((GRAND_MINUTES / TOTAL_SESSIONS)) min | $((GRAND_COMMITS / TOTAL_SESSIONS)) commits"
+  fi
+  echo ""
+}
+
+# =====================================================
+# HTML OUTPUT
+# =====================================================
+output_html() {
+  # Build JSON data from enriched file
+  JSON_SESSIONS="["
+  TOTAL_COMMITS=0
+  TOTAL_ADDED=0
+  TOTAL_REMOVED=0
+  TOTAL_MINUTES=0
+  SESSION_COUNT=0
+
+  for s in $SESSION_NUMS; do
+    SESSION_COUNT=$((SESSION_COUNT + 1))
+
+    FIRST_TS=$(awk -F'|' -v s="$s" '$1 == s {print $2; exit}' "$ENRICHED")
+    LAST_TS=$(awk -F'|' -v s="$s" '$1 == s {ts=$2} END {print ts}' "$ENRICHED")
+    DURATION_MIN=$(( (LAST_TS - FIRST_TS) / 60 ))
+    [ "$DURATION_MIN" -lt 1 ] && DURATION_MIN=1
+    TOTAL_MINUTES=$((TOTAL_MINUTES + DURATION_MIN))
+
+    START_TIME=$(date -r "$FIRST_TS" "+%-l:%M %p")
+    END_TIME=$(date -r "$LAST_TS" "+%-l:%M %p")
+    SESSION_DATE=$(date -r "$FIRST_TS" "+%b %-d")
+
+    IS_CURRENT="false"
+    if [ "$s" = "$LAST_SESSION" ] && [ $((NOW - LAST_TS)) -lt "$GAP_SECONDS" ]; then
+      IS_CURRENT="true"
+    fi
+
+    # Build repos array for this session
+    JSON_REPOS="["
+    SESSION_REPOS=$(awk -F'|' -v s="$s" '$1 == s {print $3}' "$ENRICHED" | sort -u)
+    for repo_name in $SESSION_REPOS; do
+      R_COMMITS=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r' "$ENRICHED" | wc -l | tr -d ' ')
+      R_ADDED=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r {sum+=$6} END {print sum+0}' "$ENRICHED")
+      R_REMOVED=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r {sum+=$7} END {print sum+0}' "$ENRICHED")
+
+      TOTAL_COMMITS=$((TOTAL_COMMITS + R_COMMITS))
+      TOTAL_ADDED=$((TOTAL_ADDED + R_ADDED))
+      TOTAL_REMOVED=$((TOTAL_REMOVED + R_REMOVED))
+
+      # Build messages array
+      JSON_MSGS="["
+      while IFS= read -r msg; do
+        JSON_MSGS+="$(json_str "$msg"),"
+      done < <(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r {print $5}' "$ENRICHED")
+      JSON_MSGS="${JSON_MSGS%,}]"
+
+      JSON_REPOS+="{\"name\":\"${repo_name}\",\"commits\":${R_COMMITS},\"added\":${R_ADDED},\"removed\":${R_REMOVED},\"messages\":${JSON_MSGS}},"
+    done
+    JSON_REPOS="${JSON_REPOS%,}]"
+
+    JSON_SESSIONS+="{\"number\":${SESSION_COUNT},\"date\":\"${SESSION_DATE}\",\"start\":\"${START_TIME}\",\"end\":\"${END_TIME}\",\"start_ts\":${FIRST_TS},\"end_ts\":${LAST_TS},\"duration\":${DURATION_MIN},\"current\":${IS_CURRENT},\"repos\":${JSON_REPOS}},"
+  done
+  JSON_SESSIONS="${JSON_SESSIONS%,}]"
+
+  # Determine date range
+  FIRST_DATE=$(date -r "$(awk -F'|' 'NR==1 {print $2}' "$ENRICHED")" "+%b %-d")
+  LAST_DATE=$(date -r "$(awk -F'|' '{ts=$2} END {print ts}' "$ENRICHED")" "+%b %-d, %Y")
+
+  # Format total time
+  TOTAL_HOURS=$((TOTAL_MINUTES / 60))
+  REMAINING_MINS=$((TOTAL_MINUTES % 60))
+  if [ "$TOTAL_HOURS" -gt 0 ]; then
+    TIME_FMT="${TOTAL_HOURS}h ${REMAINING_MINS}m"
+  else
+    TIME_FMT="${REMAINING_MINS}m"
+  fi
+
+  # Format lines
+  if [ "$TOTAL_ADDED" -ge 1000 ]; then
+    ADDED_FMT="$(echo "scale=1; $TOTAL_ADDED / 1000" | bc)K"
+  else
+    ADDED_FMT="$TOTAL_ADDED"
+  fi
+  if [ "$TOTAL_REMOVED" -ge 1000 ]; then
+    REMOVED_FMT="$(echo "scale=1; $TOTAL_REMOVED / 1000" | bc)K"
+  else
+    REMOVED_FMT="$TOTAL_REMOVED"
+  fi
+
+  # Write HTML
+  cat > "$HTML_FILE" << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session Tracker</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface-hover: #1c1c1c;
+    --border: #252525;
+    --text: #e5e5e5;
+    --text-dim: #737373;
+    --text-muted: #525252;
+    --second-brain: #818cf8;
+    --lexica: #22d3ee;
+    --command-center: #fbbf24;
+    --nanny-app: #34d399;
+    --claude-test: #a78bfa;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+    padding: 2.5rem;
+    max-width: 960px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .header .date-range {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+  }
+
+  /* Stats row */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+  .stat-label {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.3rem;
+  }
+
+  /* Chart */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .section-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+    margin-bottom: 1.25rem;
+  }
+  .chart-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    height: 22px;
+  }
+  .chart-label {
+    width: 2rem;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: right;
+    margin-right: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .chart-bar-track {
+    flex: 1;
+    height: 18px;
+    display: flex;
+    border-radius: 3px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .chart-bar-track:hover { opacity: 0.85; }
+  .chart-bar-segment {
+    height: 100%;
+    min-width: 2px;
+    transition: width 0.4s ease-out;
+  }
+  .chart-meta {
+    width: 7rem;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-left: 0.75rem;
+    flex-shrink: 0;
+  }
+  .chart-meta span {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .chart-meta .commits { color: var(--text-dim); font-weight: 500; }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 1.25rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+  thead th {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  thead th.right { text-align: right; }
+  tbody td {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid #1a1a1a;
+    vertical-align: top;
+  }
+  tbody td.right {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  tbody td.num {
+    font-variant-numeric: tabular-nums;
+  }
+  tbody tr.session-row {
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  tbody tr.session-row:hover { background: var(--surface-hover); }
+  .repo-pills {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .repo-pill {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 0.65rem;
+    font-weight: 500;
+    opacity: 0.9;
+  }
+  .expand-indicator {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+    display: inline-block;
+    width: 1rem;
+  }
+  .expanded .expand-indicator { transform: rotate(90deg); }
+  .detail-row { display: none; }
+  .detail-row.open { display: table-row; }
+  .detail-row td {
+    padding: 0.5rem 0.75rem 1rem 2.5rem;
+    border-bottom: 1px solid var(--border);
+    background: #0e0e0e;
+  }
+  .detail-repo {
+    margin-bottom: 0.75rem;
+  }
+  .detail-repo:last-child { margin-bottom: 0; }
+  .detail-repo-header {
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .detail-repo-stats {
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+  .detail-msg {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    padding: 0.15rem 0;
+    padding-left: 0.75rem;
+    border-left: 2px solid var(--border);
+    margin: 0.2rem 0;
+  }
+  .added { color: #4ade80; }
+  .removed { color: #f87171; }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    body { padding: 1rem; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .chart-meta { width: 5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Session Tracker</h1>
+  <div class="date-range" id="date-range"></div>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="section">
+  <div class="section-title">Commits per Session</div>
+  <div id="chart"></div>
+  <div class="legend" id="legend"></div>
+</div>
+
+<div class="section">
+  <div class="section-title">Session Details</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>#</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Duration</th>
+          <th>Projects</th>
+          <th class="right">Commits</th>
+          <th class="right">Lines</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+HTMLEOF
+
+  # Inject the data
+  echo "const SESSIONS = ${JSON_SESSIONS};" >> "$HTML_FILE"
+  echo "const TOTALS = {sessions:${SESSION_COUNT},minutes:${TOTAL_MINUTES},commits:${TOTAL_COMMITS},added:${TOTAL_ADDED},removed:${TOTAL_REMOVED},time:\"${TIME_FMT}\",addedFmt:\"${ADDED_FMT}\",removedFmt:\"${REMOVED_FMT}\"};" >> "$HTML_FILE"
+  echo "const DATE_RANGE = \"${FIRST_DATE} – ${LAST_DATE}\";" >> "$HTML_FILE"
+
+  cat >> "$HTML_FILE" << 'HTMLEOF2'
+
+const REPO_COLORS = {
+  'second-brain': '#818cf8',
+  'lexica': '#22d3ee',
+  'command-center': '#fbbf24',
+  'nanny-app': '#34d399',
+  'claude-test': '#a78bfa'
+};
+
+function fmt(n) {
+  return n >= 10000 ? (n/1000).toFixed(1) + 'K' : n >= 1000 ? (n/1000).toFixed(1) + 'K' : String(n);
+}
+
+// Date range
+document.getElementById('date-range').textContent = DATE_RANGE;
+
+// Stats cards
+const statsEl = document.getElementById('stats');
+const cards = [
+  { value: TOTALS.sessions, label: 'Sessions' },
+  { value: TOTALS.time, label: 'Total Time' },
+  { value: TOTALS.commits, label: 'Commits' },
+  { value: `+${TOTALS.addedFmt} / -${TOTALS.removedFmt}`, label: 'Lines Changed' },
+];
+statsEl.innerHTML = cards.map(c => `
+  <div class="stat-card">
+    <div class="stat-value">${c.value}</div>
+    <div class="stat-label">${c.label}</div>
+  </div>
+`).join('');
+
+// Chart
+const chartEl = document.getElementById('chart');
+const maxCommits = Math.max(...SESSIONS.map(s => s.repos.reduce((sum, r) => sum + r.commits, 0)));
+const allRepos = new Set();
+SESSIONS.forEach(s => s.repos.forEach(r => allRepos.add(r.name)));
+
+chartEl.innerHTML = SESSIONS.map(s => {
+  const totalCommits = s.repos.reduce((sum, r) => sum + r.commits, 0);
+  const pct = (totalCommits / maxCommits) * 100;
+  const segments = s.repos.map(r => {
+    const segPct = (r.commits / totalCommits) * pct;
+    return `<div class="chart-bar-segment" style="width:${segPct}%;background:${REPO_COLORS[r.name] || '#666'}"></div>`;
+  }).join('');
+  return `
+    <div class="chart-row">
+      <div class="chart-label">#${s.number}</div>
+      <div class="chart-bar-track" onclick="toggleRow(${s.number})">${segments}</div>
+      <div class="chart-meta">
+        <span class="commits">${totalCommits}</span>
+        <span>${s.duration}m</span>
+      </div>
+    </div>`;
+}).join('');
+
+// Legend
+const legendEl = document.getElementById('legend');
+legendEl.innerHTML = [...allRepos].map(name => `
+  <div class="legend-item">
+    <div class="legend-dot" style="background:${REPO_COLORS[name] || '#666'}"></div>
+    ${name}
+  </div>
+`).join('');
+
+// Table
+const tbody = document.getElementById('table-body');
+SESSIONS.forEach(s => {
+  const totalCommits = s.repos.reduce((sum, r) => sum + r.commits, 0);
+  const totalAdded = s.repos.reduce((sum, r) => sum + r.added, 0);
+  const totalRemoved = s.repos.reduce((sum, r) => sum + r.removed, 0);
+  const pills = s.repos.map(r =>
+    `<span class="repo-pill" style="background:${REPO_COLORS[r.name] || '#666'}22;color:${REPO_COLORS[r.name] || '#666'}">${r.name}</span>`
+  ).join('');
+
+  const row = document.createElement('tr');
+  row.className = 'session-row';
+  row.id = `row-${s.number}`;
+  row.onclick = () => toggleRow(s.number);
+  row.innerHTML = `
+    <td><span class="expand-indicator">›</span></td>
+    <td class="num">${s.number}</td>
+    <td>${s.date}</td>
+    <td>${s.start} – ${s.end}</td>
+    <td class="num">${s.duration} min</td>
+    <td><div class="repo-pills">${pills}</div></td>
+    <td class="right">${totalCommits}</td>
+    <td class="right"><span class="added">+${fmt(totalAdded)}</span> <span class="removed">-${fmt(totalRemoved)}</span></td>
+  `;
+  tbody.appendChild(row);
+
+  const detailRow = document.createElement('tr');
+  detailRow.className = 'detail-row';
+  detailRow.id = `detail-${s.number}`;
+  const detailHtml = s.repos.map(r => `
+    <div class="detail-repo">
+      <div class="detail-repo-header">
+        <span class="repo-pill" style="background:${REPO_COLORS[r.name] || '#666'}22;color:${REPO_COLORS[r.name] || '#666'}">${r.name}</span>
+        <span class="detail-repo-stats">${r.commits} commits · <span class="added">+${fmt(r.added)}</span> <span class="removed">-${fmt(r.removed)}</span></span>
+      </div>
+      ${r.messages.map(m => `<div class="detail-msg">${escHtml(m)}</div>`).join('')}
+    </div>
+  `).join('');
+  detailRow.innerHTML = `<td colspan="8">${detailHtml}</td>`;
+  tbody.appendChild(detailRow);
+});
+
+function toggleRow(n) {
+  const detail = document.getElementById(`detail-${n}`);
+  const row = document.getElementById(`row-${n}`);
+  detail.classList.toggle('open');
+  row.classList.toggle('expanded');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
+HTMLEOF2
+
+  echo "Report saved to: ${HTML_FILE}"
+}
+
+# --- Main ---
+case "$OUTPUT_FORMAT" in
+  text) output_text ;;
+  html) output_html ;;
+esac
