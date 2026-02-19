@@ -19,6 +19,10 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 
 - **Set `connectionTimeoutMillis` on every pg.Pool.** The default of `0` means connection attempts wait indefinitely. A single slow connection (transient network issue, cold start after idle) makes the entire service appear dead with no error logged. Use `connectionTimeoutMillis: 5_000` (5s) — normal connections establish in 50-200ms, so 5s has no impact on healthy operations but ensures hung attempts fail fast. <!-- Source: BUG-023, second-brain, 2026-02-15 -->
 
+## Triggers & State Machines
+
+- **Enumerate ALL transition paths when expanding a state machine.** When adding a new status to a DB-managed state machine with triggers, enumerate every possible transition (N states = N*(N-1) directional transitions). It's easy to handle forward paths (OPEN→IN_PROGRESS→DONE) and forget reversal paths (DONE→IN_PROGRESS). Missing a transition branch leaves derived timestamps in an inconsistent state (e.g., `completed_at` stays set when moving a DONE item back to IN_PROGRESS). <!-- Source: adversarial review, second-brain #156, 2026-02-19 -->
+
 ## Data Integrity
 
 - **Guard after create → reload.** After creating a resource and reloading from DB, check for null. Fire-and-forget patterns, replication lag, or race conditions can cause the reload to fail.
