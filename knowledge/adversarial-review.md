@@ -40,7 +40,7 @@ A file can belong to multiple categories.
 | **shell** | Tier 2: shell command validation |
 | **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
-| **test-only** | Tier 3: UTC suffix in test Date strings, test env isolation, error branch coverage. No other tiers needed. |
+| **test-only** | Tier 3: UTC suffix in test Date strings, test env isolation, error branch coverage, test mock target verification, full object shape assertions. No other tiers needed. |
 
 **Always run:** Tier 0 automated grep checks (every review). Tier 4: pattern siblings, documentation sync, architecture self-review (100+ LOC). Learning Capture Gate.
 
@@ -178,6 +178,8 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **String truncation arithmetic.** When slicing a string to fit a max length and appending a suffix, verify `slice_length + suffix_length <= limit`. Pattern: `str.slice(0, limit - suffix.length) + suffix`. For HTML-formatted strings, truncate at line boundaries (`lastIndexOf("\n")`) to avoid splitting paired tags (`<a>...</a>`, `<b>...</b>`), then strip partial tags/entities as fallback. <!-- Source: post-mortem, second-brain #131, 2026-02-16; strengthened PR review #155, 2026-02-17 -->
 - [ ] **Compound text decoration.** When a format helper returns decorated text (e.g., parentheses, brackets), check all call sites — callers adding their own decoration can compound: `((all day))`. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 - [ ] **Stale closure in background refresh.** When a React hook fires a background fetch (cache-then-refresh pattern), the `.then()` closure captures the filter/key at call time. If the user switches tabs before the fetch resolves, `setEntries`/`setCursor` updates shared state with stale data. Guard with a `currentKeyRef` that tracks the active filter, and skip state updates when `currentKeyRef.current !== capturedKey`. Cache updates are safe; only setState calls need the guard. <!-- Source: post-mortem, second-brain #136, 2026-02-17 -->
+- [ ] **Test mock target verification.** For each `vi.spyOn()` or `vi.fn()` mock in new/changed test files, trace the mock target to the production code path under test. Verify the mocked method is the one actually called in the code path being tested, not a similar-sounding sibling method. Common failure: mocking `findForDate` when the code uses `findAllOpen`. <!-- Source: post-mortem, second-brain #159, 2026-02-19 -->
+- [ ] **Full object shape assertions on structured output.** When tests assert inline buttons, API response objects, or structured UI data, verify assertions cover the full object shape (text, labels, IDs) — not just callback data or IDs. Partial assertions miss label regressions. <!-- Source: post-mortem, second-brain #159, 2026-02-19 -->
 
 ---
 

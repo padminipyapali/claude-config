@@ -11,6 +11,8 @@ Cross-project learnings for testing strategy, mocking, and assertions.
 - **JSDoc on test helper factories.** `create*` test helpers should document default values and override behavior.
 - **Tests use `vi.waitFor()` for async side effects.** When testing fire-and-forget patterns, wait for the side effect to complete.
 - **Restore mutated `process.env` in afterEach.** Tests that `delete` or override env vars can leak state into other test files. Capture the original value in `beforeEach`, restore it in `afterEach`. <!-- Source: PR review, second-brain #148, 2026-02-17 -->
+- **Verify mock targets match the production code path.** When mocking a service method for a test, trace the test's assertion back to the production code to confirm the mock intercepts the correct method. PR #159 mocked `findTodosForDate` when the tested feature used `findAllOpenTodos` — the test would have passed vacuously or failed confusingly. This is especially common when a service has multiple similar-sounding query methods (findForDate, findAllOpen, findByStatus). <!-- Source: post-mortem, second-brain #159, 2026-02-19 -->
+- **Assert full object shapes in test expectations, not just IDs or callbacks.** When testing structured output (inline buttons, API response objects), assert the complete object shape including labels/text, not just identifiers. Partial assertions miss label regressions and field omissions. <!-- Source: post-mortem, second-brain #159, 2026-02-19 -->
 
 ---
 *Sources: second-brain, lexica*
