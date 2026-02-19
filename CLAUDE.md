@@ -97,7 +97,7 @@ When the user approves the review loop, run these sub-steps sequentially. Do not
 
 | Sub-step | Name | What happens |
 |----------|------|-------------|
-| 4a | **Code simplification** | Run code-simplifier on changed files (vs main). |
+| 4a | **Code simplification** | Run `code-simplifier:code-simplifier` agent on changed files (vs main). |
 | 4b | **CodeRabbit review** | Run `/coderabbit:review --base main`. Fix all critical/high findings. Re-run to confirm. Track the total findings count. |
 | 4c | **Adversarial review** | Run `/adversarial-review`. Fix any issues found. |
 | 4d | **CI checks** | Run build, lint, test. Fix failures. If any sub-step produced fixes, re-run from 4b (CodeRabbit) to validate the fixes didn't introduce new issues. Cap at 3 iterations to avoid infinite loops. |
