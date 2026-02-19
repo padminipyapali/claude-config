@@ -47,6 +47,7 @@ Cross-project learnings for TypeScript and Node.js development.
 
 - **`new Date("YYYY-MM-DDT00:00:00")` without `Z` suffix parses as server local time.** This silently shifts dates when the server timezone differs from the user's. Always append `Z` for UTC, or use `localToUtc()` / `Date.UTC()` when the date represents a specific timezone. Affects both production code and test helpers — flaky CI tests are the first symptom. <!-- Source: PR review, second-brain #131, 2026-02-16 -->
 - **When truncating strings to a max length with a suffix, subtract the suffix length from the limit.** `str.slice(0, 4090) + "\n[truncated]"` produces 4102 chars, exceeding a 4096 limit. Use `str.slice(0, limit - suffix.length) + suffix`. <!-- Source: PR review, second-brain #131, 2026-02-16 -->
+- **Normalize date ranges to UTC midnight for daily bucketing.** When computing a `sinceDate` for daily breakdowns, use `new Date(Date.UTC(y, m, d))` — not `new Date(Date.now() - N * 86400000)`. Raw subtraction preserves time-of-day, so the "today" bucket starts mid-day and excludes morning activity. Pattern: `const todayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())); const sinceDate = new Date(todayUtc.getTime() - (days - 1) * 86400000);`. <!-- Source: PR review, command-center #21, 2026-02-19 -->
 
 ## Code Hygiene
 
