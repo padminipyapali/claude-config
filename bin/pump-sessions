@@ -1,26 +1,27 @@
 #!/bin/bash
 # pump-sessions — Track coding productivity across repos by session.
 #
-# Groups git commits into sessions based on time gaps.
+# Groups git commits + manual notes into sessions based on time gaps.
 # A new session starts after 60+ minutes of inactivity.
 #
 # Usage:
 #   pump-sessions [options] [lookback]
 #
 # Options:
-#   --html [file]   Generate HTML report (default: ~/Desktop/sessions-report.html)
+#   --html [file]     Generate HTML report (default: ~/Desktop/sessions-report.html)
+#   --note "text"     Log a session note (creates activity even without commits)
+#   --log "text"      Alias for --note
 #
 # Lookback:
-#   24              Last 24 hours (default)
-#   48              Last 48 hours
-#   7d              Last 7 days
+#   24                Last 24 hours (default)
+#   48                Last 48 hours
+#   7d                Last 7 days
 
 set -euo pipefail
 
-# --- Configuration ---
-GAP_SECONDS=3600  # 60 minutes = new session
-
-# Known repos (path:display_name)
+# === Configuration ===
+GAP_SECONDS=3600
+LOG_FILE="$HOME/.claude/session-log.jsonl"
 REPOS=(
   "$HOME/dev/claude_test/my_mind_evolved:second-brain"
   "$HOME/dev/claude_test/nanny_management/nanny-app:nanny-app"
@@ -29,25 +30,24 @@ REPOS=(
   "$HOME/dev/claude_test:claude-test"
 )
 
-# --- Parse arguments ---
+# === Argument parsing ===
 OUTPUT_FORMAT="text"
 HTML_FILE="$HOME/Desktop/sessions-report.html"
+NOTE_TEXT=""
+MODE="report"
 LOOKBACK=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --html)
       OUTPUT_FORMAT="html"
-      if [[ "${2:-}" != "" && "${2:-}" != --* && "${2:-}" != *d && "${2:-}" != *h && ! "${2:-}" =~ ^[0-9]+$ ]]; then
-        HTML_FILE="$2"
-        shift
+      if [[ "${2:-}" != "" && "${2:-}" != --* && ! "${2:-}" =~ ^[0-9] ]]; then
+        HTML_FILE="$2"; shift
       fi
-      shift
-      ;;
-    *)
-      LOOKBACK="$1"
-      shift
-      ;;
+      shift ;;
+    --note|--log)
+      MODE="note"; NOTE_TEXT="${2:-}"; shift 2 ;;
+    *) LOOKBACK="$1"; shift ;;
   esac
 done
 
@@ -58,41 +58,129 @@ case "$LOOKBACK" in
   *)  HOURS="$LOOKBACK" ;;
 esac
 SINCE="$HOURS hours ago"
+SINCE_TS=$(date -v-${HOURS}H +%s 2>/dev/null || date -d "$SINCE" +%s)
 
-# --- Temp files ---
+# === Note logging mode ===
+if [ "$MODE" = "note" ]; then
+  if [ -z "$NOTE_TEXT" ]; then
+    echo "Usage: pump-sessions --note \"your note here\""
+    exit 1
+  fi
+  TS=$(date +%s)
+  TIME_FMT=$(date -r "$TS" "+%-l:%M %p" 2>/dev/null || date -d "@$TS" "+%-l:%M %p")
+  mkdir -p "$(dirname "$LOG_FILE")"
+  python3 -c "
+import json, sys
+entry = {'ts': $TS, 'text': sys.argv[1]}
+print(json.dumps(entry))
+" "$NOTE_TEXT" >> "$LOG_FILE"
+  echo "  Logged: \"${NOTE_TEXT}\" (${TIME_FMT})"
+  exit 0
+fi
+
+# === Temp files ===
 TMPDIR_WORK=$(mktemp -d)
 trap "rm -rf $TMPDIR_WORK" EXIT
-ALL_COMMITS="$TMPDIR_WORK/commits"
-touch "$ALL_COMMITS"
+ALL_ENTRIES="$TMPDIR_WORK/entries"
+touch "$ALL_ENTRIES"
 
-# --- Helper: JSON-escape a string ---
+# Helper: JSON-escape a string (outputs quoted string)
 json_str() {
   python3 -c "import sys,json; sys.stdout.write(json.dumps(sys.stdin.read()))" <<< "$1"
 }
 
-# --- Step 1: Collect all commits across repos ---
+# === Step 1: Collect git commits ===
 for entry in "${REPOS[@]}"; do
   repo_path="${entry%%:*}"
   repo_name="${entry##*:}"
   [ -d "$repo_path/.git" ] || continue
+  # Format: timestamp|type|repo_name|hash|subject
   git -C "$repo_path" log --all --branches \
-    --format="%at|${repo_name}|%H|%s" \
-    --since="$SINCE" 2>/dev/null >> "$ALL_COMMITS" || true
+    --format="%at|commit|${repo_name}|%H|%s" \
+    --since="$SINCE" 2>/dev/null >> "$ALL_ENTRIES" || true
 done
 
-sort -t'|' -k1 -n "$ALL_COMMITS" -o "$ALL_COMMITS"
+# === Step 2: Collect manual notes ===
+if [ -f "$LOG_FILE" ]; then
+  python3 -c "
+import json, sys
+since_ts = int(sys.argv[1])
+for line in open(sys.argv[2]):
+    line = line.strip()
+    if not line: continue
+    try:
+        entry = json.loads(line)
+        ts = entry['ts']
+        if ts >= since_ts:
+            text = entry['text'].replace('|', '-')
+            print(f'{ts}|note|__note__|n{ts}|{text}')
+    except: pass
+" "$SINCE_TS" "$LOG_FILE" >> "$ALL_ENTRIES" 2>/dev/null || true
+fi
 
-if [ ! -s "$ALL_COMMITS" ]; then
+# === Step 3: Collect GitHub PR activity ===
+collect_github_activity() {
+  for entry in "${REPOS[@]}"; do
+    repo_path="${entry%%:*}"
+    repo_name="${entry##*:}"
+    [ -d "$repo_path/.git" ] || continue
+
+    # Get GitHub remote owner/repo
+    REMOTE_URL=$(git -C "$repo_path" remote get-url origin 2>/dev/null || true)
+    [ -z "$REMOTE_URL" ] && continue
+    # Extract owner/repo from URL
+    GH_REPO=$(echo "$REMOTE_URL" | sed -E 's|.*github\.com[:/]([^/]+/[^/.]+)(\.git)?$|\1|')
+    [ -z "$GH_REPO" ] && continue
+
+    # Get PR events (created, merged, reviewed)
+    gh api "repos/${GH_REPO}/issues/comments" \
+      --paginate -q ".[] | select(.created_at > \"$(date -v-${HOURS}H -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -d \"$SINCE\" +%Y-%m-%dT%H:%M:%SZ)\") | .created_at + \"|comment|${repo_name}|pr-\" + (.issue_url | split(\"/\") | last) + \"|PR #\" + (.issue_url | split(\"/\") | last) + \": \" + (.body | split(\"\\n\") | first | .[:80])" \
+      2>/dev/null | while IFS='|' read -r created_at type repo hash subject; do
+      # Convert ISO date to epoch
+      TS=$(date -jf "%Y-%m-%dT%H:%M:%SZ" "$created_at" +%s 2>/dev/null || date -d "$created_at" +%s 2>/dev/null || true)
+      [ -z "$TS" ] && continue
+      echo "${TS}|comment|${repo}|${hash}|${subject}" >> "$ALL_ENTRIES"
+    done || true
+
+    # Get PRs created/merged in timeframe
+    gh pr list --repo "$GH_REPO" --state all --json number,title,createdAt,mergedAt \
+      --limit 50 2>/dev/null | python3 -c "
+import json, sys, subprocess
+from datetime import datetime, timezone, timedelta
+since_ts = int(sys.argv[1])
+repo_name = sys.argv[2]
+data = json.load(sys.stdin)
+for pr in data:
+    for event_type, date_field, prefix in [('pr', 'createdAt', 'opened'), ('pr-merge', 'mergedAt', 'merged')]:
+        dt_str = pr.get(date_field, '')
+        if not dt_str: continue
+        dt = datetime.fromisoformat(dt_str.replace('Z', '+00:00'))
+        ts = int(dt.timestamp())
+        if ts >= since_ts:
+            title = pr['title'].replace('|', '-')[:80]
+            print(f'{ts}|{event_type}|{repo_name}|pr-{pr[\"number\"]}|{prefix} PR #{pr[\"number\"]}: {title}')
+" "$SINCE_TS" "$repo_name" >> "$ALL_ENTRIES" 2>/dev/null || true
+  done
+}
+
+# Only collect GitHub data if gh is available and authenticated
+if command -v gh &>/dev/null && gh auth status &>/dev/null 2>&1; then
+  collect_github_activity
+fi
+
+# === Step 4: Sort and group into sessions ===
+sort -t'|' -k1 -n "$ALL_ENTRIES" -o "$ALL_ENTRIES"
+
+if [ ! -s "$ALL_ENTRIES" ]; then
   if [ "$OUTPUT_FORMAT" = "text" ]; then
     echo ""
-    echo "  No commits found in the last ${HOURS}h."
-    echo "  (Try: pump-sessions 48 or pump-sessions 7d)"
+    echo "  No activity found in the last ${HOURS}h."
+    echo "  Log a note: pump-sessions --note \"what you're working on\""
     echo ""
   fi
   exit 0
 fi
 
-# --- Step 2: Assign commits to sessions ---
 SESSIONS_FILE="$TMPDIR_WORK/sessions"
 awk -F'|' -v gap="$GAP_SECONDS" '
 BEGIN { session = 1; prev_ts = 0 }
@@ -102,40 +190,47 @@ BEGIN { session = 1; prev_ts = 0 }
   print session "|" $0
   prev_ts = ts
 }
-' "$ALL_COMMITS" > "$SESSIONS_FILE"
+' "$ALL_ENTRIES" > "$SESSIONS_FILE"
 
-# --- Step 3: Compute stats per session ---
+# === Step 5: Enrich with diff stats (commits only) ===
+ENRICHED="$TMPDIR_WORK/enriched"
+touch "$ENRICHED"
 SESSION_NUMS=$(cut -d'|' -f1 "$SESSIONS_FILE" | sort -un)
 LAST_SESSION=$(echo "$SESSION_NUMS" | tail -1)
 NOW=$(date +%s)
-
-# Enriched data file: session|timestamp|repo|hash|subject|added|removed
-ENRICHED="$TMPDIR_WORK/enriched"
-touch "$ENRICHED"
 
 for s in $SESSION_NUMS; do
   SESSION_DATA="$TMPDIR_WORK/session_${s}"
   grep "^${s}|" "$SESSIONS_FILE" > "$SESSION_DATA"
 
-  REPO_NAMES=$(cut -d'|' -f3 "$SESSION_DATA" | sort -u)
-  for repo_name in $REPO_NAMES; do
+  # Process commits (need diff stats)
+  COMMIT_REPOS=$(awk -F'|' -v s="$s" '$2 == "commit" {print $4}' "$SESSION_DATA" | sort -u)
+  for repo_name in $COMMIT_REPOS; do
     repo_path=""
     for entry in "${REPOS[@]}"; do
       [ "${entry##*:}" = "$repo_name" ] && repo_path="${entry%%:*}" && break
     done
     [ -z "$repo_path" ] && continue
 
-    REPO_HASHES=$(awk -F'|' -v r="$repo_name" '$3 == r {print $4}' "$SESSION_DATA")
+    REPO_HASHES=$(awk -F'|' -v s="$s" -v r="$repo_name" '$2=="commit" && $4==r {print $5}' "$SESSION_DATA")
     while IFS= read -r hash; do
       STATS=$(git -C "$repo_path" show --shortstat --format="" "$hash" 2>/dev/null || echo "")
       A=$(echo "$STATS" | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+' || true)
       D=$(echo "$STATS" | grep -oE '[0-9]+ deletion' | grep -oE '[0-9]+' || true)
-      TS=$(awk -F'|' -v h="$hash" '$4 == h {print $2; exit}' "$SESSION_DATA")
-      MSG=$(awk -F'|' -v h="$hash" '$4 == h {print $5; exit}' "$SESSION_DATA")
-      echo "${s}|${TS}|${repo_name}|${hash}|${MSG}|${A:-0}|${D:-0}" >> "$ENRICHED"
+      TS=$(awk -F'|' -v h="$hash" '$5 == h {print $2; exit}' "$SESSION_DATA")
+      MSG=$(awk -F'|' -v h="$hash" '$5 == h {print $6; exit}' "$SESSION_DATA")
+      echo "${s}|commit|${TS}|${repo_name}|${hash}|${MSG}|${A:-0}|${D:-0}" >> "$ENRICHED"
     done <<< "$REPO_HASHES"
   done
+
+  # Process notes (no stats needed)
+  awk -F'|' '$2 == "note" {print $1 "|note|" $2 "|__note__|" $5 "|" $6 "|0|0"}' "$SESSION_DATA" >> "$ENRICHED"
+
+  # Process PR events (no stats needed)
+  awk -F'|' '$2 == "pr" || $2 == "pr-merge" || $2 == "comment" {print $1 "|" $3 "|" $2 "|" $4 "|" $5 "|" $6 "|0|0"}' "$SESSION_DATA" >> "$ENRICHED"
 done
+
+# Enriched format: session|type|timestamp|repo|hash|subject|added|removed
 
 # =====================================================
 # TEXT OUTPUT
@@ -152,11 +247,15 @@ output_text() {
   echo "  ==============="
   echo ""
 
-  for s in $SESSION_NUMS; do
+  # Reverse order: newest first
+  REVERSED_SESSIONS=$(echo "$SESSION_NUMS" | sort -rn)
+
+  for s in $REVERSED_SESSIONS; do
     TOTAL_SESSIONS=$((TOTAL_SESSIONS + 1))
 
-    FIRST_TS=$(awk -F'|' -v s="$s" '$1 == s {print $2; exit}' "$ENRICHED")
-    LAST_TS=$(awk -F'|' -v s="$s" '$1 == s {ts=$2} END {print ts}' "$ENRICHED")
+    FIRST_TS=$(awk -F'|' -v s="$s" '$1 == s {print $3; exit}' "$ENRICHED")
+    LAST_TS=$(awk -F'|' -v s="$s" '$1 == s {ts=$3} END {print ts}' "$ENRICHED")
+    [ -z "$FIRST_TS" ] && continue
     DURATION_MIN=$(( (LAST_TS - FIRST_TS) / 60 ))
     [ "$DURATION_MIN" -lt 1 ] && DURATION_MIN=1
     GRAND_MINUTES=$((GRAND_MINUTES + DURATION_MIN))
@@ -170,14 +269,33 @@ output_text() {
       CURRENT_MARKER="  <- current"
     fi
 
-    echo "  Session #${TOTAL_SESSIONS}: ${SESSION_DATE}, ${START_TIME} - ${END_TIME} (${DURATION_MIN} min)${CURRENT_MARKER}"
+    # Count unique sessions from original order for display number
+    DISPLAY_NUM=$(echo "$SESSION_NUMS" | grep -n "^${s}$" | cut -d: -f1)
+    echo "  Session #${DISPLAY_NUM}: ${SESSION_DATE}, ${START_TIME} - ${END_TIME} (${DURATION_MIN} min)${CURRENT_MARKER}"
     echo "  $(printf '%0.s-' {1..50})"
 
-    SESSION_REPOS=$(awk -F'|' -v s="$s" '$1 == s {print $3}' "$ENRICHED" | sort -u)
+    # Show notes first
+    NOTES=$(awk -F'|' -v s="$s" '$1==s && $2=="note" {print $6}' "$ENRICHED")
+    if [ -n "$NOTES" ]; then
+      while IFS= read -r note; do
+        printf "  %-20s %s\n" "" "# ${note}"
+      done <<< "$NOTES"
+    fi
+
+    # Show PR events
+    PR_EVENTS=$(awk -F'|' -v s="$s" '$1==s && ($2=="pr" || $2=="pr-merge" || $2=="comment") {print $4 ": " $6}' "$ENRICHED")
+    if [ -n "$PR_EVENTS" ]; then
+      while IFS= read -r ev; do
+        printf "  %-20s %s\n" "" "> ${ev}"
+      done <<< "$PR_EVENTS"
+    fi
+
+    # Show commits by repo
+    SESSION_REPOS=$(awk -F'|' -v s="$s" '$1==s && $2=="commit" {print $4}' "$ENRICHED" | sort -u)
     for repo_name in $SESSION_REPOS; do
-      COMMIT_COUNT=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r' "$ENRICHED" | wc -l | tr -d ' ')
-      REPO_ADDED=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r {sum+=$6} END {print sum+0}' "$ENRICHED")
-      REPO_REMOVED=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r {sum+=$7} END {print sum+0}' "$ENRICHED")
+      COMMIT_COUNT=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $2=="commit" && $4==r' "$ENRICHED" | wc -l | tr -d ' ')
+      REPO_ADDED=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $2=="commit" && $4==r {sum+=$7} END {print sum+0}' "$ENRICHED")
+      REPO_REMOVED=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $2=="commit" && $4==r {sum+=$8} END {print sum+0}' "$ENRICHED")
 
       GRAND_COMMITS=$((GRAND_COMMITS + COMMIT_COUNT))
       GRAND_ADDED=$((GRAND_ADDED + REPO_ADDED))
@@ -185,21 +303,25 @@ output_text() {
 
       printf "  %-20s %2d commits   +%-5d -%d\n" "$repo_name" "$COMMIT_COUNT" "$REPO_ADDED" "$REPO_REMOVED"
 
-      awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r {print $5}' "$ENRICHED" | while IFS= read -r MSG; do
+      awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $2=="commit" && $4==r {print $6}' "$ENRICHED" | while IFS= read -r MSG; do
         [ ${#MSG} -gt 58 ] && MSG="${MSG:0:55}..."
         printf "    * %s\n" "$MSG"
       done
       echo ""
     done
+
+    # If session has only notes/PR events and no commits, add spacing
+    if [ -z "$SESSION_REPOS" ]; then echo ""; fi
   done
 
   echo "  ==============="
+  TOTAL_SESSIONS_COUNT=$(echo "$SESSION_NUMS" | wc -l | tr -d ' ')
   if [ "$HOURS" -le 24 ]; then PERIOD="Today"
   elif [ "$HOURS" -le 48 ]; then PERIOD="Last 2 days"
   else PERIOD="Last ${HOURS}h"; fi
-  echo "  ${PERIOD}: ${TOTAL_SESSIONS} sessions | ${GRAND_MINUTES} min | ${GRAND_COMMITS} commits | +${GRAND_ADDED} -${GRAND_REMOVED}"
-  if [ "$TOTAL_SESSIONS" -gt 1 ]; then
-    echo "  Avg per session: $((GRAND_MINUTES / TOTAL_SESSIONS)) min | $((GRAND_COMMITS / TOTAL_SESSIONS)) commits"
+  echo "  ${PERIOD}: ${TOTAL_SESSIONS_COUNT} sessions | ${GRAND_MINUTES} min | ${GRAND_COMMITS} commits | +${GRAND_ADDED} -${GRAND_REMOVED}"
+  if [ "$TOTAL_SESSIONS_COUNT" -gt 1 ]; then
+    echo "  Avg per session: $((GRAND_MINUTES / TOTAL_SESSIONS_COUNT)) min | $((GRAND_COMMITS / TOTAL_SESSIONS_COUNT)) commits"
   fi
   echo ""
 }
@@ -208,19 +330,22 @@ output_text() {
 # HTML OUTPUT
 # =====================================================
 output_html() {
-  # Build JSON data from enriched file
+  # Build JSON data
   JSON_SESSIONS="["
   TOTAL_COMMITS=0
   TOTAL_ADDED=0
   TOTAL_REMOVED=0
   TOTAL_MINUTES=0
+  TOTAL_NOTES=0
+  TOTAL_PR_EVENTS=0
   SESSION_COUNT=0
 
   for s in $SESSION_NUMS; do
     SESSION_COUNT=$((SESSION_COUNT + 1))
 
-    FIRST_TS=$(awk -F'|' -v s="$s" '$1 == s {print $2; exit}' "$ENRICHED")
-    LAST_TS=$(awk -F'|' -v s="$s" '$1 == s {ts=$2} END {print ts}' "$ENRICHED")
+    FIRST_TS=$(awk -F'|' -v s="$s" '$1 == s {print $3; exit}' "$ENRICHED")
+    LAST_TS=$(awk -F'|' -v s="$s" '$1 == s {ts=$3} END {print ts}' "$ENRICHED")
+    [ -z "$FIRST_TS" ] && continue
     DURATION_MIN=$(( (LAST_TS - FIRST_TS) / 60 ))
     [ "$DURATION_MIN" -lt 1 ] && DURATION_MIN=1
     TOTAL_MINUTES=$((TOTAL_MINUTES + DURATION_MIN))
@@ -234,59 +359,62 @@ output_html() {
       IS_CURRENT="true"
     fi
 
-    # Build repos array for this session
-    JSON_REPOS="["
-    SESSION_REPOS=$(awk -F'|' -v s="$s" '$1 == s {print $3}' "$ENRICHED" | sort -u)
-    for repo_name in $SESSION_REPOS; do
-      R_COMMITS=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r' "$ENRICHED" | wc -l | tr -d ' ')
-      R_ADDED=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r {sum+=$6} END {print sum+0}' "$ENRICHED")
-      R_REMOVED=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r {sum+=$7} END {print sum+0}' "$ENRICHED")
+    # Notes
+    JSON_NOTES="["
+    while IFS= read -r note; do
+      [ -z "$note" ] && continue
+      JSON_NOTES+="$(json_str "$note"),"
+      TOTAL_NOTES=$((TOTAL_NOTES + 1))
+    done < <(awk -F'|' -v s="$s" '$1==s && $2=="note" {print $6}' "$ENRICHED")
+    JSON_NOTES="${JSON_NOTES%,}]"
 
+    # PR events
+    JSON_PR="["
+    while IFS= read -r ev; do
+      [ -z "$ev" ] && continue
+      IFS='|' read -r ev_type ev_repo ev_text <<< "$ev"
+      JSON_PR+="{\"type\":$(json_str "$ev_type"),\"repo\":$(json_str "$ev_repo"),\"text\":$(json_str "$ev_text")},"
+      TOTAL_PR_EVENTS=$((TOTAL_PR_EVENTS + 1))
+    done < <(awk -F'|' -v s="$s" '$1==s && ($2=="pr" || $2=="pr-merge" || $2=="comment") {print $2 "|" $4 "|" $6}' "$ENRICHED")
+    JSON_PR="${JSON_PR%,}]"
+
+    # Repos (commits only)
+    JSON_REPOS="["
+    SESSION_REPOS=$(awk -F'|' -v s="$s" '$1==s && $2=="commit" {print $4}' "$ENRICHED" | sort -u)
+    for repo_name in $SESSION_REPOS; do
+      R_COMMITS=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $2=="commit" && $4==r' "$ENRICHED" | wc -l | tr -d ' ')
+      R_ADDED=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $2=="commit" && $4==r {sum+=$7} END {print sum+0}' "$ENRICHED")
+      R_REMOVED=$(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $2=="commit" && $4==r {sum+=$8} END {print sum+0}' "$ENRICHED")
       TOTAL_COMMITS=$((TOTAL_COMMITS + R_COMMITS))
       TOTAL_ADDED=$((TOTAL_ADDED + R_ADDED))
       TOTAL_REMOVED=$((TOTAL_REMOVED + R_REMOVED))
 
-      # Build messages array
       JSON_MSGS="["
       while IFS= read -r msg; do
         JSON_MSGS+="$(json_str "$msg"),"
-      done < <(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $3==r {print $5}' "$ENRICHED")
+      done < <(awk -F'|' -v s="$s" -v r="$repo_name" '$1==s && $2=="commit" && $4==r {print $6}' "$ENRICHED")
       JSON_MSGS="${JSON_MSGS%,}]"
 
-      JSON_REPOS+="{\"name\":\"${repo_name}\",\"commits\":${R_COMMITS},\"added\":${R_ADDED},\"removed\":${R_REMOVED},\"messages\":${JSON_MSGS}},"
+      JSON_REPOS+="{\"name\":$(json_str "$repo_name"),\"commits\":${R_COMMITS},\"added\":${R_ADDED},\"removed\":${R_REMOVED},\"messages\":${JSON_MSGS}},"
     done
     JSON_REPOS="${JSON_REPOS%,}]"
 
-    JSON_SESSIONS+="{\"number\":${SESSION_COUNT},\"date\":\"${SESSION_DATE}\",\"start\":\"${START_TIME}\",\"end\":\"${END_TIME}\",\"start_ts\":${FIRST_TS},\"end_ts\":${LAST_TS},\"duration\":${DURATION_MIN},\"current\":${IS_CURRENT},\"repos\":${JSON_REPOS}},"
+    JSON_SESSIONS+="{\"number\":${SESSION_COUNT},\"date\":\"${SESSION_DATE}\",\"start\":\"${START_TIME}\",\"end\":\"${END_TIME}\",\"start_ts\":${FIRST_TS},\"end_ts\":${LAST_TS},\"duration\":${DURATION_MIN},\"current\":${IS_CURRENT},\"notes\":${JSON_NOTES},\"ghEvents\":${JSON_PR},\"repos\":${JSON_REPOS}},"
   done
   JSON_SESSIONS="${JSON_SESSIONS%,}]"
 
-  # Determine date range
-  FIRST_DATE=$(date -r "$(awk -F'|' 'NR==1 {print $2}' "$ENRICHED")" "+%b %-d")
-  LAST_DATE=$(date -r "$(awk -F'|' '{ts=$2} END {print ts}' "$ENRICHED")" "+%b %-d, %Y")
+  # Date range
+  FIRST_DATE=$(date -r "$(awk -F'|' 'NR==1 {print $3}' "$ENRICHED")" "+%b %-d")
+  LAST_DATE=$(date -r "$(awk -F'|' '{ts=$3} END {print ts}' "$ENRICHED")" "+%b %-d, %Y")
 
-  # Format total time
+  # Formatted totals
   TOTAL_HOURS=$((TOTAL_MINUTES / 60))
   REMAINING_MINS=$((TOTAL_MINUTES % 60))
-  if [ "$TOTAL_HOURS" -gt 0 ]; then
-    TIME_FMT="${TOTAL_HOURS}h ${REMAINING_MINS}m"
-  else
-    TIME_FMT="${REMAINING_MINS}m"
-  fi
+  [ "$TOTAL_HOURS" -gt 0 ] && TIME_FMT="${TOTAL_HOURS}h ${REMAINING_MINS}m" || TIME_FMT="${REMAINING_MINS}m"
+  [ "$TOTAL_ADDED" -ge 1000 ] && ADDED_FMT="$(echo "scale=1; $TOTAL_ADDED / 1000" | bc)K" || ADDED_FMT="$TOTAL_ADDED"
+  [ "$TOTAL_REMOVED" -ge 1000 ] && REMOVED_FMT="$(echo "scale=1; $TOTAL_REMOVED / 1000" | bc)K" || REMOVED_FMT="$TOTAL_REMOVED"
 
-  # Format lines
-  if [ "$TOTAL_ADDED" -ge 1000 ]; then
-    ADDED_FMT="$(echo "scale=1; $TOTAL_ADDED / 1000" | bc)K"
-  else
-    ADDED_FMT="$TOTAL_ADDED"
-  fi
-  if [ "$TOTAL_REMOVED" -ge 1000 ]; then
-    REMOVED_FMT="$(echo "scale=1; $TOTAL_REMOVED / 1000" | bc)K"
-  else
-    REMOVED_FMT="$TOTAL_REMOVED"
-  fi
-
-  # Write HTML
+  # === Write HTML ===
   cat > "$HTML_FILE" << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en">
@@ -296,18 +424,25 @@ output_html() {
 <title>Session Tracker</title>
 <style>
   :root {
-    --bg: #0a0a0a;
-    --surface: #141414;
-    --surface-hover: #1c1c1c;
-    --border: #252525;
-    --text: #e5e5e5;
-    --text-dim: #737373;
-    --text-muted: #525252;
+    --bg: #060608;
+    --surface: #111114;
+    --surface-2: #18181c;
+    --surface-hover: #1e1e24;
+    --border: #222228;
+    --border-subtle: #1a1a1f;
+    --text: #e8e8ed;
+    --text-dim: #8888a0;
+    --text-muted: #555566;
+    --accent: #b4a0ff;
     --second-brain: #818cf8;
     --lexica: #22d3ee;
     --command-center: #fbbf24;
     --nanny-app: #34d399;
     --claude-test: #a78bfa;
+    --note-color: #e0b0ff;
+    --pr-color: #f0883e;
+    --added: #3fb950;
+    --removed: #f85149;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -315,239 +450,300 @@ output_html() {
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
-    padding: 2.5rem;
-    max-width: 960px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, sans-serif;
+    padding: 2rem 2.5rem;
+    max-width: 1000px;
     margin: 0 auto;
     -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
   }
 
-  /* Header */
   .header {
     text-align: center;
-    margin-bottom: 2.5rem;
-    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
     border-bottom: 1px solid var(--border);
   }
   .header h1 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--text-dim);
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
   }
   .header .date-range {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-top: 0.5rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
   }
 
-  /* Stats row */
+  /* Stats */
   .stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    margin-bottom: 2.5rem;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
   }
   .stat-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 1.25rem;
+    padding: 1.1rem 1rem;
     text-align: center;
   }
   .stat-value {
-    font-size: 1.75rem;
+    font-size: 1.6rem;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
   }
   .stat-label {
-    color: var(--text-dim);
-    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-top: 0.3rem;
+    letter-spacing: 0.1em;
+    margin-top: 0.15rem;
   }
 
-  /* Chart */
+  /* Sections */
   .section {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
   }
   .section-title {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--text-dim);
-    margin-bottom: 1.25rem;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    font-weight: 500;
   }
+  .toggle-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.65rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+  }
+  .toggle-btn:hover { border-color: var(--text-muted); color: var(--text); }
+
+  /* Chart */
+  .chart-container { position: relative; }
   .chart-row {
     display: flex;
     align-items: center;
-    margin-bottom: 6px;
-    height: 22px;
+    margin-bottom: 4px;
+    height: 20px;
   }
+  .chart-row.hidden { display: none; }
   .chart-label {
-    width: 2rem;
-    font-size: 0.7rem;
+    width: 2.5rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
     text-align: right;
-    margin-right: 0.75rem;
-    font-variant-numeric: tabular-nums;
+    margin-right: 0.6rem;
     flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
   }
   .chart-bar-track {
     flex: 1;
-    height: 18px;
+    height: 16px;
     display: flex;
     border-radius: 3px;
     overflow: hidden;
     cursor: pointer;
     transition: opacity 0.15s;
   }
-  .chart-bar-track:hover { opacity: 0.85; }
-  .chart-bar-segment {
-    height: 100%;
-    min-width: 2px;
-    transition: width 0.4s ease-out;
+  .chart-bar-track:hover { opacity: 0.8; }
+  .chart-bar-track.note-only {
+    border: 1px dashed var(--note-color);
+    opacity: 0.5;
+    height: 14px;
+    margin: 1px 0;
   }
+  .chart-bar-segment { height: 100%; min-width: 2px; }
   .chart-meta {
-    width: 7rem;
+    width: 6.5rem;
     display: flex;
-    gap: 0.75rem;
+    gap: 0.5rem;
     justify-content: flex-end;
-    margin-left: 0.75rem;
+    margin-left: 0.6rem;
     flex-shrink: 0;
   }
   .chart-meta span {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
     font-variant-numeric: tabular-nums;
   }
-  .chart-meta .commits { color: var(--text-dim); font-weight: 500; }
+  .chart-meta .commits-count { color: var(--text-dim); font-weight: 500; }
 
-  /* Legend */
   .legend {
     display: flex;
-    gap: 1.25rem;
-    margin-top: 1.25rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-subtle);
     flex-wrap: wrap;
   }
   .legend-item {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    font-size: 0.7rem;
-    color: var(--text-dim);
+    gap: 0.35rem;
+    font-size: 0.65rem;
+    color: var(--text-muted);
   }
   .legend-dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 2px;
   }
 
   /* Table */
-  .table-wrap { overflow-x: auto; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.8rem;
+  .table-wrap {
+    overflow-x: auto;
+    max-height: 70vh;
+    overflow-y: auto;
   }
+  table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
   thead th {
     text-align: left;
-    padding: 0.6rem 0.75rem;
-    font-size: 0.65rem;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-muted);
     border-bottom: 1px solid var(--border);
     font-weight: 500;
     white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    z-index: 1;
   }
-  thead th.right { text-align: right; }
+  thead th.r { text-align: right; }
   tbody td {
-    padding: 0.6rem 0.75rem;
-    border-bottom: 1px solid #1a1a1a;
-    vertical-align: top;
+    padding: 0.5rem 0.65rem;
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: middle;
   }
-  tbody td.right {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
-  tbody td.num {
-    font-variant-numeric: tabular-nums;
-  }
+  tbody td.r { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody td.mono { font-variant-numeric: tabular-nums; }
   tbody tr.session-row {
     cursor: pointer;
     transition: background 0.1s;
   }
   tbody tr.session-row:hover { background: var(--surface-hover); }
-  .repo-pills {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
+  .current-badge {
+    display: inline-block;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    padding: 0 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+    opacity: 0.8;
   }
+  .repo-pills { display: flex; gap: 3px; flex-wrap: wrap; }
   .repo-pill {
     display: inline-block;
-    padding: 1px 7px;
+    padding: 1px 6px;
     border-radius: 3px;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 500;
-    opacity: 0.9;
   }
-  .expand-indicator {
+  .note-pill {
+    border: 1px dashed var(--note-color);
+    color: var(--note-color);
+    opacity: 0.7;
+  }
+  .pr-pill {
+    border: 1px dashed var(--pr-color);
+    color: var(--pr-color);
+    opacity: 0.7;
+  }
+  .expand-ind {
     color: var(--text-muted);
-    font-size: 0.7rem;
-    transition: transform 0.2s;
+    font-size: 0.6rem;
+    transition: transform 0.15s;
     display: inline-block;
-    width: 1rem;
+    width: 0.8rem;
   }
-  .expanded .expand-indicator { transform: rotate(90deg); }
+  .expanded .expand-ind { transform: rotate(90deg); }
+
   .detail-row { display: none; }
   .detail-row.open { display: table-row; }
   .detail-row td {
-    padding: 0.5rem 0.75rem 1rem 2.5rem;
+    padding: 0.6rem 0.65rem 0.8rem 2rem;
     border-bottom: 1px solid var(--border);
-    background: #0e0e0e;
+    background: var(--surface-2);
   }
-  .detail-repo {
-    margin-bottom: 0.75rem;
+  .detail-section { margin-bottom: 0.6rem; }
+  .detail-section:last-child { margin-bottom: 0; }
+  .detail-section-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 0.3rem;
   }
+  .detail-note {
+    font-size: 0.72rem;
+    color: var(--note-color);
+    padding: 0.2rem 0 0.2rem 0.65rem;
+    border-left: 2px solid var(--note-color);
+    margin: 0.15rem 0;
+    opacity: 0.85;
+    font-style: italic;
+  }
+  .detail-pr {
+    font-size: 0.72rem;
+    color: var(--pr-color);
+    padding: 0.2rem 0 0.2rem 0.65rem;
+    border-left: 2px solid var(--pr-color);
+    margin: 0.15rem 0;
+    opacity: 0.85;
+  }
+  .detail-repo { margin-bottom: 0.5rem; }
   .detail-repo:last-child { margin-bottom: 0; }
   .detail-repo-header {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 600;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.25rem;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
   }
-  .detail-repo-stats {
-    font-weight: 400;
-    color: var(--text-muted);
-  }
+  .detail-repo-stats { font-weight: 400; color: var(--text-muted); font-size: 0.65rem; }
   .detail-msg {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     color: var(--text-dim);
-    padding: 0.15rem 0;
-    padding-left: 0.75rem;
+    padding: 0.12rem 0 0.12rem 0.65rem;
     border-left: 2px solid var(--border);
-    margin: 0.2rem 0;
+    margin: 0.12rem 0;
   }
-  .added { color: #4ade80; }
-  .removed { color: #f87171; }
+  .c-added { color: var(--added); }
+  .c-removed { color: var(--removed); }
 
-  /* Responsive */
   @media (max-width: 640px) {
     body { padding: 1rem; }
     .stats { grid-template-columns: repeat(2, 1fr); }
-    .chart-meta { width: 5rem; }
+    .chart-meta { width: 4.5rem; }
   }
 </style>
 </head>
@@ -557,31 +753,27 @@ output_html() {
   <h1>Session Tracker</h1>
   <div class="date-range" id="date-range"></div>
 </div>
-
 <div class="stats" id="stats"></div>
 
 <div class="section">
-  <div class="section-title">Commits per Session</div>
-  <div id="chart"></div>
+  <div class="section-header">
+    <div class="section-title">Activity per Session</div>
+    <button class="toggle-btn" id="chart-toggle" onclick="toggleChart()">Show all</button>
+  </div>
+  <div class="chart-container" id="chart"></div>
   <div class="legend" id="legend"></div>
 </div>
 
 <div class="section">
-  <div class="section-title">Session Details</div>
+  <div class="section-header">
+    <div class="section-title">Session Details</div>
+  </div>
   <div class="table-wrap">
     <table>
-      <thead>
-        <tr>
-          <th></th>
-          <th>#</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Duration</th>
-          <th>Projects</th>
-          <th class="right">Commits</th>
-          <th class="right">Lines</th>
-        </tr>
-      </thead>
+      <thead><tr>
+        <th></th><th>#</th><th>Date</th><th>Time</th><th>Duration</th>
+        <th>Activity</th><th class="r">Commits</th><th class="r">Lines</th>
+      </tr></thead>
       <tbody id="table-body"></tbody>
     </table>
   </div>
@@ -590,14 +782,14 @@ output_html() {
 <script>
 HTMLEOF
 
-  # Inject the data
+  # Inject data
   echo "const SESSIONS = ${JSON_SESSIONS};" >> "$HTML_FILE"
-  echo "const TOTALS = {sessions:${SESSION_COUNT},minutes:${TOTAL_MINUTES},commits:${TOTAL_COMMITS},added:${TOTAL_ADDED},removed:${TOTAL_REMOVED},time:\"${TIME_FMT}\",addedFmt:\"${ADDED_FMT}\",removedFmt:\"${REMOVED_FMT}\"};" >> "$HTML_FILE"
+  echo "const TOTALS = {sessions:${SESSION_COUNT},minutes:${TOTAL_MINUTES},commits:${TOTAL_COMMITS},added:${TOTAL_ADDED},removed:${TOTAL_REMOVED},notes:${TOTAL_NOTES},prEvents:${TOTAL_PR_EVENTS},time:\"${TIME_FMT}\",addedFmt:\"${ADDED_FMT}\",removedFmt:\"${REMOVED_FMT}\"};" >> "$HTML_FILE"
   echo "const DATE_RANGE = \"${FIRST_DATE} – ${LAST_DATE}\";" >> "$HTML_FILE"
 
   cat >> "$HTML_FILE" << 'HTMLEOF2'
 
-const REPO_COLORS = {
+const COLORS = {
   'second-brain': '#818cf8',
   'lexica': '#22d3ee',
   'command-center': '#fbbf24',
@@ -605,112 +797,152 @@ const REPO_COLORS = {
   'claude-test': '#a78bfa'
 };
 
-function fmt(n) {
-  return n >= 10000 ? (n/1000).toFixed(1) + 'K' : n >= 1000 ? (n/1000).toFixed(1) + 'K' : String(n);
-}
+const fmt = n => n >= 1000 ? (n/1000).toFixed(1) + 'K' : String(n);
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-// Date range
+// Reverse: newest first
+const sessions = [...SESSIONS].reverse();
+
+// Header
 document.getElementById('date-range').textContent = DATE_RANGE;
 
-// Stats cards
-const statsEl = document.getElementById('stats');
-const cards = [
-  { value: TOTALS.sessions, label: 'Sessions' },
-  { value: TOTALS.time, label: 'Total Time' },
-  { value: TOTALS.commits, label: 'Commits' },
-  { value: `+${TOTALS.addedFmt} / -${TOTALS.removedFmt}`, label: 'Lines Changed' },
-];
-statsEl.innerHTML = cards.map(c => `
-  <div class="stat-card">
-    <div class="stat-value">${c.value}</div>
-    <div class="stat-label">${c.label}</div>
-  </div>
-`).join('');
+// Stats
+document.getElementById('stats').innerHTML = [
+  { v: TOTALS.sessions, l: 'Sessions' },
+  { v: TOTALS.time, l: 'Total Time' },
+  { v: TOTALS.commits, l: 'Commits' },
+  { v: `+${TOTALS.addedFmt} / -${TOTALS.removedFmt}`, l: 'Lines Changed' },
+].map(c => `<div class="stat-card"><div class="stat-value">${c.v}</div><div class="stat-label">${c.l}</div></div>`).join('');
 
-// Chart
-const chartEl = document.getElementById('chart');
-const maxCommits = Math.max(...SESSIONS.map(s => s.repos.reduce((sum, r) => sum + r.commits, 0)));
+// Chart (newest first, show first 10 by default)
+const CHART_LIMIT = 10;
+let chartExpanded = false;
+const maxCommits = Math.max(...sessions.map(s => s.repos.reduce((sum, r) => sum + r.commits, 0)), 1);
 const allRepos = new Set();
-SESSIONS.forEach(s => s.repos.forEach(r => allRepos.add(r.name)));
+sessions.forEach(s => s.repos.forEach(r => allRepos.add(r.name)));
 
-chartEl.innerHTML = SESSIONS.map(s => {
-  const totalCommits = s.repos.reduce((sum, r) => sum + r.commits, 0);
-  const pct = (totalCommits / maxCommits) * 100;
-  const segments = s.repos.map(r => {
-    const segPct = (r.commits / totalCommits) * pct;
-    return `<div class="chart-bar-segment" style="width:${segPct}%;background:${REPO_COLORS[r.name] || '#666'}"></div>`;
-  }).join('');
-  return `
-    <div class="chart-row">
-      <div class="chart-label">#${s.number}</div>
-      <div class="chart-bar-track" onclick="toggleRow(${s.number})">${segments}</div>
-      <div class="chart-meta">
-        <span class="commits">${totalCommits}</span>
-        <span>${s.duration}m</span>
-      </div>
+function renderChart() {
+  const chartEl = document.getElementById('chart');
+  chartEl.innerHTML = sessions.map((s, i) => {
+    const totalCommits = s.repos.reduce((sum, r) => sum + r.commits, 0);
+    const isNoteOnly = totalCommits === 0;
+    const pct = isNoteOnly ? 3 : (totalCommits / maxCommits) * 100;
+    const hidden = !chartExpanded && i >= CHART_LIMIT ? 'hidden' : '';
+    const currentMark = s.current ? ' *' : '';
+
+    let barContent;
+    if (isNoteOnly) {
+      barContent = `<div class="chart-bar-track note-only" onclick="toggleRow(${s.number})"></div>`;
+    } else {
+      const segments = s.repos.map(r => {
+        const segPct = (r.commits / totalCommits) * pct;
+        return `<div class="chart-bar-segment" style="width:${segPct}%;background:${COLORS[r.name]||'#666'}"></div>`;
+      }).join('');
+      barContent = `<div class="chart-bar-track" onclick="toggleRow(${s.number})">${segments}</div>`;
+    }
+
+    const metaText = isNoteOnly
+      ? `<span style="color:var(--note-color);opacity:0.6">notes</span><span>${s.duration}m</span>`
+      : `<span class="commits-count">${totalCommits}</span><span>${s.duration}m</span>`;
+
+    return `<div class="chart-row ${hidden}" data-chart-row>
+      <div class="chart-label">#${s.number}${currentMark}</div>
+      ${barContent}
+      <div class="chart-meta">${metaText}</div>
     </div>`;
-}).join('');
+  }).join('');
+
+  const btn = document.getElementById('chart-toggle');
+  if (sessions.length <= CHART_LIMIT) {
+    btn.style.display = 'none';
+  } else {
+    btn.textContent = chartExpanded ? `Show recent ${CHART_LIMIT}` : `Show all ${sessions.length}`;
+  }
+}
+
+function toggleChart() {
+  chartExpanded = !chartExpanded;
+  renderChart();
+}
+renderChart();
 
 // Legend
-const legendEl = document.getElementById('legend');
-legendEl.innerHTML = [...allRepos].map(name => `
-  <div class="legend-item">
-    <div class="legend-dot" style="background:${REPO_COLORS[name] || '#666'}"></div>
-    ${name}
-  </div>
-`).join('');
+document.getElementById('legend').innerHTML = [...allRepos].map(name =>
+  `<div class="legend-item"><div class="legend-dot" style="background:${COLORS[name]||'#666'}"></div>${name}</div>`
+).join('') + (TOTALS.notes > 0 ? `<div class="legend-item"><div class="legend-dot" style="background:var(--note-color);opacity:0.6"></div>notes</div>` : '');
 
-// Table
+// Table (newest first)
 const tbody = document.getElementById('table-body');
-SESSIONS.forEach(s => {
+sessions.forEach(s => {
   const totalCommits = s.repos.reduce((sum, r) => sum + r.commits, 0);
   const totalAdded = s.repos.reduce((sum, r) => sum + r.added, 0);
   const totalRemoved = s.repos.reduce((sum, r) => sum + r.removed, 0);
-  const pills = s.repos.map(r =>
-    `<span class="repo-pill" style="background:${REPO_COLORS[r.name] || '#666'}22;color:${REPO_COLORS[r.name] || '#666'}">${r.name}</span>`
-  ).join('');
+
+  const pills = [];
+  if (s.notes && s.notes.length > 0) pills.push(`<span class="repo-pill note-pill">notes</span>`);
+  if (s.ghEvents && s.ghEvents.length > 0) pills.push(`<span class="repo-pill pr-pill">PRs</span>`);
+  s.repos.forEach(r => pills.push(
+    `<span class="repo-pill" style="background:${COLORS[r.name]||'#666'}18;color:${COLORS[r.name]||'#666'}">${r.name}</span>`
+  ));
+
+  const currentBadge = s.current ? '<span class="current-badge">now</span>' : '';
 
   const row = document.createElement('tr');
   row.className = 'session-row';
   row.id = `row-${s.number}`;
   row.onclick = () => toggleRow(s.number);
   row.innerHTML = `
-    <td><span class="expand-indicator">›</span></td>
-    <td class="num">${s.number}</td>
+    <td><span class="expand-ind">\u203A</span></td>
+    <td class="mono">${s.number}${currentBadge}</td>
     <td>${s.date}</td>
-    <td>${s.start} – ${s.end}</td>
-    <td class="num">${s.duration} min</td>
-    <td><div class="repo-pills">${pills}</div></td>
-    <td class="right">${totalCommits}</td>
-    <td class="right"><span class="added">+${fmt(totalAdded)}</span> <span class="removed">-${fmt(totalRemoved)}</span></td>
+    <td style="white-space:nowrap">${s.start} – ${s.end}</td>
+    <td class="mono">${s.duration}m</td>
+    <td><div class="repo-pills">${pills.join('')}</div></td>
+    <td class="r">${totalCommits || '–'}</td>
+    <td class="r">${totalCommits ? `<span class="c-added">+${fmt(totalAdded)}</span> <span class="c-removed">-${fmt(totalRemoved)}</span>` : '–'}</td>
   `;
   tbody.appendChild(row);
 
+  // Detail row
   const detailRow = document.createElement('tr');
   detailRow.className = 'detail-row';
   detailRow.id = `detail-${s.number}`;
-  const detailHtml = s.repos.map(r => `
-    <div class="detail-repo">
-      <div class="detail-repo-header">
-        <span class="repo-pill" style="background:${REPO_COLORS[r.name] || '#666'}22;color:${REPO_COLORS[r.name] || '#666'}">${r.name}</span>
-        <span class="detail-repo-stats">${r.commits} commits · <span class="added">+${fmt(r.added)}</span> <span class="removed">-${fmt(r.removed)}</span></span>
+
+  let detailHtml = '';
+
+  if (s.notes && s.notes.length > 0) {
+    detailHtml += `<div class="detail-section">
+      <div class="detail-section-label">Notes</div>
+      ${s.notes.map(n => `<div class="detail-note">${esc(n)}</div>`).join('')}
+    </div>`;
+  }
+
+  if (s.ghEvents && s.ghEvents.length > 0) {
+    detailHtml += `<div class="detail-section">
+      <div class="detail-section-label">GitHub Activity</div>
+      ${s.ghEvents.map(e => `<div class="detail-pr">${esc(e.text)}</div>`).join('')}
+    </div>`;
+  }
+
+  if (s.repos.length > 0) {
+    detailHtml += s.repos.map(r => `
+      <div class="detail-repo">
+        <div class="detail-repo-header">
+          <span class="repo-pill" style="background:${COLORS[r.name]||'#666'}18;color:${COLORS[r.name]||'#666'}">${r.name}</span>
+          <span class="detail-repo-stats">${r.commits} commits · <span class="c-added">+${fmt(r.added)}</span> <span class="c-removed">-${fmt(r.removed)}</span></span>
+        </div>
+        ${r.messages.map(m => `<div class="detail-msg">${esc(m)}</div>`).join('')}
       </div>
-      ${r.messages.map(m => `<div class="detail-msg">${escHtml(m)}</div>`).join('')}
-    </div>
-  `).join('');
+    `).join('');
+  }
+
   detailRow.innerHTML = `<td colspan="8">${detailHtml}</td>`;
   tbody.appendChild(detailRow);
 });
 
 function toggleRow(n) {
-  const detail = document.getElementById(`detail-${n}`);
-  const row = document.getElementById(`row-${n}`);
-  detail.classList.toggle('open');
-  row.classList.toggle('expanded');
-}
-
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  document.getElementById(`detail-${n}`)?.classList.toggle('open');
+  document.getElementById(`row-${n}`)?.classList.toggle('expanded');
 }
 </script>
 </body>
@@ -720,7 +952,7 @@ HTMLEOF2
   echo "Report saved to: ${HTML_FILE}"
 }
 
-# --- Main ---
+# === Main ===
 case "$OUTPUT_FORMAT" in
   text) output_text ;;
   html) output_html ;;
