@@ -47,7 +47,7 @@ Every feature or fix follows these numbered steps. Print the step number and nam
 | 1 | **Plan** | Three sub-steps: ask clarifying questions (1a), write the plan (1b), adversarial plan review (1c). See details below. |
 | 2 | **Implement** | Write the code on a feature branch. Follow project CLAUDE.md conventions. |
 | 3 | **Test locally** | Run the project's test suite, linter, and type-checker. Fix failures before proceeding. |
-| 4 | **Code review loop** | Ask the user: *"Ready to run the code review loop?"* If yes, execute Steps 4a–4d automatically (see below). If no, stop and wait. |
+| 4 | **Code review loop** | **Auto-run** after step 3 passes. Skip ONLY if the user explicitly says to skip AND the diff is under 50 LOC. For diffs >= 50 LOC, always run — do not ask, do not skip. See details below. |
 | 5 | **Push & create PR** | Push branch, create PR via `gh pr create`. Include a `## Local Review` section in the PR body with CodeRabbit findings count (see below). |
 | 6 | **Post-merge** | After merge, auto-run `/post-mortem [PR-number]` in background. |
 
@@ -91,9 +91,11 @@ The reviewing agent also performs a **product-level adversarial review**:
 
 The reviewing agent returns a verdict: **approve**, **approve with notes**, or **revise**. If "revise", address the feedback and re-run 1c. Cap at 2 revision rounds — if still contested, present both perspectives to the user for a decision.
 
-### Step 4: Code Review Loop (automatic after user approval)
+### Step 4: Code Review Loop (auto-run, mandatory for >= 50 LOC)
 
-When the user approves the review loop, run these sub-steps sequentially. Do not ask for approval between sub-steps — run the full loop, then report results.
+After step 3 passes, automatically run the review loop. Do not ask for permission — just run it. For diffs under 50 LOC, the user may explicitly request skipping; for >= 50 LOC, always run. This is non-negotiable: PR #23 (command-center) skipped this step on a 1200 LOC PR and paid with 67% fix-up ratio and 2 extra review rounds.
+
+Run these sub-steps sequentially. Do not ask for approval between sub-steps — run the full loop, then report results.
 
 | Sub-step | Name | What happens |
 |----------|------|-------------|
@@ -102,7 +104,7 @@ When the user approves the review loop, run these sub-steps sequentially. Do not
 | 4c | **Adversarial review** | Run `/adversarial-review`. Fix any issues found. |
 | 4d | **CI checks** | Run build, lint, test. Fix failures. If any sub-step produced fixes, re-run from 4b (CodeRabbit) to validate the fixes didn't introduce new issues. Cap at 3 iterations to avoid infinite loops. |
 
-After the loop completes cleanly, report the summary and proceed to Step 5.
+After the loop completes cleanly, write the review loop marker: `git rev-parse HEAD > .claude/.review-loop-passed`. Then report the summary and proceed to Step 5. The pre-push hook checks this marker for diffs >= 50 LOC — without it, the push will be blocked.
 
 ### PR Body: Local Review Section
 
