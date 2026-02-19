@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Auto-run npm install when package.json or package-lock.json changes after a merge/pull.
+# Global git template hook — applies to all repos.
+
+# Only run if this is an npm project.
+if [ ! -f "package.json" ]; then
+  exit 0
+fi
+
+changed_files="$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD)"
+
+if echo "$changed_files" | grep -qE '(^|/)package(-lock)?\.json$'; then
+  echo "📦 package.json changed — running npm install..."
+  npm install
+fi

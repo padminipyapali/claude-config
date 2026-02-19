@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Auto-run npm install when package.json or package-lock.json changes after a branch switch.
+# Global git template hook — applies to all repos.
+# Args: $1=prev HEAD, $2=new HEAD, $3=1 if branch checkout (0 if file checkout).
+
+# Only run if this is an npm project.
+if [ ! -f "package.json" ]; then
+  exit 0
+fi
+
+prev_head="$1"
+new_head="$2"
+is_branch_checkout="$3"
+
+# Only run on branch checkouts, not file checkouts.
+if [ "$is_branch_checkout" != "1" ]; then
+  exit 0
+fi
+
+changed_files="$(git diff --name-only "$prev_head" "$new_head")"
+
+if echo "$changed_files" | grep -qE '(^|/)package(-lock)?\.json$'; then
+  echo "📦 package.json changed — running npm install..."
+  npm install
+fi
