@@ -1,0 +1,198 @@
+#!/bin/bash
+# pump-sessions — Track productivity across repos by session.
+#
+# Groups git commits into sessions based on time gaps.
+# A new session starts after 60+ minutes of inactivity.
+#
+# Usage:
+#   pump-sessions           # Show today's sessions (last 24h)
+#   pump-sessions 48        # Show last 48 hours
+#   pump-sessions 7d        # Show last 7 days
+
+set -euo pipefail
+
+# --- Configuration ---
+GAP_SECONDS=3600  # 60 minutes = new session
+
+# Known repos (path:display_name)
+REPOS=(
+  "$HOME/dev/claude_test/my_mind_evolved:second-brain"
+  "$HOME/dev/claude_test/nanny_management/nanny-app:nanny-app"
+  "$HOME/dev/claude_test/vocab_app/lexica:lexica"
+  "$HOME/dev/claude_test/command-center:command-center"
+  "$HOME/dev/claude_test:claude-test"
+)
+
+# --- Parse arguments ---
+LOOKBACK="${1:-24}"
+case "$LOOKBACK" in
+  *d) HOURS=$(( ${LOOKBACK%d} * 24 )) ;;
+  *h) HOURS="${LOOKBACK%h}" ;;
+  *)  HOURS="$LOOKBACK" ;;
+esac
+SINCE="$HOURS hours ago"
+
+# --- Temp files ---
+TMPDIR_WORK=$(mktemp -d)
+trap "rm -rf $TMPDIR_WORK" EXIT
+ALL_COMMITS="$TMPDIR_WORK/commits"
+touch "$ALL_COMMITS"
+
+# --- Step 1: Collect all commits across repos ---
+for entry in "${REPOS[@]}"; do
+  repo_path="${entry%%:*}"
+  repo_name="${entry##*:}"
+  [ -d "$repo_path/.git" ] || continue
+
+  # Format: timestamp|repo_name|hash|subject
+  git -C "$repo_path" log --all --branches \
+    --format="%at|${repo_name}|%H|%s" \
+    --since="$SINCE" 2>/dev/null >> "$ALL_COMMITS" || true
+done
+
+# Sort by timestamp
+sort -t'|' -k1 -n "$ALL_COMMITS" -o "$ALL_COMMITS"
+
+# Exit if no commits found
+if [ ! -s "$ALL_COMMITS" ]; then
+  echo ""
+  echo "  No commits found in the last ${HOURS}h."
+  echo "  (Try: pump-sessions 48 or pump-sessions 7d)"
+  echo ""
+  exit 0
+fi
+
+# --- Step 2: Assign commits to sessions based on time gaps ---
+SESSIONS_FILE="$TMPDIR_WORK/sessions"
+awk -F'|' -v gap="$GAP_SECONDS" '
+BEGIN { session = 1; prev_ts = 0 }
+{
+  ts = $1
+  if (prev_ts > 0 && (ts - prev_ts) > gap) {
+    session++
+  }
+  print session "|" $0
+  prev_ts = ts
+}
+' "$ALL_COMMITS" > "$SESSIONS_FILE"
+
+# --- Step 3: Process and display each session ---
+SESSION_NUMS=$(cut -d'|' -f1 "$SESSIONS_FILE" | sort -un)
+TOTAL_SESSIONS=0
+GRAND_COMMITS=0
+GRAND_ADDED=0
+GRAND_REMOVED=0
+GRAND_MINUTES=0
+
+# Check if this is the most recent session (for "current" label)
+LAST_SESSION=$(echo "$SESSION_NUMS" | tail -1)
+NOW=$(date +%s)
+
+echo ""
+echo "  Pumping Session Tracker"
+echo "  ======================="
+echo ""
+
+for s in $SESSION_NUMS; do
+  TOTAL_SESSIONS=$((TOTAL_SESSIONS + 1))
+
+  # Extract commits for this session
+  SESSION_DATA="$TMPDIR_WORK/session_${s}"
+  grep "^${s}|" "$SESSIONS_FILE" > "$SESSION_DATA"
+
+  # Time range
+  FIRST_TS=$(head -1 "$SESSION_DATA" | cut -d'|' -f2)
+  LAST_TS=$(tail -1 "$SESSION_DATA" | cut -d'|' -f2)
+  DURATION_MIN=$(( (LAST_TS - FIRST_TS) / 60 ))
+  [ "$DURATION_MIN" -lt 1 ] && DURATION_MIN=1
+  GRAND_MINUTES=$((GRAND_MINUTES + DURATION_MIN))
+
+  START_TIME=$(date -r "$FIRST_TS" "+%-l:%M %p")
+  END_TIME=$(date -r "$LAST_TS" "+%-l:%M %p")
+  SESSION_DATE=$(date -r "$FIRST_TS" "+%b %-d")
+
+  # Current session marker
+  CURRENT_MARKER=""
+  if [ "$s" = "$LAST_SESSION" ] && [ $((NOW - LAST_TS)) -lt "$GAP_SECONDS" ]; then
+    CURRENT_MARKER="  <- current"
+  fi
+
+  echo "  Session #${TOTAL_SESSIONS}: ${SESSION_DATE}, ${START_TIME} - ${END_TIME} (${DURATION_MIN} min)${CURRENT_MARKER}"
+  echo "  $(printf '%0.s-' {1..50})"
+
+  # Process each repo in this session
+  SESSION_COMMITS=0
+  SESSION_ADDED=0
+  SESSION_REMOVED=0
+  REPO_NAMES=$(cut -d'|' -f3 "$SESSION_DATA" | sort -u)
+
+  for repo_name in $REPO_NAMES; do
+    # Find repo path
+    repo_path=""
+    for entry in "${REPOS[@]}"; do
+      if [ "${entry##*:}" = "$repo_name" ]; then
+        repo_path="${entry%%:*}"
+        break
+      fi
+    done
+    [ -z "$repo_path" ] && continue
+
+    # Get hashes for this repo in this session
+    REPO_HASHES=$(awk -F'|' -v r="$repo_name" '$3 == r {print $4}' "$SESSION_DATA")
+    COMMIT_COUNT=$(echo "$REPO_HASHES" | wc -l | tr -d ' ')
+    SESSION_COMMITS=$((SESSION_COMMITS + COMMIT_COUNT))
+
+    # Compute diff stats
+    REPO_ADDED=0
+    REPO_REMOVED=0
+    REPO_FILES=0
+    while IFS= read -r hash; do
+      STATS=$(git -C "$repo_path" show --shortstat --format="" "$hash" 2>/dev/null || echo "")
+      A=$(echo "$STATS" | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+' || true)
+      D=$(echo "$STATS" | grep -oE '[0-9]+ deletion' | grep -oE '[0-9]+' || true)
+      F=$(echo "$STATS" | grep -oE '[0-9]+ file' | grep -oE '[0-9]+' || true)
+      REPO_ADDED=$((REPO_ADDED + ${A:-0}))
+      REPO_REMOVED=$((REPO_REMOVED + ${D:-0}))
+      REPO_FILES=$((REPO_FILES + ${F:-0}))
+    done <<< "$REPO_HASHES"
+
+    SESSION_ADDED=$((SESSION_ADDED + REPO_ADDED))
+    SESSION_REMOVED=$((SESSION_REMOVED + REPO_REMOVED))
+
+    printf "  %-20s %2d commits   +%-5d -%d\n" "$repo_name" "$COMMIT_COUNT" "$REPO_ADDED" "$REPO_REMOVED"
+
+    # Show commit messages
+    while IFS= read -r hash; do
+      MSG=$(awk -F'|' -v h="$hash" '$4 == h {print $5; exit}' "$SESSION_DATA")
+      # Truncate long messages
+      if [ ${#MSG} -gt 58 ]; then
+        MSG="${MSG:0:55}..."
+      fi
+      printf "    * %s\n" "$MSG"
+    done <<< "$REPO_HASHES"
+    echo ""
+  done
+
+  GRAND_COMMITS=$((GRAND_COMMITS + SESSION_COMMITS))
+  GRAND_ADDED=$((GRAND_ADDED + SESSION_ADDED))
+  GRAND_REMOVED=$((GRAND_REMOVED + SESSION_REMOVED))
+done
+
+# --- Summary ---
+echo "  ======================="
+if [ "$HOURS" -le 24 ]; then
+  PERIOD="Today"
+elif [ "$HOURS" -le 48 ]; then
+  PERIOD="Last 2 days"
+else
+  PERIOD="Last ${HOURS}h"
+fi
+echo "  ${PERIOD}: ${TOTAL_SESSIONS} sessions | ${GRAND_MINUTES} min | ${GRAND_COMMITS} commits | +${GRAND_ADDED} -${GRAND_REMOVED}"
+
+# Fun per-session average
+if [ "$TOTAL_SESSIONS" -gt 1 ]; then
+  AVG_COMMITS=$((GRAND_COMMITS / TOTAL_SESSIONS))
+  AVG_MINUTES=$((GRAND_MINUTES / TOTAL_SESSIONS))
+  echo "  Avg per session: ${AVG_MINUTES} min | ${AVG_COMMITS} commits"
+fi
+echo ""
