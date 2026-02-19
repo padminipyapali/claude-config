@@ -12,6 +12,10 @@ planning discipline, iteration velocity, and automation opportunities.
 
 - **Thorough planning reduces implementation rework.** PR #131 had a detailed plan (entry points, DRY analysis, adversarial review section, performance/cost) and zero redesign commits. All fix commits were review-driven, not planning gaps. The plan paid off. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 
+## Scope Decisions
+
+- **Deferring trivial interface extractions creates fix commits.** command-center PR #21 deferred `IVelocityService` interface extraction (~3 lines) as "scope creep" during local review. CodeRabbit then flagged it post-push, requiring a fix commit. For extractions under 10 lines that match an established project convention, include them in the original PR. The "scope creep" label should be reserved for behavioral additions, not pattern compliance. <!-- Source: post-mortem, command-center #21, 2026-02-19 -->
+
 ## Adversarial Review Gaps
 
 - **Checklist items present but not mechanically executed.** "UTC suffix in test Date strings" was literally in Tier 3 of the adversarial review checklist, yet test dates without Z suffix shipped. The bottleneck is execution discipline, not checklist coverage. Fix: run grep patterns, not just read items. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
@@ -41,6 +45,7 @@ planning discipline, iteration velocity, and automation opportunities.
 - **75% fix-up ratio on pattern-adaptation PR despite local review.** PR #143 (242 LOC, 3 files) had 3 of 4 commits as review fixes, matching the worst performance in the series (PR #131). The PR adapted an inline-edit pattern from one component to another and claimed local adversarial review, but fixes were incomplete. Copy-and-adapt work is higher-risk for review quality than greenfield implementation. <!-- Source: post-mortem, second-brain #143, 2026-02-17 -->
 - **0% fix-up ratio with unresolved review finding (false clean).** PR #145 (44 LOC, 3 files) had 1 commit and 0 fix commits, but merged with an outstanding CHANGES_REQUESTED. CodeRabbit found a spec-implementation mismatch (test asserts behavior contradicting the stated requirement). The 0% ratio is technically accurate but masks the unresolved finding. Same pattern as PR #136. When evaluating fix-up ratio, check whether CHANGES_REQUESTED reviews were addressed or ignored. <!-- Source: post-mortem, second-brain #145, 2026-02-17 -->
 - **50% fix-up ratio with partial review addressing.** PR #148 (601 LOC, 23 files) had 2 commits, 1 feature + 1 fix. Addressed 2 of 4 actionable post-push findings (env leakage, TODO tracking), left 2 unaddressed (restoreAllMocks in afterEach, timeout test coverage). Merged with 2nd CHANGES_REQUESTED outstanding. Local review caught 6 issues pre-push (60% shift-left rate), but test isolation gaps still escaped both local and adversarial reviews. <!-- Source: post-mortem, second-brain #148, 2026-02-17 -->
+- **80% fix-up ratio on large greenfield feature with full local review.** command-center PR #21 (1073 LOC, 9 files) ran the complete review loop (simplifier + CodeRabbit + adversarial + CI) locally, catching 13 issues pre-push (70% shift-left rate). Still, 3 post-push findings produced 4 fix commits (2 substantive + 2 marker). Fix-up ratio inflated by marker commits — substantive ratio was 67%. Key gap: date arithmetic correctness (UTC midnight normalization) slipped through despite Tier 3 date checks existing. <!-- Source: post-mortem, command-center #21, 2026-02-19 -->
 
 ## Documentation Review Noise
 
