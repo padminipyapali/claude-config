@@ -47,6 +47,25 @@ Commands: `/consolidate-learnings`, `/capture-learning`, `/project-setup`, `/mem
 - **ALWAYS run repo conflict detection before making code changes.** This is in global CLAUDE.md and is NOT optional. Check `git status --porcelain`, `ps aux | grep claude`, and `.git/index.lock` BEFORE any edits. Skipping this caused an entire session of wasted work when concurrent agents were reverting edits (second-brain feat/calendar-command, 2026-02-16).
 - **When concurrent agents are detected: use Task agent with `bypassPermissions` for atomic edits.** Apply all changes + build + test in one burst via a delegated agent. This prevents interference from concurrent linters/builds. But this is a workaround — prefer avoiding conflicts in the first place.
 
+## In Progress: second-brain Issue #130 — Async Research Agent Mockups
+
+- **Issue:** "Feature: Delegate long-running research tasks to background agent" (Phase 1: explorable TODOs, Phase 2: full async research agent)
+- **Status:** 5 interactive HTML mockups created at `docs/mockups/second-brain/async-research-agent/`
+  1. `01-telegram-native.html` — Chat-first flow, everything inside Telegram (digest cards, inline buttons, progress messages)
+  2. `02-dashboard-command-center.html` — Dedicated "Research" dashboard section with sidebar queue + detail view
+  3. `03-card-digest.html` — Warm editorial aesthetic, card-based digest with AI-suggested explorations
+  4. `04-timeline-progress.html` — GitHub-dark theme, real-time vertical timeline with step-by-step findings
+  5. `05-minimalist-split-pane.html` — Monospace/code-editor aesthetic, split queue + report reader
+- **Round 2:** 5 flow prototypes showing dashboard integration (how Research lives in the existing UI):
+  1. `flow-01-right-panel.html` — Research as a right-slide panel (like TODOs/Inbox), with "Research" button in feed header
+  2. `flow-02-view-toggle.html` — Feed/Research toggle below the title, replaces masonry with research-specific two-column layout
+  3. `flow-03-thread-integrated.html` — No new nav. Research block lives inside the existing thread panel for each entry
+  4. `flow-04-floating-widget.html` — Persistent floating pill in bottom-right, expands to mini-queue card with context drawer
+  5. `flow-05-filter-chip-overlay.html` — Research as a special filter chip in the existing chip row, detail via centered overlay modal
+- Each prototype has 5 clickable steps: dashboard → mark explore → view research → in-progress → add context
+- All match the existing noir theme (colors, fonts, card styles, panel patterns from actual codebase)
+- **Next step:** User reviews flow prototypes and picks a direction. Then proceed to Step 1 planning for implementation.
+
 ## Cross-Project Learnings
 
 Detailed patterns now live in `~/.claude/knowledge/*.md` topic files (no longer duplicated here).
