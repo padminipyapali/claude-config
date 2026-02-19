@@ -165,16 +165,18 @@ Step 4b uses `/coderabbit:review --base main`. Additional notes:
 - If a fix is under 5 lines, do it now — only defer fixes needing new infrastructure.
 - Register global error handlers on long-running services — per-request error handling is necessary but not sufficient.
 - Log errors with enough context to reproduce (request ID, user ID, operation name) but never log secrets or PII.
+- When conditional logic for a mode/variant appears in 2+ components, extract to a shared utility immediately — don't copy the if/else. Divergence is inevitable and always caught in review.
 
 ## Defensive Coding
 
 - Scope data access to the authenticated user — never trust client-provided IDs to be globally unique.
-- Trim and validate user input at the earliest pipeline entry point.
+- Trim and validate user input at the earliest pipeline entry point. Remember: whitespace-only strings are truthy in JS — guard on `!text.trim()` not `!text`.
 - Guard every index mapping: bounds-check user-provided numbers against array length.
 - Graceful degradation at every layer: independent error handling around each operation.
 - Error messages should be specific and actionable, not generic fallthrough.
 - Schema changes need migration reminders — schema files are documentation, not deployment, without an automated runner.
 - When two queries feed separate display sections and can overlap, filter by authoritative state rather than cross-referencing result sets.
+- Catch blocks: only return defaults (`[]`, `null`) for *expected* errors (not found, empty result). Unexpected errors (connection failure, syntax error) must propagate — `catch { return [] }` masks real outages.
 
 ## Planning Requirements
 
@@ -205,6 +207,7 @@ Before jumping to planning, take a product expert's view. This applies whenever 
 ## Testing
 
 - Test every type/feature combination, not just the happy path.
+- When a component has conditional UI branches (e.g., `isNightNurse`), write at least one test per branch — don't only test the default path.
 - Assert all side effects, not just the primary return value.
 - For route changes: integration tests. For state/flow changes: flow tests. For pure logic: unit tests. Pure-function unit tests alone are NOT sufficient for route or flow changes.
 
@@ -280,16 +283,19 @@ When creating a PR (during adversarial review), verify:
 
 - Don't mark functions `async` unless they `await` something.
 - Exhaustive `never` checks should throw, not return — fail fast on unhandled types.
-- Fire-and-forget operations MUST have `.catch()` handlers to prevent unhandled rejections.
+- When adding a new value to a type union, grep the ENTIRE codebase for every switch/conditional that maps that type to a style, label, color, or behavior. Each consumer needs explicit handling — fallthrough to default produces wrong results.
+- Fire-and-forget operations MUST have `.catch()` handlers to prevent unhandled rejections. Inside those methods, each `await` needs its own try/catch — a single outer try/catch means one failure skips all subsequent awaits.
 - Runtime arrays derived from TS types need "keep in sync" comments (types erased at runtime).
 - Build tools (@types, typescript, vite, tsx, vitest) in devDependencies.
 - npm workspaces use `*` not `workspace:*` (that's pnpm/yarn).
 - Full object assertions in tests, not `objectContaining`, unless partial matching is intentional.
+- `new Date("2026-02-14T10:00:00")` without `Z` suffix parses in local timezone, making tests flaky on CI. Always use `new Date("2026-02-14T10:00:00Z")`.
 - Negative async assertions ("should NOT have been called") need settle time — polling helpers (waitFor) pass immediately for negatives. Use a timeout to let promises settle first.
 
 # When Applicable: Web UI
 
 - Explicit `type` on every `<button>`: `type="button"` (default) or `type="submit"` (forms only).
+- When a hook returns `{ data, loading, error }`, ALWAYS destructure and render the `error`. Silently ignoring errors creates invisible failures.
 - Don't rely on Unicode characters for icons — use SVG for consistent sizing across platforms.
 - Don't impose arbitrary UI truncation — make content expandable if length varies.
 - Use placeholder hints instead of default values for user-configurable settings.
