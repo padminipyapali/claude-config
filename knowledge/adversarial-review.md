@@ -36,7 +36,7 @@ A file can belong to multiple categories.
 | **async-ts** | Tier 1: all (1.1–1.3). Tier 3: null guards, error message specificity |
 | **routes-api** | Tier 2: all. Tier 4: business logic in service not routes |
 | **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create→reload |
-| **ui-react** | Tier 0: 0.4 (semantic elements), 0.5 (escape handler). Tier 1: 1.4 (grammar), 1.5 (optimistic UI). Tier 3: SVG/a11y, hook error states, escape in edit-within-panel, stale closure in background refresh |
+| **ui-react** | Tier 0: 0.4 (semantic elements), 0.5 (escape handler). Tier 1: 1.4 (grammar), 1.5 (optimistic UI). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh |
 | **shell** | Tier 2: shell command validation |
 | **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
@@ -162,6 +162,9 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **LLM output parsing.** `JSON.parse()` on LLM output must strip code fences. Handle empty/malformed.
 - [ ] **Error message specificity.** Edge cases get specific messages, not generic fallthrough.
 - [ ] **Semantic elements.** Grep changed `.tsx` files for `role="button"` — every match on a non-`<button>` element (`<span>`, `<div>`, `<a>`) must be replaced with `<button type="button">`. Also: every `<svg>` needs a `<title>` child.
+- [ ] **Button type audit.** When modifying a `.tsx` file, grep it for `<button` without `type=`. Every `<button>` must have explicit `type="button"` (interactive) or `type="submit"` (form). Missing types default to `submit` and cause accidental form submissions. Audit the *entire file*, not just the diff — pre-existing violations in touched files should be fixed. <!-- Source: CodeRabbit review, nanny-app #26, 2026-02-19 -->
+- [ ] **New union member completeness.** When adding a value to a TypeScript union type (e.g., `'unpaid_off'` to `SpecialDay['type']`), grep the entire codebase for every switch/conditional that maps that type to a style class, label, color, or behavior. Each one needs explicit handling for the new value — fallthrough to a default case often produces wrong results (e.g., unpaid days getting sick-day styling). <!-- Source: CodeRabbit review, nanny-app #26, 2026-02-19 -->
+- [ ] **Conditional UI branch test coverage.** When a component renders different UI based on a boolean flag (e.g., `isNightNurse`), verify test cases exist for each branch — not just the default path. At minimum: one test asserting the alternate UI renders, one asserting the default UI elements are hidden. <!-- Source: CodeRabbit review, nanny-app #26, 2026-02-19 -->
 - [ ] **Escape in edit-within-panel.** If an inline edit mode lives inside a dismissible panel/modal, verify Escape is caught via `onKeyDownCapture` on the edit container — not just `onKeyDown` on the textarea. Focus can move to Save/Cancel buttons where textarea handlers don't fire. Also: guard `if (saving) return` so Escape during an in-flight save doesn't discard the error state.
 - [ ] **Hook error states surfaced in UI.** `{ data, loading, error }` — error MUST be rendered.
 - [ ] **Env var validation.** NaN check, valid range, fallback logging for numeric vars. Timezone vars validated via `Intl.DateTimeFormat`.

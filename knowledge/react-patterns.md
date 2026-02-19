@@ -38,6 +38,10 @@ Cross-project learnings for React and React Native development.
 - **Never filter paginated results client-side.** If the server returns N items per page and the client filters some out, the visible count is unpredictable — a page of all-filtered items shows "No entries found" despite data existing. Push filtering to the server SQL query so pagination operates on the final result set. <!-- Source: BUG-021, second-brain #100, 2026-02-15 -->
 - **iOS Safari auto-zoom: minimum 16px font-size on form inputs.** Any `<input>`, `<textarea>`, or `<select>` on a mobile-facing web page must have a computed font-size of at least 16px (1rem at default root size) to prevent iOS Safari's auto-zoom behavior. When fixing one input, grep for pattern siblings — all focusable form elements in the stylesheet need the same minimum. <!-- Source: BUG-W008, second-brain, 2026-02-16 -->
 
+## Component Design
+
+- **Extract shared conditional logic on first duplication.** When adding a new mode/variant (e.g., `isNightNurse`) that changes calculation logic in multiple components, extract the branching into a shared utility function immediately — don't copy the `if/else` into each component. Waiting creates divergence risk and always gets caught in review. Pattern: `calculateTotalPay(hours, ..., settings, isVariant)` returning a unified result shape. <!-- Source: CodeRabbit review, nanny-app #26, 2026-02-19 -->
+
 ## Testing React Components
 
 - **Case-insensitive dedup for display lists.** When building UI lists from AI-generated data, use `Set<string>` with `.toLowerCase()`.
