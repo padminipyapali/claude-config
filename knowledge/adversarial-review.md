@@ -233,9 +233,11 @@ After the review passes, before writing the marker file:
 3. **Were any new defensive patterns discovered?** If yes, update the relevant knowledge topic file.
 4. **Is there a pattern in this PR that would have prevented a bug in a sibling project?** If yes, capture it in the appropriate knowledge file.
 
-Only after confirming learning capture, write the marker:
+Only after confirming learning capture, write the marker **outside the repo** to avoid git tracking conflicts:
 ```bash
-git rev-parse HEAD > .claude/.adversarial-review-passed
+PROJECT_HASH=$(echo -n "$PWD" | md5)
+mkdir -p ~/.claude/review-markers
+git rev-parse HEAD > ~/.claude/review-markers/$PROJECT_HASH
 ```
 
 ---
