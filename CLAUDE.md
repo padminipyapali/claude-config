@@ -46,7 +46,7 @@ Every feature or fix follows these numbered steps. Print the step number and nam
 |------|------|-------------|
 | 1 | **Plan** | Three sub-steps: ask clarifying questions (1a), write the plan (1b), adversarial plan review (1c). See details below. |
 | 2 | **Implement** | Write the code on a feature branch. Follow project CLAUDE.md conventions. |
-| 3 | **Test locally** | Run the project's test suite, linter, and type-checker. Fix failures before proceeding. |
+| 3 | **Test locally** | Run the project's test suite, linter, and type-checker. If changes touch UI, run Playwright local testing (see below). Fix failures before proceeding. |
 | 4 | **Code review loop** | **Auto-run** after step 3 passes. Skip ONLY if the user explicitly says to skip AND the diff is under 50 LOC. For diffs >= 50 LOC, always run — do not ask, do not skip. See details below. |
 | 5 | **Push & create PR** | Push branch, create PR via `gh pr create`. Include a `## Local Review` section in the PR body with CodeRabbit findings count (see below). |
 | 6 | **Post-merge** | After merge, auto-run `/post-mortem [PR-number]` in background. |
@@ -91,6 +91,21 @@ The reviewing agent also performs a **product-level adversarial review**:
 
 The reviewing agent returns a verdict: **approve**, **approve with notes**, or **revise**. If "revise", address the feedback and re-run 1c. Cap at 2 revision rounds — if still contested, present both perspectives to the user for a decision.
 
+### Step 3: Playwright Testing (mandatory for UI changes)
+
+When the diff touches UI files (React components, CSS, HTML templates, frontend routes), Playwright local testing is mandatory. This is not optional — it catches visual regressions and interaction bugs that unit tests miss.
+
+**What qualifies as "touches UI":** Any change to files in `packages/web/`, frontend component files, CSS/styling files, or changes that affect rendered output (e.g., response text formatting changes visible in a web dashboard).
+
+**Procedure:**
+1. Start the dev server (or use the running one).
+2. Use Playwright to navigate to every page/view affected by the change.
+3. Verify: page loads without errors, changed elements render correctly, interactions work (clicks, form submissions, navigation).
+4. Check browser console for errors or warnings introduced by the change.
+5. If the project has Playwright test files, run them: `npx playwright test`.
+
+**Skip conditions:** Backend-only changes, CLI-only changes, test-only changes, or changes that don't affect any rendered UI. Record the skip reason in the PR body's Local Review section.
+
 ### Step 4: Code Review Loop (auto-run, mandatory for >= 50 LOC)
 
 After step 3 passes, automatically run the review loop. Do not ask for permission — just run it. For diffs under 50 LOC, the user may explicitly request skipping; for >= 50 LOC, always run. This is non-negotiable: PR #23 (command-center) skipped this step on a 1200 LOC PR and paid with 67% fix-up ratio and 2 extra review rounds.
@@ -100,11 +115,25 @@ Run these sub-steps sequentially. Do not ask for approval between sub-steps — 
 | Sub-step | Name | What happens |
 |----------|------|-------------|
 | 4a | **Code simplification** | Run `code-simplifier:code-simplifier` agent on changed files (vs main). |
-| 4b | **CodeRabbit review** | Run `/coderabbit:review --base main`. Fix all critical/high findings. Re-run to confirm. Track the total findings count. |
-| 4c | **Adversarial review** | Run `/adversarial-review`. Fix any issues found. |
-| 4d | **CI checks** | Run build, lint, test. Fix failures. If any sub-step produced fixes, re-run from 4b (CodeRabbit) to validate the fixes didn't introduce new issues. Cap at 3 iterations to avoid infinite loops. |
+| 4b | **Internal review** | Read the full diff yourself and review for cross-file consistency, interface compliance, missed siblings, and patterns automated tools miss. See details below. |
+| 4c | **CodeRabbit review** | Run `/coderabbit:review --base main`. Fix all critical/high findings. Re-run to confirm. Track the total findings count. |
+| 4d | **Adversarial review** | Run `/adversarial-review`. Fix any issues found. |
+| 4e | **CI checks** | Run build, lint, test. Fix failures. If any sub-step produced fixes, re-run from 4c (CodeRabbit) to validate the fixes didn't introduce new issues. Cap at 3 iterations to avoid infinite loops. |
 
-After the loop completes cleanly, report the summary and proceed to Step 5. The adversarial review step (4c) writes the review marker to `~/.claude/review-markers/` (outside the repo) — the pre-push hook checks this marker automatically.
+#### Step 4b: Internal Review (details)
+
+Read the full `git diff main...HEAD` yourself. This is a manual, line-by-line review focused on what automated tools consistently miss. PR #187 proved this step catches issues the adversarial review and CodeRabbit both miss — it outperformed the adversarial review (3 findings vs 0 net new).
+
+**Check for:**
+- **Cross-file consistency.** When a pattern is fixed in one file, grep for the same pattern in sibling files. (PR #187: fixing a command signature in one handler but not the other four.)
+- **Interface compliance.** For every interface/type definition in the diff, verify all implementations match the full signature. TypeScript structural typing allows fewer params — the type-checker won't catch missing optional params.
+- **Caller safety.** When a function's error behavior changes (e.g., adding `throw` to a validation function), trace all callers and verify they handle the new error path.
+- **Comment/code alignment.** Comments placed inside data structures, stale JSDoc, or misleading inline comments.
+- **Semantic correctness.** Values that are technically valid but semantically wrong (e.g., empty-string edge cases in string templates, off-by-one in array mappings).
+
+Fix all issues found, then proceed to 4b.
+
+After the loop completes cleanly, report the summary and proceed to Step 5. The adversarial review step (4d) writes the review marker to `~/.claude/review-markers/` (outside the repo) — the pre-push hook checks this marker automatically.
 
 ### PR Body: Local Review Section
 
@@ -112,9 +141,11 @@ Include this section in every PR body so the post-mortem can track what was caug
 
 ```
 ## Local Review
-- **Steps skipped:** none | list of skipped steps with reason (e.g., "3 (lint+test): minimal change, 4a-4d: skipped")
+- **Steps skipped:** none | list of skipped steps with reason (e.g., "3-Playwright: backend-only, 4a-4e: skipped")
+- **Internal review findings:** N issues found, N fixed
 - **CodeRabbit findings:** N issues found, N fixed (N iterations)
 - **Adversarial review findings:** N issues found, N fixed
+- **Playwright testing:** passed | N/A (no UI changes) | issues found and fixed
 - **CI status:** all passed / failures fixed
 ```
 
@@ -141,7 +172,7 @@ For features that span **multiple components, systems, or vendors**, create a fl
 
 ## Adversarial Self-Review
 
-Step 4c runs `/adversarial-review`. The review is **targeted, not exhaustive** — classify changed files by category (async, routes, DB, UI, LLM, shell, config, test-only) and run only the matching checklist sections. See `~/.claude/knowledge/adversarial-review.md` for the category-to-tier mapping. Don't block PRs on checklist items that don't apply to the files changed.
+Step 4d runs `/adversarial-review`. The review is **targeted, not exhaustive** — classify changed files by category (async, routes, DB, UI, LLM, shell, config, test-only) and run only the matching checklist sections. See `~/.claude/knowledge/adversarial-review.md` for the category-to-tier mapping. Don't block PRs on checklist items that don't apply to the files changed.
 
 These universal checks always apply regardless of category:
 
@@ -153,7 +184,7 @@ These universal checks always apply regardless of category:
 
 ## CodeRabbit Local Review Notes
 
-Step 4b uses `/coderabbit:review --base main`. Additional notes:
+Step 4c uses `/coderabbit:review --base main`. Additional notes:
 - **Rate limits:** Free tier allows 2 reviews/hour. If rate-limited, proceed to adversarial review — CodeRabbit on GitHub still catches issues post-push.
 - **Review time:** Expect 7-30+ minutes depending on changeset size. Run in background when possible.
 - **Minor style suggestions** can be skipped if they conflict with project conventions.

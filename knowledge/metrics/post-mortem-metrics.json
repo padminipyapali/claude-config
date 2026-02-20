@@ -3814,6 +3814,43 @@
         "complianceRate": 1.0,
         "skipAssessment": null
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 187,
+      "title": "Decompose MessageProcessor into handler registry pattern",
+      "dateMerged": "2026-02-20T12:00:51Z",
+      "reviewRounds": 4,
+      "totalComments": 24,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 15,
+        "architecture": 0,
+        "style": 9,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 3,
+        "coderabbitFixed": 3,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 0.32,
+      "fixupCommitRatio": 0.83,
+      "timeToMergeHours": 0.62,
+      "planningQuality": "complete",
+      "prSize": 2190,
+      "stepCompliance": {
+        "stepsRun": ["1", "2", "3", "4a", "4b", "4c", "4d", "5"],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": "good"
+      }
     }
   ]
 }
