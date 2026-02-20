@@ -69,6 +69,10 @@ planning discipline, iteration velocity, and automation opportunities.
 
 - **50% fix-up ratio on large greenfield wizard component with 100% step compliance and 59% shift-left rate.** nanny-app PR #35 (1320 LOC, 6 files) ran all 8 steps, catching 10 of 17 total issues locally (2 CodeRabbit + 8 adversarial). Yet 7 post-push findings from CodeRabbit across 2 rounds produced 2 fix commits. Dominant category: JSDoc documentation (4/7 findings). The adversarial review caught "async error handling" but the fix was incomplete -- onComplete() still fired after catch. Fix-up ratio is moderate (50%) but could have been lower with a JSDoc grep check and more rigorous error-handling verification. <!-- Source: post-mortem, nanny-app #35, 2026-02-20 -->
 
+## PR Sizing
+
+- **Local review shift-left effectiveness degrades above ~600 LOC.** Across 15 tracked PRs with local review data, PRs under 600 LOC achieve 67-100% shift-left rates (catching that fraction of total issues before push), while PRs over 600 LOC drop to 14-59%. The two cleanest large PRs — #142 (654 LOC, 100% shift-left, 0% fix-up) and #157 (587 LOC, 100% shift-left, 0% fix-up) — both sat right at the threshold. Meanwhile, PRs at 887-1565 LOC consistently hit 2-3 CodeRabbit CHANGES_REQUESTED rounds and 50-80% fix-up ratios. **Recommendation:** Split features over 600 LOC into 2-3 focused PRs. A 1500 LOC feature split into three 500 LOC PRs would likely push each PR's shift-left rate above 80%, reducing total review rounds from ~6 to ~3. <!-- Source: cross-PR analysis of 15 PRs with local review data, 2026-02-20 -->
+
 ## Documentation Review Noise
 
 - **Markdownlint findings inflate review rounds on docs PRs.** PR #141 had 2 review rounds, both on a README.md file: missing blank lines around headings/tables and missing fence language. These are mechanical lint issues, not code quality problems. When a PR includes docs, expect 1 extra CodeRabbit round for markdown lint. Mitigation: run markdownlint locally before push, or accept the noise as baseline. <!-- Source: post-mortem, second-brain #141, 2026-02-17 -->
