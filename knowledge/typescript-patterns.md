@@ -28,6 +28,10 @@ Cross-project learnings for TypeScript and Node.js development.
 - **Always `?? []` when mapping API response arrays.** Servers can return unexpected shapes even when TypeScript says the field is required. This applies especially to GraphQL: the generated types may declare a field as non-optional, but the actual API can return `null` for nested fields (e.g., `repo.mergedPrs.nodes`). Always use optional chaining + nullish coalescing: `response?.nodes ?? []`. When fixing this in a service, grep the entire codebase for sibling services using the same GraphQL query shape — the same unguarded access is very likely to exist there too. <!-- Source: PR review, command-center #23, 2026-02-19 -->
 - **Reject non-string query params explicitly.** Express parses repeated query params (`?x=A&x=B`) as arrays. A `typeof x === "string"` check silently skips arrays, disabling the feature. Guard with `typeof x !== "string"` → 400 before parsing. <!-- Source: PR review, second-brain #100, 2026-02-15 -->
 
+## ESM / Module Patterns
+
+- **Use `fileURLToPath(import.meta.url)` for path resolution in ESM, not `new URL(import.meta.url).pathname`.** The `.pathname` property preserves percent-encoding (e.g., `%20` for spaces) and on Windows returns a leading `/C:/...` which is invalid. `fileURLToPath()` from `node:url` correctly decodes and normalizes the path on all platforms. When fixing this in one file, grep the repo for `new URL(import.meta.url).pathname` to catch all sibling instances. <!-- Source: PR review, command-center #33, 2026-02-20 -->
+
 ## Environment Variables
 
 - **Numeric env vars need NaN check + range validation + fallback logging.** `parseInt` can return NaN; bounded values (hours 0-23, ports 1-65535) need range checks.
