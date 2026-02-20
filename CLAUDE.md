@@ -116,7 +116,7 @@ Run these sub-steps sequentially. Do not ask for approval between sub-steps — 
 |----------|------|-------------|
 | 4a | **Code simplification** | Run `code-simplifier:code-simplifier` agent on changed files (vs main). |
 | 4b | **Internal review** | Read the full diff yourself and review for cross-file consistency, interface compliance, missed siblings, and patterns automated tools miss. See details below. |
-| 4c | **CodeRabbit review** | Run `/coderabbit:review --base main`. Fix all critical/high findings. Re-run to confirm. Track the total findings count. |
+| 4c | **CodeRabbit review** | Run `coderabbit review --plain -t all --base main -c .coderabbit.yaml CLAUDE.md` (falls back to `/coderabbit:review --base main` if no `.coderabbit.yaml` exists). Fix all critical/high findings. Re-run to confirm. Track the total findings count. |
 | 4d | **Adversarial review** | Run `/adversarial-review`. Fix any issues found. |
 | 4e | **CI checks** | Run build, lint, test. Fix failures. If any sub-step produced fixes, re-run from 4c (CodeRabbit) to validate the fixes didn't introduce new issues. Cap at 3 iterations to avoid infinite loops. |
 
@@ -184,7 +184,20 @@ These universal checks always apply regardless of category:
 
 ## CodeRabbit Local Review Notes
 
-Step 4c uses `/coderabbit:review --base main`. Additional notes:
+Step 4c prefers the CLI directly over the skill for deeper reviews:
+
+```bash
+coderabbit review --plain -t all --base main -c .coderabbit.yaml CLAUDE.md
+```
+
+The `-c` flag feeds project-specific instructions and the CLAUDE.md to the reviewer, closing the gap between local CLI and GitHub app reviews. If the project has no `.coderabbit.yaml`, fall back to `/coderabbit:review --base main`.
+
+**Every project should have a `.coderabbit.yaml`** with:
+- `profile: "assertive"` — catches correctness issues the default "chill" profile skips.
+- `path_instructions` — domain-specific guidance per file pattern (services, routes, bot commands, UI).
+- `knowledge_base.code_guidelines.filePatterns: ["CLAUDE.md"]` — feeds project conventions to the reviewer.
+
+Additional notes:
 - **Rate limits:** Free tier allows 2 reviews/hour. If rate-limited, proceed to adversarial review — CodeRabbit on GitHub still catches issues post-push.
 - **Review time:** Expect 7-30+ minutes depending on changeset size. Run in background when possible.
 - **Minor style suggestions** can be skipped if they conflict with project conventions.
