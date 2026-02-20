@@ -212,6 +212,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 ## Tier 4: Data Integrity & Architecture
 
 - [ ] **Type sync between SQL and TypeScript.** CHECK constraints and unions match. Verify "source of truth" comments agree on directionality — if both files claim to be canonical, they'll diverge. Pick one (usually the TypeScript type) and have the other reference it. <!-- Strengthened: PR review, second-brain #191, 2026-02-20 -->
+- [ ] **Migration-gated defensive filtering.** When removing a value from a type union/CHECK constraint AND gating the DB cleanup on a manual migration, all queries that return rows of the affected type must defensively filter by supported types (`type IN ('A','B','C')` or `type <> 'REMOVED'`) until the migration is confirmed run. Without this guard, legacy rows surface at runtime and crash downstream code that no longer handles them. <!-- Source: post-mortem, second-brain #191, 2026-02-20 -->
 - [ ] **Index coverage for new queries.** New WHERE patterns covered by existing indexes.
 - [ ] **FTS coverage.** New searchable text columns in the GIN index.
 - [ ] **Pattern siblings.** Grep entire codebase for other instances of same pattern.
@@ -221,7 +222,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Timezone consistency: resolve once, pass through.** When a codepath needs both a timezone and a today-string, derive them from a SINGLE source. If `getLocalToday()` uses one default and `this.deps.userTimezone` uses another, they can silently diverge. Resolve timezone first, then derive the date from it.
 - [ ] **Reuse existing DB pools.** Don't create ad-hoc `pg.Pool` for a single query when a service already has a pool. Add the method to the service interface instead. Ad-hoc pools leak connections and bypass service abstractions.
 - [ ] **In-memory state survives restarts?** If a scheduler or service uses in-memory state for dedup (e.g., `lastSentDate`), verify it handles server restarts. On deploy-on-push platforms, every deploy clears memory. Either persist to DB or initialize defensively (e.g., pre-set the marker if the scheduled time has passed).
-- [ ] **Documentation sync.** JSDoc matches code. Step counts updated. Module headers mention new capabilities.
+- [ ] **Documentation sync.** JSDoc matches code. Step counts updated. Module headers mention new capabilities. **On removal PRs:** grep docs for numeric counts and universal claims (e.g., "seven intents", "all entry types", "every channel") that reference the removed entity — these silently go stale. <!-- Strengthened: post-mortem, second-brain #191, 2026-02-20 -->
 - [ ] **Cross-channel output regression.** If changed code touches shared data consumed by multiple output channels (web, Telegram, email, API), verify all channels still render correctly. Same data, different display constraints (HTML vs 4096-char text vs JSON). <!-- Source: BUG-022, second-brain #101, 2026-02-15 -->
 - [ ] **Architecture self-review (100+ LOC or 3+ directories changed).**
   1. **Right location?** Would a new contributor find each new file/function by grepping for the feature name?

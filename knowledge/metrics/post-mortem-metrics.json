@@ -4002,6 +4002,54 @@
         "complianceRate": 0.875,
         "skipAssessment": "neutral"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 191,
+      "title": "Deprecate ACTION intent \u2014 full removal (#168)",
+      "dateMerged": "2026-02-20T20:03:12Z",
+      "reviewRounds": 2,
+      "totalComments": 9,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 7,
+        "architecture": 0,
+        "style": 1,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 1,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 2,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 0.67,
+      "fixupCommitRatio": 0.75,
+      "timeToMergeHours": 3.5,
+      "planningQuality": "complete",
+      "prSize": 1783,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3-Playwright"
+        ],
+        "skipReasons": "backend + type removal, no UI rendering changes",
+        "complianceRate": 0.875,
+        "skipAssessment": "good"
+      }
     }
   ]
 }
