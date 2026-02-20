@@ -28,6 +28,7 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 
 - **Guard after create → reload.** After creating a resource and reloading from DB, check for null. Fire-and-forget patterns, replication lag, or race conditions can cause the reload to fail.
 - **Dedup-check-then-insert must be in a transaction.** When checking for duplicates before inserting, both the SELECT and INSERT must be inside a `BEGIN`/`COMMIT` block. Without a transaction, a concurrent request can pass the dedup check after the first request's SELECT but before its INSERT, creating duplicates. Use `pool.connect()` + explicit transaction, not `pool.query()`. <!-- Source: PR review, second-brain #102, 2026-02-15 -->
+- **Source of truth directionality for type/CHECK pairs.** When a TypeScript union and a SQL CHECK constraint mirror each other, designate ONE as canonical (usually the TS type — it has compile-time checking) and have the other reference it. If both files say "I'm the source of truth," they'll diverge when one is updated without the other. <!-- Source: PR review, second-brain #191, 2026-02-20 -->
 
 ---
 *Sources: second-brain, lexica*

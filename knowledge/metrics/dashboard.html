@@ -4382,7 +4382,16 @@ const METRICS_DATA = {
       "planningQuality": "complete",
       "prSize": 2190,
       "stepCompliance": {
-        "stepsRun": ["1", "2", "3", "4a", "4b", "4c", "4d", "5"],
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
         "stepsSkipped": [],
         "skipReasons": "",
         "complianceRate": 1.0,
@@ -4419,8 +4428,18 @@ const METRICS_DATA = {
       "planningQuality": "complete",
       "prSize": 140,
       "stepCompliance": {
-        "stepsRun": ["1", "2", "3", "5"],
-        "stepsSkipped": ["4a", "4b", "4c", "4d"],
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
         "skipReasons": "production diff is 11 LOC, under 50 threshold; user approved plan",
         "complianceRate": 0.5,
         "skipAssessment": "bad"
@@ -4456,11 +4475,69 @@ const METRICS_DATA = {
       "planningQuality": "complete",
       "prSize": 20,
       "stepCompliance": {
-        "stepsRun": ["2", "3", "5"],
-        "stepsSkipped": ["1", "4a", "4b", "4c", "4d"],
+        "stepsRun": [
+          "2",
+          "3",
+          "5"
+        ],
+        "stepsSkipped": [
+          "1",
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
         "skipReasons": "3 LOC fix, follow-up to CodeRabbit finding with exact suggested fix",
         "complianceRate": 0.375,
         "skipAssessment": "good"
+      }
+    },
+    {
+      "project": "command-center",
+      "prNumber": 30,
+      "title": "Add persistent agent session notes with SQLite storage",
+      "dateMerged": "2026-02-20T19:29:31Z",
+      "reviewRounds": 2,
+      "totalComments": 7,
+      "commentCategories": {
+        "security": 1,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 2,
+        "performance": 1,
+        "testing": 1,
+        "documentation": 1,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 14,
+        "coderabbitFixed": 2,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 7,
+        "adversarialFixed": 5
+      },
+      "adversarialCatchRate": 0.4,
+      "fixupCommitRatio": 0.67,
+      "timeToMergeHours": 3.15,
+      "planningQuality": "complete",
+      "prSize": 1916,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3-playwright"
+        ],
+        "skipReasons": "backend + styling-only changes, no interactive UI logic to test",
+        "complianceRate": 0.875,
+        "skipAssessment": "neutral"
       }
     }
   ]

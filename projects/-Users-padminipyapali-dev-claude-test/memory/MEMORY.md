@@ -31,6 +31,20 @@ Commands: `/consolidate-learnings`, `/capture-learning`, `/project-setup`, `/mem
 - Has adversarial review hook (.claude/hooks/require-adversarial-review.sh)
 - Two-phase AI streaming: Phase 1 streams conversation via Sonnet, Phase 2 extracts evaluations via Haiku tool_use
 
+## Project: lullaby
+- Path: /Users/padminipyapali/dev/claude_test/lullaby
+- Stack: TypeScript, React Native (Expo), Supabase (PostgreSQL + Auth + Realtime)
+- Purpose: Beautiful, mobile-first baby tracker app. Core differentiator: delightful UX with minimal taps.
+- Has adversarial review hook (.claude/hooks/require-adversarial-review.sh)
+- Separate from nanny_management (different concern: baby tracking vs employee management)
+
+## Project: baby-name-picker
+- Path: /Users/padminipyapali/dev/claude_test/baby-name-picker
+- Stack: TypeScript, React Native (Expo), SQLite (expo-sqlite + Drizzle), Zustand, Supabase, Claude API
+- Purpose: Mobile-first baby name discovery app. Side-by-side comparison, rich name cards, AI taste profiling.
+- Core differentiator: rich data on cards + comparison mechanic, NOT social features.
+- Has adversarial review hook (.claude/hooks/require-adversarial-review.sh)
+
 ## Project: command-center
 - Stack: TypeScript, Express, grammY (Telegram), @octokit/graphql, Claude CLI agent runner
 - Monorepo: packages/shared, packages/server, packages/web (placeholder)

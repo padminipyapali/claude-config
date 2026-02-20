@@ -211,7 +211,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 
 ## Tier 4: Data Integrity & Architecture
 
-- [ ] **Type sync between SQL and TypeScript.** CHECK constraints and unions match.
+- [ ] **Type sync between SQL and TypeScript.** CHECK constraints and unions match. Verify "source of truth" comments agree on directionality — if both files claim to be canonical, they'll diverge. Pick one (usually the TypeScript type) and have the other reference it. <!-- Strengthened: PR review, second-brain #191, 2026-02-20 -->
 - [ ] **Index coverage for new queries.** New WHERE patterns covered by existing indexes.
 - [ ] **FTS coverage.** New searchable text columns in the GIN index.
 - [ ] **Pattern siblings.** Grep entire codebase for other instances of same pattern.
