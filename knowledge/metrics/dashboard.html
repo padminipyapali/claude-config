@@ -4351,6 +4351,80 @@ const METRICS_DATA = {
         "complianceRate": 1.0,
         "skipAssessment": null
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 187,
+      "title": "Decompose MessageProcessor into handler registry pattern",
+      "dateMerged": "2026-02-20T12:00:51Z",
+      "reviewRounds": 4,
+      "totalComments": 24,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 15,
+        "architecture": 0,
+        "style": 9,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 3,
+        "coderabbitFixed": 3,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 0.32,
+      "fixupCommitRatio": 0.83,
+      "timeToMergeHours": 0.62,
+      "planningQuality": "complete",
+      "prSize": 2190,
+      "stepCompliance": {
+        "stepsRun": ["1", "2", "3", "4a", "4b", "4c", "4d", "5"],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": "good"
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 189,
+      "title": "Fix broken media images on web dashboard",
+      "dateMerged": "2026-02-20T15:57:11Z",
+      "reviewRounds": 1,
+      "totalComments": 1,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.34,
+      "planningQuality": "complete",
+      "prSize": 140,
+      "stepCompliance": {
+        "stepsRun": ["1", "2", "3", "5"],
+        "stepsSkipped": ["4a", "4b", "4c", "4d"],
+        "skipReasons": "production diff is 11 LOC, under 50 threshold; user approved plan",
+        "complianceRate": 0.5,
+        "skipAssessment": "bad"
+      }
     }
   ]
 };
