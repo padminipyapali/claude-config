@@ -36,7 +36,7 @@ A file can belong to multiple categories.
 | **async-ts** | Tier 1: all (1.1–1.3). Tier 3: null guards, error message specificity |
 | **routes-api** | Tier 2: all. Tier 4: business logic in service not routes |
 | **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create→reload |
-| **ui-react** | Tier 0: 0.4 (semantic elements), 0.5 (escape handler). Tier 1: 1.4 (grammar), 1.5 (optimistic UI). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh |
+| **ui-react** | Tier 0: 0.4 (semantic elements), 0.5 (escape handler). Tier 1: 1.4 (grammar), 1.5 (optimistic UI), 1.6 (portal/popover positioning), 1.7 (interactive mode state cleanup). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh |
 | **shell** | Tier 2: shell command validation |
 | **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
@@ -141,6 +141,23 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 **Mechanical verification:**
 1. Find optimistic update patterns.
 2. In catch/error path, verify revert uses a CAPTURED snapshot, not an inverted value.
+3. After revert, verify there is **user-visible error feedback** (toast, inline error, temporary message). Silent revert without feedback confuses users — they see a change, then it disappears with no explanation. <!-- Source: post-mortem, second-brain #186, 2026-02-20 -->
+
+### 1.6 Portal/Popover Positioning
+
+**Mechanical verification:**
+1. Find portal-rendered or absolutely-positioned popovers/dropdowns.
+2. Verify position is **recalculated** on scroll and window resize (via event listeners), or that the popover **closes** on scroll/resize. Static one-time positioning disconnects the popover from its trigger on user interaction.
+3. Verify `left` and `top` values are clamped to avoid off-screen positioning on narrow viewports (e.g., `Math.max(8, Math.min(rect.left, maxLeft))`).
+<!-- Source: post-mortem, second-brain #186, 2026-02-20 -->
+
+### 1.7 Interactive Mode State Cleanup
+
+**Mechanical verification:**
+1. Find components with multiple interactive states (e.g., editing, date-picker-open, dropdown-open).
+2. When entering one interactive mode, verify all competing mode states are reset. Example: entering edit mode should set `showDatePicker = false`.
+3. Check: "If mode A is active and user triggers mode B, does mode A's state get cleaned up?"
+<!-- Source: post-mortem, second-brain #186, 2026-02-20 -->
 
 ---
 
