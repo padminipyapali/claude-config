@@ -3466,6 +3466,29 @@
         "complianceRate": 1.0,
         "skipAssessment": null
       }
+    },
+    {
+      "project": "nanny-app",
+      "prNumber": 28,
+      "title": "Add configurable pay period per nanny",
+      "dateMerged": "2026-02-20T02:45:11Z",
+      "reviewRounds": 3,
+      "totalComments": 5,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 0,
+        "performance": 2,
+        "testing": 1,
+        "documentation": 1,
+        "other": 0
+      },
+      "adversarialCatchRate": 0.86,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 4.7,
+      "planningQuality": "complete",
+      "prSize": 711
     }
   ]
 }
