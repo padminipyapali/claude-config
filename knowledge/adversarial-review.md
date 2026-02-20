@@ -235,9 +235,9 @@ After the review passes, before writing the marker file:
 
 Only after confirming learning capture, write the marker **outside the repo** to avoid git tracking conflicts:
 ```bash
-PROJECT_HASH=$(echo -n "$PWD" | md5)
-mkdir -p ~/.claude/review-markers
-git rev-parse HEAD > ~/.claude/review-markers/$PROJECT_HASH
+PROJECT_HASH=$(echo -n "$PWD" | md5 -q 2>/dev/null || echo -n "$PWD" | md5sum 2>/dev/null | cut -d' ' -f1)
+mkdir -p "$HOME/.claude/review-markers"
+git rev-parse HEAD > "$HOME/.claude/review-markers/$PROJECT_HASH"
 ```
 
 ---
