@@ -50,6 +50,7 @@ planning discipline, iteration velocity, and automation opportunities.
 
 - **UTC suffix enforcement via lint rule.** A custom ESLint rule or grep check for `new Date("...:00")` without trailing `Z` would catch the most common timezone bug class automatically. Multiple PRs have hit this. **Decision:** Deferred CI-level lint rules. Instead, Tier 0 automated grep checks in the adversarial review checklist serve the same purpose without per-project setup cost. If patterns are still missed after Tier 0 is live, escalate to GitHub Actions workflows. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 - **Run Biome lint before push to catch a11y issues.** PR #143 shipped a `span` with `role="button"` that Biome's `noStaticElementInteractions` rule would have flagged. Running `npm run lint` as part of the pre-push workflow would have prevented at least 1 of 3 fix rounds. The lint output was either not generated or not reviewed before push. <!-- Source: post-mortem, second-brain #143, 2026-02-17 -->
+- **Add Stylelint to local pre-PR checks for web projects.** Stylelint is the largest single source of CodeRabbit tool findings (~40% of all tool findings across 149 PRs). These are CSS issues caught post-push that could be caught locally. Add `npx stylelint "**/*.css"` to the pre-PR check sequence for projects with CSS (second-brain, nanny-app). <!-- Source: CodeRabbit analytics export, 2026-02-20 -->
 
 ## Iteration Velocity
 
