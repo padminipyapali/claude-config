@@ -4112,6 +4112,52 @@
         "playwrightTesting": "N/A (no UI changes)",
         "ciStatus": "all passed (777 tests)"
       }
+    },
+    {
+      "project": "command-center",
+      "prNumber": 33,
+      "title": "Add summary and notes to coding sessions",
+      "dateMerged": "2026-02-20T23:08:29Z",
+      "reviewRounds": 1,
+      "totalComments": 7,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 4,
+        "architecture": 0,
+        "style": 3,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 4,
+        "coderabbitFixed": 1,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.67,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 2.33,
+      "planningQuality": "complete",
+      "prSize": 3032,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": null
+      }
     }
   ]
 }
