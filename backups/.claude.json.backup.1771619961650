@@ -1,5 +1,5 @@
 {
-  "numStartups": 122,
+  "numStartups": 123,
   "installMethod": "native",
   "autoUpdates": false,
   "theme": "light",
@@ -7,7 +7,7 @@
   "tipsHistory": {
     "new-user-warmup": 9,
     "plan-mode-for-complex-tasks": 120,
-    "memory-command": 108,
+    "memory-command": 123,
     "theme-command": 121,
     "colorterm-truecolor": 1,
     "status-line": 101,
@@ -15,8 +15,8 @@
     "terminal-setup": 115,
     "shift-enter-setup": 105,
     "prompt-queue": 7,
-    "enter-to-steer-in-relatime": 103,
-    "todo-list": 103,
+    "enter-to-steer-in-relatime": 123,
+    "todo-list": 123,
     "install-github-app": 115,
     "install-slack-app": 115,
     "drag-and-drop-images": 115,
@@ -24,8 +24,8 @@
     "double-esc-code-restore": 117,
     "continue": 117,
     "shift-tab": 117,
-    "image-paste": 103,
-    "desktop-app": 108,
+    "image-paste": 123,
+    "desktop-app": 123,
     "web-app": 109,
     "mobile-app": 109,
     "frontend-design-plugin": 121,
@@ -40,7 +40,7 @@
     "custom-commands": 117,
     "git-worktrees": 122
   },
-  "promptQueueUseCount": 1053,
+  "promptQueueUseCount": 1091,
   "cachedStatsigGates": {
     "tengu_prompt_suggestion": true
   },
@@ -379,55 +379,69 @@
         "packageManager": null
       },
       "hasCompletedProjectOnboarding": true,
-      "lastCost": 90.55331615000006,
-      "lastAPIDuration": 27878783,
-      "lastAPIDurationWithoutRetries": 27878256,
-      "lastToolDuration": 4323776,
-      "lastDuration": 87101092,
-      "lastLinesAdded": 16123,
-      "lastLinesRemoved": 436,
-      "lastTotalInputTokens": 417512,
-      "lastTotalOutputTokens": 598820,
-      "lastTotalCacheCreationInputTokens": 5879669,
-      "lastTotalCacheReadInputTokens": 88719989,
+      "lastCost": 28.244811399999985,
+      "lastAPIDuration": 3994126,
+      "lastAPIDurationWithoutRetries": 3993911,
+      "lastToolDuration": 1814908,
+      "lastDuration": 30148798,
+      "lastLinesAdded": 1857,
+      "lastLinesRemoved": 32,
+      "lastTotalInputTokens": 289124,
+      "lastTotalOutputTokens": 203106,
+      "lastTotalCacheCreationInputTokens": 1337780,
+      "lastTotalCacheReadInputTokens": 36193256,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 6.35,
-      "lastFpsLow1Pct": 39.39,
+      "lastFpsAverage": 8.26,
+      "lastFpsLow1Pct": 38.11,
       "lastModelUsage": {
         "claude-haiku-4-5-20251001": {
-          "inputTokens": 395455,
-          "outputTokens": 61597,
-          "cacheReadInputTokens": 4499124,
-          "cacheCreationInputTokens": 599852,
+          "inputTokens": 283694,
+          "outputTokens": 40624,
+          "cacheReadInputTokens": 2354114,
+          "cacheCreationInputTokens": 369462,
           "webSearchRequests": 0,
-          "costUSD": 1.9031674000000003
+          "costUSD": 1.184052899999999
         },
         "claude-opus-4-6": {
-          "inputTokens": 22032,
-          "outputTokens": 524346,
-          "cacheReadInputTokens": 83413966,
-          "cacheCreationInputTokens": 5147466,
+          "inputTokens": 5400,
+          "outputTokens": 154385,
+          "cacheReadInputTokens": 32301109,
+          "cacheCreationInputTokens": 889657,
           "webSearchRequests": 0,
-          "costUSD": 87.09745550000001
+          "costUSD": 25.597535750000002
         },
         "claude-sonnet-4-6": {
-          "inputTokens": 25,
-          "outputTokens": 12877,
-          "cacheReadInputTokens": 806899,
-          "cacheCreationInputTokens": 132351,
+          "inputTokens": 30,
+          "outputTokens": 8097,
+          "cacheReadInputTokens": 1538033,
+          "cacheCreationInputTokens": 78661,
           "webSearchRequests": 0,
-          "costUSD": 1.55269325
+          "costUSD": 1.46322275
         }
       },
-      "lastSessionId": "b2ada173-0976-4c8f-a353-b7db377e88be",
+      "lastSessionId": "3a0365e9-fa85-47e8-9752-e97f304e912b",
       "lastSessionMetrics": {
-        "frame_duration_ms_count": 209102,
-        "frame_duration_ms_min": 0.1259169988334179,
-        "frame_duration_ms_max": 117.75512500014156,
-        "frame_duration_ms_avg": 2.146126385909024,
-        "frame_duration_ms_p50": 1.3646875005215406,
-        "frame_duration_ms_p95": 3.5305920508690143,
-        "frame_duration_ms_p99": 30.023418180048463
+        "frame_duration_ms_count": 81895,
+        "frame_duration_ms_min": 0.1366249998100102,
+        "frame_duration_ms_max": 189.52045799978077,
+        "frame_duration_ms_avg": 2.315769491581382,
+        "frame_duration_ms_p50": 1.4710625001462176,
+        "frame_duration_ms_p95": 3.1899580500088622,
+        "frame_duration_ms_p99": 14.248127750065159,
+        "pre_tool_hook_duration_ms_count": 646,
+        "pre_tool_hook_duration_ms_min": 0,
+        "pre_tool_hook_duration_ms_max": 5,
+        "pre_tool_hook_duration_ms_avg": 1.543343653250774,
+        "pre_tool_hook_duration_ms_p50": 1,
+        "pre_tool_hook_duration_ms_p95": 3,
+        "pre_tool_hook_duration_ms_p99": 3,
+        "hook_duration_ms_count": 389,
+        "hook_duration_ms_min": 0,
+        "hook_duration_ms_max": 1,
+        "hook_duration_ms_avg": 0.13110539845758354,
+        "hook_duration_ms_p50": 0,
+        "hook_duration_ms_p95": 1,
+        "hook_duration_ms_p99": 1
       }
     },
     "/Users/padminipyapali/dev/claude_test/my_mind_evolved": {
@@ -852,7 +866,7 @@
         "currency": "USD"
       },
       "remaining_passes": 3,
-      "timestamp": 1771587710268
+      "timestamp": 1771615958681
     }
   },
   "feedbackSurveyState": {
@@ -866,7 +880,7 @@
   },
   "clientDataCache": {
     "data": {},
-    "timestamp": 1771615921041
+    "timestamp": 1771619956613
   },
   "penguinModeOrgEnabled": true,
   "githubRepoPaths": {
@@ -906,16 +920,16 @@
       "lastUsedAt": 1771279230153
     },
     "review-fix": {
-      "usageCount": 116,
-      "lastUsedAt": 1771615705020
+      "usageCount": 117,
+      "lastUsedAt": 1771617303641
     },
     "test-session": {
       "usageCount": 2,
       "lastUsedAt": 1770697071668
     },
     "adversarial-review": {
-      "usageCount": 80,
-      "lastUsedAt": 1771603405387
+      "usageCount": 81,
+      "lastUsedAt": 1771619238888
     },
     "review": {
       "usageCount": 3,
@@ -950,8 +964,8 @@
       "lastUsedAt": 1771285297606
     },
     "post-mortem": {
-      "usageCount": 30,
-      "lastUsedAt": 1771615782200
+      "usageCount": 31,
+      "lastUsedAt": 1771617818155
     },
     "coderabbit:review": {
       "usageCount": 18,
