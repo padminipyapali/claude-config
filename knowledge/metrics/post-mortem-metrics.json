@@ -3405,7 +3405,62 @@
       "planningQuality": "complete",
       "prSize": 100,
       "stepCompliance": {
-        "stepsRun": ["1", "2", "3", "4a", "4b", "4c", "4d", "5"],
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": null
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 164,
+      "title": "Add snooze/defer for TODOs",
+      "dateMerged": "2026-02-20T01:00:15Z",
+      "reviewRounds": 2,
+      "totalComments": 6,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 3,
+        "architecture": 1,
+        "style": 2,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 2,
+        "coderabbitFixed": 2,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.4,
+      "planningQuality": "complete",
+      "prSize": 1019,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
         "stepsSkipped": [],
         "skipReasons": "",
         "complianceRate": 1.0,

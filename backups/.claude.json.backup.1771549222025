@@ -1,5 +1,5 @@
 {
-  "numStartups": 111,
+  "numStartups": 112,
   "installMethod": "native",
   "autoUpdates": false,
   "theme": "light",
@@ -32,15 +32,15 @@
     "guest-passes": 109,
     "ide-upsell-external-terminal": 110,
     "custom-agents": 111,
-    "agent-flag": 97,
+    "agent-flag": 112,
     "overage-promo": 100,
-    "default-permission-mode-config": 102,
+    "default-permission-mode-config": 112,
     "permissions": 105,
     "rename-conversation": 102,
     "custom-commands": 102,
     "git-worktrees": 102
   },
-  "promptQueueUseCount": 305,
+  "promptQueueUseCount": 307,
   "cachedStatsigGates": {
     "tengu_prompt_suggestion": true
   },
@@ -146,7 +146,7 @@
   "sonnet45MigrationComplete": true,
   "opus45MigrationComplete": true,
   "thinkingMigrationComplete": true,
-  "changelogLastFetched": 1771548577012,
+  "changelogLastFetched": 1771549219348,
   "autoUpdatesProtectedForNative": true,
   "claudeCodeFirstTokenDate": "2026-01-10T18:24:10.162949Z",
   "appleTerminalSetupInProgress": false,
@@ -767,10 +767,19 @@
         "frame_duration_ms_p50": 0.6815000000005966,
         "frame_duration_ms_p95": 0.9042670000000725,
         "frame_duration_ms_p99": 5.292558999999919
+      },
+      "activeWorktreeSession": {
+        "originalCwd": "/Users/padminipyapali/dev/claude_test/my_mind_evolved_2",
+        "worktreePath": "/Users/padminipyapali/dev/claude_test/my_mind_evolved_2/.claude/worktrees/audit-report",
+        "worktreeName": "audit-report",
+        "worktreeBranch": "worktree-audit-report",
+        "originalBranch": "feat/todo-snooze",
+        "originalHeadCommit": "9a31cdfd0823437ec41b6a6afd23a5b5d7b27f79",
+        "sessionId": "65a5f132-430d-4b65-a744-03037ff8469a"
       }
     }
   },
-  "lastReleaseNotesSeen": "2.1.47",
+  "lastReleaseNotesSeen": "2.1.49",
   "hasShownOpus45Notice": {
     "34f8278c-7016-4969-96dd-ec052bbc18b8": true
   },
@@ -819,7 +828,7 @@
   },
   "clientDataCache": {
     "data": {},
-    "timestamp": 1771548761110
+    "timestamp": 1771549217366
   },
   "penguinModeOrgEnabled": true,
   "githubRepoPaths": {

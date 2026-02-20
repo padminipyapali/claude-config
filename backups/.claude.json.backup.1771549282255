@@ -1,5 +1,5 @@
 {
-  "numStartups": 111,
+  "numStartups": 112,
   "installMethod": "native",
   "autoUpdates": false,
   "theme": "light",
@@ -29,18 +29,18 @@
     "web-app": 109,
     "mobile-app": 109,
     "frontend-design-plugin": 109,
-    "guest-passes": 109,
+    "guest-passes": 112,
     "ide-upsell-external-terminal": 110,
     "custom-agents": 111,
-    "agent-flag": 97,
+    "agent-flag": 112,
     "overage-promo": 100,
-    "default-permission-mode-config": 102,
+    "default-permission-mode-config": 112,
     "permissions": 105,
     "rename-conversation": 102,
     "custom-commands": 102,
-    "git-worktrees": 102
+    "git-worktrees": 112
   },
-  "promptQueueUseCount": 305,
+  "promptQueueUseCount": 308,
   "cachedStatsigGates": {
     "tengu_prompt_suggestion": true
   },
@@ -146,7 +146,7 @@
   "sonnet45MigrationComplete": true,
   "opus45MigrationComplete": true,
   "thinkingMigrationComplete": true,
-  "changelogLastFetched": 1771548903454,
+  "changelogLastFetched": 1771549280781,
   "autoUpdatesProtectedForNative": true,
   "claudeCodeFirstTokenDate": "2026-01-10T18:24:10.162949Z",
   "appleTerminalSetupInProgress": false,
@@ -779,7 +779,7 @@
       }
     }
   },
-  "lastReleaseNotesSeen": "2.1.47",
+  "lastReleaseNotesSeen": "2.1.49",
   "hasShownOpus45Notice": {
     "34f8278c-7016-4969-96dd-ec052bbc18b8": true
   },
@@ -828,7 +828,7 @@
   },
   "clientDataCache": {
     "data": {},
-    "timestamp": 1771548905130
+    "timestamp": 1771549279376
   },
   "penguinModeOrgEnabled": true,
   "githubRepoPaths": {
@@ -912,8 +912,8 @@
       "lastUsedAt": 1771285297606
     },
     "post-mortem": {
-      "usageCount": 18,
-      "lastUsedAt": 1771538828043
+      "usageCount": 19,
+      "lastUsedAt": 1771549226461
     },
     "coderabbit:review": {
       "usageCount": 14,

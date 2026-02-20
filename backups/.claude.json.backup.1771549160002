@@ -40,7 +40,7 @@
     "custom-commands": 102,
     "git-worktrees": 102
   },
-  "promptQueueUseCount": 305,
+  "promptQueueUseCount": 306,
   "cachedStatsigGates": {
     "tengu_prompt_suggestion": true
   },
@@ -146,7 +146,7 @@
   "sonnet45MigrationComplete": true,
   "opus45MigrationComplete": true,
   "thinkingMigrationComplete": true,
-  "changelogLastFetched": 1771548577012,
+  "changelogLastFetched": 1771549151692,
   "autoUpdatesProtectedForNative": true,
   "claudeCodeFirstTokenDate": "2026-01-10T18:24:10.162949Z",
   "appleTerminalSetupInProgress": false,
@@ -767,6 +767,15 @@
         "frame_duration_ms_p50": 0.6815000000005966,
         "frame_duration_ms_p95": 0.9042670000000725,
         "frame_duration_ms_p99": 5.292558999999919
+      },
+      "activeWorktreeSession": {
+        "originalCwd": "/Users/padminipyapali/dev/claude_test/my_mind_evolved_2",
+        "worktreePath": "/Users/padminipyapali/dev/claude_test/my_mind_evolved_2/.claude/worktrees/audit-report",
+        "worktreeName": "audit-report",
+        "worktreeBranch": "worktree-audit-report",
+        "originalBranch": "feat/todo-snooze",
+        "originalHeadCommit": "9a31cdfd0823437ec41b6a6afd23a5b5d7b27f79",
+        "sessionId": "65a5f132-430d-4b65-a744-03037ff8469a"
       }
     }
   },
@@ -819,7 +828,7 @@
   },
   "clientDataCache": {
     "data": {},
-    "timestamp": 1771548745790
+    "timestamp": 1771549149245
   },
   "penguinModeOrgEnabled": true,
   "githubRepoPaths": {
