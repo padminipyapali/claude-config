@@ -104,7 +104,7 @@ Run these sub-steps sequentially. Do not ask for approval between sub-steps — 
 | 4c | **Adversarial review** | Run `/adversarial-review`. Fix any issues found. |
 | 4d | **CI checks** | Run build, lint, test. Fix failures. If any sub-step produced fixes, re-run from 4b (CodeRabbit) to validate the fixes didn't introduce new issues. Cap at 3 iterations to avoid infinite loops. |
 
-After the loop completes cleanly, write the review loop marker: `git rev-parse HEAD > .claude/.review-loop-passed`. Then report the summary and proceed to Step 5. The pre-push hook checks this marker for diffs >= 50 LOC — without it, the push will be blocked.
+After the loop completes cleanly, report the summary and proceed to Step 5. The adversarial review step (4c) writes the review marker to `~/.claude/review-markers/` (outside the repo) — the pre-push hook checks this marker automatically.
 
 ### PR Body: Local Review Section
 

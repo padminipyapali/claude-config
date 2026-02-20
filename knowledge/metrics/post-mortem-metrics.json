@@ -3489,6 +3489,53 @@
       "timeToMergeHours": 4.7,
       "planningQuality": "complete",
       "prSize": 711
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 184,
+      "title": "Move review markers outside repo to prevent tracking conflicts",
+      "dateMerged": "2026-02-20T02:59:31Z",
+      "reviewRounds": 1,
+      "totalComments": 3,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 3,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.3,
+      "planningQuality": "partial",
+      "prSize": 31,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "infrastructure-only change, no application code",
+        "complianceRate": 0.375,
+        "skipAssessment": "neutral"
+      }
     }
   ]
 }

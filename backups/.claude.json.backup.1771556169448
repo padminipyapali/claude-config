@@ -1,5 +1,5 @@
 {
-  "numStartups": 112,
+  "numStartups": 113,
   "installMethod": "native",
   "autoUpdates": false,
   "theme": "light",
@@ -28,7 +28,7 @@
     "desktop-app": 108,
     "web-app": 109,
     "mobile-app": 109,
-    "frontend-design-plugin": 109,
+    "frontend-design-plugin": 112,
     "guest-passes": 112,
     "ide-upsell-external-terminal": 110,
     "custom-agents": 111,
@@ -40,7 +40,7 @@
     "custom-commands": 102,
     "git-worktrees": 112
   },
-  "promptQueueUseCount": 308,
+  "promptQueueUseCount": 648,
   "cachedStatsigGates": {
     "tengu_prompt_suggestion": true
   },
@@ -146,7 +146,7 @@
   "sonnet45MigrationComplete": true,
   "opus45MigrationComplete": true,
   "thinkingMigrationComplete": true,
-  "changelogLastFetched": 1771549401942,
+  "changelogLastFetched": 1771556168169,
   "autoUpdatesProtectedForNative": true,
   "claudeCodeFirstTokenDate": "2026-01-10T18:24:10.162949Z",
   "appleTerminalSetupInProgress": false,
@@ -371,47 +371,55 @@
         "packageManager": null
       },
       "hasCompletedProjectOnboarding": true,
-      "lastCost": 24.377815850000033,
-      "lastAPIDuration": 3384079,
-      "lastAPIDurationWithoutRetries": 3383834,
-      "lastToolDuration": 1519539,
-      "lastDuration": 222914145,
-      "lastLinesAdded": 2834,
-      "lastLinesRemoved": 162,
-      "lastTotalInputTokens": 106612,
-      "lastTotalOutputTokens": 170936,
-      "lastTotalCacheCreationInputTokens": 1475923,
-      "lastTotalCacheReadInputTokens": 25519095,
+      "lastCost": 26.342417849999997,
+      "lastAPIDuration": 4413027,
+      "lastAPIDurationWithoutRetries": 4412869,
+      "lastToolDuration": 1533800,
+      "lastDuration": 39697044,
+      "lastLinesAdded": 3509,
+      "lastLinesRemoved": 258,
+      "lastTotalInputTokens": 109183,
+      "lastTotalOutputTokens": 139284,
+      "lastTotalCacheCreationInputTokens": 1715467,
+      "lastTotalCacheReadInputTokens": 27212619,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 0.62,
-      "lastFpsLow1Pct": 69.66,
+      "lastFpsAverage": 6.82,
+      "lastFpsLow1Pct": 56.56,
       "lastModelUsage": {
         "claude-haiku-4-5-20251001": {
-          "inputTokens": 106193,
-          "outputTokens": 20436,
-          "cacheReadInputTokens": 1362921,
-          "cacheCreationInputTokens": 206810,
+          "inputTokens": 104129,
+          "outputTokens": 15922,
+          "cacheReadInputTokens": 945061,
+          "cacheCreationInputTokens": 180119,
           "webSearchRequests": 0,
-          "costUSD": 0.6031776000000005
+          "costUSD": 0.5033938499999999
         },
         "claude-opus-4-6": {
-          "inputTokens": 419,
-          "outputTokens": 150500,
-          "cacheReadInputTokens": 24156174,
-          "cacheCreationInputTokens": 1269113,
+          "inputTokens": 5014,
+          "outputTokens": 110373,
+          "cacheReadInputTokens": 24655209,
+          "cacheCreationInputTokens": 1426115,
           "webSearchRequests": 0,
-          "costUSD": 23.77463825000002
+          "costUSD": 24.025218249999998
+        },
+        "claude-sonnet-4-6": {
+          "inputTokens": 40,
+          "outputTokens": 12989,
+          "cacheReadInputTokens": 1612349,
+          "cacheCreationInputTokens": 109233,
+          "webSearchRequests": 0,
+          "costUSD": 1.81380575
         }
       },
-      "lastSessionId": "b5fbee4d-b5eb-4917-8e7b-61da1a4d7d87",
+      "lastSessionId": "1cd0c6e5-1ff9-4298-a4a8-4aef61265ded",
       "lastSessionMetrics": {
-        "frame_duration_ms_count": 79154,
-        "frame_duration_ms_min": 0.08858299255371094,
-        "frame_duration_ms_max": 123.98687499761581,
-        "frame_duration_ms_avg": 2.198673115396688,
-        "frame_duration_ms_p50": 1.4025835022330284,
-        "frame_duration_ms_p95": 2.8431499516358594,
-        "frame_duration_ms_p99": 44.086353093683
+        "frame_duration_ms_count": 100305,
+        "frame_duration_ms_min": 0.1007080003619194,
+        "frame_duration_ms_max": 162.94083300046623,
+        "frame_duration_ms_avg": 2.0278958230398754,
+        "frame_duration_ms_p50": 1.3903749999590218,
+        "frame_duration_ms_p95": 3.4362437010742726,
+        "frame_duration_ms_p99": 10.495132520189387
       }
     },
     "/Users/padminipyapali/dev/claude_test/my_mind_evolved": {
@@ -828,7 +836,7 @@
   },
   "clientDataCache": {
     "data": {},
-    "timestamp": 1771549402322
+    "timestamp": 1771556167048
   },
   "penguinModeOrgEnabled": true,
   "githubRepoPaths": {
@@ -868,16 +876,16 @@
       "lastUsedAt": 1771279230153
     },
     "review-fix": {
-      "usageCount": 104,
-      "lastUsedAt": 1771548395896
+      "usageCount": 105,
+      "lastUsedAt": 1771556094040
     },
     "test-session": {
       "usageCount": 2,
       "lastUsedAt": 1770697071668
     },
     "adversarial-review": {
-      "usageCount": 74,
-      "lastUsedAt": 1771538296807
+      "usageCount": 75,
+      "lastUsedAt": 1771549891647
     },
     "review": {
       "usageCount": 3,
@@ -912,12 +920,12 @@
       "lastUsedAt": 1771285297606
     },
     "post-mortem": {
-      "usageCount": 19,
-      "lastUsedAt": 1771549226461
+      "usageCount": 20,
+      "lastUsedAt": 1771555627932
     },
     "coderabbit:review": {
-      "usageCount": 14,
-      "lastUsedAt": 1771538045303
+      "usageCount": 15,
+      "lastUsedAt": 1771549632781
     },
     "sessions": {
       "usageCount": 5,
