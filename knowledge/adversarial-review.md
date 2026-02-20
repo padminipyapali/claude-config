@@ -91,6 +91,12 @@ done
 ```
 Heuristic — if a file handles Escape on a textarea/input but has no `onKeyDownCapture`, the Escape handler may not fire when focus is on sibling buttons. Flag for review.
 
+### 0.6 Date comparison without validity check
+```bash
+git diff main...HEAD -U5 -- '*.ts' '*.tsx' | grep -B5 -E 'new Date\(' | grep -E '(>|<|>=|<=)\s*new Date' 2>/dev/null
+```
+Heuristic — flags date comparisons near `new Date()` construction. `new Date("bad") > new Date()` is always `false` (NaN comparison), silently taking the wrong branch. Verify each match has a `Number.isFinite()` or `isNaN()` guard. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
+
 ### Adding new patterns
 When a bug class is caught 2+ times across PRs, add a grep pattern here.
 Requirements: expressible as regex on changed lines, low false-positive rate (<20%).
@@ -189,6 +195,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **JSON.parse on external config.** `JSON.parse()` on env vars or external config must be in try/catch with a descriptive error (e.g., "Invalid JSON in GOOGLE_SERVICE_ACCOUNT_KEY").
 - [ ] **Off-by-one in time boundaries.** When querying events/records for a date range, use start-of-next-day as exclusive upper bound (`< nextDay T00:00:00`), not `<= T23:59:59` which misses the final second.
 - [ ] **Off-by-one in threshold comparisons.** When code splits, groups, or gates on a threshold (time gaps, count limits, window sizes), verify the comparison operator matches the spec: `>` means "split only when strictly greater," `>=` means "split at the threshold itself." The distinction matters: a 30-minute session gap threshold should use `>= 30` not `> 30`, or a gap of exactly 30 minutes is silently placed in the wrong session. Mechanical check: find all comparisons against threshold/limit/max constants in changed files and ask "should equality trigger the branch or not?" <!-- Source: PR review, command-center #23, 2026-02-19 -->
+- [ ] **Newly-throwing functions: caller audit.** When a function gains `throw` validation that it didn't have before (e.g., converting a silent `return null` to `throw new Error("invalid")`), grep ALL callers and verify each has error handling. Especially dangerous when inputs come from LLM extraction or user input — bad data is the common case. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
 - [ ] **Filter external API data before mapping.** External APIs can return malformed entries (missing fields, null values). Use `.filter()` to skip invalid entries before `.map()`, rather than producing `NaN`/`Invalid Date` downstream.
 - [ ] **UTC suffix in test Date strings.** `new Date("2026-02-14T10:00:00")` parses in server-local timezone, making tests flaky on CI. Always append `Z` for UTC: `new Date("2026-02-14T10:00:00Z")`. **Enforcement:** Covered by Tier 0 check 0.1.
 - [ ] **Test env variable isolation.** When tests mutate `process.env.*` (set in `beforeEach`, deleted in a test), verify cleanup in `afterEach` that captures and restores the original value. Without restore, env mutations leak across test files. Also: `vi.restoreAllMocks()` / `vi.resetAllMocks()` should be in `afterEach`, not inline — inline cleanup is skipped if the test fails before reaching it. <!-- Source: post-mortem, second-brain #148, 2026-02-17 -->

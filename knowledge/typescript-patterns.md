@@ -22,6 +22,7 @@ Cross-project learnings for TypeScript and Node.js development.
 - **Validate query param enum values.** Reject invalid values with 400, don't silently fall back to `undefined`.
 - **Guard API response shape before destructuring.** Even with TypeScript generics on `api.get<T>()`, check `Array.isArray()` before `.filter()/.map()`.
 - **Validate date strings before formatting.** `new Date(str)` can produce `NaN` timestamps. Always check `isNaN(d.getTime())` and return a fallback (`""`, `"—"`) instead of displaying `"NaN ago"` or `"Invalid Date"`. <!-- Source: PR review, command-center #3, 2026-02-14 -->
+- **Use `Number.isFinite()` to detect Invalid Date, not just `isNaN`.** `new Date("bad").getTime()` returns `NaN`, which silently fails ALL comparisons (`NaN > x` is false, `NaN < x` is false, `NaN === NaN` is false). This means conditionals like `if (date > new Date())` silently take the wrong branch. Use `Number.isFinite(date.getTime())` as the validation check — it catches `NaN`, `Infinity`, and non-number values in one guard. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
 - **Always `?? []` when mapping API response arrays.** Servers can return unexpected shapes even when TypeScript says the field is required. This applies especially to GraphQL: the generated types may declare a field as non-optional, but the actual API can return `null` for nested fields (e.g., `repo.mergedPrs.nodes`). Always use optional chaining + nullish coalescing: `response?.nodes ?? []`. When fixing this in a service, grep the entire codebase for sibling services using the same GraphQL query shape — the same unguarded access is very likely to exist there too. <!-- Source: PR review, command-center #23, 2026-02-19 -->
 - **Reject non-string query params explicitly.** Express parses repeated query params (`?x=A&x=B`) as arrays. A `typeof x === "string"` check silently skips arrays, disabling the feature. Guard with `typeof x !== "string"` → 400 before parsing. <!-- Source: PR review, second-brain #100, 2026-02-15 -->
 
@@ -33,6 +34,7 @@ Cross-project learnings for TypeScript and Node.js development.
 ## Error Handling
 
 - **Error swallowing in catch blocks.** A catch returning `[]` or a default masks real DB outages. Only return defaults for EXPECTED edge cases (not found, no embedding). Unexpected errors (connection failure, query syntax) must propagate.
+- **When adding throws to a previously-silent function, wrap ALL callers in try/catch.** If a function previously returned `null` or a default on bad input and you add `throw new Error()` validation, every caller becomes a crash site. Grep for all call sites and add error handling. This is especially critical when the function's inputs come from LLM extraction — bad output is the expected case, not the edge case. Pattern: search for the function name across the codebase, verify each caller either has a try/catch or is itself called within one. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
 
 ## Observer / Pub-Sub Patterns
 
@@ -41,6 +43,7 @@ Cross-project learnings for TypeScript and Node.js development.
 ## Input Validation
 
 - **Whitespace-only strings are truthy in JavaScript.** `!text` does NOT catch `"   "` — whitespace-only strings are truthy and bypass empty guards. Always `.trim()` at the earliest pipeline point so downstream logic operates on normalized input. Guard on `!text.trim()` not `!text`. <!-- Source: BUG-T014, second-brain -->
+- **Normalize internal punctuation when matching against token sets.** When checking user input against a set of keywords/tokens (e.g., `["yes", "no", "skip"]`), stripping only trailing punctuation is insufficient — `"yes, please"` won't match `"yes"`. Normalize by removing ALL non-alphanumeric characters or splitting on word boundaries before matching. Pattern: `input.replace(/[^\w\s]/g, "").split(/\s+/).some(word => tokenSet.has(word.toLowerCase()))`. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
 - **Narrow try/catch to I/O only; guard `Invalid Date` from external APIs.** A broad try/catch around fetch + JSON transform means a formatting bug silently drops all fetched data. Wrap only the network call in try/catch. Then guard each data transformation separately — especially `new Date()` on external strings, which can produce `Invalid Date` that propagates silently through formatters. <!-- Source: BUG-T016, second-brain -->
 
 ## Date / Timezone Pitfalls
@@ -50,9 +53,18 @@ Cross-project learnings for TypeScript and Node.js development.
 - **`new Date(year, month, day)` silently normalizes invalid dates.** `new Date(2026, 1, 30)` (Feb 30) doesn't throw — it normalizes to March 2. When parsing user-provided date strings via split-and-construct, verify the result matches the input: `candidate.getFullYear() === year && candidate.getMonth() === month - 1 && candidate.getDate() === day`. If not, treat as invalid. This applies to any date picker fallback path or config file parsing. <!-- Source: PR review, nanny-app #28, 2026-02-19 -->
 - **Normalize date ranges to UTC midnight for daily bucketing.** When computing a `sinceDate` for daily breakdowns, use `new Date(Date.UTC(y, m, d))` — not `new Date(Date.now() - N * 86400000)`. Raw subtraction preserves time-of-day, so the "today" bucket starts mid-day and excludes morning activity. Pattern: `const todayUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())); const sinceDate = new Date(todayUtc.getTime() - (days - 1) * 86400000);`. <!-- Source: PR review, command-center #21, 2026-02-19 -->
 
+## Interface Implementation
+
+- **Match interface signatures explicitly, even when TypeScript allows fewer params.** TypeScript's structural typing permits implementations to declare fewer parameters than the interface. But when sibling implementations use different subsets of the interface params, it creates confusing inconsistency. Convention: always declare all interface parameters, even if unused (prefix with `_` to satisfy linters). This makes handler registries and strategy patterns easier to read and maintain. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
+
+## Import Hygiene
+
+- **Use module-level imports, not inline `import()` types.** Inline type references like `import("../../services/entry.js").TodoMatch` are harder to read and break import organization conventions. Hoist them to module-level `import type { TodoMatch } from "../../services/entry.js"` for consistency and discoverability. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
+
 ## Code Hygiene
 
 - **Remove unnecessary `as const`.** String literals assigned to typed fields don't need `as const` — TS infers from context.
+- **Normalize newlines in single-line output functions.** When a function produces a single-line string (e.g., a numbered list item, a summary row, a log line), replace `\n` with a space or strip it entirely. User-provided or LLM-generated text can contain unexpected newlines that break the surrounding format (e.g., a numbered list becomes misaligned: `1. Buy\nmilk\n2. Call dentist`). Guard: `text.replace(/\n/g, " ").trim()` in any function that returns a single-line string. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
 - **`toLocaleString` + `new Date()` for timezone offset is fragile.** The pattern of computing timezone offsets via `new Date(date.toLocaleString("en-US", { timeZone }))` relies on both the `toLocaleString` output and the `new Date()` reparsing step being in the server's local timezone, which happens to cancel out. This is susceptible to locale-dependent parsing quirks and DST transitions. Use `Intl.DateTimeFormat("en-US", { timeZone }).formatToParts(date)` instead — it returns structured data (year, month, day, hour, minute) without needing string reparsing. <!-- Source: PR review, second-brain #164, 2026-02-19 -->
 
 ---

@@ -25,6 +25,10 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 
 - **Multi-layer silent failures.** Search fails → no context → AI disclaims memory. Test each layer independently, not just the end-to-end result.
 
+## LLM Output as Function Input
+
+- **Treat LLM-extracted values as untrusted input at every call site.** When a function receives values extracted by an LLM (dates, times, categories, IDs), bad/impossible values are the expected case — not an edge case. If you add input validation to such a function (e.g., `buildRemindAt` throwing on invalid hour/minute), every caller must have try/catch, because the LLM WILL produce invalid values. The safe default on validation failure is to skip the feature gracefully (no reminder set) rather than crash the entire message processing pipeline. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
+
 ## Date/Time Extraction
 
 - **Use user's timezone, not UTC.** `extractDueDate` must use the user's timezone. The `en-CA` locale trick produces YYYY-MM-DD format.
