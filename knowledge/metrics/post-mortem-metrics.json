@@ -3582,6 +3582,53 @@
         "complianceRate": 1.0,
         "skipAssessment": null
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 183,
+      "title": "Add comprehensive product and codebase audit report",
+      "dateMerged": "2026-02-20T04:25:37Z",
+      "reviewRounds": 1,
+      "totalComments": 1,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 1,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.25,
+      "timeToMergeHours": 3.37,
+      "planningQuality": "partial",
+      "prSize": 199,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "docs-only PR, no code changes",
+        "complianceRate": 0.375,
+        "skipAssessment": "good"
+      }
     }
   ]
 }
