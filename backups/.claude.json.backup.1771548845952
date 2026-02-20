@@ -1,5 +1,5 @@
 {
-  "numStartups": 108,
+  "numStartups": 111,
   "installMethod": "native",
   "autoUpdates": false,
   "theme": "light",
@@ -26,12 +26,12 @@
     "shift-tab": 106,
     "image-paste": 103,
     "desktop-app": 108,
-    "web-app": 94,
-    "mobile-app": 94,
-    "frontend-design-plugin": 106,
-    "guest-passes": 106,
-    "ide-upsell-external-terminal": 106,
-    "custom-agents": 96,
+    "web-app": 109,
+    "mobile-app": 109,
+    "frontend-design-plugin": 109,
+    "guest-passes": 109,
+    "ide-upsell-external-terminal": 110,
+    "custom-agents": 111,
     "agent-flag": 97,
     "overage-promo": 100,
     "default-permission-mode-config": 102,
@@ -40,7 +40,7 @@
     "custom-commands": 102,
     "git-worktrees": 102
   },
-  "promptQueueUseCount": 228,
+  "promptQueueUseCount": 305,
   "cachedStatsigGates": {
     "tengu_prompt_suggestion": true
   },
@@ -127,19 +127,26 @@
     "tengu_birthday_hat": true,
     "tengu_marble_lantern_disabled": false,
     "tengu_tst_kx7": false,
-    "tengu_slate_nexus": true,
+    "tengu_slate_nexus": false,
     "tengu_marble_sandcastle": true,
     "tengu_moth_copse": false,
     "tengu_birch_mist": false,
     "tengu_oak_drum": false,
-    "tengu_destructive_command_warning": false
+    "tengu_destructive_command_warning": false,
+    "tengu_worktree_mode": true,
+    "tengu_pebble_leaf_prune": false,
+    "tengu_swann_brevity": "control",
+    "tengu_crystal_beam": {
+      "budgetTokens": 0
+    },
+    "tengu_tool_input_aliasing": false
   },
   "userID": "63a21decf33c804528de81670f9ba7c443e740f9fc402f6d9646468000820ee6",
   "firstStartTime": "2026-01-10T18:22:25.504Z",
   "sonnet45MigrationComplete": true,
   "opus45MigrationComplete": true,
   "thinkingMigrationComplete": true,
-  "changelogLastFetched": 1771529970054,
+  "changelogLastFetched": 1771548577012,
   "autoUpdatesProtectedForNative": true,
   "claudeCodeFirstTokenDate": "2026-01-10T18:24:10.162949Z",
   "appleTerminalSetupInProgress": false,
@@ -364,55 +371,47 @@
         "packageManager": null
       },
       "hasCompletedProjectOnboarding": true,
-      "lastCost": 40.42272875000002,
-      "lastAPIDuration": 3670427,
-      "lastAPIDurationWithoutRetries": 3670275,
-      "lastToolDuration": 885175,
-      "lastDuration": 34677242,
-      "lastLinesAdded": 1242,
-      "lastLinesRemoved": 547,
-      "lastTotalInputTokens": 105937,
-      "lastTotalOutputTokens": 164320,
-      "lastTotalCacheCreationInputTokens": 2868533,
-      "lastTotalCacheReadInputTokens": 37561187,
+      "lastCost": 24.377815850000033,
+      "lastAPIDuration": 3384079,
+      "lastAPIDurationWithoutRetries": 3383834,
+      "lastToolDuration": 1519539,
+      "lastDuration": 222914145,
+      "lastLinesAdded": 2834,
+      "lastLinesRemoved": 162,
+      "lastTotalInputTokens": 106612,
+      "lastTotalOutputTokens": 170936,
+      "lastTotalCacheCreationInputTokens": 1475923,
+      "lastTotalCacheReadInputTokens": 25519095,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 7.83,
-      "lastFpsLow1Pct": 49.05,
+      "lastFpsAverage": 0.62,
+      "lastFpsLow1Pct": 69.66,
       "lastModelUsage": {
         "claude-haiku-4-5-20251001": {
-          "inputTokens": 99544,
-          "outputTokens": 4668,
-          "cacheReadInputTokens": 0,
-          "cacheCreationInputTokens": 86469,
+          "inputTokens": 106193,
+          "outputTokens": 20436,
+          "cacheReadInputTokens": 1362921,
+          "cacheCreationInputTokens": 206810,
           "webSearchRequests": 0,
-          "costUSD": 0.23097024999999993
+          "costUSD": 0.6031776000000005
         },
         "claude-opus-4-6": {
-          "inputTokens": 6296,
-          "outputTokens": 145990,
-          "cacheReadInputTokens": 35838307,
-          "cacheCreationInputTokens": 2580690,
+          "inputTokens": 419,
+          "outputTokens": 150500,
+          "cacheReadInputTokens": 24156174,
+          "cacheCreationInputTokens": 1269113,
           "webSearchRequests": 0,
-          "costUSD": 37.729696000000025
-        },
-        "claude-sonnet-4-6": {
-          "inputTokens": 97,
-          "outputTokens": 13662,
-          "cacheReadInputTokens": 1722880,
-          "cacheCreationInputTokens": 201374,
-          "webSearchRequests": 0,
-          "costUSD": 2.4620625000000005
+          "costUSD": 23.77463825000002
         }
       },
-      "lastSessionId": "f9913d0b-ee22-44ac-977b-b91a4c566f27",
+      "lastSessionId": "b5fbee4d-b5eb-4917-8e7b-61da1a4d7d87",
       "lastSessionMetrics": {
-        "frame_duration_ms_count": 118793,
-        "frame_duration_ms_min": 0.07804100029170513,
-        "frame_duration_ms_max": 165.64004200021736,
-        "frame_duration_ms_avg": 2.518975705847639,
-        "frame_duration_ms_p50": 1.5868544997647405,
-        "frame_duration_ms_p95": 4.250579500012099,
-        "frame_duration_ms_p99": 17.458648750483885
+        "frame_duration_ms_count": 79154,
+        "frame_duration_ms_min": 0.08858299255371094,
+        "frame_duration_ms_max": 123.98687499761581,
+        "frame_duration_ms_avg": 2.198673115396688,
+        "frame_duration_ms_p50": 1.4025835022330284,
+        "frame_duration_ms_p95": 2.8431499516358594,
+        "frame_duration_ms_p99": 44.086353093683
       }
     },
     "/Users/padminipyapali/dev/claude_test/my_mind_evolved": {
@@ -806,11 +805,11 @@
         "currency": "USD"
       },
       "remaining_passes": 3,
-      "timestamp": 1771529970684
+      "timestamp": 1771547787885
     }
   },
   "feedbackSurveyState": {
-    "lastShownTime": 1771285622112
+    "lastShownTime": 1771537998204
   },
   "passesUpsellSeenCount": 4,
   "hasVisitedPasses": false,
@@ -820,7 +819,7 @@
   },
   "clientDataCache": {
     "data": {},
-    "timestamp": 1771531694511
+    "timestamp": 1771548761110
   },
   "penguinModeOrgEnabled": true,
   "githubRepoPaths": {
@@ -860,16 +859,16 @@
       "lastUsedAt": 1771279230153
     },
     "review-fix": {
-      "usageCount": 96,
-      "lastUsedAt": 1771527356995
+      "usageCount": 104,
+      "lastUsedAt": 1771548395896
     },
     "test-session": {
       "usageCount": 2,
       "lastUsedAt": 1770697071668
     },
     "adversarial-review": {
-      "usageCount": 72,
-      "lastUsedAt": 1771531672588
+      "usageCount": 74,
+      "lastUsedAt": 1771538296807
     },
     "review": {
       "usageCount": 3,
@@ -904,12 +903,12 @@
       "lastUsedAt": 1771285297606
     },
     "post-mortem": {
-      "usageCount": 15,
-      "lastUsedAt": 1771528556036
+      "usageCount": 18,
+      "lastUsedAt": 1771538828043
     },
     "coderabbit:review": {
-      "usageCount": 12,
-      "lastUsedAt": 1771531525586
+      "usageCount": 14,
+      "lastUsedAt": 1771538045303
     },
     "sessions": {
       "usageCount": 5,

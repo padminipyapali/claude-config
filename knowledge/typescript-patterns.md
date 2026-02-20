@@ -53,6 +53,7 @@ Cross-project learnings for TypeScript and Node.js development.
 ## Code Hygiene
 
 - **Remove unnecessary `as const`.** String literals assigned to typed fields don't need `as const` — TS infers from context.
+- **`toLocaleString` + `new Date()` for timezone offset is fragile.** The pattern of computing timezone offsets via `new Date(date.toLocaleString("en-US", { timeZone }))` relies on both the `toLocaleString` output and the `new Date()` reparsing step being in the server's local timezone, which happens to cancel out. This is susceptible to locale-dependent parsing quirks and DST transitions. Use `Intl.DateTimeFormat("en-US", { timeZone }).formatToParts(date)` instead — it returns structured data (year, month, day, hour, minute) without needing string reparsing. <!-- Source: PR review, second-brain #164, 2026-02-19 -->
 
 ---
 *Sources: second-brain, lexica, command-center, nanny-management*
