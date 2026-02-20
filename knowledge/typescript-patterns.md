@@ -16,6 +16,8 @@ Cross-project learnings for TypeScript and Node.js development.
 - **Use `as const` on lookup objects when using `keyof typeof`.** `Record<string, V>` erases literal key types, so `keyof typeof OBJ` resolves to `string` — defeating the purpose of type narrowing. Declare with `as const` to preserve a concrete union of keys. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 - **Import types directly under automatic JSX transform.** With `jsx: "react-jsx"`, `React` is not in scope. Use `import type { ComponentType } from 'react'` not `React.ComponentType`, or the type reference will fail at compile time. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 
+- **Type runtime validation sets as `Set<UnionType>` not `Set<string>`.** When a `Set` is used to validate input against a TypeScript union (e.g., `SessionNoteSource = "telegram" | "web" | "cli"`), declare it as `Set<SessionNoteSource>` not `Set<string>`. The compiler catches drift if a value is added/removed from the union but not the Set. Pair with `satisfies` for arrays: `["a", "b"] as const satisfies readonly MyUnion[]`. <!-- Source: PR review, command-center #30, 2026-02-20 -->
+
 ## API Boundaries
 
 - **Input type validation.** `(content ?? "").trim()` silently coerces `null` but crashes on `42` or `{obj: true}`. Use `typeof content !== "string"` guard before `.trim()`.
@@ -39,6 +41,7 @@ Cross-project learnings for TypeScript and Node.js development.
 ## Observer / Pub-Sub Patterns
 
 - **Snapshot callback arrays before iteration.** When callbacks can unsubscribe during invocation (observer/event-emitter patterns), iterate over `[...callbacks]` not the live array. `splice()` during iteration skips entries. <!-- Source: PR review, command-center #3, 2026-02-14 -->
+- **Snapshot mutable collections before notify loops that may re-enter.** When iterating a collection (e.g., pending queue) and calling callbacks that could mutate it (e.g., `onComplete` triggers `enqueue`), snapshot the collection and clear the original BEFORE the loop. Otherwise new items added during iteration are lost when the collection is cleared after the loop. Pattern: `const toProcess = this.items; this.items = []; for (const item of toProcess) { ... }`. <!-- Source: PR review, command-center #30, 2026-02-20 -->
 
 ## Input Validation
 

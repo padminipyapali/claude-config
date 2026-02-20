@@ -11,6 +11,8 @@ Cross-project learnings for service design, error handling, and system architect
 
 - **Bind HTTP listener before slow async init on container platforms.** Railway, Kubernetes, and ECS health check probes expect the port to accept connections within seconds. Call `app.listen()` right after creating the app (with health/readiness routes already registered), then initialize services (bot connections, external APIs) afterward. Express/Fastify/Koa all support adding routes dynamically after the server is listening. <!-- Source: command-center fix/railway-host-bind, 2026-02-15 -->
 
+- **Close persistent resources (SQLite, DB pools) on SIGTERM/uncaughtException.** Container orchestrators send SIGTERM before SIGKILL. Add `process.on("SIGTERM", ...)` handlers that close DB connections, flush WAL journals, and exit cleanly. Use `try/catch` with empty catch for best-effort cleanup — the process is terminating regardless. Hoist the resource reference to module scope if it's created inside `bootstrap()`. <!-- Source: PR review, command-center #30, 2026-02-20 -->
+
 ## In-Memory State & Process Restarts
 
 - **In-memory dedup markers don't survive restarts.** On deploy-on-push platforms (Railway, Vercel, Heroku), every deploy clears memory. Schedulers and notification systems using in-memory state (e.g., `lastSentDate`) will re-trigger on every restart. Either persist the marker to DB, or initialize defensively by checking whether the scheduled time has already passed.
