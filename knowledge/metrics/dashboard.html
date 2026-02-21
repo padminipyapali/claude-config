@@ -4695,6 +4695,68 @@ const METRICS_DATA = {
         "complianceRate": 1.0,
         "skipAssessment": null
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 197,
+      "title": "Create unified TodoCreationService (#167)",
+      "dateMerged": "2026-02-21T01:37:57Z",
+      "reviewRounds": 1,
+      "totalComments": 3,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 3,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "stepsSkipped": "3-Playwright (no UI changes)",
+        "internalReviewFindings": 4,
+        "internalReviewFixed": 4,
+        "coderabbitFindings": 1,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 8,
+        "adversarialFixed": 4,
+        "playwrightTesting": "N/A (no UI changes)",
+        "ciStatus": "all passed (792 tests)"
+      },
+      "adversarialCatchRate": 0.8,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.54,
+      "planningQuality": "complete",
+      "prSize": 1061,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "4e",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3-Playwright"
+        ],
+        "skipReasons": "no UI changes",
+        "complianceRate": 1.0,
+        "skipAssessment": "justified"
+      },
+      "shiftLeftRate": 0.8,
+      "localIssuesFound": 12,
+      "postPushIssuesReal": 3,
+      "postPushCategories": [
+        "fallback dueDate semantics divergence",
+        "missing explicit channel param in fallback",
+        "defensive dueDate normalization (empty string edge case)"
+      ]
     }
   ]
 };

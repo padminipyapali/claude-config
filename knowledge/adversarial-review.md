@@ -225,6 +225,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Index coverage for new queries.** New WHERE patterns covered by existing indexes.
 - [ ] **FTS coverage.** New searchable text columns in the GIN index.
 - [ ] **Pattern siblings.** Grep entire codebase for other instances of same pattern.
+- [ ] **Fallback path semantic parity.** When a new primary code path coexists with a legacy fallback (e.g., `if (newService) { ... } else { /* old path */ }`), verify the fallback matches the new path's semantics for every parameter -- especially `null` vs `undefined` vs empty-string distinctions. All 3 post-push findings on PR #197 were fallback divergence issues that the local review missed. <!-- Source: post-mortem, second-brain #197, 2026-02-20 -->
 - [ ] **Business logic in service, not routes.** Route does more than extract → call → return? Refactor.
 - [ ] **At-most-once dedup markers BEFORE the action.**
 - [ ] **Async initialization ordering.** New services depend on others being ready? Await them.
