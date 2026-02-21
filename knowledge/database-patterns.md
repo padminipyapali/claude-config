@@ -24,6 +24,10 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 
 - **Enumerate ALL transition paths when expanding a state machine.** When adding a new status to a DB-managed state machine with triggers, enumerate every possible transition (N states = N*(N-1) directional transitions). It's easy to handle forward paths (OPEN→IN_PROGRESS→DONE) and forget reversal paths (DONE→IN_PROGRESS). Missing a transition branch leaves derived timestamps in an inconsistent state (e.g., `completed_at` stays set when moving a DONE item back to IN_PROGRESS). <!-- Source: adversarial review, second-brain #156, 2026-02-19 -->
 
+## SQLite-Specific
+
+- **Use PRAGMA table_info for idempotent migrations, not blanket try/catch.** SQLite's `ALTER TABLE ADD COLUMN` throws if the column exists, but catching all errors hides real failures (disk full, permissions, corrupt DB). Instead: `const cols = db.pragma("table_info(table_name)"); if (!cols.some(c => c.name === "col")) { db.exec("ALTER TABLE ..."); }`. This is precise and doesn't mask unexpected errors. <!-- Source: PR review, command-center #34, 2026-02-21 -->
+
 ## Data Integrity
 
 - **Guard after create → reload.** After creating a resource and reloading from DB, check for null. Fire-and-forget patterns, replication lag, or race conditions can cause the reload to fail.

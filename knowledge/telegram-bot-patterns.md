@@ -27,6 +27,10 @@ Cross-project learnings for Telegram bots (grammY, Bot API).
 
 - **Account for `@botname` suffix in group chats.** Telegram appends `@botname` to slash commands in group chats (e.g., `/todos@my_bot`). Don't use bare `startsWith("/cmd")` (matches `/cmdxyz`) or strict `=== "/cmd"` (misses group suffix). Use explicit three-way matching: `text === "/cmd" || text.startsWith("/cmd ") || text.startsWith("/cmd@")`. For argument extraction, normalize with a `stripBotMention(text, command)` utility: `/command@botname args` → `/command args`. <!-- Source: BUG-024, second-brain, 2026-02-15 -->
 
+## Command Parameter Parsing
+
+- **Reject lone optional parameter as the required argument.** When a command accepts `[optional_project] <required_description>` (e.g., `/session [project] <description>`), and the user provides a single word that matches the optional parameter but no required text follows, show a usage message — don't silently treat the project name as the description. Pattern: after resolving `maybeSlug`, check `if (maybeSlug && parts.length === 1)` → reply with usage hint. <!-- Source: PR review, command-center #34, 2026-02-21 -->
+
 ## Message Handling
 
 - **Entry-less responses break reply-to chains.** Response types that don't create DB entries (TODO_LIST, CHAT) have no entry to link replies to. Solution: use a lightweight `bot_responses` table to track outbound messages.
