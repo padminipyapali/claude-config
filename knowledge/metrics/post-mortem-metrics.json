@@ -4278,6 +4278,97 @@
       "postPushCategories": [
         "code duplication (buildTodoInlineButtons extraction)"
       ]
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 199,
+      "title": "Merge /brief and /summary into unified /brief command",
+      "dateMerged": "2026-02-21T16:16:10Z",
+      "reviewRounds": 2,
+      "totalComments": 3,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 3,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "stepsSkipped": "3-Playwright: backend-only changes, no UI",
+        "internalReviewFindings": 6,
+        "internalReviewFixed": 6,
+        "coderabbitFindings": 3,
+        "coderabbitFixed": 1,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 9,
+        "adversarialFixed": 3,
+        "playwrightTesting": "N/A (no UI changes)",
+        "ciStatus": "all passed"
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.81,
+      "planningQuality": "complete",
+      "prSize": 878,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3-Playwright"
+        ],
+        "skipReasons": "Backend-only changes, no UI",
+        "complianceRate": 0.875,
+        "skipAssessment": "good"
+      },
+      "shiftLeftRate": 0.77,
+      "localIssuesFound": 10,
+      "postPushIssuesReal": 3,
+      "postPushCategories": [
+        "correctness: env fallback (process.env.USER_TIMEZONE hidden dependency)",
+        "correctness: test mock type mismatch (string vs Date for completedAt)",
+        "correctness: whitespace brief normalization (empty string edge case)"
+      ]
+    },
+    {
+      "project": "command-center",
+      "prNumber": 34,
+      "title": "Add standalone session creation via /session command and REST API",
+      "dateMerged": "2026-02-21T16:18:21Z",
+      "reviewRounds": 2,
+      "totalComments": 10,
+      "commentCategories": {
+        "security": 1,
+        "correctness": 7,
+        "architecture": 0,
+        "style": 1,
+        "performance": 0,
+        "testing": 1,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.5,
+      "fixupCommitRatio": 0.67,
+      "timeToMergeHours": 3.68,
+      "planningQuality": "partial",
+      "prSize": 347,
+      "stepCompliance": null
     }
   ]
 }
