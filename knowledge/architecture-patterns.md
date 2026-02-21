@@ -38,7 +38,7 @@ Cross-project learnings for service design, error handling, and system architect
 ## Result Types & Dependency Injection
 
 - **Discriminated unions for expected failures.** For expected failures (bad auth, invalid payload, not found), return `{ ok: true, payload }` or `{ ok: false, status, error }` rather than throwing. This makes expected failures explicit in the type system. Pattern-match on `result.ok` — no catch blocks for control flow. Reserve exceptions for truly unexpected errors. <!-- Source: second-brain DECISIONS -->
-- **Context injection: config via constructor, not `process.env`.** Services receive configuration (HMAC secret, API key, DB pool) through their constructor, not by reading `process.env` directly. Keeps wiring concerns in the composition root (`server.ts`). Makes services trivially testable without env var manipulation. <!-- Source: second-brain DECISIONS -->
+- **Context injection: config via constructor, not `process.env`.** Services receive configuration (HMAC secret, API key, DB pool) through their constructor, not by reading `process.env` directly. Keeps wiring concerns in the composition root (`server.ts`). Makes services trivially testable without env var manipulation. Corollary: when a value is injected via `deps` (e.g., `deps.userTimezone`), don't also read the raw env var at the usage site as a fallback (`deps.x || process.env.X || default`). The injected value already resolves from the env var — the extra fallback is redundant and creates a hidden dependency that can diverge. <!-- Source: second-brain DECISIONS; strengthened: PR review, second-brain #199, 2026-02-21 -->
 
 ## Pipeline Design
 
