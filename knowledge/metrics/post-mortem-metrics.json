@@ -4220,6 +4220,64 @@
         "missing explicit channel param in fallback",
         "defensive dueDate normalization (empty string edge case)"
       ]
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 198,
+      "title": "Re-render TODO list after inline button actions",
+      "dateMerged": "2026-02-21T06:02:35Z",
+      "reviewRounds": 2,
+      "totalComments": 1,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 1,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "stepsSkipped": "3-Playwright (Telegram bot, no web UI)",
+        "internalReviewFindings": 1,
+        "internalReviewFixed": 1,
+        "coderabbitFindings": 3,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 3,
+        "adversarialFixed": 1,
+        "playwrightTesting": "N/A (Telegram bot feature)",
+        "ciStatus": "all passed (804 tests)"
+      },
+      "adversarialCatchRate": 0.88,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.54,
+      "planningQuality": "complete",
+      "prSize": 86,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3-Playwright"
+        ],
+        "skipReasons": "Telegram bot feature, no web UI changes",
+        "complianceRate": 0.875,
+        "skipAssessment": "justified"
+      },
+      "shiftLeftRate": 0.88,
+      "localIssuesFound": 7,
+      "postPushIssuesReal": 1,
+      "postPushCategories": [
+        "code duplication (buildTodoInlineButtons extraction)"
+      ]
     }
   ]
 }
