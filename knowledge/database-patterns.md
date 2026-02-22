@@ -22,6 +22,8 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 
 ## Triggers & State Machines
 
+- **Auto-timestamp triggers must fire on INSERT OR UPDATE, not UPDATE only.** If a trigger auto-manages a timestamp (e.g., `completed_at = now()` when status = 'DONE'), make it fire `BEFORE INSERT OR UPDATE` — not just `BEFORE UPDATE`. UPDATE-only triggers silently skip direct INSERTs with terminal status (test data seeding, manual migrations, data repairs). The function body handles INSERT safely when using `OLD IS NULL OR OLD.status IS DISTINCT FROM 'DONE'` — `OLD IS NULL` is true for INSERTs, so `IS DISTINCT FROM` already works. <!-- Source: PR review, second-brain #206, 2026-02-22 -->
+
 - **Enumerate ALL transition paths when expanding a state machine.** When adding a new status to a DB-managed state machine with triggers, enumerate every possible transition (N states = N*(N-1) directional transitions). It's easy to handle forward paths (OPEN→IN_PROGRESS→DONE) and forget reversal paths (DONE→IN_PROGRESS). Missing a transition branch leaves derived timestamps in an inconsistent state (e.g., `completed_at` stays set when moving a DONE item back to IN_PROGRESS). <!-- Source: adversarial review, second-brain #156, 2026-02-19 -->
 
 ## SQLite-Specific
