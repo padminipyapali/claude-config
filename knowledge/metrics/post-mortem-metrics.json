@@ -4463,6 +4463,52 @@
         "complianceRate": 0.375,
         "skipAssessment": "bad"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 205,
+      "title": "Add Supabase Auth magic link login for web dashboard",
+      "dateMerged": "2026-02-22T06:41:10Z",
+      "reviewRounds": 1,
+      "totalComments": 4,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 2,
+        "style": 1,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 4,
+        "coderabbitFixed": 2,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 11,
+        "adversarialFixed": 7
+      },
+      "adversarialCatchRate": 0.75,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.12,
+      "planningQuality": "complete",
+      "prSize": 761,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": null
+      }
     }
   ]
 }
