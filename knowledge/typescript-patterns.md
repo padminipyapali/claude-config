@@ -39,6 +39,7 @@ Cross-project learnings for TypeScript and Node.js development.
 
 ## Error Handling
 
+- **`process.exit()` inside try bypasses finally.** `process.exit(1)` skips the `finally` block entirely — cleanup code (pool.end(), file handles, temp files) never runs. Use `process.exitCode = 1; return;` inside try blocks to allow finally to execute. <!-- Source: PR review, second-brain #204, 2026-02-22 -->
 - **Error swallowing in catch blocks.** A catch returning `[]` or a default masks real DB outages. Only return defaults for EXPECTED edge cases (not found, no embedding). Unexpected errors (connection failure, query syntax) must propagate.
 - **When adding throws to a previously-silent function, wrap ALL callers in try/catch.** If a function previously returned `null` or a default on bad input and you add `throw new Error()` validation, every caller becomes a crash site. Grep for all call sites and add error handling. This is especially critical when the function's inputs come from LLM extraction — bad output is the expected case, not the edge case. Pattern: search for the function name across the codebase, verify each caller either has a try/catch or is itself called within one. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
 
