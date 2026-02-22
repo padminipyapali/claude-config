@@ -19,7 +19,7 @@ Cross-project learnings for Telegram bots (grammY, Bot API).
 
 ## HTML-Mode Safety
 
-- **Escape user content in HTML-mode replies.** When using `parse_mode: "HTML"`, always escape `<`, `>`, `&` in user-provided strings (`task`, `displayName`, any input). This is the Telegram equivalent of XSS — Telegram will reject malformed HTML or render it incorrectly. <!-- Source: PR review, command-center #3, 2026-02-14 -->
+- **Escape user content in ALL HTML-mode messages.** When using `parse_mode: "HTML"`, always escape `<`, `>`, `&` in user-provided strings — in bot replies, notifications, scheduler messages, and any other outbound channel. This applies to any field derived from user input (topic, title, displayName, task content). This is the Telegram equivalent of XSS — Telegram will reject malformed HTML or render it incorrectly. Easy to miss in notification methods that don't feel like "replies." <!-- Source: PR review, command-center #3, 2026-02-14; PR review, second-brain #208, 2026-02-22 -->
 - **Truncate raw text BEFORE escaping, not after.** `slice()` after `escapeHtml()` can break entities mid-sequence (e.g., `&amp;` becomes `&am`). Always: (1) truncate raw string, (2) escape, (3) verify total length fits. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 - **Truncate HTML messages at line boundaries, not character offsets.** When enforcing Telegram's 4096-char limit on HTML-formatted messages, `slice(0, N)` can split between `<a>` and `</a>`, leaving unclosed tags that cause `Bad Request: can't parse entities`. Truncate at `lastIndexOf("\n")` first (each line should contain balanced tags), then fall back to stripping partial tags (`/<[^>]*$/`) and entities (`/&[a-z]*$/i`). <!-- Source: PR review, second-brain #155, 2026-02-17 -->
 
