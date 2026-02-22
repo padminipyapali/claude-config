@@ -4616,6 +4616,63 @@
         "complianceRate": 0.25,
         "skipAssessment": "good"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 208,
+      "title": "Add ResearchService core (Issue #130, PR 2/8)",
+      "dateMerged": "2026-02-22T18:26:41Z",
+      "reviewRounds": 2,
+      "totalComments": 5,
+      "commentCategories": {
+        "security": 2,
+        "correctness": 2,
+        "architecture": 1,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 2,
+        "coderabbitFixed": 2,
+        "coderabbitIterations": null,
+        "adversarialFindings": 7,
+        "adversarialFixed": 5
+      },
+      "adversarialCatchRate": 0.67,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.35,
+      "planningQuality": "complete",
+      "prSize": 1373,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3-Playwright"
+        ],
+        "skipReasons": "3-Playwright: backend-only service, no UI changes",
+        "complianceRate": 0.875,
+        "skipAssessment": "good"
+      },
+      "shiftLeftRate": 0.64,
+      "localIssuesFound": 9,
+      "postPushIssuesReal": 5,
+      "postPushCategories": [
+        "correctness: defensive Date conversion in row mapper",
+        "correctness: TOCTOU race on concurrent task limit (advisory lock needed)",
+        "security: HTML-escape user content in Telegram notification",
+        "security: formattedContext escaping in notification (not addressed)",
+        "architecture: pool shutdown method (not addressed)"
+      ]
     }
   ]
 }
