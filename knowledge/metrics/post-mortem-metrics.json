@@ -4369,6 +4369,100 @@
       "planningQuality": "partial",
       "prSize": 347,
       "stepCompliance": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 201,
+      "title": "Replace CHAT LLM call with static response (#175)",
+      "dateMerged": "2026-02-21T23:13:22Z",
+      "reviewRounds": 1,
+      "totalComments": 1,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 1,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.2,
+      "planningQuality": "complete",
+      "prSize": 79,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3"
+        ],
+        "skipReasons": "3-Playwright: backend-only, no UI changes",
+        "complianceRate": 0.875,
+        "skipAssessment": "good"
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 203,
+      "title": "Add async research agent product spec",
+      "dateMerged": "2026-02-22T03:53:52Z",
+      "reviewRounds": 1,
+      "totalComments": 3,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 1,
+        "other": 2
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.33,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.5,
+      "planningQuality": "complete",
+      "prSize": 924,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "3-Playwright: docs-only, 4a-4e: docs-only PR, under 50 LOC of code",
+        "complianceRate": 0.375,
+        "skipAssessment": "bad"
+      }
     }
   ]
 }
