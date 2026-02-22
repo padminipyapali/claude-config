@@ -4545,8 +4545,19 @@
       "planningQuality": "complete",
       "prSize": 358,
       "stepCompliance": {
-        "stepsRun": ["1", "2", "3", "4a", "4b", "4c", "4d", "5"],
-        "stepsSkipped": ["3-Playwright"],
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3-Playwright"
+        ],
         "skipReasons": "schema-only PR, no UI changes",
         "complianceRate": 0.875,
         "skipAssessment": "justified"
@@ -4557,6 +4568,54 @@
       "postPushCategories": [
         "correctness: trigger event scope (completed_at fires UPDATE-only, should be INSERT OR UPDATE)"
       ]
+    },
+    {
+      "project": "command-center",
+      "prNumber": 36,
+      "title": "Show notes count badge in minimized session row",
+      "dateMerged": "2026-02-22T18:26:54Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 2.36,
+      "planningQuality": "partial",
+      "prSize": 5,
+      "stepCompliance": {
+        "stepsRun": [
+          "2",
+          "5"
+        ],
+        "stepsSkipped": [
+          "1",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "4e"
+        ],
+        "skipReasons": "4a-4e: user-approved skip, 4 LOC diff",
+        "complianceRate": 0.25,
+        "skipAssessment": "good"
+      }
     }
   ]
 }
