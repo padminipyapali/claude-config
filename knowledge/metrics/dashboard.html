@@ -5046,6 +5046,54 @@ const METRICS_DATA = {
         "complianceRate": 1.0,
         "skipAssessment": null
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 206,
+      "title": "Add research_tasks schema, shared types, and migration",
+      "dateMerged": "2026-02-22T14:58:03Z",
+      "reviewRounds": 1,
+      "totalComments": 1,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "stepsSkipped": "3-Playwright (schema-only, no UI changes)",
+        "internalReviewFindings": 4,
+        "internalReviewFixed": 4,
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 0,
+        "adversarialFindings": 3,
+        "adversarialFixed": 3,
+        "playwrightTesting": "N/A (no UI changes)",
+        "ciStatus": "all passed (build/lint/28 tests)"
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.25,
+      "timeToMergeHours": 0.23,
+      "planningQuality": "complete",
+      "prSize": 358,
+      "stepCompliance": {
+        "stepsRun": ["1", "2", "3", "4a", "4b", "4c", "4d", "5"],
+        "stepsSkipped": ["3-Playwright"],
+        "skipReasons": "schema-only PR, no UI changes",
+        "complianceRate": 0.875,
+        "skipAssessment": "justified"
+      },
+      "shiftLeftRate": 0.88,
+      "localIssuesFound": 7,
+      "postPushIssuesReal": 1,
+      "postPushCategories": [
+        "correctness: trigger event scope (completed_at fires UPDATE-only, should be INSERT OR UPDATE)"
+      ]
     }
   ]
 };
