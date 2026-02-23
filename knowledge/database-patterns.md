@@ -30,6 +30,14 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 
 - **Use PRAGMA table_info for idempotent migrations, not blanket try/catch.** SQLite's `ALTER TABLE ADD COLUMN` throws if the column exists, but catching all errors hides real failures (disk full, permissions, corrupt DB). Instead: `const cols = db.pragma("table_info(table_name)"); if (!cols.some(c => c.name === "col")) { db.exec("ALTER TABLE ..."); }`. This is precise and doesn't mask unexpected errors. <!-- Source: PR review, command-center #34, 2026-02-21 -->
 
+## Supabase / RLS Patterns
+
+- **RLS UPDATE policies need both USING and WITH CHECK.** `USING` controls which existing rows the user can modify, but without `WITH CHECK`, the UPDATE can write *any* new values — including changing `household_id` to move data to another tenant. Always add `WITH CHECK (is_household_member(household_id))` (or equivalent) mirroring the USING clause on UPDATE policies. INSERT policies already require WITH CHECK by syntax. <!-- Source: PR review, folio #1, 2026-02-23 -->
+- **Supabase upsert can't target partial unique indexes.** PostgREST maps `onConflict: 'col1,col2'` to `ON CONFLICT (col1, col2)` without a WHERE clause, so Postgres can't match a partial unique index (`WHERE source = 'manual'`). Fix: use a full (non-partial) unique index and include the discriminator column in `onConflict` (e.g., `onConflict: 'account_id,snapshot_date,source'`). This preserves per-source uniqueness without the partial index limitation. <!-- Source: PR review, folio #1, 2026-02-23 -->
+- **Include mutable timestamps in upsert payloads.** On an upsert UPDATE, columns not in the payload keep their old values. If a trigger copies `recorded_at` to a parent table (`balance_updated_at`), the old timestamp propagates, making "last updated" stale after same-day corrections. Always include time-sensitive columns like `recorded_at: new Date().toISOString()` in the upsert payload. <!-- Source: PR review, folio #1, 2026-02-23 -->
+- **Never overwrite created_at in ON CONFLICT DO UPDATE.** `created_at = now()` in a DO UPDATE SET clause destroys the original creation time. Immutable audit columns (`created_at`) should never appear in DO UPDATE SET. If you need an update timestamp, add a separate `updated_at` column. <!-- Source: PR review, folio #1, 2026-02-23 -->
+- **Realtime subscription must cover all published tables.** When `ALTER PUBLICATION supabase_realtime ADD TABLE X` publishes a table, verify the client subscribes to it. Derived tables (e.g., `net_worth_snapshots` recomputed via RPC) need subscriptions too — cross-partner sync breaks silently if only the directly-written tables are subscribed. <!-- Source: PR review, folio #1, 2026-02-23 -->
+
 ## Data Integrity
 
 - **Guard after create → reload.** After creating a resource and reloading from DB, check for null. Fire-and-forget patterns, replication lag, or race conditions can cause the reload to fail.
