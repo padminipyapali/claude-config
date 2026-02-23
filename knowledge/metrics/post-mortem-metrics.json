@@ -4786,6 +4786,120 @@
         "documentation: UUID v4 comment doesn't match regex (minor)",
         "correctness: discardReason accepts any string, should validate against enum (minor)"
       ]
+    },
+    {
+      "project": "folio",
+      "prNumber": 1,
+      "title": "Scaffold Folio: full MVP with auth, accounts, dashboard, activity, and realtime",
+      "dateMerged": "2026-02-23T18:11:53Z",
+      "reviewRounds": 1,
+      "totalComments": 2,
+      "commentCategories": {
+        "security": 2,
+        "correctness": 6,
+        "architecture": 0,
+        "style": 1,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 1
+      },
+      "localReview": {
+        "coderabbitFindings": 38,
+        "coderabbitFixed": 10,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 13,
+        "adversarialFixed": 10
+      },
+      "adversarialCatchRate": 0.5,
+      "fixupCommitRatio": 0.357,
+      "timeToMergeHours": 10.9,
+      "planningQuality": "complete",
+      "prSize": 17990,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3",
+          "4e"
+        ],
+        "skipReasons": "3-Playwright: no dev server infrastructure; 4e-lint: ESLint not configured for scaffolding PR",
+        "complianceRate": 0.75,
+        "skipAssessment": "neutral"
+      },
+      "shiftLeftRate": 0.868,
+      "localIssuesFound": 66,
+      "postPushIssuesReal": 10,
+      "postPushCategories": [
+        "correctness: TrendChart UTC midnight date parsing (inline comment)",
+        "other: absolute path in .claude/settings.json (inline comment)",
+        "security: UPDATE RLS policies missing WITH CHECK on accounts (suppressed)",
+        "security: UPDATE RLS policies missing WITH CHECK on balance_snapshots (suppressed)",
+        "correctness: partial unique index vs ON CONFLICT target mismatch (suppressed)",
+        "correctness: recorded_at not set in balance upsert (suppressed)",
+        "correctness: created_at overwritten in recompute_net_worth upsert (suppressed)",
+        "correctness: net_worth_snapshots not in Realtime subscription (suppressed)",
+        "style: todayDateString utility not used in accounts service (suppressed x2)"
+      ]
+    },
+    {
+      "project": "folio",
+      "prNumber": 2,
+      "title": "Export parseDate to centralize DATE column parsing",
+      "dateMerged": "2026-02-23T18:39:14Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": null,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.15,
+      "planningQuality": "partial",
+      "prSize": 6,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "4e"
+        ],
+        "skipReasons": "3-Playwright: no UI infra; 4a-4e: 3 LOC diff, under 50 LOC threshold",
+        "complianceRate": 0.375,
+        "skipAssessment": "good"
+      },
+      "shiftLeftRate": null,
+      "localIssuesFound": 0,
+      "postPushIssuesReal": 0,
+      "postPushCategories": []
     }
   ]
 }
