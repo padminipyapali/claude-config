@@ -37,6 +37,10 @@ Cross-project learnings for Telegram bots (grammY, Bot API).
 - **Store matched IDs in metadata, reuse directly.** When a search matches entries, store the IDs — don't re-search and risk discarding them.
 - **Reply context takes precedence over content-based search.** When a user replies to a specific message, they are referring to that message's subject — not whatever a keyword search might return. Use the parent entry directly (e.g., `findByIds([parentEntry.id])`) instead of searching all items by keyword. Fall back to search only when no parent context exists.
 
+## Inline Keyboard Lifecycle
+
+- **Clear inline keyboards after terminal actions.** When `editMessageText` is called without `reply_markup`, Telegram preserves the original inline keyboard buttons. After any terminal action (confirm, cancel, error), always pass `reply_markup: { inline_keyboard: [] }` to remove the buttons and prevent users from re-triggering callbacks. Only omit this when re-rendering the keyboard with updated state (e.g., refreshing a TODO list with new button states). <!-- Source: PR review, second-brain #209, 2026-02-22 -->
+
 ## Feature Removal with Persistent UI
 
 - **Legacy button redirect for removed inline keyboards.** When removing a feature that had inline keyboard buttons in Telegram, old messages retain those buttons indefinitely (Telegram does not allow editing buttons on delivered messages without storing the message ID). Always add a graceful redirect handler for removed button actions that replies with a toast guiding users to the new location. Pattern: `if (action.startsWith("removed_feature")) { await ctx.answerCallbackQuery({ text: "Feature moved to X." }); return; }`. Without this, users tapping old buttons get a confusing "Unknown action" error. <!-- Source: second-brain, remove-telegram-snooze, 2026-02-19 -->
