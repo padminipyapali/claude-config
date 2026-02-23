@@ -181,6 +181,7 @@ These universal checks always apply regardless of category:
 - **Fire-and-forget contract.** Every async operation inside a fire-and-forget method must be error-handled.
 - **Error message specificity.** Add specific branches for edge cases — don't let them fall through to generic handlers.
 - **Architecture self-review.** For PRs with 100+ LOC or 3+ directories changed: right location? right abstraction? right boundary? right scope? See adversarial-review.md Tier 4 for full checklist.
+- **Structured evidence required.** For every applicable checklist item, record an explicit `PASS: [evidence]`, `FAIL: [finding]`, or `SKIP: [reason]`. Do not assess by glancing — mechanical execution with recorded evidence is the only mode that works. See adversarial-review.md Step 3.
 
 ## CodeRabbit Local Review Notes
 

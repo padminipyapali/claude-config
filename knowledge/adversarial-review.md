@@ -48,9 +48,18 @@ A file can belong to multiple categories.
 
 If no categories match (e.g., docs-only change), skip directly to the Learning Capture Gate.
 
-### Step 3: Report transparency
+### Step 3: Structured evidence per checklist item
 
-In the review output, state which categories were detected and which checklist sections were skipped, so the author can verify coverage.
+For every checklist item in the matched sections, record an explicit verdict with evidence. Do not skip items or assess by "glancing at the code."
+
+Format per item:
+- **PASS: [item name]** — [1-line evidence, e.g. "grep returned 0 matches" or "all 3 callers handle the error"]
+- **FAIL: [item name]** — [description of finding + file:line]
+- **SKIP: [item name]** — [reason, e.g. "no SQL in diff"]
+
+This is non-negotiable. Four consecutive PRs (#206, #208, #209, #211) had post-push findings that mapped to existing checklist items but were missed because the reviewer assessed them judgmentally instead of mechanically. Requiring explicit evidence per item is the structural fix.
+
+Also state which categories were detected and which checklist sections were skipped, so the author can verify coverage.
 
 ---
 
