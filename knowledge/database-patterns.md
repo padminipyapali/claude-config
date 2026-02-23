@@ -30,6 +30,10 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 
 - **Use PRAGMA table_info for idempotent migrations, not blanket try/catch.** SQLite's `ALTER TABLE ADD COLUMN` throws if the column exists, but catching all errors hides real failures (disk full, permissions, corrupt DB). Instead: `const cols = db.pragma("table_info(table_name)"); if (!cols.some(c => c.name === "col")) { db.exec("ALTER TABLE ..."); }`. This is precise and doesn't mask unexpected errors. <!-- Source: PR review, command-center #34, 2026-02-21 -->
 
+## Supabase Auth Patterns
+
+- **Always set `emailRedirectTo` in `signInWithOtp`.** Without it, Supabase falls back to the project's Site URL in the dashboard — typically `http://localhost:3000` from initial setup. This silently breaks magic links in production and on mobile. Use `emailRedirectTo: window.location.origin` for web apps. Also ensure the production URL is in the Supabase dashboard redirect allowlist (Authentication → URL Configuration → Redirect URLs). <!-- Source: BUG, second-brain #214, 2026-02-23 -->
+
 ## Supabase / RLS Patterns
 
 - **RLS UPDATE policies need both USING and WITH CHECK.** `USING` controls which existing rows the user can modify, but without `WITH CHECK`, the UPDATE can write *any* new values — including changing `household_id` to move data to another tenant. Always add `WITH CHECK (is_household_member(household_id))` (or equivalent) mirroring the USING clause on UPDATE policies. INSERT policies already require WITH CHECK by syntax. <!-- Source: PR review, folio #1, 2026-02-23 -->
