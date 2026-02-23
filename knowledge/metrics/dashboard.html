@@ -5266,6 +5266,63 @@ const METRICS_DATA = {
         "security: BadRequestError message exposed raw to user (potential info leak)",
         "style: escHtml helper defined inline instead of module scope (nitpick)"
       ]
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 211,
+      "title": "Add research REST API routes (Issue #130, PR 4/8)",
+      "dateMerged": "2026-02-23T16:02:48Z",
+      "reviewRounds": 2,
+      "totalComments": 5,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 3,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 1,
+        "documentation": 1,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 1,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.4,
+      "fixupCommitRatio": 0.4,
+      "timeToMergeHours": 3.18,
+      "planningQuality": "complete",
+      "prSize": 889,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4c"
+        ],
+        "skipReasons": "4c (CodeRabbit local) -- rate-limited; 3-Playwright -- backend-only, no UI",
+        "complianceRate": 0.875,
+        "skipAssessment": "bad"
+      },
+      "shiftLeftRate": 0.375,
+      "localIssuesFound": 3,
+      "postPushIssuesReal": 5,
+      "postPushCategories": [
+        "correctness: escHtml missing quote escaping (trivial)",
+        "correctness: markResearchInitiated called before startResearch succeeds (major)",
+        "testing: test env values deleted instead of restored (minor)",
+        "documentation: UUID v4 comment doesn't match regex (minor)",
+        "correctness: discardReason accepts any string, should validate against enum (minor)"
+      ]
     }
   ]
 };
