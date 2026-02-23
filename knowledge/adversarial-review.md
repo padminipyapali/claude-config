@@ -115,6 +115,14 @@ git diff main...HEAD -U5 -- '*.ts' '*.tsx' | grep -B5 -E 'new Date\(' | grep -E 
 ```
 Heuristic — flags date comparisons near `new Date()` construction. `new Date("bad") > new Date()` is always `false` (NaN comparison), silently taking the wrong branch. Verify each match has a `Number.isFinite()` or `isNaN()` guard. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
 
+### 0.7 Infinite CSS animations without prefers-reduced-motion
+```bash
+git diff main...HEAD --name-only -- '*.css' '*.tsx' | xargs grep -l 'animation:.*infinite' 2>/dev/null | while read f; do
+  if grep -A10 'animation:.*infinite' "$f" | grep -q '@media (prefers-reduced-motion: reduce)'; then true; else echo "MISSING REDUCE: $f"; fi
+done
+```
+Catches: `animation: name ... infinite;` without a `@media (prefers-reduced-motion: reduce)` override. WCAG 2.1 Level AA requirement. Fix: add `@media (prefers-reduced-motion: reduce) { animation: none; }` for each infinite animation. <!-- Source: CodeRabbit review, second-brain #213, 2026-02-23 -->
+
 ### Adding new patterns
 When a bug class is caught 2+ times across PRs, add a grep pattern here.
 Requirements: expressible as regex on changed lines, low false-positive rate (<20%).
@@ -236,6 +244,8 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Type sync between SQL and TypeScript.** CHECK constraints and unions match. Verify "source of truth" comments agree on directionality — if both files claim to be canonical, they'll diverge. Pick one (usually the TypeScript type) and have the other reference it. <!-- Strengthened: PR review, second-brain #191, 2026-02-20 -->
 - [ ] **Migration-gated defensive filtering.** When removing a value from a type union/CHECK constraint AND gating the DB cleanup on a manual migration, all queries that return rows of the affected type must defensively filter by supported types (`type IN ('A','B','C')` or `type <> 'REMOVED'`) until the migration is confirmed run. Without this guard, legacy rows surface at runtime and crash downstream code that no longer handles them. <!-- Source: post-mortem, second-brain #191, 2026-02-20 -->
 - [ ] **Trigger event scope.** For triggers that auto-manage derived timestamps (e.g., `completed_at`), verify they fire on `INSERT OR UPDATE`, not just `UPDATE`. UPDATE-only triggers silently skip direct INSERTs with terminal status (test data, manual migrations). Compare with sibling state-machine triggers in the same schema for consistency. <!-- Source: PR review, second-brain #206, 2026-02-22 -->
+- [ ] **Partial unique index + ON CONFLICT compatibility.** When the schema uses a partial unique index (`CREATE UNIQUE INDEX ... WHERE condition`), verify that any client-side upsert's `onConflict` target can actually match it. PostgREST / Supabase `onConflict: 'col1,col2'` maps to `ON CONFLICT (col1, col2)` without a WHERE clause, which Postgres cannot resolve against a partial index. Fix: use a full (non-partial) unique index and include the discriminator column in `onConflict`. <!-- Source: PR review, folio #1, 2026-02-23 -->
+- [ ] **Realtime subscription coverage.** When tables are published to Supabase Realtime (`ALTER PUBLICATION ... ADD TABLE`), verify the client subscribes to ALL published tables. Derived tables recomputed via RPC are easy to miss. <!-- Source: PR review, folio #1, 2026-02-23 -->
 - [ ] **Index coverage for new queries.** New WHERE patterns covered by existing indexes.
 - [ ] **FTS coverage.** New searchable text columns in the GIN index.
 - [ ] **Pattern siblings.** Grep entire codebase for other instances of same pattern.
