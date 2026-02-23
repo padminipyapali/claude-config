@@ -4673,6 +4673,62 @@
         "security: formattedContext escaping in notification (not addressed)",
         "architecture: pool shutdown method (not addressed)"
       ]
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 209,
+      "title": "Add Telegram research integration (Issue #130, PR 3/8)",
+      "dateMerged": "2026-02-23T07:15:05Z",
+      "reviewRounds": 2,
+      "totalComments": 3,
+      "commentCategories": {
+        "security": 1,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 1,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.5,
+      "fixupCommitRatio": 0.67,
+      "timeToMergeHours": 5.4,
+      "planningQuality": "partial",
+      "prSize": 632,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "4e"
+        ],
+        "skipReasons": "4a-4e (code review loop) \u2014 skipped per user request",
+        "complianceRate": 0.5,
+        "skipAssessment": "bad"
+      },
+      "shiftLeftRate": 0.0,
+      "localIssuesFound": 0,
+      "postPushIssuesReal": 3,
+      "postPushCategories": [
+        "correctness: inline keyboard not cleared after callback (prevents re-triggering)",
+        "security: BadRequestError message exposed raw to user (potential info leak)",
+        "style: escHtml helper defined inline instead of module scope (nitpick)"
+      ]
     }
   ]
 }
