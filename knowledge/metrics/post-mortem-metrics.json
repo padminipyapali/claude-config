@@ -4931,8 +4931,19 @@
       "planningQuality": "complete",
       "prSize": 3242,
       "stepCompliance": {
-        "stepsRun": ["1", "2", "4b", "4e", "5"],
-        "stepsSkipped": ["3", "4a", "4c", "4d"],
+        "stepsRun": [
+          "1",
+          "2",
+          "4b",
+          "4e",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3",
+          "4a",
+          "4c",
+          "4d"
+        ],
         "skipReasons": "3-Playwright: config + mechanical fixes, no UI behavior change; 4a: no simplification needed; 4c-4d: tooling PR, all changes mechanical",
         "complianceRate": 0.625,
         "skipAssessment": "good"
@@ -4941,6 +4952,188 @@
       "localIssuesFound": 1,
       "postPushIssuesReal": 0,
       "postPushCategories": []
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 213,
+      "title": "Add dashboard Explore UI (Issue #130, PR 5/8)",
+      "dateMerged": "2026-02-24T01:40:25Z",
+      "reviewRounds": 3,
+      "totalComments": 2,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 2,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "internalReviewFindings": 1,
+        "internalReviewFixed": 1,
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": null,
+        "coderabbitSkipped": true,
+        "adversarialFindings": 4,
+        "adversarialFixed": 0,
+        "adversarialSeverity": "low/note"
+      },
+      "postPushReviewSummary": {
+        "round1": {
+          "inline": 3,
+          "outsideDiff": 1,
+          "total": 4
+        },
+        "round2": {
+          "newFindings": 5,
+          "duplicates": 2,
+          "fixed": 6
+        },
+        "round3": {
+          "newFindings": 3,
+          "duplicates": 2,
+          "fixed": 5,
+          "siblingPatternsFixes": 3,
+          "declined": 1
+        }
+      },
+      "keyPatternsCaught": [
+        "prefers-reduced-motion cascade fix with !important",
+        "SVG aria-hidden duplication across pattern siblings (Edit, Star, Delete)",
+        "individual task completion tracking for research status",
+        "test absence assertions for non-Explore visibility"
+      ],
+      "learningsCaptured": [
+        "react-patterns.md: prefers-reduced-motion handling, SVG a11y in buttons, task completion tracking",
+        "testing-patterns.md: absence assertions for UI visibility, polling mock guards",
+        "adversarial-review.md: aria-hidden pattern for SVGs, negative test assertions"
+      ],
+      "adversarialCatchRate": 0.25,
+      "fixupCommitRatio": 0.75,
+      "timeToMergeHours": 4.6,
+      "planningQuality": "complete",
+      "prSize": 578,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "4b",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3",
+          "4a",
+          "4c",
+          "4e"
+        ],
+        "skipReasons": "3-Playwright: no running instance for manual testing; 4a: minor React UI changes; 4c: CodeRabbit rate-limited; 4e: CI checks ran implicitly",
+        "complianceRate": 0.625,
+        "skipAssessment": "acceptable - unavoidable infrastructure constraints"
+      },
+      "shiftLeftRate": 0.14,
+      "localIssuesFound": 1,
+      "postPushIssuesReal": 12,
+      "postPushCategories": [
+        "correctness: 7 findings (stale closure pattern, missing test assertions, mock guards)",
+        "a11y: 3 findings (reduced-motion cascade, aria-hidden placement, SVG labeling)",
+        "testing: 2 findings (absence assertions, individual completion tracking)"
+      ],
+      "notes": "Strong accessibility and pattern-replication work across 3 review rounds. Established reusable prefers-reduced-motion !important pattern and SVG aria-hidden convention for labeled buttons applied to 4 siblings. Despite low shift-left rate (14%) due to Playwright and CodeRabbit skips, all 12 post-push findings were fixable and no critical production issues."
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 215,
+      "title": "Add thread panel research display with feedback flow (Issue #130, PR 6/8)",
+      "dateMerged": "2026-02-24T06:08:51Z",
+      "reviewRounds": 5,
+      "totalComments": 2,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 7,
+        "architecture": 0,
+        "style": 2,
+        "performance": 0,
+        "testing": 2,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "internalReviewFindings": 0,
+        "internalReviewFixed": 0,
+        "coderabbitFindings": 10,
+        "coderabbitFixed": 4,
+        "coderabbitIterations": 1,
+        "coderabbitSkipped": false,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2,
+        "adversarialSeverity": "mixed"
+      },
+      "postPushReviewSummary": {
+        "round1": {
+          "findings": 5,
+          "categories": "currentcolor casing (style), feedback flicker via local submitted state (correctness), duplicate loose-end keys (correctness), nav ref stuck on no-op (correctness), unchecked success flag (correctness)"
+        },
+        "round2": {
+          "findings": 1,
+          "categories": "render-phase setState -> useEffect (correctness)"
+        },
+        "round3": {
+          "findings": 2,
+          "categories": "biome-ignore for trigger dep (style), instance-unique IDs with task.id suffix (correctness)"
+        },
+        "round4": {
+          "findings": 1,
+          "categories": "cancel handlers clear feedbackError (correctness)"
+        },
+        "round5": {
+          "findings": 4,
+          "categories": "submitted flag test (testing), empty sources/loose ends negative cases (testing)"
+        }
+      },
+      "keyPatternsCaught": [
+        "local submitted state to prevent feedback button flicker during parent refetch",
+        "render-phase setState anti-pattern -> useEffect migration",
+        "instance-unique IDs for multi-instance components (useId or task.id suffix)",
+        "cancel handlers must clear form-level error state",
+        "negative test cases for empty/absent sections"
+      ],
+      "learningsCaptured": [
+        "5 knowledge base entries across rounds (per user input)"
+      ],
+      "adversarialCatchRate": 0.55,
+      "fixupCommitRatio": 0.83,
+      "timeToMergeHours": 1.0,
+      "planningQuality": "complete",
+      "prSize": 1296,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "3-Playwright sub-step skipped: no dev server with research data for E2E testing",
+        "complianceRate": 1.0,
+        "skipAssessment": "good"
+      },
+      "shiftLeftRate": 0.316,
+      "localIssuesFound": 6,
+      "postPushIssuesReal": 13,
+      "postPushCategories": [
+        "correctness: 7 findings (feedback flicker, duplicate keys, nav ref, unchecked success, setState render, instance IDs, cancel feedbackError)",
+        "style: 2 findings (currentcolor casing, biome-ignore lint)",
+        "testing: 2 findings (submitted flag test, empty sections negative cases)"
+      ],
+      "notes": "Highest review round count in project history (5 rounds). Despite 100% step compliance and running the full local review loop, only 31.6% shift-left rate. The 83% fix-up ratio is the highest for a PR with full compliance. Dominant issue: React state management patterns (render-phase setState, local submitted flags, useEffect dependencies) not covered by adversarial checklist. 5 of 11 unique findings are React-specific patterns absent from checklist. Large 1296-line PR confirms the >600 LOC threshold pattern for review friction."
     }
   ]
 }
