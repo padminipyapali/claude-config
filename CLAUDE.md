@@ -30,6 +30,7 @@ When creating a new project or initializing a new codebase, always run `/project
 - All changes via PRs — never commit directly to main.
 - Feature branches: `<type>/<short-description>` (feat, fix, refactor, chore, docs, test).
 - Keep PRs focused on one concern — don't mix refactoring with features.
+- Keep PRs under 600 LOC. Post-mortem data shows shift-left rate degrades sharply above this threshold (67-100% under vs 14-59% over). Split larger features into 2-3 focused PRs.
 - Tests required for every feature and bug fix. Docs-only or config PRs may skip with justification.
 - Commit messages: complete sentences with periods.
 - Sort config files (.env.example, etc.) alphabetically.
@@ -181,7 +182,8 @@ These universal checks always apply regardless of category:
 - **Fire-and-forget contract.** Every async operation inside a fire-and-forget method must be error-handled.
 - **Error message specificity.** Add specific branches for edge cases — don't let them fall through to generic handlers.
 - **Architecture self-review.** For PRs with 100+ LOC or 3+ directories changed: right location? right abstraction? right boundary? right scope? See adversarial-review.md Tier 4 for full checklist.
-- **Structured evidence required.** For every applicable checklist item, record an explicit `PASS: [evidence]`, `FAIL: [finding]`, or `SKIP: [reason]`. Do not assess by glancing — mechanical execution with recorded evidence is the only mode that works. See adversarial-review.md Step 3.
+- **Structured evidence required.** For every applicable checklist item, record an explicit `PASS: [evidence]`, `FAIL: [finding]`, or `SKIP: [reason]`. Evidence must be verifiable: grep output, file:line references, caller lists — not "looks fine" or "verified." See adversarial-review.md Step 3.
+- **Default to fix.** Any finding identified by the adversarial review must be fixed immediately. Do not defer findings as "low", "acceptable", or "non-blocking." The 5-minute local fix is always cheaper than the 15-minute post-push round-trip. See adversarial-review.md Step 4.
 
 ## CodeRabbit Local Review Notes
 
@@ -199,7 +201,7 @@ The `-c` flag feeds project-specific instructions and the CLAUDE.md to the revie
 - `knowledge_base.code_guidelines.filePatterns: ["CLAUDE.md"]` — feeds project conventions to the reviewer.
 
 Additional notes:
-- **Rate limits:** Free tier allows 2 reviews/hour. If rate-limited, proceed to adversarial review — CodeRabbit on GitHub still catches issues post-push.
+- **CodeRabbit local is mandatory.** Do not skip due to rate limits — the paid tier has sufficient capacity. If genuinely rate-limited, wait for the limit to reset rather than skipping. Skipping CodeRabbit local has consistently dropped shift-left rates from ~80% to ~37%.
 - **Review time:** Expect 7-30+ minutes depending on changeset size. Run in background when possible.
 - **Minor style suggestions** can be skipped if they conflict with project conventions.
 

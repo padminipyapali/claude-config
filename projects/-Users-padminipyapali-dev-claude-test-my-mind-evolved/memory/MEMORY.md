@@ -18,3 +18,6 @@ All PR review patterns (27 items from PRs #23-#59), architecture learnings, LLM 
 - When spawning sub-agents for PRs, explicitly instruct them to run adversarial review. Agents follow feature correctness but skip security/robustness unless prompted.
 - Parallel agents must use separate branches/worktrees to avoid Edit tool "file modified since read" conflicts.
 - Always adversarial-review plans before presenting them. The first plan is often not the best.
+
+## PR Sizing Rule
+- Keep PRs under 600 LOC. Post-mortem data across 15+ tracked PRs shows shift-left effectiveness degrades sharply above ~600 LOC (67-100% under vs 14-59% over). The two cleanest large PRs (#142 and #157, both 0% fix-up) sat right at the threshold. Split features over 600 LOC into 2-3 focused PRs.

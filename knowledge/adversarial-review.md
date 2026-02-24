@@ -50,16 +50,39 @@ If no categories match (e.g., docs-only change), skip directly to the Learning C
 
 ### Step 3: Structured evidence per checklist item
 
-For every checklist item in the matched sections, record an explicit verdict with evidence. Do not skip items or assess by "glancing at the code."
+For every checklist item in the matched sections, record an explicit verdict with **specific, verifiable evidence**. Do not skip items or assess by "glancing at the code."
 
 Format per item:
-- **PASS: [item name]** — [1-line evidence, e.g. "grep returned 0 matches" or "all 3 callers handle the error"]
+- **PASS: [item name]** — [verifiable evidence: grep command + output, specific file:line references visited, list of callers/implementations checked]
 - **FAIL: [item name]** — [description of finding + file:line]
 - **SKIP: [item name]** — [reason, e.g. "no SQL in diff"]
 
-This is non-negotiable. Four consecutive PRs (#206, #208, #209, #211) had post-push findings that mapped to existing checklist items but were missed because the reviewer assessed them judgmentally instead of mechanically. Requiring explicit evidence per item is the structural fix.
+**Evidence requirements by item type:**
+- **Items with grep patterns (Tier 0):** Paste the grep command AND its output (even if "0 matches"). Do not summarize.
+- **Items requiring caller/implementation tracing:** List EACH caller or implementation by file:line. "All callers handle it" without listing them is not evidence.
+- **Items checking for pattern siblings:** Show the grep command, the files matched, and the disposition of each match.
+- **Items checking test coverage:** List each test case by name and what branch/path it covers.
+
+**Banned evidence phrases** (these indicate judgment, not mechanical verification):
+- "looks fine", "appears correct", "no issues found", "code looks clean"
+- "checked and OK", "verified", "confirmed" (without specifics)
+- Any single-word verdict without a file:line reference or grep output
+
+This is non-negotiable. Four consecutive PRs (#206, #208, #209, #211) had post-push findings that mapped to existing checklist items but were missed because the reviewer assessed them judgmentally instead of mechanically. Requiring verifiable evidence per item is the structural fix.
 
 Also state which categories were detected and which checklist sections were skipped, so the author can verify coverage.
+
+### Step 4: Default to fix — no deferrals
+
+When the review identifies ANY finding — regardless of severity — **fix it immediately**. Do not classify findings as "low", "acceptable", "non-blocking", or "deferred."
+
+**Why:** PRs #198, #206, and #213 all show the same anti-pattern: the adversarial review identified an issue, labeled it low-severity, and chose not to fix it. CodeRabbit then flagged the exact same issue post-push, costing 15+ minutes of round-trip (re-review + fix commit + wait for re-review). The 5-minute local fix is always cheaper than the post-push cycle.
+
+**The only valid skip reasons:**
+- The finding requires changes to files NOT in the current diff (create a follow-up issue instead).
+- The finding is a false positive (explain why with specific evidence).
+
+"Low priority", "non-blocking", "acceptable for now", and "will address in follow-up" are NOT valid skip reasons. If you can identify it, you can fix it.
 
 ---
 
