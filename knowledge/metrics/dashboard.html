@@ -5671,6 +5671,48 @@ const METRICS_DATA = {
         "testing: 2 findings (submitted flag test, empty sections negative cases)"
       ],
       "notes": "Highest review round count in project history (5 rounds). Despite 100% step compliance and running the full local review loop, only 31.6% shift-left rate. The 83% fix-up ratio is the highest for a PR with full compliance. Dominant issue: React state management patterns (render-phase setState, local submitted flags, useEffect dependencies) not covered by adversarial checklist. 5 of 11 unique findings are React-specific patterns absent from checklist. Large 1296-line PR confirms the >600 LOC threshold pattern for review friction."
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 225,
+      "title": "Fix: Remove auto-open thread panel after creating an entry",
+      "dateMerged": "2026-02-24T20:32:30Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 1.31,
+      "planningQuality": "partial",
+      "prSize": 18,
+      "stepCompliance": {
+        "stepsRun": ["2", "4a", "4b", "4c", "4d", "5"],
+        "stepsSkipped": ["1", "3"],
+        "skipReasons": "1a-1c: trivial bug fix no planning needed, 3-Playwright: behavioral change no visual UI changes",
+        "complianceRate": 0.75,
+        "skipAssessment": "good"
+      },
+      "shiftLeftRate": 1.0,
+      "localIssuesFound": 1,
+      "postPushIssuesReal": 0,
+      "postPushCategories": [],
+      "notes": "Minimal 18 LOC bug fix removing onEntryCreated callback. Single commit, zero post-push findings. CodeRabbit approved without findings. Adversarial review caught 1 doc issue (missing BUGS.md entry) pre-push. Planning skip justified for trivial bug fix. Exemplary outcome for small focused PRs: 0% fix-up ratio, 100% shift-left rate, 1 review round (approval only)."
     }
   ]
 };
