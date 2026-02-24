@@ -121,7 +121,26 @@ git diff main...HEAD --name-only -- '*.css' '*.tsx' | xargs grep -l 'animation:.
   if grep -A10 'animation:.*infinite' "$f" | grep -q '@media (prefers-reduced-motion: reduce)'; then true; else echo "MISSING REDUCE: $f"; fi
 done
 ```
-Catches: `animation: name ... infinite;` without a `@media (prefers-reduced-motion: reduce)` override. WCAG 2.1 Level AA requirement. Fix: add `@media (prefers-reduced-motion: reduce) { animation: none; }` for each infinite animation. <!-- Source: CodeRabbit review, second-brain #213, 2026-02-23 -->
+Catches: `animation: name ... infinite;` without a `@media (prefers-reduced-motion: reduce)` override. WCAG 2.1 Level AA requirement. Fix: add `@media (prefers-reduced-motion: reduce) { animation: none !important; }` for each infinite animation (use `!important` to prevent cascade shadowing). <!-- Source: CodeRabbit review, second-brain #213, 2026-02-23 -->
+
+### 0.8 SVG `<title>` inside labeled buttons
+```bash
+git diff main...HEAD --name-only -- '*.tsx' | while read f; do
+  # Find lines with <svg><title> inside buttons with aria-label
+  grep -n '<svg' "$f" | while read svgline; do
+    svglineno=$(echo "$svgline" | cut -d: -f1)
+    # Check if <title> exists in next 3 lines
+    if sed -n "${svglineno},$((svglineno+3))p" "$f" | grep -q '<title>'; then
+      # Check if parent is a button or link with aria-label
+      parentlines=$(sed -n "1,${svglineno}p" "$f" | tail -20)
+      if echo "$parentlines" | grep -qE '<(button|a).*aria-label'; then
+        echo "DUPLICATE A11Y: $f:$svglineno (SVG <title> with labeled parent)"
+      fi
+    fi
+  done
+done
+```
+Catches: SVGs with `<title>` elements inside buttons/links that have `aria-label`. Screen readers announce both, creating duplicate labels. Fix: remove `<title>` and add `aria-hidden="true" focusable="false"` to the `<svg>`. <!-- Source: CodeRabbit review, second-brain #213, 2026-02-23 -->
 
 ### Adding new patterns
 When a bug class is caught 2+ times across PRs, add a grep pattern here.
