@@ -45,6 +45,15 @@ Commands: `/consolidate-learnings`, `/capture-learning`, `/project-setup`, `/mem
 - Core differentiator: rich data on cards + comparison mechanic, NOT social features.
 - Has adversarial review hook (.claude/hooks/require-adversarial-review.sh)
 
+## Project: folio
+- Path: /Users/padminipyapali/dev/claude_test/folio
+- Stack: TypeScript, React Native (Expo Router v4), Supabase (PostgreSQL + Auth + Realtime), Zustand
+- Monorepo: apps/mobile, packages/shared
+- Purpose: Family net worth tracker. Two partners independently update 25+ account balances with real-time sync.
+- No backend server — direct Supabase client from mobile.
+- Has adversarial review hook (.claude/hooks/require-adversarial-review.sh)
+- Key patterns: Result<T> service layer, balance_snapshot trigger + recompute_net_worth RPC, RLS gated by is_household_member()
+
 ## Project: command-center
 - Stack: TypeScript, Express, grammY (Telegram), @octokit/graphql, Claude CLI agent runner
 - Monorepo: packages/shared, packages/server, packages/web (placeholder)
