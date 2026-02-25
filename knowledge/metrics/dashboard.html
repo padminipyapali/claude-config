@@ -5786,6 +5786,54 @@ const METRICS_DATA = {
         "style: redundant tagName assertion in standalone test (trivial, not addressed)"
       ],
       "notes": "UI cleanup PR removing research from ThreadPanel and collapsing related entries. 1745 LOC (1514 add + 231 del) but ~1100 are static mockup HTML. Production code changes were well-scoped. Despite 87.5% step compliance and running the full local review loop, the adversarial review caught only 1 of 7 total issues (14.3% catch rate). Two major correctness findings (badge click propagation and state persistence across navigation) were both covered by recently-added adversarial checklist items but not caught locally. 3 findings were not addressed before merge. The 67% fix-up ratio is consistent with the >600 LOC threshold pattern. Merged with 3 outstanding CHANGES_REQUESTED reviews (continues the pattern from PRs #136, #145, #148, #199, #205)."
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 228,
+      "title": "Defer hidden panel fetches for faster dashboard load",
+      "dateMerged": "2026-02-25T05:54:27Z",
+      "reviewRounds": 2,
+      "totalComments": 5,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 3,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 2,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 7,
+        "coderabbitFixed": 2,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.34,
+      "planningQuality": "complete",
+      "prSize": 1599,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3-Playwright"
+        ],
+        "skipReasons": "no visual changes (conditional mounting only)",
+        "complianceRate": 1.0,
+        "skipAssessment": "good"
+      }
     }
   ]
 };
