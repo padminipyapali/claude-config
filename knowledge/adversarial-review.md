@@ -187,6 +187,12 @@ done
 ```
 Catches: files that do both DELETE and INSERT on the same table without a transaction. A failure between delete and insert leaves data partially removed. Fix: wrap in `BEGIN`/`COMMIT`/`ROLLBACK` using `pool.connect()` + explicit transaction. Heuristic — some patterns are safe (e.g., delete and insert on different tables). Flag for review. <!-- Source: post-mortem, second-brain #237, 2026-02-25 -->
 
+### 0.12 Brittle error type detection via string matching
+```bash
+git diff main...HEAD --name-only -- '*.ts' '*.tsx' | xargs grep -nE '\.message\.(includes|startsWith|match)\(' 2>/dev/null
+```
+Catches: `err.message.includes("not found")` or similar string matching on error messages. Fix: use `instanceof` against typed error classes (e.g., `NotFoundError`). If no typed error class exists, create one. String matching is brittle — messages change, and unrelated errors can contain the substring. <!-- Source: PR review, second-brain #248, 2026-02-25 -->
+
 ### Adding new patterns
 When a bug class is caught 2+ times across PRs, add a grep pattern here.
 Requirements: expressible as regex on changed lines, low false-positive rate (<20%).
@@ -280,7 +286,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **New union member completeness.** When adding a value to a TypeScript union type (e.g., `'unpaid_off'` to `SpecialDay['type']`), grep the entire codebase for every switch/conditional that maps that type to a style class, label, color, or behavior. Each one needs explicit handling for the new value — fallthrough to a default case often produces wrong results (e.g., unpaid days getting sick-day styling). <!-- Source: CodeRabbit review, nanny-app #26, 2026-02-19 -->
 - [ ] **Conditional UI branch test coverage.** When a component renders different UI based on a boolean flag (e.g., `isNightNurse`), verify test cases exist for each branch — not just the default path. At minimum: one test asserting the alternate UI renders, one asserting the default UI elements are hidden. <!-- Source: CodeRabbit review, nanny-app #26, 2026-02-19 -->
 - [ ] **Escape in edit-within-panel.** If an inline edit mode lives inside a dismissible panel/modal, verify Escape is caught via `onKeyDownCapture` on the edit container — not just `onKeyDown` on the textarea. Focus can move to Save/Cancel buttons where textarea handlers don't fire. Also: guard `if (saving) return` so Escape during an in-flight save doesn't discard the error state.
-- [ ] **Hook error states surfaced in UI.** `{ data, loading, error }` — error MUST be rendered.
+- [ ] **Hook error states surfaced in UI.** `{ data, loading, error }` — error MUST be rendered. Also check the hook's internal implementation: `load()` catch blocks must call `setError(err)` (not silently swallow), and the success path must call `setError(null)` to clear stale errors. <!-- Strengthened: PR review, second-brain #248, 2026-02-25 -->
 - [ ] **Env var validation.** NaN check, valid range, fallback logging for numeric vars. Timezone vars validated via `Intl.DateTimeFormat`.
 - [ ] **Guard after create → reload.** Check for null after DB insert + reload.
 - [ ] **JSON.parse on external config.** `JSON.parse()` on env vars or external config must be in try/catch with a descriptive error (e.g., "Invalid JSON in GOOGLE_SERVICE_ACCOUNT_KEY").
