@@ -18,8 +18,12 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 
 ## Safety & Prompt Injection
 
-- **Escape XML delimiters in user content.** When interpolating user text into XML-tagged prompts, escape `<`/`>` with `&lt;`/`&gt;` to prevent tag injection.
+- **Escape XML delimiters in user content — all 5 entities.** When interpolating user text into XML-tagged prompts, escape all XML special characters: `&` → `&amp;`, `<` → `&lt;`, `>` → `&gt;`, `"` → `&quot;`, `'` → `&#39;`. This applies to both element content AND attribute values (e.g., `<doc source="...">`) — attribute values with unescaped quotes break the XML structure, and `&` in any position creates malformed entities. <!-- Strengthened: PR review, second-brain #237, 2026-02-24 -->
 - **Escape ALL user-sourced strings, including DB-stored values.** Word names, definitions, example sentences stored in DB are still user-provided. Escape when interpolating into prompts.
+
+## Handler-Level Error Wrapping
+
+- **Wrap LLM generation calls in try/catch at the handler level.** When an intent handler calls an LLM to generate a user-facing response, wrap the call in its own try/catch and return a user-safe fallback message on failure (e.g., "I'm having trouble answering that right now. Please try again."). Don't let LLM API errors (rate limits, timeouts, malformed responses) propagate as unhandled exceptions — they crash the request and show raw error messages. The entry/storage side of the handler should still succeed even if response generation fails. <!-- Source: PR review, second-brain #237, 2026-02-24 -->
 
 ## Multi-Layer Pipeline Debugging
 
