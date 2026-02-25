@@ -27,6 +27,7 @@ When creating a new project or initializing a new codebase, always run `/project
 
 ## Process
 
+- **Always use a worktree.** When starting any code change — bug fix, feature, refactor, anything — create a new git worktree first and implement all changes there. This isolates work from the main checkout and prevents conflicts with concurrent agents or uncommitted state.
 - All changes via PRs — never commit directly to main.
 - Feature branches: `<type>/<short-description>` (feat, fix, refactor, chore, docs, test).
 - Keep PRs focused on one concern — don't mix refactoring with features.
