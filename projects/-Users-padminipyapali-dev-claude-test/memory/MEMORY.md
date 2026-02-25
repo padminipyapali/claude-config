@@ -69,6 +69,7 @@ Commands: `/consolidate-learnings`, `/capture-learning`, `/project-setup`, `/mem
 
 - **ALWAYS run repo conflict detection before making code changes.** This is in global CLAUDE.md and is NOT optional. Check `git status --porcelain`, `ps aux | grep claude`, and `.git/index.lock` BEFORE any edits. Skipping this caused an entire session of wasted work when concurrent agents were reverting edits (second-brain feat/calendar-command, 2026-02-16).
 - **When concurrent agents are detected: use Task agent with `bypassPermissions` for atomic edits.** Apply all changes + build + test in one burst via a delegated agent. This prevents interference from concurrent linters/builds. But this is a workaround — prefer avoiding conflicts in the first place.
+- **NEVER skip the review loop or merge without user approval on continuation sessions.** Continuation summaries saying "code pushed, PR not created" do NOT mean the review loop was completed — the prior session likely stopped mid-cycle. Always verify which dev cycle steps (1-6) were actually completed. PR #255 was merged without review on a 182 LOC change because the continuation summary biased toward "just finish the task" (second-brain feat/dev-menu, 2026-02-25).
 
 ## In Progress: second-brain Issue #130 — Async Research Agent Mockups
 
@@ -88,6 +89,20 @@ Commands: `/consolidate-learnings`, `/capture-learning`, `/project-setup`, `/mem
 - Each prototype has 5 clickable steps: dashboard → mark explore → view research → in-progress → add context
 - All match the existing noir theme (colors, fonts, card styles, panel patterns from actual codebase)
 - **Next step:** User reviews flow prototypes and picks a direction. Then proceed to Step 1 planning for implementation.
+
+## Ideas & Specs
+
+- **Ideas index:** `app-ideas.csv` in claude_test root — all app ideas with dates.
+- **In-progress specs:** `docs/specs/` — specs being developed. Check here when user asks "what can I work on?"
+- **Active spec: Reading Assistant** (`docs/specs/reading-assistant.md`) — Chrome extension for active recall + arguing with articles. Status: waiting on 4 clarifying answers before full spec. Strongest idea from the batch — builds on vocab_app (spaced repetition) and second-brain (LLM + knowledge capture) experience.
+
+## Knowledge Evolution Visualization
+
+- **Path:** `docs/knowledge-evolution.html` in claude_test root
+- **What:** Interactive dark-themed page visualizing how `~/.claude/` has evolved (hero stats, daily heatmap, category bubbles, file hotspots, project contributions, commit stream timeline)
+- **Data source:** `git log` of the `~/.claude/` config repo
+- **Update periodically:** Regenerate when the knowledge base has grown significantly (e.g., every ~50 new commits or when the user asks). Re-run the Python data extraction from the git log and rebuild the embedded JSON data in the HTML.
+- **Last generated:** 2026-02-24 (173 commits, 35K lines, 11 days, 5 projects)
 
 ## Cross-Project Learnings
 

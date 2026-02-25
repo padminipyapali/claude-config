@@ -17,9 +17,11 @@ On EVERY session start — including continuations from previous sessions — ru
    - `ps aux | grep -E 'claude|claude-code' | grep -v grep | grep '<path>'` — check for active agents.
    - `ls <path>/.git/index.lock 2>/dev/null` — check for git lock files.
 2. **Do NOT trust continuation summaries about repo state.** The summary reflects the *previous* session. Other agents may have started, files may have changed, branches may have moved. Verify it yourself.
-3. **If conflicts are detected**, follow the Repo Conflict Detection rules below (queue the task, don't edit).
+3. **Development cycle checkpoint.** Before creating a PR or merging, verify which development cycle steps (1-6) have been completed in the *current* session. Continuation summaries saying "code pushed, PR not created" do NOT mean prior sessions completed the review loop — they often stopped mid-cycle. Walk through the steps explicitly.
+4. **Never merge a PR without explicit user approval.** Creating the PR is step 5. The user decides when to merge. Merging autonomously is never acceptable, even if the summary implies "just finish up."
+5. **If conflicts are detected**, follow the Repo Conflict Detection rules below (queue the task, don't edit).
 
-This is non-negotiable. Skipping this check has caused entire sessions of wasted work when concurrent agents were modifying the same repo.
+This is non-negotiable. Skipping these checks has caused wasted work (concurrent agent conflicts) and premature merges (PR #255: 182 LOC merged without review loop because continuation summary implied "just finish the task").
 
 ## New Projects
 
