@@ -5297,6 +5297,53 @@
         "complianceRate": 1.0,
         "skipAssessment": "good"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 232,
+      "title": "Update product docs for PRs #219-#231",
+      "dateMerged": "2026-02-25T06:42:23Z",
+      "reviewRounds": 2,
+      "totalComments": 4,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 4,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.75,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.25,
+      "planningQuality": "complete",
+      "prSize": 83,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "docs-only PR, under 50 LOC of prose",
+        "complianceRate": 0.375,
+        "skipAssessment": "bad"
+      }
     }
   ]
 }
