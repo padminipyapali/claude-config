@@ -23,6 +23,10 @@ Cross-project learnings for testing strategy, mocking, and assertions.
 
 - **Test every error path in try/catch blocks, not just the primary one.** When a try block contains multiple `await` calls (e.g., `findUser()` then `linkUser()`), each can fail independently. A test for `findUser()` throwing doesn't cover `linkUser()` throwing -- both reach the same catch block but via different code paths. Write a separate test for each `await` that can throw, mocking the preceding calls to succeed and the target call to reject. This is especially important for linking/creation flows where the first call is a lookup and the second is a write. <!-- Source: PR review, second-brain #234, 2026-02-25 -->
 
+## Test Cleanup
+
+- **`vi.restoreAllMocks()` belongs in `afterEach`, never inside individual tests.** Placing `vi.restoreAllMocks()` at the end of a specific test is fragile — if the test fails or is skipped, mocks leak into subsequent tests. Move to `afterEach(() => { vi.restoreAllMocks(); })`. Same applies to `vi.useRealTimers()`, `vi.unstubAllEnvs()`, and any state restoration. General rule: cleanup that undoes test-specific mutations goes in `afterEach`, not in the test body. <!-- Source: PR review, second-brain #256, 2026-02-25 -->
+
 ## Mock Data Type Safety
 
 - **Match exact types in mock data — `vi.fn()` bypasses type checking.** When constructing mock return values (e.g., `vi.mocked(service.query).mockResolvedValue({...})`), match the exact TypeScript type for every field. Common trap: `completedAt: new Date().toISOString()` produces a `string`, but the interface declares `completedAt: Date`. Tests pass because `vi.fn()` and `as unknown as` casts bypass compile-time checking, but the mock shape silently diverges from production data. If the implementation later accesses `.getTime()` or other Date methods, the test will fail with a confusing runtime error instead of catching the mismatch early. <!-- Source: PR review, second-brain #199, 2026-02-21 -->
