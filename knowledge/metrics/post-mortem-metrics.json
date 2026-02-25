@@ -5344,6 +5344,53 @@
         "complianceRate": 0.375,
         "skipAssessment": "bad"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 237,
+      "title": "Add /sb command for self-referential bot questions",
+      "dateMerged": "2026-02-25T07:44:50Z",
+      "reviewRounds": 2,
+      "totalComments": 8,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 6,
+        "architecture": 1,
+        "style": 1,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 18,
+        "coderabbitFixed": 5,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 4,
+        "adversarialFixed": 3
+      },
+      "adversarialCatchRate": 0.88,
+      "fixupCommitRatio": 0.67,
+      "timeToMergeHours": 0.49,
+      "planningQuality": "complete",
+      "prSize": 933,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3"
+        ],
+        "skipReasons": "3-Playwright: backend-only, no UI changes",
+        "complianceRate": 0.875,
+        "skipAssessment": "good"
+      }
     }
   ]
 }
