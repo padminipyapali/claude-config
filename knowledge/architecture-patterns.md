@@ -17,6 +17,7 @@ Cross-project learnings for service design, error handling, and system architect
 
 - **In-memory dedup markers don't survive restarts.** On deploy-on-push platforms (Railway, Vercel, Heroku), every deploy clears memory. Schedulers and notification systems using in-memory state (e.g., `lastSentDate`) will re-trigger on every restart. Either persist the marker to DB, or initialize defensively by checking whether the scheduled time has already passed.
 - **Defensive initialization over persistence for simple cases.** If a scheduler's dedup marker is a date string, pre-set it in the constructor when the current time is past the trigger hour. Simpler than a schema change, though it can't distinguish "first startup of the day" from "restart after already sent" — acceptable when at-most-once is better than spam.
+- **In-memory caches need TTL and size caps.** An unbounded `Map` used as a cache is a slow memory leak in long-running services. Even for single-user apps, cached entries become stale (e.g., revoked auth tokens, re-linked accounts). Use a TTL (e.g., 5 minutes) and a max-size cap (e.g., 1000 entries with oldest-first eviction). A simple `{ value, expiresAt }` wrapper around Map is sufficient -- no library needed. Check expiry on read, evict oldest on write when at capacity. <!-- Source: PR review, second-brain #234, 2026-02-25 -->
 
 ## Data Integrity
 
@@ -27,6 +28,7 @@ Cross-project learnings for service design, error handling, and system architect
 ## Auth & Security Boundaries
 
 - **Scope auth fallbacks to the specific routes that need them.** When adding an alternative auth mechanism (query param token, cookie, API key header), restrict it to the exact route that requires it — never apply it globally in middleware. The temptation is to add the fallback once in shared middleware for simplicity, but this broadens the attack surface to every route. Use route path matching (`req.path`) and method checks (`req.method`) in the middleware to gate the fallback. <!-- Source: PR review, second-brain #152, 2026-02-17 -->
+- **Validate JWT issuer for defense-in-depth.** When verifying JWTs locally (e.g., Supabase JWT via `jose`), validate both `audience` and `issuer` claims. The shared HMAC secret already scopes trust, but issuer validation rejects tokens minted by other services that happen to share the same signing key. Make issuer optional (only checked when the issuer URL is configured) so environments missing the config don't break. <!-- Source: PR review, second-brain #234, 2026-02-25 -->
 
 ## Error Handling Strategy
 
