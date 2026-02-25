@@ -165,6 +165,28 @@ done
 ```
 Catches: SVGs with `<title>` elements inside buttons/links that have `aria-label`. Screen readers announce both, creating duplicate labels. Fix: remove `<title>` and add `aria-hidden="true" focusable="false"` to the `<svg>`. <!-- Source: CodeRabbit review, second-brain #213, 2026-02-23 -->
 
+### 0.9 Truthiness guard on string input (missing .trim())
+```bash
+git diff main...HEAD -U0 -- '*.ts' '*.tsx' | grep -E '^\+' | grep -E 'if\s*\(\s*!(\w+)\s*\)' | grep -vE '\.trim\(\)' 2>/dev/null
+```
+Heuristic — flags `if (!variable)` guards on string inputs that don't call `.trim()`. Whitespace-only strings like `"   "` are truthy in JS and bypass these guards. Verify each match: if the variable holds user/command input, it needs `!variable?.trim()` or the variable should be trimmed at assignment. Not all matches are bugs — boolean/number guards are fine. <!-- Source: post-mortem, second-brain #237, 2026-02-25 -->
+
+### 0.10 Raw interpolation in XML/HTML template strings
+```bash
+git diff main...HEAD -U3 -- '*.ts' '*.tsx' | grep -E '^\+.*`<\w+[^>]*\$\{' 2>/dev/null
+```
+Catches: template literals building XML/HTML tags with `${variable}` interpolation. Any match needs verification that the interpolated values are escaped (attribute values with `escapeXml`/`escapeHtml`, element content if user-sourced). Common miss: escaping attributes but not body content, or escaping `<`/`>` but missing `&`/`"`/`'`. <!-- Source: post-mortem, second-brain #237, 2026-02-25 -->
+
+### 0.11 DELETE + INSERT loop without transaction
+```bash
+git diff main...HEAD --name-only -- '*.ts' | xargs grep -lE 'delete|DELETE FROM' 2>/dev/null | while read f; do
+  if grep -q 'DELETE FROM' "$f" && grep -q 'INSERT INTO' "$f" && ! grep -qE 'BEGIN|transaction|COMMIT' "$f"; then
+    echo "NO TRANSACTION: $f (has DELETE + INSERT without BEGIN/COMMIT)"
+  fi
+done
+```
+Catches: files that do both DELETE and INSERT on the same table without a transaction. A failure between delete and insert leaves data partially removed. Fix: wrap in `BEGIN`/`COMMIT`/`ROLLBACK` using `pool.connect()` + explicit transaction. Heuristic — some patterns are safe (e.g., delete and insert on different tables). Flag for review. <!-- Source: post-mortem, second-brain #237, 2026-02-25 -->
+
 ### Adding new patterns
 When a bug class is caught 2+ times across PRs, add a grep pattern here.
 Requirements: expressible as regex on changed lines, low false-positive rate (<20%).
