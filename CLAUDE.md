@@ -90,7 +90,7 @@ The reviewing agent also performs a **product-level adversarial review**:
 - **Build vs. defer.** Would it be better to ship a minimal version now and iterate, or is the full plan necessary to be useful at all?
 - **Second-order effects.** Does this feature create maintenance burden, user confusion, or lock in a design direction that's hard to reverse?
 
-The reviewing agent returns a verdict: **approve**, **approve with notes**, or **revise**. If "revise", address the feedback and re-run 1c. Cap at 2 revision rounds — if still contested, present both perspectives to the user for a decision.
+The reviewing agent returns a verdict: **approve**, **approve with notes**, or **revise**. If "revise", address the feedback and re-run 1c. Repeat until the reviewing agent returns **approve** or **approve with notes** — do not cap the rounds. If the same finding oscillates (fix → re-flag → fix → re-flag) for 3+ rounds, present both perspectives to the user for a tiebreaker decision on that specific finding, then continue the loop for remaining issues.
 
 ### Step 3: Playwright Testing (mandatory for UI changes)
 
