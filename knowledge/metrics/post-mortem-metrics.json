@@ -5992,6 +5992,56 @@
         "complianceRate": 0.25,
         "skipAssessment": "neutral"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 272,
+      "title": "Add multi-turn conversational chat panel for dashboard (PR 1/3)",
+      "dateMerged": "2026-02-26T14:25:17Z",
+      "reviewRounds": 3,
+      "totalComments": 12,
+      "commentCategories": {
+        "security": 1,
+        "correctness": 7,
+        "architecture": 1,
+        "style": 2,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 1
+      },
+      "localReview": {
+        "internalFindings": 1,
+        "internalFixed": 1,
+        "coderabbitFindings": 5,
+        "coderabbitFixed": 3,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 7,
+        "adversarialFixed": 7
+      },
+      "adversarialCatchRate": 0.10,
+      "fixupCommitRatio": 0.83,
+      "timeToMergeHours": 1.06,
+      "planningQuality": "complete",
+      "prSize": 1258,
+      "shiftLeftRate": 0.52,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3"
+        ],
+        "skipReasons": "3-Playwright: chat panel requires running server with DB for meaningful testing; manual test plan provided",
+        "complianceRate": 0.875,
+        "skipAssessment": "justified"
+      }
     }
   ]
 }

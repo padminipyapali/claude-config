@@ -36,7 +36,7 @@ A file can belong to multiple categories.
 | **async-ts** | Tier 1: all (1.1–1.3). Tier 3: null guards, error message specificity |
 | **routes-api** | Tier 2: all. Tier 4: business logic in service not routes |
 | **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create→reload, trigger event scope (INSERT vs UPDATE vs both), transaction client affinity |
-| **ui-react** | Tier 0: 0.4 (semantic elements), 0.4b (form input labels), 0.5 (escape handler). Tier 1: 1.4 (grammar), 1.5 (optimistic UI), 1.6 (portal/popover positioning), 1.7 (interactive mode state cleanup). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh, render-phase setState, instance-unique IDs, React key uniqueness, click propagation on interactive→non-interactive refactors, key-based state reset for context-dependent children |
+| **ui-react** | Tier 0: 0.4 (semantic elements), 0.4b (form input labels), 0.5 (escape handler), 0.13 (focus-visible parity), 0.14 (iOS auto-zoom). Tier 1: 1.4 (grammar), 1.5 (optimistic UI), 1.6 (portal/popover positioning), 1.7 (interactive mode state cleanup). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh, render-phase setState, instance-unique IDs, React key uniqueness, click propagation on interactive→non-interactive refactors, key-based state reset for context-dependent children |
 | **shell** | Tier 2: shell command validation |
 | **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
@@ -211,6 +211,12 @@ git diff main...HEAD --name-only -- '*.css' | while read f; do
 done
 ```
 Heuristic -- flags new CSS selectors in files that already have `:focus-visible` rules on sibling selectors. When a file has an established focus-visible pattern and a new interactive element is added, the new element should have matching focus-visible treatment. <!-- Source: post-mortem, second-brain #256, 2026-02-26 -->
+
+### 0.14 iOS auto-zoom on small font-size inputs
+```bash
+git diff main...HEAD --name-only -- '*.css' | xargs grep -nE '(input|textarea|\.chat-input|\.text-input).*font-size:\s*(0\.\d+rem|1[0-5]px|0\.[0-8]\d*em)' 2>/dev/null
+```
+Catches: `<input>` or `<textarea>` elements styled with `font-size` below 16px (1rem). iOS Safari auto-zooms the viewport on focus when input font-size is under 16px, disrupting mobile UX. Fix: use `font-size: 1rem` (16px) or larger on all form inputs. Heuristic -- not all matches are actual inputs; verify the selector targets a form element. <!-- Source: CodeRabbit review, second-brain #272, 2026-02-26 -->
 
 ### Adding new patterns
 When a bug class is caught 2+ times across PRs, add a grep pattern here.

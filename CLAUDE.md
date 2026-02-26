@@ -20,8 +20,9 @@ On EVERY session start — including continuations from previous sessions — ru
 3. **Development cycle checkpoint.** Before creating a PR or merging, verify which development cycle steps (1-6) have been completed in the *current* session. Continuation summaries saying "code pushed, PR not created" do NOT mean prior sessions completed the review loop — they often stopped mid-cycle. Walk through the steps explicitly.
 4. **Never merge a PR without explicit user approval.** Creating the PR is step 5. The user decides when to merge. Merging autonomously is never acceptable, even if the summary implies "just finish up."
 5. **If conflicts are detected**, follow the Repo Conflict Detection rules below (queue the task, don't edit).
+6. **Project infrastructure check.** Check if the project has a `CLAUDE.md` file. If not, run `/project-setup` before any code changes — even if the codebase already has code, tests, and a working build. A project with code but no CLAUDE.md is un-initialized: it's missing the adversarial review hook, CodeRabbit config, and conventions that every PR depends on. This check is mechanical — don't try to judge whether the project "feels" initialized.
 
-This is non-negotiable. Skipping these checks has caused wasted work (concurrent agent conflicts) and premature merges (PR #255: 182 LOC merged without review loop because continuation summary implied "just finish the task").
+This is non-negotiable. Skipping these checks has caused wasted work (concurrent agent conflicts), premature merges (PR #255: 182 LOC merged without review loop because continuation summary implied "just finish the task"), and missing review infrastructure (summer-camps PR #1 shipped without adversarial review hook because `/project-setup` was skipped).
 
 ## New Projects
 
