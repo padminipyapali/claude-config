@@ -6004,6 +6004,53 @@ const METRICS_DATA = {
         "complianceRate": 0.25,
         "skipAssessment": "neutral"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 256,
+      "title": "Add changelog from merged PRs to /brief and dashboard",
+      "dateMerged": "2026-02-26T00:29:00Z",
+      "reviewRounds": 4,
+      "totalComments": 16,
+      "commentCategories": {
+        "security": 3,
+        "correctness": 4,
+        "architecture": 2,
+        "style": 3,
+        "performance": 1,
+        "testing": 0,
+        "documentation": 2,
+        "other": 1
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.75,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 1.4,
+      "planningQuality": "complete",
+      "prSize": 856,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b",
+          "4c"
+        ],
+        "skipReasons": "4b: no .coderabbit.yaml in project; 4c: adversarial review listed as pending at PR creation",
+        "complianceRate": 0.75,
+        "skipAssessment": "bad"
+      }
     }
   ]
 };

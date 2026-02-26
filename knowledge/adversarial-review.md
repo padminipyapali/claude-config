@@ -193,6 +193,25 @@ git diff main...HEAD --name-only -- '*.ts' '*.tsx' | xargs grep -nE '\.message\.
 ```
 Catches: `err.message.includes("not found")` or similar string matching on error messages. Fix: use `instanceof` against typed error classes (e.g., `NotFoundError`). If no typed error class exists, create one. String matching is brittle — messages change, and unrelated errors can contain the substring. <!-- Source: PR review, second-brain #248, 2026-02-25 -->
 
+### 0.13 Focus-visible parity for new interactive elements
+```bash
+git diff main...HEAD --name-only -- '*.css' | while read f; do
+  new_selectors=$(git diff main...HEAD -- "$f" | grep -E '^\+.*\{' | grep -vE '^\+\+\+' | sed 's/+//' | tr -d '{ ')
+  if [ -n "$new_selectors" ]; then
+    existing_focus=$(grep -c ':focus-visible' "$f" 2>/dev/null || echo 0)
+    if [ "$existing_focus" -gt 0 ]; then
+      for sel in $new_selectors; do
+        clean=$(echo "$sel" | sed 's/[.#]//g' | tr -d '[:space:]')
+        if [ -n "$clean" ] && ! grep -q "${clean}.*:focus-visible" "$f" 2>/dev/null; then
+          echo "MISSING FOCUS-VISIBLE: $f selector '$sel' (file has $existing_focus existing :focus-visible rules)"
+        fi
+      done
+    fi
+  fi
+done
+```
+Heuristic -- flags new CSS selectors in files that already have `:focus-visible` rules on sibling selectors. When a file has an established focus-visible pattern and a new interactive element is added, the new element should have matching focus-visible treatment. <!-- Source: post-mortem, second-brain #256, 2026-02-26 -->
+
 ### Adding new patterns
 When a bug class is caught 2+ times across PRs, add a grep pattern here.
 Requirements: expressible as regex on changed lines, low false-positive rate (<20%).
@@ -269,7 +288,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **No raw user content in logs.** Log timing, counts, IDs, types — never message content. Use `error.name` not `error.message`.
 - [ ] **Input validation at boundaries.** `typeof` guard before `.trim()` or string methods on request body fields.
 - [ ] **Shell command validation.** Regex: no prefix injection bypass (`\b` not `^`); no suffix injection bypass (`(\s|$)` not `\b`); extracted variables validated non-empty. Guard ordering: verify early-exit blocks don't make later exception paths unreachable or create bypass holes for non-matching branches. <!-- Strengthened: nanny-app #31, 2026-02-19 -->
-- [ ] **Escape user content in AI prompts.** Escape `<`/`>` with `&lt;`/`&gt;` in XML-tagged prompts. This includes DB-stored values.
+- [ ] **Escape user content in AI prompts.** Escape `<`/`>` with `&lt;`/`&gt;` in XML-tagged prompts. This includes DB-stored values. When injecting external data (e.g., GitHub PR titles, user emails, RSS feeds) into LLM context blocks, verify BOTH: (1) XML-structural escape (`<`, `>`, `&`, `"`, `'`) and (2) the system prompt treats the data as read-only reference, not as instructions to follow. XML escaping prevents structural corruption; prompt-level framing prevents adversarial content from influencing LLM behavior. <!-- Strengthened: post-mortem, second-brain #256, 2026-02-26 -->
 - [ ] **RLS UPDATE policies have WITH CHECK.** For every RLS UPDATE policy in migration files, verify both `USING` and `WITH CHECK` clauses are present. `USING` alone gates which rows can be read for update, but allows writing unauthorized values (e.g., changing `household_id` to another tenant). `WITH CHECK` should mirror the tenant-scoping predicate. <!-- Source: PR review, folio #1, 2026-02-23 -->
 - [ ] **No token-like placeholders in UI.** Avoid `ghp_`, `sk-`, `Bearer ey...`, `xoxb-` prefixes in placeholder/mock/demo data — secret scanners (CI, GitHub) will flag them. Use generic bullets `"••••••••"` or `"(hidden)"`. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 - [ ] **Auth fallbacks scoped to specific routes.** When adding alternative auth (query param token, cookie), verify it only applies to the exact route that needs it — not globally in shared middleware. Check: does the middleware gate the fallback on `req.method` + `req.path`? <!-- Source: PR review, second-brain #152, 2026-02-17 -->
