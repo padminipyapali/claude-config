@@ -6482,6 +6482,53 @@ const METRICS_DATA = {
         "complianceRate": 0.875,
         "skipAssessment": "neutral"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 270,
+      "title": "Guard optimistic reverts against stale failures",
+      "dateMerged": "2026-02-26T13:50:05Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 1.01,
+      "planningQuality": "complete",
+      "prSize": 14,
+      "stepCompliance": {
+        "stepsRun": [
+          "2",
+          "5"
+        ],
+        "stepsSkipped": [
+          "1",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "1, 3, 4a-4d: under 50 LOC mechanical fix, pattern already established in #269",
+        "complianceRate": 0.25,
+        "skipAssessment": "neutral"
+      }
     }
   ]
 };
