@@ -6098,6 +6098,100 @@ const METRICS_DATA = {
         "complianceRate": 0.25,
         "skipAssessment": "bad"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 259,
+      "title": "Add outbound email infrastructure via Resend",
+      "dateMerged": "2026-02-26T05:40:11Z",
+      "reviewRounds": 1,
+      "totalComments": 2,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 1,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.67,
+      "timeToMergeHours": 0.77,
+      "planningQuality": "complete",
+      "prSize": 217,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "3: backend-only (valid); 4a-4e: claimed under 50 LOC logic threshold (invalid \u2014 217 LOC total diff exceeds 50 LOC mandatory threshold)",
+        "complianceRate": 0.375,
+        "skipAssessment": "bad"
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 261,
+      "title": "feat: weekly review scheduler, dev menu, and dashboard deep-links",
+      "dateMerged": "2026-02-26T06:13:04Z",
+      "reviewRounds": 0,
+      "totalComments": 2,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 2
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 0,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.75,
+      "timeToMergeHours": 1.28,
+      "planningQuality": "good",
+      "prSize": 353,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "stacked PR (invalid justification for 353 LOC)",
+        "complianceRate": 0.5,
+        "skipAssessment": "bad"
+      }
     }
   ]
 };
