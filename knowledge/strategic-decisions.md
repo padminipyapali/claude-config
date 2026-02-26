@@ -32,6 +32,12 @@ Cross-project product thinking patterns. These are decision frameworks and produ
 - Channel adapter pattern for input sources. Design the core as channel-agnostic from day one even if you only ship one channel at launch — the second channel is always closer than you think.
 <!-- Source: second-brain ChannelAdapter interface (Telegram → email → SMS) -->
 
+- Zero-friction onboarding for consumer apps with a simple core loop. Skip all setup screens — drop users directly into the primary interaction. Infer preferences (e.g., gender, name origin) from behavior after a few rounds rather than asking upfront. Inline prompts at natural pauses ("What's your last name?" after 3-5 swipes) feel like conversation, not configuration. Every screen before the core loop is a drop-off point.
+<!-- Source: baby-name-picker DEC-001, DEC-003, DEC-005, 2026-02-25 -->
+
+- Start online-only for MVPs. Offline-first adds substantial complexity (sync conflicts, local storage, migration strategies) that's wasted if the product doesn't find fit. A simple "No connection" banner is sufficient until real usage proves offline demand. Validate the product before investing in offline support.
+<!-- Source: folio D001, 2026-02-23 -->
+
 ## Security & Multi-Tenancy
 
 - Multi-tenant access control from day one, even for single-user MVPs. Retrofitting authorization is 10x harder than building it in. Define roles (owner, member, viewer) at the data layer before writing UI.

@@ -13,6 +13,10 @@ Cross-project learnings for service design, error handling, and system architect
 
 - **Close persistent resources (SQLite, DB pools) on ALL exit paths.** Container orchestrators send SIGTERM before SIGKILL. Add `process.on("SIGTERM", ...)` handlers that close DB connections, flush WAL journals, and exit cleanly. **Also close in `bootstrap().catch()` — if bootstrap fails after stores are initialized (e.g., during bot setup), the stores leak without explicit cleanup.** Use `try/catch` with empty catch for best-effort cleanup — the process is terminating regardless. Hoist the resource reference to module scope if it's created inside `bootstrap()`. Use optional chaining (`store?.close()`) so cleanup is safe even if the resource wasn't initialized yet. <!-- Strengthened: PR review, command-center #33, 2026-02-20 -->
 
+## Concurrency & Task Queues
+
+- **Sequential task queue (concurrency 1) for rate-limited external APIs.** When tasks hit external APIs with strict rate limits (Claude API, GitHub API), use a queue with max concurrency 1 and auto-advance on completion. This prevents rate limit errors and ensures predictable execution order. A simple in-memory queue is sufficient for single-instance deployments; persist to DB only if tasks must survive restarts. <!-- Source: command-center D004, 2026-02-14 -->
+
 ## In-Memory State & Process Restarts
 
 - **In-memory dedup markers don't survive restarts.** On deploy-on-push platforms (Railway, Vercel, Heroku), every deploy clears memory. Schedulers and notification systems using in-memory state (e.g., `lastSentDate`) will re-trigger on every restart. Either persist the marker to DB, or initialize defensively by checking whether the scheduled time has already passed.
@@ -29,6 +33,7 @@ Cross-project learnings for service design, error handling, and system architect
 ## Auth & Security Boundaries
 
 - **Scope auth fallbacks to the specific routes that need them.** When adding an alternative auth mechanism (query param token, cookie, API key header), restrict it to the exact route that requires it — never apply it globally in middleware. The temptation is to add the fallback once in shared middleware for simplicity, but this broadens the attack surface to every route. Use route path matching (`req.path`) and method checks (`req.method`) in the middleware to gate the fallback. <!-- Source: PR review, second-brain #152, 2026-02-17 -->
+- **Express `router.use()` middleware runs for ALL requests matching the mount path, not just matching terminal routes.** When multiple routers are mounted at the same path (e.g., `app.use("/api", routerA)` and `app.use("/api", routerB)`), requests traverse middleware from all routers in mount order — even if only one router has a matching route. Auth middleware on routerA will execute for requests that only routerB handles. To scope middleware to specific routes, either mount routers at distinct sub-paths or attach middleware directly to route handlers (`router.get("/x", auth, handler)`). <!-- Source: PR review, second-brain #251, 2026-02-25 -->
 - **Validate JWT issuer for defense-in-depth.** When verifying JWTs locally (e.g., Supabase JWT via `jose`), validate both `audience` and `issuer` claims. The shared HMAC secret already scopes trust, but issuer validation rejects tokens minted by other services that happen to share the same signing key. Make issuer optional (only checked when the issuer URL is configured) so environments missing the config don't break. <!-- Source: PR review, second-brain #234, 2026-02-25 -->
 
 ## Error Handling Strategy

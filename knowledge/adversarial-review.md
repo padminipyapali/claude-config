@@ -380,8 +380,8 @@ Run this on every non-trivial feature plan before implementation. Code-level adv
 
 After the review passes, before writing the marker file:
 
-1. **Were any bugs fixed in this PR?** If yes, update `docs/BUGS.md` AND the relevant `~/.claude/knowledge/*.md` topic file.
-2. **Were any architectural decisions made?** If yes, update `docs/DECISIONS.md` AND `~/.claude/knowledge/architecture-patterns.md` if the pattern is generalizable.
+1. **Were any bugs fixed in this PR?** If yes, update `docs/features/_cross-cutting/bugs.md` (or the relevant feature's `bugs.md`) AND the relevant `~/.claude/knowledge/*.md` topic file.
+2. **Were any architectural decisions made?** If yes, update `docs/features/_cross-cutting/decisions.md` (or the relevant feature's `decisions.md`) AND `~/.claude/knowledge/architecture-patterns.md` if the pattern is generalizable.
 3. **Were any new defensive patterns discovered?** If yes, update the relevant knowledge topic file.
 4. **Is there a pattern in this PR that would have prevented a bug in a sibling project?** If yes, capture it in the appropriate knowledge file.
 
