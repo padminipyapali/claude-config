@@ -5702,6 +5702,53 @@
         "complianceRate": 0.25,
         "skipAssessment": "bad"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 265,
+      "title": "Remove query cards from dashboard feed",
+      "dateMerged": "2026-02-26T06:29:46Z",
+      "reviewRounds": 2,
+      "totalComments": 4,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 4,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 0.25,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.33,
+      "planningQuality": "partial",
+      "prSize": 134,
+      "stepCompliance": {
+        "stepsRun": [
+          "2",
+          "3",
+          "4b",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "1",
+          "4a",
+          "4c"
+        ],
+        "skipReasons": "1: small removal (no formal plan), 4a: diff under 50 LOC, 4c: diff under 50 LOC (but total diff was 134 LOC)",
+        "complianceRate": 0.625,
+        "skipAssessment": "acceptable"
+      }
     }
   ]
 }
