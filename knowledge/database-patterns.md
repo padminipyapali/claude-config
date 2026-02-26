@@ -49,6 +49,10 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 - **Never overwrite created_at in ON CONFLICT DO UPDATE.** `created_at = now()` in a DO UPDATE SET clause destroys the original creation time. Immutable audit columns (`created_at`) should never appear in DO UPDATE SET. If you need an update timestamp, add a separate `updated_at` column. <!-- Source: PR review, folio #1, 2026-02-23 -->
 - **Realtime subscription must cover all published tables.** When `ALTER PUBLICATION supabase_realtime ADD TABLE X` publishes a table, verify the client subscribes to it. Derived tables (e.g., `net_worth_snapshots` recomputed via RPC) need subscriptions too — cross-partner sync breaks silently if only the directly-written tables are subscribed. <!-- Source: PR review, folio #1, 2026-02-23 -->
 
+## Counter Management
+
+- **Async counter resets should use relative decrement, not unconditional zero.** When a fire-and-forget task processes N items and resets a counter (e.g., `turns_since_summary`), use `GREATEST(counter - $N, 0)` instead of `SET counter = 0`. Between the async task starting and completing, new increments may have arrived. Zeroing the counter loses those increments; relative decrement preserves them. This applies to any pattern where: (1) a counter tracks unprocessed items, (2) processing runs asynchronously, and (3) new items can arrive during processing. <!-- Source: PR review, second-brain #275, 2026-02-26 -->
+
 ## Mutation Return Values
 
 - **DB mutations (UPDATE/DELETE) should return affected row count, not void.** When a service method runs `UPDATE ... WHERE id = $1 AND user_id = $2`, returning `void` gives the API layer no signal for 0-row results (row doesn't exist, wrong user, wrong type). Return `boolean` (`(result.rowCount ?? 0) > 0`) or the count itself. This lets routes return 404 on miss instead of silently succeeding. Applies to any mutation gated by ownership or type constraints. <!-- Source: PR review, second-brain #262, 2026-02-25 -->
