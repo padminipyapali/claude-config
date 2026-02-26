@@ -5749,6 +5749,104 @@
         "complianceRate": 0.625,
         "skipAssessment": "acceptable"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 262,
+      "title": "Add IDEA entry type with status pipeline and Haiku rephrase",
+      "dateMerged": "2026-02-26T06:37:32Z",
+      "reviewRounds": 4,
+      "totalComments": 13,
+      "commentCategories": {
+        "security": 1,
+        "correctness": 5,
+        "architecture": 2,
+        "style": 0,
+        "performance": 0,
+        "testing": 4,
+        "documentation": 1,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 4,
+        "coderabbitFixed": 2,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 6,
+        "adversarialFixed": 6
+      },
+      "adversarialCatchRate": 0.92,
+      "fixupCommitRatio": 0.6,
+      "timeToMergeHours": 1.29,
+      "planningQuality": "complete",
+      "prSize": 1054,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3"
+        ],
+        "skipReasons": "3-Playwright: backend-only, no UI changes",
+        "complianceRate": 0.875,
+        "skipAssessment": "good"
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 267,
+      "title": "Fix weekly review post-merge findings",
+      "dateMerged": "2026-02-26T06:49:31Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0,
+        "internalReviewFindings": 1,
+        "internalReviewFixed": 1,
+        "codeSimplifierFindings": 3,
+        "codeSimplifierFixed": 3
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.1,
+      "planningQuality": "complete",
+      "prSize": 279,
+      "stepCompliance": {
+        "stepsRun": [
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "1"
+        ],
+        "skipReasons": "1: follow-up PR, scope pre-defined by PR #260 post-mortem; 3-Playwright: backend-only",
+        "complianceRate": 0.875,
+        "skipAssessment": "good"
+      }
     }
   ]
 }
