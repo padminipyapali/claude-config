@@ -45,7 +45,7 @@ When creating a new project or initializing a new codebase, always run `/project
 
 ## Development Flow (Numbered Steps)
 
-Every feature or fix follows these numbered steps. Print the step number and name when starting each one (e.g., "**Step 3: Test locally**"). This makes progress visible.
+Every feature or fix follows these numbered steps. When the orchestrator is running, **let the orchestrator announce step transitions** — don't duplicate the announcement yourself. When the orchestrator is NOT running (e.g., spawning failed), fall back to printing the step number and name yourself (e.g., "**Step 3: Test locally**"). Either way, step progress must be visible to the user.
 
 | Step | Name | What happens |
 |------|------|-------------|
@@ -114,7 +114,15 @@ Status types used in the header:
    - Final summary: steps completed, steps skipped, violations found
 5. **Report at PR creation.** Before Step 5 (Push & create PR), the orchestrator sends a `PRE-PR GATE` message verifying ALL prior steps were completed, with a process compliance summary. If steps are missing, it blocks PR creation until they are addressed or the user explicitly overrides. On a clean run, it sends an `ALL CLEAR` with a brief celebration.
 
-**Communication:** The orchestrator communicates with the implementing agent via SendMessage. It reads task lists, checks git status, and monitors progress — but never edits code files.
+**Communication & Visibility:**
+
+The orchestrator is the **primary narrator** of the development session. The user should see the orchestrator's voice as the main thread of what's happening.
+
+- **The orchestrator speaks to the user directly.** It outputs its formatted status updates as direct text messages to the user (via the implementing agent relaying them). The implementing agent MUST print the orchestrator's messages verbatim when received — these are the user-facing progress narration. The implementing agent should NOT duplicate step announcements; the orchestrator owns step transitions.
+- **The implementing agent defers narration to the orchestrator.** Instead of printing "Step 3: Test locally" itself, the implementing agent sends a message to the orchestrator saying what it's about to do, and the orchestrator announces it to the user with proper formatting. The implementing agent focuses on doing the work silently; the orchestrator provides the running commentary.
+- **Proactive updates, not just milestones.** The orchestrator doesn't wait for steps to complete before speaking. It narrates what's happening in real time: "Kicking off code simplification on 4 changed files...", "Build passed, moving to lint...", "CodeRabbit review running — this usually takes 7-15 min, I'll check back."
+- **The orchestrator also communicates directly with the implementing agent** via SendMessage for process enforcement (skip challenges, violation flags). These internal messages don't need to be shown to the user unless they contain violations.
+- The orchestrator reads task lists, checks git status, and monitors progress — but never edits code files.
 
 ### Step 1: Plan (sub-steps)
 
