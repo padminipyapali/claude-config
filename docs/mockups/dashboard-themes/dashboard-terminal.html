@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEV LOOP // Self-Improvement Monitor</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: #000000;
+    color: #00ff41;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* Scanline overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.03) 0px,
+      rgba(0, 0, 0, 0.03) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+  }
+
+  /* ===== LAYOUT ===== */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    margin-bottom: 32px;
+    border-bottom: 1px solid #003300;
+    padding-bottom: 16px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: normal;
+    color: #00ff41;
+    letter-spacing: 2px;
+  }
+
+  .header .sub-header {
+    margin-top: 8px;
+    color: #ffb000;
+    font-size: 13px;
+  }
+
+  .header .sub-header span {
+    margin-right: 12px;
+  }
+
+  /* ===== SECTION DIVIDERS ===== */
+  .section-divider {
+    color: #ffb000;
+    font-size: 13px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    padding: 4px 0;
+  }
+
+  /* ===== CHART GRID ===== */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 900px) {
+    .chart-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .chart-panel {
+    background: #0a0a0a;
+    border: 1px solid #003300;
+    border-radius: 0;
+    padding: 16px;
+  }
+
+  .chart-panel canvas {
+    width: 100% !important;
+    max-height: 280px;
+  }
+
+  /* ===== ASCII TABLE ===== */
+  .summary-section {
+    margin-top: 8px;
+    margin-bottom: 32px;
+  }
+
+  .ascii-table {
+    background: #0a0a0a;
+    border: 1px solid #003300;
+    border-radius: 0;
+    padding: 16px 20px;
+    overflow-x: auto;
+    white-space: pre;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #00ff41;
+  }
+
+  .ascii-table .header-row {
+    color: #ffb000;
+  }
+
+  .ascii-table .divider-row {
+    color: #003300;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    border-top: 1px solid #003300;
+    padding-top: 16px;
+    margin-top: 16px;
+    color: #00ff41;
+    font-size: 13px;
+    opacity: 0.7;
+  }
+
+  /* ===== BLINKING CURSOR ===== */
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: #00ff41;
+    animation: blink 1s step-end infinite;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>&gt; DEV LOOP // SELF-IMPROVEMENT MONITOR</h1>
+    <div class="sub-header">
+      <span>[last scan: 2026-02-16]</span>
+      <span>[prs analyzed: 10]</span>
+      <span>[status: IMPROVING]</span>
+      <span class="cursor"></span>
+    </div>
+  </div>
+
+  <!-- CHART GRID -->
+  <div class="chart-grid">
+
+    <!-- 1. Review Comments Over Time -->
+    <div class="chart-panel">
+      <div class="section-divider">--- REVIEW COMMENTS OVER TIME ---</div>
+      <canvas id="chartComments"></canvas>
+    </div>
+
+    <!-- 2. Review Rounds Over Time -->
+    <div class="chart-panel">
+      <div class="section-divider">--- REVIEW ROUNDS OVER TIME ---</div>
+      <canvas id="chartRounds"></canvas>
+    </div>
+
+    <!-- 3. Comment Categories Over Time -->
+    <div class="chart-panel">
+      <div class="section-divider">--- COMMENT CATEGORIES OVER TIME ---</div>
+      <canvas id="chartCategories"></canvas>
+    </div>
+
+    <!-- 4. Adversarial Catch Rate -->
+    <div class="chart-panel">
+      <div class="section-divider">--- ADVERSARIAL CATCH RATE ---</div>
+      <canvas id="chartCatchRate"></canvas>
+    </div>
+
+    <!-- 5. Time to Merge -->
+    <div class="chart-panel">
+      <div class="section-divider">--- TIME TO MERGE (HOURS) ---</div>
+      <canvas id="chartMergeTime"></canvas>
+    </div>
+
+  </div>
+
+  <!-- 6. Per-Project Summary -->
+  <div class="summary-section">
+    <div class="section-divider">--- PER-PROJECT SUMMARY ---</div>
+    <div class="ascii-table" id="asciiTable"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    &gt; system operational // next scan: on merge<span class="cursor"></span>
+  </div>
+
+</div>
+
+<script>
+/**
+ * DEV LOOP // Terminal Dashboard — Version 1: Terminal
+ *
+ * Self-contained HTML mockup with embedded metrics data,
+ * Chart.js charts, and a CLI/hacker-inspired visual design.
+ */
+
+// ===== METRICS DATA =====
+const METRICS_DATA = {
+  "version": 1,
+  "prs": [
+    {"project": "second-brain", "prNumber": 38, "title": "Add memory search", "dateMerged": "2026-01-05T10:00:00Z", "reviewRounds": 3, "totalComments": 12, "commentCategories": {"security": 1, "correctness": 4, "architecture": 2, "style": 3, "performance": 0, "testing": 1, "documentation": 1, "other": 0}, "adversarialCatchRate": 0.42, "fixupCommitRatio": 0.45, "timeToMergeHours": 48, "planningQuality": "partial", "prSize": 320},
+    {"project": "lexica", "prNumber": 15, "title": "SM-2 algorithm implementation", "dateMerged": "2026-01-10T14:00:00Z", "reviewRounds": 2, "totalComments": 8, "commentCategories": {"security": 0, "correctness": 3, "architecture": 1, "style": 2, "performance": 1, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.50, "fixupCommitRatio": 0.33, "timeToMergeHours": 32, "planningQuality": "complete", "prSize": 245},
+    {"project": "nanny-app", "prNumber": 5, "title": "Multi-tenant security rules", "dateMerged": "2026-01-15T09:00:00Z", "reviewRounds": 3, "totalComments": 15, "commentCategories": {"security": 5, "correctness": 3, "architecture": 2, "style": 2, "performance": 0, "testing": 2, "documentation": 1, "other": 0}, "adversarialCatchRate": 0.47, "fixupCommitRatio": 0.40, "timeToMergeHours": 52, "planningQuality": "partial", "prSize": 410},
+    {"project": "command-center", "prNumber": 2, "title": "Telegram bot commands", "dateMerged": "2026-01-20T16:00:00Z", "reviewRounds": 2, "totalComments": 6, "commentCategories": {"security": 0, "correctness": 2, "architecture": 1, "style": 1, "performance": 0, "testing": 1, "documentation": 1, "other": 0}, "adversarialCatchRate": 0.55, "fixupCommitRatio": 0.25, "timeToMergeHours": 24, "planningQuality": "complete", "prSize": 180},
+    {"project": "second-brain", "prNumber": 42, "title": "Embedding pipeline refactor", "dateMerged": "2026-01-25T11:00:00Z", "reviewRounds": 2, "totalComments": 7, "commentCategories": {"security": 0, "correctness": 2, "architecture": 2, "style": 1, "performance": 1, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.60, "fixupCommitRatio": 0.28, "timeToMergeHours": 28, "planningQuality": "complete", "prSize": 195},
+    {"project": "lexica", "prNumber": 20, "title": "Streaming conversation UI", "dateMerged": "2026-01-30T13:00:00Z", "reviewRounds": 2, "totalComments": 9, "commentCategories": {"security": 0, "correctness": 2, "architecture": 1, "style": 3, "performance": 1, "testing": 1, "documentation": 1, "other": 0}, "adversarialCatchRate": 0.58, "fixupCommitRatio": 0.30, "timeToMergeHours": 26, "planningQuality": "complete", "prSize": 275},
+    {"project": "nanny-app", "prNumber": 8, "title": "Pay calculation engine", "dateMerged": "2026-02-03T10:00:00Z", "reviewRounds": 1, "totalComments": 4, "commentCategories": {"security": 0, "correctness": 1, "architecture": 1, "style": 1, "performance": 0, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.65, "fixupCommitRatio": 0.15, "timeToMergeHours": 18, "planningQuality": "complete", "prSize": 160},
+    {"project": "command-center", "prNumber": 5, "title": "PR status aggregation", "dateMerged": "2026-02-06T15:00:00Z", "reviewRounds": 1, "totalComments": 3, "commentCategories": {"security": 0, "correctness": 1, "architecture": 0, "style": 1, "performance": 0, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.72, "fixupCommitRatio": 0.12, "timeToMergeHours": 14, "planningQuality": "complete", "prSize": 130},
+    {"project": "second-brain", "prNumber": 47, "title": "Thread reply support", "dateMerged": "2026-02-10T12:00:00Z", "reviewRounds": 1, "totalComments": 5, "commentCategories": {"security": 0, "correctness": 1, "architecture": 1, "style": 1, "performance": 1, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.75, "fixupCommitRatio": 0.18, "timeToMergeHours": 20, "planningQuality": "complete", "prSize": 185},
+    {"project": "lexica", "prNumber": 24, "title": "Offline vocabulary sync", "dateMerged": "2026-02-14T14:00:00Z", "reviewRounds": 1, "totalComments": 3, "commentCategories": {"security": 0, "correctness": 1, "architecture": 0, "style": 1, "performance": 0, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.80, "fixupCommitRatio": 0.10, "timeToMergeHours": 12, "planningQuality": "complete", "prSize": 140}
+  ]
+};
+
+// ===== HELPERS =====
+
+/** Map project name to abbreviated x-axis label. */
+function prLabel(pr) {
+  const abbrev = {
+    'second-brain': 'SB',
+    'lexica': 'LX',
+    'nanny-app': 'NA',
+    'command-center': 'CC'
+  };
+  return (abbrev[pr.project] || pr.project) + '#' + pr.prNumber;
+}
+
+/** Compute linear regression trendline values. */
+function linearRegression(data) {
+  const n = data.length;
+  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+  data.forEach((y, x) => {
+    sumX += x;
+    sumY += y;
+    sumXY += x * y;
+    sumX2 += x * x;
+  });
+  const denom = n * sumX2 - sumX * sumX;
+  if (denom === 0) return data.map(() => sumY / n);
+  const slope = (n * sumXY - sumX * sumY) / denom;
+  const intercept = (sumY - slope * sumX) / n;
+  return data.map((_, x) => slope * x + intercept);
+}
+
+/** Pad a string to a fixed width (right-padded). */
+function padRight(str, len) {
+  str = String(str);
+  while (str.length < len) str += ' ';
+  return str;
+}
+
+/** Pad a string to a fixed width (left-padded). */
+function padLeft(str, len) {
+  str = String(str);
+  while (str.length < len) str = ' ' + str;
+  return str;
+}
+
+// ===== DATA EXTRACTION =====
+const prs = METRICS_DATA.prs;
+const labels = prs.map(prLabel);
+
+const commentsData = prs.map(pr => pr.totalComments);
+const commentsTrend = linearRegression(commentsData);
+
+const roundsData = prs.map(pr => pr.reviewRounds);
+
+const categoryKeys = ['security', 'correctness', 'architecture', 'style', 'performance', 'testing', 'documentation', 'other'];
+const categoryColors = {
+  security:      '#ff0040',
+  correctness:   '#ff6600',
+  architecture:  '#ffb000',
+  style:         '#00ff41',
+  performance:   '#00ffff',
+  testing:       '#4488ff',
+  documentation: '#aa44ff',
+  other:         '#666666'
+};
+
+const catchRateData = prs.map(pr => Math.round(pr.adversarialCatchRate * 100));
+const mergeTimeData = prs.map(pr => pr.timeToMergeHours);
+
+// ===== SHARED CHART OPTIONS =====
+const baseOptions = {
+  responsive: true,
+  maintainAspectRatio: true,
+  animation: false,
+  plugins: {
+    legend: {
+      labels: {
+        color: '#00ff41',
+        font: { family: "'Courier New', Courier, monospace", size: 11 },
+        boxWidth: 12,
+        padding: 8
+      }
+    },
+    tooltip: {
+      backgroundColor: '#000000',
+      titleColor: '#00ff41',
+      bodyColor: '#00ff41',
+      borderColor: '#00ff41',
+      borderWidth: 1,
+      titleFont: { family: "'Courier New', Courier, monospace" },
+      bodyFont: { family: "'Courier New', Courier, monospace" },
+      cornerRadius: 0
+    }
+  },
+  scales: {
+    x: {
+      ticks: {
+        color: '#00ff41',
+        font: { family: "'Courier New', Courier, monospace", size: 10 },
+        maxRotation: 45,
+        minRotation: 0
+      },
+      grid: { color: '#0a2a0a' },
+      border: { color: '#003300' }
+    },
+    y: {
+      ticks: {
+        color: '#00ff41',
+        font: { family: "'Courier New', Courier, monospace", size: 10 }
+      },
+      grid: { color: '#0a2a0a' },
+      border: { color: '#003300' }
+    }
+  }
+};
+
+/** Deep-merge helper to produce chart-specific options from base. */
+function chartOptions(overrides) {
+  const opts = JSON.parse(JSON.stringify(baseOptions));
+  if (overrides) {
+    if (overrides.plugins) {
+      if (overrides.plugins.legend) {
+        Object.assign(opts.plugins.legend, overrides.plugins.legend);
+      }
+    }
+    if (overrides.scales) {
+      for (const axis of Object.keys(overrides.scales)) {
+        if (!opts.scales[axis]) opts.scales[axis] = {};
+        Object.assign(opts.scales[axis], overrides.scales[axis]);
+      }
+    }
+    // Copy any top-level keys not already handled
+    for (const key of Object.keys(overrides)) {
+      if (key !== 'plugins' && key !== 'scales') {
+        opts[key] = overrides[key];
+      }
+    }
+  }
+  return opts;
+}
+
+// ===== CHART 1: REVIEW COMMENTS OVER TIME =====
+new Chart(document.getElementById('chartComments').getContext('2d'), {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Comments',
+        data: commentsData,
+        borderColor: '#00ff41',
+        backgroundColor: 'rgba(0, 255, 65, 0.1)',
+        borderWidth: 2,
+        pointBackgroundColor: '#00ff41',
+        pointBorderColor: '#00ff41',
+        pointRadius: 3,
+        tension: 0,
+        fill: false
+      },
+      {
+        label: 'Trendline',
+        data: commentsTrend.map(v => Math.round(v * 100) / 100),
+        borderColor: '#ffb000',
+        borderWidth: 2,
+        borderDash: [6, 4],
+        pointRadius: 0,
+        fill: false,
+        tension: 0
+      }
+    ]
+  },
+  options: chartOptions()
+});
+
+// ===== CHART 2: REVIEW ROUNDS OVER TIME =====
+new Chart(document.getElementById('chartRounds').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: labels,
+    datasets: [{
+      label: 'Rounds',
+      data: roundsData,
+      backgroundColor: '#00ff41',
+      borderColor: '#00ff41',
+      borderWidth: 1
+    }]
+  },
+  options: chartOptions({
+    scales: {
+      y: {
+        ticks: {
+          stepSize: 1,
+          color: '#00ff41',
+          font: { family: "'Courier New', Courier, monospace", size: 10 }
+        }
+      }
+    }
+  })
+});
+
+// ===== CHART 3: COMMENT CATEGORIES OVER TIME =====
+new Chart(document.getElementById('chartCategories').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: labels,
+    datasets: categoryKeys.map(key => ({
+      label: key,
+      data: prs.map(pr => pr.commentCategories[key]),
+      backgroundColor: categoryColors[key],
+      borderColor: categoryColors[key],
+      borderWidth: 0
+    }))
+  },
+  options: chartOptions({
+    scales: {
+      x: {
+        stacked: true,
+        ticks: {
+          color: '#00ff41',
+          font: { family: "'Courier New', Courier, monospace", size: 10 },
+          maxRotation: 45,
+          minRotation: 0
+        },
+        grid: { color: '#0a2a0a' },
+        border: { color: '#003300' }
+      },
+      y: {
+        stacked: true,
+        ticks: {
+          color: '#00ff41',
+          font: { family: "'Courier New', Courier, monospace", size: 10 }
+        },
+        grid: { color: '#0a2a0a' },
+        border: { color: '#003300' }
+      }
+    },
+    plugins: {
+      legend: {
+        labels: {
+          color: '#00ff41',
+          font: { family: "'Courier New', Courier, monospace", size: 9 },
+          boxWidth: 10,
+          padding: 6
+        }
+      }
+    }
+  })
+});
+
+// ===== CHART 4: ADVERSARIAL CATCH RATE =====
+new Chart(document.getElementById('chartCatchRate').getContext('2d'), {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [
+      {
+        label: 'Catch Rate %',
+        data: catchRateData,
+        borderColor: '#00ff41',
+        backgroundColor: 'rgba(0, 255, 65, 0.1)',
+        borderWidth: 2,
+        pointBackgroundColor: '#00ff41',
+        pointBorderColor: '#00ff41',
+        pointRadius: 3,
+        tension: 0,
+        fill: false
+      },
+      {
+        label: '80% Threshold',
+        data: prs.map(() => 80),
+        borderColor: '#ff0040',
+        borderWidth: 2,
+        borderDash: [8, 4],
+        pointRadius: 0,
+        fill: false,
+        tension: 0
+      }
+    ]
+  },
+  options: chartOptions({
+    scales: {
+      y: {
+        min: 0,
+        max: 100,
+        ticks: {
+          callback: function(value) { return value + '%'; },
+          color: '#00ff41',
+          font: { family: "'Courier New', Courier, monospace", size: 10 }
+        },
+        grid: { color: '#0a2a0a' },
+        border: { color: '#003300' }
+      }
+    }
+  })
+});
+
+// ===== CHART 5: TIME TO MERGE =====
+new Chart(document.getElementById('chartMergeTime').getContext('2d'), {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [{
+      label: 'Hours to Merge',
+      data: mergeTimeData,
+      borderColor: '#00ff41',
+      backgroundColor: 'rgba(0, 255, 65, 0.1)',
+      borderWidth: 2,
+      pointBackgroundColor: '#00ff41',
+      pointBorderColor: '#00ff41',
+      pointRadius: 3,
+      tension: 0,
+      fill: false
+    }]
+  },
+  options: chartOptions()
+});
+
+// ===== TABLE 6: PER-PROJECT SUMMARY =====
+(function renderAsciiTable() {
+  // Aggregate per project
+  const projects = {};
+  prs.forEach(pr => {
+    if (!projects[pr.project]) {
+      projects[pr.project] = { count: 0, totalComments: 0, totalRounds: 0, totalMerge: 0 };
+    }
+    const p = projects[pr.project];
+    p.count++;
+    p.totalComments += pr.totalComments;
+    p.totalRounds += pr.reviewRounds;
+    p.totalMerge += pr.timeToMergeHours;
+  });
+
+  // Column widths
+  const colW = { name: 17, prs: 5, comments: 14, rounds: 12, merge: 14 };
+
+  // Header
+  const headerRow =
+    padRight('PROJECT', colW.name) + '| ' +
+    padLeft('PRs', colW.prs) + ' | ' +
+    padLeft('AVG COMMENTS', colW.comments) + ' | ' +
+    padLeft('AVG ROUNDS', colW.rounds) + ' | ' +
+    padLeft('AVG MERGE (h)', colW.merge);
+
+  const divider =
+    '-'.repeat(colW.name) + '+-' +
+    '-'.repeat(colW.prs) + '-+-' +
+    '-'.repeat(colW.comments) + '-+-' +
+    '-'.repeat(colW.rounds) + '-+-' +
+    '-'.repeat(colW.merge);
+
+  let rows = '';
+  const sortedProjects = Object.keys(projects).sort();
+  sortedProjects.forEach(name => {
+    const p = projects[name];
+    const avgComments = (p.totalComments / p.count).toFixed(1);
+    const avgRounds = (p.totalRounds / p.count).toFixed(1);
+    const avgMerge = (p.totalMerge / p.count).toFixed(1);
+
+    rows +=
+      padRight(name, colW.name) + '| ' +
+      padLeft(String(p.count), colW.prs) + ' | ' +
+      padLeft(avgComments, colW.comments) + ' | ' +
+      padLeft(avgRounds, colW.rounds) + ' | ' +
+      padLeft(avgMerge, colW.merge) + '\n';
+  });
+
+  // Totals row
+  const totalPRs = prs.length;
+  const totalComments = prs.reduce((s, pr) => s + pr.totalComments, 0);
+  const totalRounds = prs.reduce((s, pr) => s + pr.reviewRounds, 0);
+  const totalMerge = prs.reduce((s, pr) => s + pr.timeToMergeHours, 0);
+
+  const totalsRow =
+    padRight('ALL', colW.name) + '| ' +
+    padLeft(String(totalPRs), colW.prs) + ' | ' +
+    padLeft((totalComments / totalPRs).toFixed(1), colW.comments) + ' | ' +
+    padLeft((totalRounds / totalPRs).toFixed(1), colW.rounds) + ' | ' +
+    padLeft((totalMerge / totalPRs).toFixed(1), colW.merge);
+
+  const table = document.getElementById('asciiTable');
+  table.innerHTML =
+    '<span class="header-row">' + headerRow + '</span>\n' +
+    '<span class="divider-row">' + divider + '</span>\n' +
+    rows +
+    '<span class="divider-row">' + divider + '</span>\n' +
+    '<span class="header-row">' + totalsRow + '</span>';
+})();
+</script>
+
+</body>
+</html>

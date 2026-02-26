@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dev Loop Self-Improvement Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    /* ===================================================================
+       Dev Loop Self-Improvement Dashboard — Version 2: Modern Analytics
+       Dark-themed SaaS-style analytics dashboard.
+       =================================================================== */
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0F172A;
+      color: #F1F5F9;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #F1F5F9;
+      margin-bottom: 4px;
+    }
+
+    .header .subtitle {
+      font-size: 14px;
+      color: #94A3B8;
+      font-weight: 400;
+    }
+
+    /* Filter chips */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #F1F5F9;
+      cursor: pointer;
+      transition: opacity 0.2s, border-color 0.2s;
+      user-select: none;
+    }
+
+    .filter-chip .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .filter-chip.inactive {
+      opacity: 0.35;
+      border-color: #1E293B;
+    }
+
+    .filter-chip:hover {
+      border-color: #475569;
+    }
+
+    /* Summary strip */
+    .summary-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .stat-pill .stat-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-pill .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 22px;
+      font-weight: 400;
+      color: #F1F5F9;
+    }
+
+    .stat-pill .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .stat-pill .stat-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Chart grid */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .chart-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 24px;
+    }
+
+    .chart-card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .chart-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #F1F5F9;
+      margin-bottom: 4px;
+    }
+
+    .chart-card .chart-desc {
+      font-size: 12px;
+      color: #64748B;
+      margin-bottom: 16px;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    /* Project summary cards */
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .project-card {
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .project-card .project-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .project-card .project-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .project-card .project-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #F1F5F9;
+    }
+
+    .project-card .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid #334155;
+    }
+
+    .project-card .metric-row:last-child {
+      border-bottom: none;
+    }
+
+    .project-card .metric-label {
+      font-size: 12px;
+      color: #94A3B8;
+    }
+
+    .project-card .metric-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: #F1F5F9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .trend-arrow {
+      font-size: 11px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    .trend-arrow.improving {
+      color: #10B981;
+    }
+
+    .trend-arrow.declining {
+      color: #EF4444;
+    }
+
+    .trend-arrow.stable {
+      color: #94A3B8;
+    }
+
+    /* Section title */
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 32px;
+      margin-bottom: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .dashboard {
+        padding: 16px;
+      }
+
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .project-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .summary-strip {
+        flex-direction: column;
+      }
+
+      .stat-pill {
+        min-width: unset;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .project-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Header -->
+    <div class="header">
+      <h1>Dev Loop Self-Improvement</h1>
+      <div class="subtitle">Last updated Feb 16, 2026 | 10 PRs analyzed</div>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="filter-bar" id="filterBar"></div>
+
+    <!-- Summary strip -->
+    <div class="summary-strip" id="summaryStrip"></div>
+
+    <!-- Charts -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Review Comments Over Time</h3>
+        <div class="chart-desc">Total review comments per PR with linear trendline</div>
+        <div class="chart-wrapper">
+          <canvas id="commentsChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>Review Rounds Over Time</h3>
+        <div class="chart-desc">Number of review rounds before merge</div>
+        <div class="chart-wrapper">
+          <canvas id="roundsChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card full-width">
+        <h3>Comment Categories Over Time</h3>
+        <div class="chart-desc">Distribution of review feedback by category across PRs</div>
+        <div class="chart-wrapper">
+          <canvas id="categoriesChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>Adversarial Catch Rate</h3>
+        <div class="chart-desc">Percentage of issues caught by self-review before external review</div>
+        <div class="chart-wrapper">
+          <canvas id="catchRateChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>Time to Merge (hours)</h3>
+        <div class="chart-desc">Hours from PR open to merge, 24h reference line</div>
+        <div class="chart-wrapper">
+          <canvas id="mergeTimeChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Per-Project Summary -->
+    <div class="section-title">Per-Project Summary</div>
+    <div class="project-grid" id="projectGrid"></div>
+  </div>
+
+  <script>
+    // =====================================================================
+    // Data & Configuration
+    // =====================================================================
+
+    const METRICS_DATA = {
+      "version": 1,
+      "prs": [
+        {"project": "second-brain", "prNumber": 38, "title": "Add memory search", "dateMerged": "2026-01-05T10:00:00Z", "reviewRounds": 3, "totalComments": 12, "commentCategories": {"security": 1, "correctness": 4, "architecture": 2, "style": 3, "performance": 0, "testing": 1, "documentation": 1, "other": 0}, "adversarialCatchRate": 0.42, "fixupCommitRatio": 0.45, "timeToMergeHours": 48, "planningQuality": "partial", "prSize": 320},
+        {"project": "lexica", "prNumber": 15, "title": "SM-2 algorithm implementation", "dateMerged": "2026-01-10T14:00:00Z", "reviewRounds": 2, "totalComments": 8, "commentCategories": {"security": 0, "correctness": 3, "architecture": 1, "style": 2, "performance": 1, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.50, "fixupCommitRatio": 0.33, "timeToMergeHours": 32, "planningQuality": "complete", "prSize": 245},
+        {"project": "nanny-app", "prNumber": 5, "title": "Multi-tenant security rules", "dateMerged": "2026-01-15T09:00:00Z", "reviewRounds": 3, "totalComments": 15, "commentCategories": {"security": 5, "correctness": 3, "architecture": 2, "style": 2, "performance": 0, "testing": 2, "documentation": 1, "other": 0}, "adversarialCatchRate": 0.47, "fixupCommitRatio": 0.40, "timeToMergeHours": 52, "planningQuality": "partial", "prSize": 410},
+        {"project": "command-center", "prNumber": 2, "title": "Telegram bot commands", "dateMerged": "2026-01-20T16:00:00Z", "reviewRounds": 2, "totalComments": 6, "commentCategories": {"security": 0, "correctness": 2, "architecture": 1, "style": 1, "performance": 0, "testing": 1, "documentation": 1, "other": 0}, "adversarialCatchRate": 0.55, "fixupCommitRatio": 0.25, "timeToMergeHours": 24, "planningQuality": "complete", "prSize": 180},
+        {"project": "second-brain", "prNumber": 42, "title": "Embedding pipeline refactor", "dateMerged": "2026-01-25T11:00:00Z", "reviewRounds": 2, "totalComments": 7, "commentCategories": {"security": 0, "correctness": 2, "architecture": 2, "style": 1, "performance": 1, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.60, "fixupCommitRatio": 0.28, "timeToMergeHours": 28, "planningQuality": "complete", "prSize": 195},
+        {"project": "lexica", "prNumber": 20, "title": "Streaming conversation UI", "dateMerged": "2026-01-30T13:00:00Z", "reviewRounds": 2, "totalComments": 9, "commentCategories": {"security": 0, "correctness": 2, "architecture": 1, "style": 3, "performance": 1, "testing": 1, "documentation": 1, "other": 0}, "adversarialCatchRate": 0.58, "fixupCommitRatio": 0.30, "timeToMergeHours": 26, "planningQuality": "complete", "prSize": 275},
+        {"project": "nanny-app", "prNumber": 8, "title": "Pay calculation engine", "dateMerged": "2026-02-03T10:00:00Z", "reviewRounds": 1, "totalComments": 4, "commentCategories": {"security": 0, "correctness": 1, "architecture": 1, "style": 1, "performance": 0, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.65, "fixupCommitRatio": 0.15, "timeToMergeHours": 18, "planningQuality": "complete", "prSize": 160},
+        {"project": "command-center", "prNumber": 5, "title": "PR status aggregation", "dateMerged": "2026-02-06T15:00:00Z", "reviewRounds": 1, "totalComments": 3, "commentCategories": {"security": 0, "correctness": 1, "architecture": 0, "style": 1, "performance": 0, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.72, "fixupCommitRatio": 0.12, "timeToMergeHours": 14, "planningQuality": "complete", "prSize": 130},
+        {"project": "second-brain", "prNumber": 47, "title": "Thread reply support", "dateMerged": "2026-02-10T12:00:00Z", "reviewRounds": 1, "totalComments": 5, "commentCategories": {"security": 0, "correctness": 1, "architecture": 1, "style": 1, "performance": 1, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.75, "fixupCommitRatio": 0.18, "timeToMergeHours": 20, "planningQuality": "complete", "prSize": 185},
+        {"project": "lexica", "prNumber": 24, "title": "Offline vocabulary sync", "dateMerged": "2026-02-14T14:00:00Z", "reviewRounds": 1, "totalComments": 3, "commentCategories": {"security": 0, "correctness": 1, "architecture": 0, "style": 1, "performance": 0, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.80, "fixupCommitRatio": 0.10, "timeToMergeHours": 12, "planningQuality": "complete", "prSize": 140}
+      ]
+    };
+
+    const PROJECT_CONFIG = {
+      'second-brain': { abbrev: 'SB', color: '#06B6D4', label: 'second-brain' },
+      'lexica':       { abbrev: 'LX', color: '#8B5CF6', label: 'lexica' },
+      'nanny-app':    { abbrev: 'NA', color: '#F59E0B', label: 'nanny-app' },
+      'command-center': { abbrev: 'CC', color: '#10B981', label: 'command-center' }
+    };
+
+    const CATEGORY_COLORS = {
+      security: '#EF4444',
+      correctness: '#F97316',
+      architecture: '#EAB308',
+      performance: '#A855F7',
+      testing: '#3B82F6',
+      style: '#06B6D4',
+      documentation: '#10B981',
+      other: '#64748B'
+    };
+
+    // Active project filters — all on by default
+    const activeProjects = new Set(Object.keys(PROJECT_CONFIG));
+
+    // =====================================================================
+    // Utility Functions
+    // =====================================================================
+
+    function linearRegression(data) {
+      const n = data.length;
+      if (n === 0) return [];
+      let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+      data.forEach((y, x) => { sumX += x; sumY += y; sumXY += x * y; sumX2 += x * x; });
+      const denom = n * sumX2 - sumX * sumX;
+      if (denom === 0) return data.map(() => sumY / n);
+      const slope = (n * sumXY - sumX * sumY) / denom;
+      const intercept = (sumY - slope * sumX) / n;
+      return data.map((_, x) => slope * x + intercept);
+    }
+
+    function getFilteredPRs() {
+      return METRICS_DATA.prs.filter(pr => activeProjects.has(pr.project));
+    }
+
+    function prLabel(pr) {
+      return PROJECT_CONFIG[pr.project].abbrev + '#' + pr.prNumber;
+    }
+
+    function avg(arr) {
+      if (arr.length === 0) return 0;
+      return arr.reduce((a, b) => a + b, 0) / arr.length;
+    }
+
+    function hexToRgba(hex, alpha) {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    // =====================================================================
+    // Shared Chart.js Defaults
+    // =====================================================================
+
+    const CHART_DEFAULTS = {
+      animation: false,
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        tooltip: {
+          backgroundColor: '#1E293B',
+          borderColor: '#475569',
+          borderWidth: 1,
+          cornerRadius: 8,
+          titleFont: { family: "'Inter', sans-serif", size: 12, weight: 500 },
+          bodyFont: { family: "'JetBrains Mono', monospace", size: 12 },
+          titleColor: '#F1F5F9',
+          bodyColor: '#94A3B8',
+          padding: 10
+        },
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: { family: "'Inter', sans-serif", size: 11 },
+            color: '#94A3B8',
+            usePointStyle: true,
+            pointStyle: 'rect',
+            padding: 16
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: '#334155' },
+          ticks: { color: '#94A3B8', font: { family: "'Inter', sans-serif", size: 11 } }
+        },
+        y: {
+          grid: { color: '#334155' },
+          ticks: { color: '#94A3B8', font: { family: "'Inter', sans-serif", size: 11 } }
+        }
+      }
+    };
+
+    function deepMerge(target, source) {
+      const output = { ...target };
+      for (const key of Object.keys(source)) {
+        if (
+          source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) &&
+          target[key] && typeof target[key] === 'object' && !Array.isArray(target[key])
+        ) {
+          output[key] = deepMerge(target[key], source[key]);
+        } else {
+          output[key] = source[key];
+        }
+      }
+      return output;
+    }
+
+    function chartOptions(overrides = {}) {
+      return deepMerge(CHART_DEFAULTS, overrides);
+    }
+
+    // =====================================================================
+    // Chart Instances (stored for re-rendering on filter change)
+    // =====================================================================
+
+    let charts = {};
+
+    // =====================================================================
+    // Render: Filter Chips
+    // =====================================================================
+
+    function renderFilters() {
+      const bar = document.getElementById('filterBar');
+      bar.innerHTML = '';
+      for (const [project, cfg] of Object.entries(PROJECT_CONFIG)) {
+        const chip = document.createElement('div');
+        chip.className = 'filter-chip' + (activeProjects.has(project) ? '' : ' inactive');
+        chip.innerHTML = `<span class="dot" style="background:${cfg.color}"></span>${cfg.label}`;
+        chip.addEventListener('click', () => {
+          if (activeProjects.has(project)) {
+            if (activeProjects.size > 1) {
+              activeProjects.delete(project);
+            }
+          } else {
+            activeProjects.add(project);
+          }
+          renderAll();
+        });
+        bar.appendChild(chip);
+      }
+    }
+
+    // =====================================================================
+    // Render: Summary Strip
+    // =====================================================================
+
+    function renderSummary() {
+      const prs = getFilteredPRs();
+      const totalPRs = prs.length;
+      const avgComments = avg(prs.map(p => p.totalComments)).toFixed(1);
+      const avgRounds = avg(prs.map(p => p.reviewRounds)).toFixed(1);
+      const avgMerge = avg(prs.map(p => p.timeToMergeHours)).toFixed(0);
+
+      const pills = [
+        { label: 'Total PRs', value: totalPRs, color: '#06B6D4', icon: '#' },
+        { label: 'Avg Comments', value: avgComments, color: '#F97316', icon: '\u2709' },
+        { label: 'Avg Rounds', value: avgRounds, color: '#A855F7', icon: '\u21BB' },
+        { label: 'Avg Merge (hrs)', value: avgMerge + 'h', color: '#10B981', icon: '\u23F1' }
+      ];
+
+      const strip = document.getElementById('summaryStrip');
+      strip.innerHTML = pills.map(p => `
+        <div class="stat-pill">
+          <div class="stat-icon" style="background:${hexToRgba(p.color, 0.15)}; color:${p.color}">${p.icon}</div>
+          <div class="stat-content">
+            <span class="stat-label">${p.label}</span>
+            <span class="stat-value">${p.value}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // =====================================================================
+    // Render: Review Comments Over Time (Line + Trendline)
+    // =====================================================================
+
+    function renderCommentsChart() {
+      const prs = getFilteredPRs();
+      const labels = prs.map(prLabel);
+      const data = prs.map(p => p.totalComments);
+      const trend = linearRegression(data);
+
+      if (charts.comments) charts.comments.destroy();
+      charts.comments = new Chart(document.getElementById('commentsChart'), {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Comments',
+              data,
+              borderColor: '#06B6D4',
+              backgroundColor: hexToRgba('#06B6D4', 0.10),
+              fill: true,
+              tension: 0.35,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              pointBackgroundColor: '#06B6D4',
+              borderWidth: 2
+            },
+            {
+              label: 'Trend',
+              data: trend,
+              borderColor: 'rgba(255,255,255,0.40)',
+              borderDash: [6, 4],
+              borderWidth: 2,
+              pointRadius: 0,
+              pointHoverRadius: 0,
+              fill: false,
+              tension: 0
+            }
+          ]
+        },
+        options: chartOptions({
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: '#334155' },
+              ticks: { color: '#94A3B8', font: { family: "'Inter', sans-serif", size: 11 } }
+            }
+          }
+        })
+      });
+    }
+
+    // =====================================================================
+    // Render: Review Rounds Over Time (Bar)
+    // =====================================================================
+
+    function renderRoundsChart() {
+      const prs = getFilteredPRs();
+      const labels = prs.map(prLabel);
+      const data = prs.map(p => p.reviewRounds);
+
+      if (charts.rounds) charts.rounds.destroy();
+      charts.rounds = new Chart(document.getElementById('roundsChart'), {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Review Rounds',
+            data,
+            backgroundColor: '#06B6D4',
+            borderColor: '#06B6D4',
+            borderWidth: 0,
+            borderRadius: 6,
+            borderSkipped: false,
+            barPercentage: 0.6
+          }]
+        },
+        options: chartOptions({
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1,
+                color: '#94A3B8',
+                font: { family: "'Inter', sans-serif", size: 11 }
+              },
+              grid: { color: '#334155' }
+            }
+          }
+        })
+      });
+    }
+
+    // =====================================================================
+    // Render: Comment Categories Over Time (Stacked Area)
+    // =====================================================================
+
+    function renderCategoriesChart() {
+      const prs = getFilteredPRs();
+      const labels = prs.map(prLabel);
+      const categories = ['security', 'correctness', 'architecture', 'performance', 'testing', 'style', 'documentation', 'other'];
+
+      const datasets = categories.map(cat => ({
+        label: cat.charAt(0).toUpperCase() + cat.slice(1),
+        data: prs.map(p => p.commentCategories[cat] || 0),
+        backgroundColor: hexToRgba(CATEGORY_COLORS[cat], 0.70),
+        borderColor: CATEGORY_COLORS[cat],
+        borderWidth: 1,
+        fill: true,
+        tension: 0.35,
+        pointRadius: 0,
+        pointHoverRadius: 4
+      }));
+
+      if (charts.categories) charts.categories.destroy();
+      charts.categories = new Chart(document.getElementById('categoriesChart'), {
+        type: 'line',
+        data: { labels, datasets },
+        options: chartOptions({
+          scales: {
+            x: {
+              grid: { color: '#334155' },
+              ticks: { color: '#94A3B8', font: { family: "'Inter', sans-serif", size: 11 } }
+            },
+            y: {
+              stacked: true,
+              beginAtZero: true,
+              grid: { color: '#334155' },
+              ticks: { color: '#94A3B8', font: { family: "'Inter', sans-serif", size: 11 } }
+            }
+          },
+          plugins: {
+            tooltip: {
+              mode: 'index',
+              backgroundColor: '#1E293B',
+              borderColor: '#475569',
+              borderWidth: 1,
+              cornerRadius: 8,
+              titleFont: { family: "'Inter', sans-serif", size: 12, weight: 500 },
+              bodyFont: { family: "'JetBrains Mono', monospace", size: 12 },
+              titleColor: '#F1F5F9',
+              bodyColor: '#94A3B8',
+              padding: 10
+            },
+            legend: {
+              position: 'bottom',
+              labels: {
+                font: { family: "'Inter', sans-serif", size: 11 },
+                color: '#94A3B8',
+                usePointStyle: true,
+                pointStyle: 'rect',
+                padding: 12
+              }
+            }
+          }
+        })
+      });
+    }
+
+    // =====================================================================
+    // Render: Adversarial Catch Rate (Line + Threshold)
+    // =====================================================================
+
+    function renderCatchRateChart() {
+      const prs = getFilteredPRs();
+      const labels = prs.map(prLabel);
+      const data = prs.map(p => p.adversarialCatchRate);
+
+      // Threshold plugin for horizontal dashed line at 0.80
+      const thresholdPlugin = {
+        id: 'catchRateThreshold',
+        afterDraw(chart) {
+          const yScale = chart.scales.y;
+          const ctx = chart.ctx;
+          const yPixel = yScale.getPixelForValue(0.80);
+          ctx.save();
+          ctx.setLineDash([6, 4]);
+          ctx.strokeStyle = '#EAB308';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(chart.chartArea.left, yPixel);
+          ctx.lineTo(chart.chartArea.right, yPixel);
+          ctx.stroke();
+          ctx.restore();
+
+          // Label
+          ctx.fillStyle = '#EAB308';
+          ctx.font = "11px 'Inter', sans-serif";
+          ctx.textAlign = 'right';
+          ctx.fillText('80% target', chart.chartArea.right, yPixel - 6);
+        }
+      };
+
+      if (charts.catchRate) charts.catchRate.destroy();
+      charts.catchRate = new Chart(document.getElementById('catchRateChart'), {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Catch Rate',
+            data,
+            borderColor: '#06B6D4',
+            backgroundColor: hexToRgba('#06B6D4', 0.10),
+            fill: true,
+            tension: 0.35,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#06B6D4',
+            borderWidth: 2
+          }]
+        },
+        options: chartOptions({
+          scales: {
+            y: {
+              min: 0,
+              max: 1.0,
+              grid: { color: '#334155' },
+              ticks: {
+                color: '#94A3B8',
+                font: { family: "'Inter', sans-serif", size: 11 },
+                callback: (v) => (v * 100).toFixed(0) + '%'
+              }
+            }
+          },
+          plugins: {
+            tooltip: {
+              backgroundColor: '#1E293B',
+              borderColor: '#475569',
+              borderWidth: 1,
+              cornerRadius: 8,
+              titleFont: { family: "'Inter', sans-serif", size: 12, weight: 500 },
+              bodyFont: { family: "'JetBrains Mono', monospace", size: 12 },
+              titleColor: '#F1F5F9',
+              bodyColor: '#94A3B8',
+              padding: 10,
+              callbacks: {
+                label: (ctx) => ctx.dataset.label + ': ' + (ctx.parsed.y * 100).toFixed(0) + '%'
+              }
+            }
+          }
+        }),
+        plugins: [thresholdPlugin]
+      });
+    }
+
+    // =====================================================================
+    // Render: Time to Merge (Line + 24h Reference)
+    // =====================================================================
+
+    function renderMergeTimeChart() {
+      const prs = getFilteredPRs();
+      const labels = prs.map(prLabel);
+      const data = prs.map(p => p.timeToMergeHours);
+
+      const referencePlugin = {
+        id: 'mergeTimeReference',
+        afterDraw(chart) {
+          const yScale = chart.scales.y;
+          const ctx = chart.ctx;
+          const yPixel = yScale.getPixelForValue(24);
+          ctx.save();
+          ctx.setLineDash([6, 4]);
+          ctx.strokeStyle = '#EAB308';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(chart.chartArea.left, yPixel);
+          ctx.lineTo(chart.chartArea.right, yPixel);
+          ctx.stroke();
+          ctx.restore();
+
+          ctx.fillStyle = '#EAB308';
+          ctx.font = "11px 'Inter', sans-serif";
+          ctx.textAlign = 'right';
+          ctx.fillText('24h target', chart.chartArea.right, yPixel - 6);
+        }
+      };
+
+      if (charts.mergeTime) charts.mergeTime.destroy();
+      charts.mergeTime = new Chart(document.getElementById('mergeTimeChart'), {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Hours to Merge',
+            data,
+            borderColor: '#06B6D4',
+            backgroundColor: hexToRgba('#06B6D4', 0.10),
+            fill: true,
+            tension: 0.35,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            pointBackgroundColor: '#06B6D4',
+            borderWidth: 2
+          }]
+        },
+        options: chartOptions({
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: '#334155' },
+              ticks: {
+                color: '#94A3B8',
+                font: { family: "'Inter', sans-serif", size: 11 },
+                callback: (v) => v + 'h'
+              }
+            }
+          },
+          plugins: {
+            tooltip: {
+              backgroundColor: '#1E293B',
+              borderColor: '#475569',
+              borderWidth: 1,
+              cornerRadius: 8,
+              titleFont: { family: "'Inter', sans-serif", size: 12, weight: 500 },
+              bodyFont: { family: "'JetBrains Mono', monospace", size: 12 },
+              titleColor: '#F1F5F9',
+              bodyColor: '#94A3B8',
+              padding: 10,
+              callbacks: {
+                label: (ctx) => ctx.dataset.label + ': ' + ctx.parsed.y + 'h'
+              }
+            }
+          }
+        }),
+        plugins: [referencePlugin]
+      });
+    }
+
+    // =====================================================================
+    // Render: Per-Project Summary Cards
+    // =====================================================================
+
+    function renderProjectCards() {
+      const allPRs = getFilteredPRs();
+      const grid = document.getElementById('projectGrid');
+      grid.innerHTML = '';
+
+      for (const [project, cfg] of Object.entries(PROJECT_CONFIG)) {
+        if (!activeProjects.has(project)) continue;
+
+        const projectPRs = allPRs.filter(p => p.project === project);
+        if (projectPRs.length === 0) continue;
+
+        const prCount = projectPRs.length;
+        const avgC = avg(projectPRs.map(p => p.totalComments));
+        const avgR = avg(projectPRs.map(p => p.reviewRounds));
+        const avgM = avg(projectPRs.map(p => p.timeToMergeHours));
+
+        // Trend: last 3 PRs (or fewer) vs overall average
+        // For "improving": fewer comments, fewer rounds, less time is better
+        const recent = projectPRs.slice(-Math.min(3, projectPRs.length));
+        const recentAvgC = avg(recent.map(p => p.totalComments));
+        const recentAvgR = avg(recent.map(p => p.reviewRounds));
+        const recentAvgM = avg(recent.map(p => p.timeToMergeHours));
+
+        function trendArrow(recentVal, overallVal, lowerIsBetter) {
+          const diff = recentVal - overallVal;
+          const threshold = overallVal * 0.05; // 5% threshold for "stable"
+          if (Math.abs(diff) < threshold) {
+            return '<span class="trend-arrow stable">\u2192</span>';
+          }
+          if (lowerIsBetter) {
+            return diff < 0
+              ? '<span class="trend-arrow improving">\u2193</span>'
+              : '<span class="trend-arrow declining">\u2191</span>';
+          } else {
+            return diff > 0
+              ? '<span class="trend-arrow improving">\u2191</span>'
+              : '<span class="trend-arrow declining">\u2193</span>';
+          }
+        }
+
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.innerHTML = `
+          <div class="project-header">
+            <span class="project-dot" style="background:${cfg.color}"></span>
+            <span class="project-name">${cfg.label}</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">PRs</span>
+            <span class="metric-value">${prCount}</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Avg Comments</span>
+            <span class="metric-value">${avgC.toFixed(1)} ${trendArrow(recentAvgC, avgC, true)}</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Avg Rounds</span>
+            <span class="metric-value">${avgR.toFixed(1)} ${trendArrow(recentAvgR, avgR, true)}</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Avg Merge</span>
+            <span class="metric-value">${avgM.toFixed(0)}h ${trendArrow(recentAvgM, avgM, true)}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      }
+    }
+
+    // =====================================================================
+    // Render All
+    // =====================================================================
+
+    function renderAll() {
+      renderFilters();
+      renderSummary();
+      renderCommentsChart();
+      renderRoundsChart();
+      renderCategoriesChart();
+      renderCatchRateChart();
+      renderMergeTimeChart();
+      renderProjectCards();
+    }
+
+    // Initialize on load
+    renderAll();
+  </script>
+</body>
+</html>

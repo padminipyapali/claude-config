@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Development Process — Claude Code Workflow — Warm Paper Theme</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Source+Code+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fdf6e3;
+      --bg-warm: #f5edda;
+      --surface: #faf3e0;
+      --surface-raised: #f0e8d2;
+      --surface-hover: #ebe3cc;
+      --border: #e0d5b8;
+      --border-active: #c9b990;
+      --text: #5b4a3f;
+      --text-bright: #352a21;
+      --text-muted: #8c7a6b;
+      --text-dim: #b3a393;
+
+      /* Step accent colors — warm palette */
+      --step1: #c05746;  /* terracotta */
+      --step1-dim: #c0574615;
+      --step1-glow: #c0574635;
+      --step2: #6b8f71;  /* sage green */
+      --step2-dim: #6b8f7115;
+      --step2-glow: #6b8f7135;
+      --step3: #d4a03c;  /* amber */
+      --step3-dim: #d4a03c15;
+      --step3-glow: #d4a03c35;
+      --step4: #7b4d6e;  /* wine */
+      --step4-dim: #7b4d6e15;
+      --step4-glow: #7b4d6e35;
+      --step5: #6b8caa;  /* dusty blue */
+      --step5-dim: #6b8caa15;
+      --step5-glow: #6b8caa35;
+      --step6: #7a8450;  /* olive */
+      --step6-dim: #7a845015;
+      --step6-glow: #7a845035;
+
+      --accent-warn: #d4a03c;   /* amber */
+      --accent-info: #6b8f71;   /* sage */
+      --accent-success: #7a8450; /* olive */
+      --accent-danger: #c05746; /* terracotta */
+
+      --mono: 'Source Code Pro', 'SF Mono', 'Fira Code', monospace;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'Source Serif 4', 'Georgia', serif;
+
+      --sidebar-width: 280px;
+      --header-height: 56px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; scroll-padding-top: calc(var(--header-height) + 24px); }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      min-height: 100vh;
+      font-size: 15px;
+    }
+
+    /* --- Paper grain background --- */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(139, 119, 90, 0.02) 2px,
+          rgba(139, 119, 90, 0.02) 4px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 3px,
+          rgba(139, 119, 90, 0.015) 3px,
+          rgba(139, 119, 90, 0.015) 5px
+        ),
+        linear-gradient(
+          135deg,
+          rgba(180, 160, 120, 0.04) 0%,
+          rgba(160, 140, 100, 0.02) 25%,
+          rgba(180, 160, 120, 0.05) 50%,
+          rgba(160, 140, 100, 0.02) 75%,
+          rgba(180, 160, 120, 0.04) 100%
+        );
+      opacity: 1;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* --- Header --- */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-height);
+      background: var(--bg);
+      border-bottom: none;
+      box-shadow: 0 1px 4px rgba(100, 80, 60, 0.1), 0 0 0 1px rgba(100, 80, 60, 0.05);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      background: rgba(253, 246, 227, 0.92);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 6px 8px;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--step1), var(--step4));
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #fdf6e3;
+      font-weight: 700;
+      font-family: var(--mono);
+      box-shadow: 0 2px 6px rgba(100, 60, 40, 0.2);
+    }
+
+    .header-title {
+      font-family: var(--mono);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-bright);
+      letter-spacing: -0.02em;
+    }
+
+    .header-title span {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .header-version {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      padding: 2px 8px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      margin-left: auto;
+    }
+
+    /* --- Sidebar --- */
+    .sidebar {
+      position: fixed;
+      top: var(--header-height);
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-width);
+      background: var(--bg-warm);
+      border-right: none;
+      box-shadow: 2px 0 8px rgba(100, 80, 60, 0.06);
+      overflow-y: auto;
+      padding: 20px 0;
+      z-index: 90;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .nav-section {
+      margin-bottom: 24px;
+    }
+
+    .nav-section-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      padding: 0 24px;
+      margin-bottom: 8px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 24px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 400;
+      transition: all 0.15s ease;
+      border-left: 2px solid transparent;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+      background: rgba(200, 180, 140, 0.2);
+      border-left-color: var(--border-active);
+    }
+
+    .nav-link.active {
+      color: var(--text-bright);
+      background: rgba(200, 180, 140, 0.25);
+      border-left-color: var(--step1);
+    }
+
+    .nav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .nav-link .nav-step-num {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #fdf6e3;
+    }
+
+    /* --- Main content --- */
+    .main {
+      margin-left: var(--sidebar-width);
+      padding: calc(var(--header-height) + 40px) 60px 80px;
+      max-width: calc(var(--sidebar-width) + 900px);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* --- Hero --- */
+    .hero {
+      margin-bottom: 56px;
+    }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1.15;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--step1), var(--step4));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* --- Pipeline quick reference --- */
+    .pipeline {
+      background: var(--surface);
+      border: none;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 56px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(100, 80, 60, 0.08), 0 0 0 1px rgba(100, 80, 60, 0.06);
+    }
+
+    .pipeline::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--step1), var(--step2), var(--step3), var(--step4), var(--step5), var(--step6));
+    }
+
+    .pipeline-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+    }
+
+    .pipeline-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .pipeline-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .pipeline-step:hover {
+      background: var(--surface-hover);
+    }
+
+    .pipeline-num {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 700;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fdf6e3;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    }
+
+    .pipeline-step-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pipeline-step-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-bright);
+      line-height: 1.2;
+    }
+
+    .pipeline-step-desc {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      line-height: 1.3;
+    }
+
+    .pipeline-arrow {
+      color: var(--text-dim);
+      font-size: 16px;
+      flex-shrink: 0;
+      margin: 0 2px;
+      user-select: none;
+    }
+
+    /* --- Section --- */
+    .section {
+      margin-bottom: 64px;
+      scroll-margin-top: calc(var(--header-height) + 24px);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(100, 80, 60, 0.1);
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text-bright);
+      letter-spacing: -0.01em;
+    }
+
+    .section-anchor {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-left: auto;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .section-header:hover .section-anchor { opacity: 1; }
+
+    /* --- Step card --- */
+    .step-card {
+      background: var(--surface);
+      border: none;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+      scroll-margin-top: calc(var(--header-height) + 24px);
+      box-shadow: 0 1px 6px rgba(100, 80, 60, 0.08), 0 0 0 1px rgba(100, 80, 60, 0.05);
+    }
+
+    .step-card:hover {
+      box-shadow: 0 3px 12px rgba(100, 80, 60, 0.12), 0 0 0 1px rgba(100, 80, 60, 0.08);
+    }
+
+    .step-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 24px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .step-card-num {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fdf6e3;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    }
+
+    .step-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-bright);
+      flex: 1;
+      font-family: var(--serif);
+    }
+
+    .step-card-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .step-card-chevron {
+      color: var(--text-dim);
+      font-size: 18px;
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .step-card.open .step-card-chevron {
+      transform: rotate(180deg);
+    }
+
+    .step-card-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .step-card.open .step-card-body {
+      max-height: 5000px;
+    }
+
+    .step-card-content {
+      padding: 0 24px 24px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+
+    /* --- Sub-step --- */
+    .substep {
+      margin-bottom: 24px;
+      padding-left: 20px;
+      border-left: 2px solid var(--border);
+    }
+
+    .substep:last-child { margin-bottom: 0; }
+
+    .substep-label {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .substep-label .tag {
+      font-size: 9px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .substep h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 8px;
+    }
+
+    .substep p, .substep li {
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .substep ul {
+      list-style: none;
+      margin: 8px 0;
+    }
+
+    .substep ul li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 4px;
+    }
+
+    .substep ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-dim);
+    }
+
+    /* --- Content elements --- */
+    p { margin-bottom: 12px; }
+    p:last-child { margin-bottom: 0; }
+
+    .content-block {
+      margin-bottom: 20px;
+    }
+
+    .content-block h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 10px;
+      font-family: var(--serif);
+    }
+
+    .content-block p {
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .content-block ul, .content-block ol {
+      padding-left: 0;
+      list-style: none;
+      margin: 10px 0;
+    }
+
+    .content-block ul li, .content-block ol li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 6px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .content-block ul li::before {
+      content: '';
+      position: absolute;
+      left: 2px;
+      top: 10px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text-dim);
+    }
+
+    .content-block ol { counter-reset: item; }
+    .content-block ol li { counter-increment: item; }
+    .content-block ol li::before {
+      content: counter(item) '.';
+      position: absolute;
+      left: 0;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-dim);
+    }
+
+    /* --- Code blocks --- */
+    code {
+      font-family: var(--mono);
+      font-size: 12px;
+      background: #f0e8d2;
+      padding: 2px 7px;
+      border-radius: 4px;
+      color: #7a4a2e;
+      border: 1px solid rgba(160, 140, 100, 0.3);
+    }
+
+    .code-block {
+      background: #f0e8d2;
+      border: none;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 12px 0;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.7;
+      color: #5b4a3f;
+      overflow-x: auto;
+      box-shadow: inset 0 1px 3px rgba(100, 80, 60, 0.08);
+    }
+
+    .code-block .comment { color: var(--text-dim); }
+    .code-block .keyword { color: var(--step1); }
+    .code-block .string { color: var(--step2); }
+    .code-block .field { color: #b37d2e; }
+
+    /* --- Callout boxes --- */
+    .callout {
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      font-size: 13px;
+      line-height: 1.7;
+      display: flex;
+      gap: 12px;
+    }
+
+    .callout-icon {
+      flex-shrink: 0;
+      font-size: 16px;
+      margin-top: 1px;
+    }
+
+    .callout-warn {
+      background: rgba(212, 160, 60, 0.1);
+      border: 1px solid rgba(212, 160, 60, 0.25);
+      color: #8a6a1e;
+      box-shadow: 0 1px 4px rgba(212, 160, 60, 0.08);
+    }
+
+    .callout-info {
+      background: rgba(107, 143, 113, 0.1);
+      border: 1px solid rgba(107, 143, 113, 0.25);
+      color: #4a6b4e;
+      box-shadow: 0 1px 4px rgba(107, 143, 113, 0.08);
+    }
+
+    .callout-danger {
+      background: rgba(192, 87, 70, 0.08);
+      border: 1px solid rgba(192, 87, 70, 0.25);
+      color: #8f3a2a;
+      box-shadow: 0 1px 4px rgba(192, 87, 70, 0.08);
+    }
+
+    .callout-success {
+      background: rgba(122, 132, 80, 0.1);
+      border: 1px solid rgba(122, 132, 80, 0.25);
+      color: #556030;
+      box-shadow: 0 1px 4px rgba(122, 132, 80, 0.08);
+    }
+
+    /* --- Review checklist --- */
+    .checklist {
+      margin: 12px 0;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .check-icon {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--border-active);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+      font-size: 10px;
+      color: var(--accent-success);
+    }
+
+    .check-item strong {
+      color: var(--text-bright);
+    }
+
+    /* --- Doc card grid --- */
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .doc-card {
+      background: var(--surface);
+      border: none;
+      border-radius: 8px;
+      padding: 16px;
+      transition: box-shadow 0.2s, transform 0.2s;
+      box-shadow: 0 1px 4px rgba(100, 80, 60, 0.08), 0 0 0 1px rgba(100, 80, 60, 0.05);
+    }
+
+    .doc-card:hover {
+      box-shadow: 0 3px 10px rgba(100, 80, 60, 0.12), 0 0 0 1px rgba(100, 80, 60, 0.08);
+      transform: translateY(-1px);
+    }
+
+    .doc-card-path {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--step1);
+      margin-bottom: 6px;
+    }
+
+    .doc-card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* --- PR template --- */
+    .pr-template {
+      background: var(--surface-raised);
+      border: none;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 16px 0;
+      box-shadow: 0 1px 6px rgba(100, 80, 60, 0.08), 0 0 0 1px rgba(100, 80, 60, 0.05);
+    }
+
+    .pr-template-header {
+      background: var(--surface);
+      padding: 10px 16px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pr-template-body {
+      padding: 16px 20px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.8;
+      color: var(--text);
+      white-space: pre-line;
+    }
+
+    .pr-template-body .heading {
+      color: var(--text-bright);
+      font-weight: 600;
+    }
+
+    .pr-template-body .placeholder {
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    /* --- Changelog --- */
+    .changelog {
+      background: var(--surface);
+      border: none;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(100, 80, 60, 0.08), 0 0 0 1px rgba(100, 80, 60, 0.05);
+    }
+
+    .changelog-header {
+      background: var(--surface-raised);
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .changelog-header-text {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-bright);
+    }
+
+    .changelog-prompt {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+
+    .changelog-body {
+      padding: 20px 24px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    .changelog-entry {
+      display: flex;
+      gap: 16px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .changelog-entry:last-child { border-bottom: none; }
+
+    .changelog-date {
+      color: var(--text-dim);
+      flex-shrink: 0;
+      white-space: nowrap;
+      min-width: 90px;
+    }
+
+    .changelog-tag {
+      font-size: 9px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+      height: fit-content;
+      margin-top: 3px;
+    }
+
+    .changelog-tag-added {
+      background: rgba(122, 132, 80, 0.2);
+      color: var(--accent-success);
+    }
+
+    .changelog-tag-changed {
+      background: rgba(107, 143, 113, 0.2);
+      color: var(--accent-info);
+    }
+
+    .changelog-tag-init {
+      background: rgba(192, 87, 70, 0.15);
+      color: var(--step1);
+    }
+
+    .changelog-desc {
+      color: var(--text);
+    }
+
+    /* --- Flow connector between step cards --- */
+    .flow-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 24px;
+      position: relative;
+    }
+
+    .flow-connector::before {
+      content: '';
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--border-active), var(--border));
+    }
+
+    .flow-connector-arrow {
+      position: absolute;
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+
+    /* --- Knowledge system diagram --- */
+    .knowledge-diagram {
+      display: grid;
+      grid-template-columns: 1fr 40px 1fr;
+      gap: 0;
+      align-items: center;
+      margin: 20px 0;
+    }
+
+    .knowledge-node {
+      background: var(--surface);
+      border: none;
+      border-radius: 8px;
+      padding: 14px 16px;
+      box-shadow: 0 1px 4px rgba(100, 80, 60, 0.08), 0 0 0 1px rgba(100, 80, 60, 0.05);
+    }
+
+    .knowledge-node-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 4px;
+    }
+
+    .knowledge-node-path {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+
+    .knowledge-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 900px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 200;
+        width: 280px;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(60, 50, 40, 0.4);
+        z-index: 150;
+      }
+
+      .sidebar-overlay.open { display: block; }
+
+      .menu-toggle { display: block; }
+
+      .main {
+        margin-left: 0;
+        padding: calc(var(--header-height) + 24px) 20px 60px;
+        max-width: 100%;
+      }
+
+      .hero h1 { font-size: 32px; }
+
+      .pipeline-steps { flex-direction: column; align-items: stretch; }
+      .pipeline-arrow { transform: rotate(90deg); text-align: center; }
+
+      .doc-grid { grid-template-columns: 1fr; }
+
+      .changelog-entry { flex-direction: column; gap: 6px; }
+
+      .knowledge-diagram {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .knowledge-arrow { transform: rotate(90deg); }
+    }
+
+    /* --- Print --- */
+    @media print {
+      body::before { display: none; }
+      .header, .sidebar, .menu-toggle, .sidebar-overlay { display: none !important; }
+      .main { margin-left: 0; padding: 20px; max-width: 100%; }
+      .step-card-body { max-height: none !important; overflow: visible !important; }
+      .section { page-break-inside: avoid; }
+      .hero h1 { font-size: 28px; }
+      * { color: #1a1a1a !important; background: white !important; border-color: #ddd !important; }
+      .pipeline::before { display: none; }
+    }
+
+    /* --- Scrollbar --- */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border-active); }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-inner">
+    <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle navigation">&#9776;</button>
+    <div class="header-brand">
+      <div class="header-icon">&lambda;</div>
+      <div class="header-title">dev-process <span>/ documentation</span></div>
+    </div>
+    <div class="header-version">v1.0</div>
+  </div>
+</header>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="nav-section">
+    <div class="nav-section-title">Overview</div>
+    <a href="#session-start" class="nav-link"><span class="nav-dot" style="background: var(--accent-warn)"></span> Session Start Protocol</a>
+    <a href="#general-rules" class="nav-link"><span class="nav-dot" style="background: var(--text-dim)"></span> General Rules</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Development Flow</div>
+    <a href="#step-1" class="nav-link"><span class="nav-step-num" style="background: var(--step1)">1</span> Plan</a>
+    <a href="#step-2" class="nav-link"><span class="nav-step-num" style="background: var(--step2)">2</span> Implement</a>
+    <a href="#step-3" class="nav-link"><span class="nav-step-num" style="background: var(--step3)">3</span> Test Locally</a>
+    <a href="#step-4" class="nav-link"><span class="nav-step-num" style="background: var(--step4)">4</span> Code Review Loop</a>
+    <a href="#step-5" class="nav-link"><span class="nav-step-num" style="background: var(--step5)">5</span> Push &amp; PR</a>
+    <a href="#step-6" class="nav-link"><span class="nav-step-num" style="background: var(--step6)">6</span> Post-merge</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Supporting Systems</div>
+    <a href="#living-docs" class="nav-link"><span class="nav-dot" style="background: var(--step2)"></span> Living Documentation</a>
+    <a href="#flow-diagrams" class="nav-link"><span class="nav-dot" style="background: var(--step5)"></span> Flow Diagrams</a>
+    <a href="#knowledge" class="nav-link"><span class="nav-dot" style="background: var(--step1)"></span> Knowledge System</a>
+    <a href="#product-discovery" class="nav-link"><span class="nav-dot" style="background: var(--step4)"></span> Product Discovery</a>
+    <a href="#conflict-detection" class="nav-link"><span class="nav-dot" style="background: var(--accent-danger)"></span> Conflict Detection</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Reference</div>
+    <a href="#pr-template" class="nav-link"><span class="nav-dot" style="background: var(--text-dim)"></span> PR Template</a>
+    <a href="#changelog" class="nav-link"><span class="nav-dot" style="background: var(--accent-success)"></span> Changelog</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>Development <em>Process</em></h1>
+    <p class="hero-subtitle">
+      The complete workflow for building features, reviewing code, and continuously improving&mdash;from first question to post-merge learning capture.
+    </p>
+  </div>
+
+  <!-- Pipeline Quick Reference -->
+  <div class="pipeline">
+    <div class="pipeline-label">Quick Reference &mdash; 6-Step Pipeline</div>
+    <div class="pipeline-steps">
+      <a href="#step-1" class="pipeline-step">
+        <div class="pipeline-num" style="background: var(--step1)">1</div>
+        <div class="pipeline-step-info">
+          <div class="pipeline-step-name">Plan</div>
+          <div class="pipeline-step-desc">Questions &rarr; Plan &rarr; Adversarial review</div>
+        </div>
+      </a>
+      <div class="pipeline-arrow">&rarr;</div>
+      <a href="#step-2" class="pipeline-step">
+        <div class="pipeline-num" style="background: var(--step2)">2</div>
+        <div class="pipeline-step-info">
+          <div class="pipeline-step-name">Implement</div>
+          <div class="pipeline-step-desc">Feature branch, project conventions</div>
+        </div>
+      </a>
+      <div class="pipeline-arrow">&rarr;</div>
+      <a href="#step-3" class="pipeline-step">
+        <div class="pipeline-num" style="background: var(--step3)">3</div>
+        <div class="pipeline-step-info">
+          <div class="pipeline-step-name">Test</div>
+          <div class="pipeline-step-desc">Suite, lint, type-check</div>
+        </div>
+      </a>
+      <div class="pipeline-arrow">&rarr;</div>
+      <a href="#step-4" class="pipeline-step">
+        <div class="pipeline-num" style="background: var(--step4)">4</div>
+        <div class="pipeline-step-info">
+          <div class="pipeline-step-name">Review Loop</div>
+          <div class="pipeline-step-desc">Simplify &rarr; CR &rarr; Adversarial &rarr; CI</div>
+        </div>
+      </a>
+      <div class="pipeline-arrow">&rarr;</div>
+      <a href="#step-5" class="pipeline-step">
+        <div class="pipeline-num" style="background: var(--step5)">5</div>
+        <div class="pipeline-step-info">
+          <div class="pipeline-step-name">Push &amp; PR</div>
+          <div class="pipeline-step-desc">gh pr create + local review</div>
+        </div>
+      </a>
+      <div class="pipeline-arrow">&rarr;</div>
+      <a href="#step-6" class="pipeline-step">
+        <div class="pipeline-num" style="background: var(--step6)">6</div>
+        <div class="pipeline-step-info">
+          <div class="pipeline-step-name">Post-merge</div>
+          <div class="pipeline-step-desc">Post-mortem + dashboard</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- SESSION START PROTOCOL -->
+  <div class="section" id="session-start">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--step3-dim); color: var(--step3);">&#9888;</div>
+      <h2 class="section-title">Session Start Protocol</h2>
+      <span class="section-anchor">#session-start</span>
+    </div>
+
+    <div class="callout callout-danger">
+      <span class="callout-icon">&#9632;</span>
+      <div><strong>Non-negotiable.</strong> Run these checks on EVERY session start&mdash;including continuations. Skipping this has caused entire sessions of wasted work when concurrent agents modified the same repo.</div>
+    </div>
+
+    <div class="content-block">
+      <p>Before making any code changes, run these three checks for each repo you plan to modify:</p>
+      <ol>
+        <li><strong>Check uncommitted changes</strong> &mdash; <code>git -C &lt;path&gt; status --porcelain</code></li>
+        <li><strong>Check for active agents</strong> &mdash; <code>ps aux | grep -E 'claude|claude-code' | grep -v grep | grep '&lt;path&gt;'</code></li>
+        <li><strong>Check for git lock files</strong> &mdash; <code>ls &lt;path&gt;/.git/index.lock 2>/dev/null</code></li>
+      </ol>
+    </div>
+
+    <div class="content-block">
+      <p><strong>Never trust continuation summaries</strong> about repo state. The summary reflects the previous session. Other agents may have started, files may have changed, branches may have moved. Verify it yourself.</p>
+      <p>If conflicts are detected, <strong>queue the task</strong> to <code>~/.claude/task-queue.md</code> instead of editing. Read-only exploration is still fine.</p>
+    </div>
+  </div>
+
+  <!-- GENERAL RULES -->
+  <div class="section" id="general-rules">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--surface-raised); color: var(--text-muted);">&#9670;</div>
+      <h2 class="section-title">General Rules</h2>
+      <span class="section-anchor">#general-rules</span>
+    </div>
+
+    <div class="content-block">
+      <ul>
+        <li><strong>All changes via PRs</strong> &mdash; never commit directly to main.</li>
+        <li><strong>Feature branches:</strong> <code>&lt;type&gt;/&lt;short-description&gt;</code> where type is <code>feat</code>, <code>fix</code>, <code>refactor</code>, <code>chore</code>, <code>docs</code>, or <code>test</code>.</li>
+        <li><strong>Keep PRs focused</strong> on one concern &mdash; don&rsquo;t mix refactoring with features.</li>
+        <li><strong>Tests required</strong> for every feature and bug fix. Docs-only or config PRs may skip with justification.</li>
+        <li><strong>Commit messages:</strong> complete sentences with periods.</li>
+        <li><strong>Never commit secrets,</strong> API keys, or credentials. Use environment variables.</li>
+        <li><strong>Semantic versioning</strong> (MAJOR.MINOR.PATCH) for projects with releases.</li>
+        <li><strong>Issue lifecycle:</strong> include <code>Closes #N</code> in the PR commit message. If an issue spans multiple PRs, close manually after the last one merges.</li>
+        <li><strong>Sort config files</strong> (.env.example, etc.) alphabetically.</li>
+      </ul>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">&#9679;</span>
+      <div>Print the step number and name when starting each one (e.g., <strong>&ldquo;Step 3: Test locally&rdquo;</strong>). This makes progress visible and helps track what was completed or skipped.</div>
+    </div>
+  </div>
+
+  <!-- STEP 1: PLAN -->
+  <div class="section" id="step-1">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--step1-dim); color: var(--step1);">1</div>
+      <h2 class="section-title">Step 1: Plan</h2>
+      <span class="section-anchor">#step-1</span>
+    </div>
+
+    <!-- 1a -->
+    <div class="step-card open" id="step-1a">
+      <div class="step-card-header" onclick="toggleCard(this)">
+        <div class="step-card-num" style="background: var(--step1)">1a</div>
+        <div class="step-card-title">Ask Clarifying Questions</div>
+        <div class="step-card-badge" style="background: var(--step1-dim); color: var(--step1);">required</div>
+        <div class="step-card-chevron">&#9660;</div>
+      </div>
+      <div class="step-card-body">
+        <div class="step-card-content">
+          <p>Before writing any plan, ask the user 2&ndash;4 clarifying questions. Don&rsquo;t accept the first framing&mdash;probe deeper.</p>
+          <div class="checklist">
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div><strong>Scope &amp; intent:</strong> &ldquo;What&rsquo;s the core problem? What does success look like?&rdquo;</div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div><strong>Entry points &amp; edge cases:</strong> &ldquo;Who hits this and how? What about [alternative path]?&rdquo;</div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div><strong>Constraints:</strong> &ldquo;Are there performance, cost, or timeline constraints I should know about?&rdquo;</div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div><strong>Prior art:</strong> &ldquo;Have you tried anything already? Is there a manual workaround today?&rdquo;</div>
+            </div>
+          </div>
+          <div class="callout callout-info">
+            <span class="callout-icon">&#9679;</span>
+            <div>Read <code>~/.claude/knowledge/strategic-decisions.md</code> before questioning&mdash;prior product decisions provide context. Wait for answers before proceeding to 1b.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-connector-arrow">&#9660;</div></div>
+
+    <!-- 1b -->
+    <div class="step-card" id="step-1b">
+      <div class="step-card-header" onclick="toggleCard(this)">
+        <div class="step-card-num" style="background: var(--step1)">1b</div>
+        <div class="step-card-title">Write the Plan</div>
+        <div class="step-card-badge" style="background: var(--step1-dim); color: var(--step1);">required</div>
+        <div class="step-card-chevron">&#9660;</div>
+      </div>
+      <div class="step-card-body">
+        <div class="step-card-content">
+          <p>With the user&rsquo;s answers in hand, read relevant knowledge files from <code>~/.claude/knowledge/</code>. Enumerate all entry points, trace each path end-to-end, plan the approach. For non-trivial work, enter plan mode.</p>
+          <h3 style="margin-top: 16px; font-size: 14px; color: var(--text-bright);">Every plan must:</h3>
+          <div class="checklist">
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div>Enumerate <strong>ALL entry points</strong> (new vs resume, create vs update, empty vs populated state).</div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div>Trace each path end-to-end: data read, state changed, API calls fired, UI rendered.</div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div>Verify <strong>bidirectional state coverage:</strong> all values of state A produce correct behavior B.</div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div>Answer: &ldquo;If a user hit this feature after [alternative entry point], what would happen?&rdquo;</div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div>Include a <strong>Performance &amp; Cost Impact</strong> section: latency, API calls &amp; cost, DB load, code path frequency, mitigations.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-connector-arrow">&#9660;</div></div>
+
+    <!-- 1c -->
+    <div class="step-card" id="step-1c">
+      <div class="step-card-header" onclick="toggleCard(this)">
+        <div class="step-card-num" style="background: var(--step1)">1c</div>
+        <div class="step-card-title">Adversarial Plan Review</div>
+        <div class="step-card-badge" style="background: rgba(212, 160, 60, 0.15); color: var(--accent-warn);">automatic</div>
+        <div class="step-card-chevron">&#9660;</div>
+      </div>
+      <div class="step-card-body">
+        <div class="step-card-content">
+          <p>A separate reviewing agent is spawned automatically to challenge the plan. This covers two levels:</p>
+
+          <div class="substep" style="border-left-color: var(--step1)">
+            <div class="substep-label" style="color: var(--step1)">Technical Review</div>
+            <ul>
+              <li><strong>Missed entry points</strong> &mdash; user paths, edge cases, or state transitions not accounted for.</li>
+              <li><strong>Assumption challenges</strong> &mdash; things assumed about existing code that haven&rsquo;t been verified.</li>
+              <li><strong>Scope creep or under-scoping</strong> &mdash; too much for one PR, or missing something that forces a follow-up.</li>
+              <li><strong>Alternative approaches</strong> &mdash; simpler or more robust ways to achieve the same goal.</li>
+              <li><strong>Risk flags</strong> &mdash; data loss potential, breaking changes, performance concerns, security gaps.</li>
+              <li><strong>Knowledge file gaps</strong> &mdash; contradictions with patterns from <code>~/.claude/knowledge/</code>.</li>
+            </ul>
+          </div>
+
+          <div class="substep" style="border-left-color: var(--step4)">
+            <div class="substep-label" style="color: var(--step4)">Product-Level Review</div>
+            <ul>
+              <li><strong>Is this worth building?</strong> &mdash; user impact vs. engineering cost.</li>
+              <li><strong>Simpler alternatives</strong> &mdash; config changes, existing features, manual workarounds that achieve 80% of the value at 20% of the cost.</li>
+              <li><strong>User frequency &amp; urgency</strong> &mdash; daily pain point or once-a-month inconvenience?</li>
+              <li><strong>Build vs. defer</strong> &mdash; minimal version now and iterate, or full plan necessary?</li>
+              <li><strong>Second-order effects</strong> &mdash; maintenance burden, user confusion, locked-in design direction.</li>
+            </ul>
+          </div>
+
+          <div class="callout callout-warn">
+            <span class="callout-icon">&#9632;</span>
+            <div>Verdict: <strong>approve</strong>, <strong>approve with notes</strong>, or <strong>revise</strong>. If &ldquo;revise&rdquo;, address feedback and re-run. Cap at 2 revision rounds&mdash;if still contested, present both perspectives to the user.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: IMPLEMENT -->
+  <div class="section" id="step-2">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--step2-dim); color: var(--step2);">2</div>
+      <h2 class="section-title">Step 2: Implement</h2>
+      <span class="section-anchor">#step-2</span>
+    </div>
+    <div class="content-block">
+      <p>Write the code on a feature branch. Follow project <code>CLAUDE.md</code> conventions.</p>
+      <ul>
+        <li>Branch naming: <code>&lt;type&gt;/&lt;short-description&gt;</code></li>
+        <li>One concern per PR &mdash; don&rsquo;t mix refactoring with features.</li>
+        <li>Module-level documentation headers on all top-level files.</li>
+        <li>Early return before dead computation.</li>
+        <li>If a fix is under 5 lines, do it now &mdash; only defer fixes needing new infrastructure.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- STEP 3: TEST -->
+  <div class="section" id="step-3">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--step3-dim); color: var(--step3);">3</div>
+      <h2 class="section-title">Step 3: Test Locally</h2>
+      <span class="section-anchor">#step-3</span>
+    </div>
+    <div class="content-block">
+      <p>Run the project&rsquo;s test suite, linter, and type-checker. Fix all failures before proceeding.</p>
+      <ul>
+        <li>Test every type/feature combination, not just the happy path.</li>
+        <li>Assert all side effects, not just the primary return value.</li>
+        <li>Route changes need integration tests. State/flow changes need flow tests. Pure logic needs unit tests.</li>
+        <li>Pure-function unit tests alone are NOT sufficient for route or flow changes.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- STEP 4: CODE REVIEW LOOP -->
+  <div class="section" id="step-4">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--step4-dim); color: var(--step4);">4</div>
+      <h2 class="section-title">Step 4: Code Review Loop</h2>
+      <span class="section-anchor">#step-4</span>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">&#9679;</span>
+      <div>Ask the user: <strong>&ldquo;Ready to run the code review loop?&rdquo;</strong> If yes, run all sub-steps automatically without pausing for approval between them. Report results at the end.</div>
+    </div>
+
+    <!-- 4a -->
+    <div class="step-card" id="step-4a">
+      <div class="step-card-header" onclick="toggleCard(this)">
+        <div class="step-card-num" style="background: var(--step4)">4a</div>
+        <div class="step-card-title">Code Simplification</div>
+        <div class="step-card-chevron">&#9660;</div>
+      </div>
+      <div class="step-card-body">
+        <div class="step-card-content">
+          <p>Run code-simplifier on changed files (compared to <code>main</code>). Focus on clarity, consistency, and maintainability while preserving all functionality.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-connector-arrow">&#9660;</div></div>
+
+    <!-- 4b -->
+    <div class="step-card" id="step-4b">
+      <div class="step-card-header" onclick="toggleCard(this)">
+        <div class="step-card-num" style="background: var(--step4)">4b</div>
+        <div class="step-card-title">CodeRabbit Review</div>
+        <div class="step-card-chevron">&#9660;</div>
+      </div>
+      <div class="step-card-body">
+        <div class="step-card-content">
+          <p>Run <code>/coderabbit:review --base main</code>. Fix all critical and high findings. Re-run to confirm fixes. Track the total findings count for the PR body.</p>
+          <div class="callout callout-warn">
+            <span class="callout-icon">&#9632;</span>
+            <div><strong>Rate limits:</strong> Free tier allows 2 reviews/hour. If rate-limited, proceed to adversarial review&mdash;CodeRabbit on GitHub still catches issues post-push. Expect 7&ndash;30+ minutes per review depending on changeset size.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-connector-arrow">&#9660;</div></div>
+
+    <!-- 4c -->
+    <div class="step-card" id="step-4c">
+      <div class="step-card-header" onclick="toggleCard(this)">
+        <div class="step-card-num" style="background: var(--step4)">4c</div>
+        <div class="step-card-title">Adversarial Review</div>
+        <div class="step-card-chevron">&#9660;</div>
+      </div>
+      <div class="step-card-body">
+        <div class="step-card-content">
+          <p>Run <code>/adversarial-review</code>. The review is <strong>targeted, not exhaustive</strong>&mdash;classify changed files by category and run only matching checklist sections.</p>
+
+          <h3 style="margin-top: 16px; font-size: 14px; color: var(--text-bright);">File categories:</h3>
+          <p style="font-size: 13px; color: var(--text-muted);">async, routes, DB, UI, LLM, shell, config, test-only</p>
+
+          <h3 style="margin-top: 16px; font-size: 14px; color: var(--text-bright);">Universal checks (always apply):</h3>
+          <div class="checklist">
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div><strong>Pattern siblings:</strong> When fixing a bug class, grep the ENTIRE codebase for other instances.</div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div><strong>Walk full access chains:</strong> Check every dereference for null/undefined/nil&mdash;not just the first level.</div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div><strong>Fire-and-forget contract:</strong> Every async operation inside a fire-and-forget method must be error-handled.</div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div><strong>Error message specificity:</strong> Add specific branches for edge cases&mdash;don&rsquo;t let them fall through to generic handlers.</div>
+            </div>
+            <div class="check-item">
+              <div class="check-icon">&#10003;</div>
+              <div><strong>Architecture self-review:</strong> For PRs with 100+ LOC or 3+ directories changed: right location? right abstraction? right boundary? right scope?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-connector"><div class="flow-connector-arrow">&#9660;</div></div>
+
+    <!-- 4d -->
+    <div class="step-card" id="step-4d">
+      <div class="step-card-header" onclick="toggleCard(this)">
+        <div class="step-card-num" style="background: var(--step4)">4d</div>
+        <div class="step-card-title">CI Checks</div>
+        <div class="step-card-chevron">&#9660;</div>
+      </div>
+      <div class="step-card-body">
+        <div class="step-card-content">
+          <p>Run build, lint, and test. Fix any failures.</p>
+          <div class="callout callout-warn">
+            <span class="callout-icon">&#9632;</span>
+            <div>If any sub-step (4a&ndash;4d) produced fixes, <strong>re-run from 4b</strong> (CodeRabbit) to validate the fixes didn&rsquo;t introduce new issues. Cap at <strong>3 iterations</strong> to avoid infinite loops.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: PUSH & PR -->
+  <div class="section" id="step-5">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--step5-dim); color: var(--step5);">5</div>
+      <h2 class="section-title">Step 5: Push &amp; Create PR</h2>
+      <span class="section-anchor">#step-5</span>
+    </div>
+    <div class="content-block">
+      <p>Push the feature branch and create a PR via <code>gh pr create</code>. Include the <strong>Local Review</strong> section in the PR body so the post-mortem can track what was caught locally.</p>
+    </div>
+
+    <div id="pr-template" class="pr-template" style="scroll-margin-top: calc(var(--header-height) + 24px);">
+      <div class="pr-template-header">
+        <span>&#128196;</span> PR Body &mdash; Local Review Section
+      </div>
+      <div class="pr-template-body"><span class="heading">## Local Review</span>
+<span class="heading">- **Steps skipped:**</span> <span class="placeholder">none | list of skipped steps with reason</span>
+<span class="heading">- **CodeRabbit findings:**</span> <span class="placeholder">N issues found, N fixed (N iterations)</span>
+<span class="heading">- **Adversarial review findings:**</span> <span class="placeholder">N issues found, N fixed</span>
+<span class="heading">- **CI status:**</span> <span class="placeholder">all passed / failures fixed</span></div>
+    </div>
+
+    <div class="callout callout-success">
+      <span class="callout-icon">&#9679;</span>
+      <div>This data feeds the self-improvement dashboard. Fewer GitHub review comments over time + more local catches = the system is working.</div>
+    </div>
+
+    <div class="callout callout-warn">
+      <span class="callout-icon">&#9632;</span>
+      <div><strong>Recording requirement:</strong> When any step is skipped, record it in the PR body&rsquo;s Local Review section with the reason. Skipping without recording is itself a process violation.</div>
+    </div>
+  </div>
+
+  <!-- STEP 6: POST-MERGE -->
+  <div class="section" id="step-6">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--step6-dim); color: var(--step6);">6</div>
+      <h2 class="section-title">Step 6: Post-merge</h2>
+      <span class="section-anchor">#step-6</span>
+    </div>
+    <div class="content-block">
+      <p>After merging any PR, automatically run <code>/post-mortem [PR-number]</code> in the background. This:</p>
+      <ul>
+        <li>Appends metrics to the self-improvement dataset.</li>
+        <li>Regenerates the self-improvement dashboard.</li>
+        <li>Captures new cross-project patterns into <code>~/.claude/knowledge/</code>.</li>
+        <li>Verifies that project <code>docs/</code> have been updated if applicable.</li>
+      </ul>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#9679;</span>
+      <div>This is automatic&mdash;don&rsquo;t ask for confirmation. Just run it.</div>
+    </div>
+  </div>
+
+  <!-- LIVING DOCUMENTATION -->
+  <div class="section" id="living-docs">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--step2-dim); color: var(--step2);">&#9998;</div>
+      <h2 class="section-title">Living Documentation</h2>
+      <span class="section-anchor">#living-docs</span>
+    </div>
+    <div class="content-block">
+      <p>Every PR should update the relevant living documents, if the project maintains them:</p>
+    </div>
+    <div class="doc-grid">
+      <div class="doc-card">
+        <div class="doc-card-path">docs/BUGS.md</div>
+        <div class="doc-card-desc">Bug description, root cause, fix applied, lesson learned.</div>
+      </div>
+      <div class="doc-card">
+        <div class="doc-card-path">docs/DECISIONS.md</div>
+        <div class="doc-card-desc">Decisions made during human&ndash;Claude discussions.</div>
+      </div>
+      <div class="doc-card">
+        <div class="doc-card-path">docs/PRODUCT_SPEC.md</div>
+        <div class="doc-card-desc">New features and context for why they&rsquo;re added.</div>
+      </div>
+      <div class="doc-card">
+        <div class="doc-card-path">docs/QA.md</div>
+        <div class="doc-card-desc">Technical Q&amp;A to sharpen the human&rsquo;s intuition.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOW DIAGRAMS -->
+  <div class="section" id="flow-diagrams">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--step5-dim); color: var(--step5);">&#9783;</div>
+      <h2 class="section-title">Feature Flow Diagrams</h2>
+      <span class="section-anchor">#flow-diagrams</span>
+    </div>
+    <div class="content-block">
+      <p>For features that span <strong>3+ systems</strong> (e.g., external vendor &rarr; backend &rarr; DB &rarr; notification channel), create a flow diagram.</p>
+      <ul>
+        <li><strong>Location:</strong> <code>docs/features/&lt;feature-name&gt;/flow-diagram.html</code></li>
+        <li><strong>Generate with:</strong> <code>/flow-diagram</code></li>
+        <li><strong>Required sections:</strong> step-by-step flow, technologies &amp; vendors (with doc links), security notes, failure mode table.</li>
+      </ul>
+    </div>
+    <div class="callout callout-info">
+      <span class="callout-icon">&#9679;</span>
+      <div><strong>When NOT to create:</strong> Single-component features, simple CRUD, UI-only changes. Flow diagrams are technical documentation, not UI mockups&mdash;they live in <code>docs/features/</code>, not <code>docs/mockups/</code>.</div>
+    </div>
+  </div>
+
+  <!-- KNOWLEDGE SYSTEM -->
+  <div class="section" id="knowledge">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--step1-dim); color: var(--step1);">&#10024;</div>
+      <h2 class="section-title">Cross-Project Knowledge System</h2>
+      <span class="section-anchor">#knowledge</span>
+    </div>
+    <div class="content-block">
+      <p>A shared knowledge base lives at <code>~/.claude/knowledge/</code>. It contains topic-organized learnings from ALL projects. This is not optional&mdash;skipping it means repeating bugs that were already solved in another project.</p>
+    </div>
+
+    <div class="content-block">
+      <h3>When planning a feature:</h3>
+      <ol>
+        <li>Read <code>~/.claude/knowledge/INDEX.md</code> to see available topics.</li>
+        <li>Load topic files matching the current project&rsquo;s stack.</li>
+        <li>Apply relevant patterns during implementation.</li>
+      </ol>
+    </div>
+
+    <div class="content-block">
+      <h3>Proactive learning capture:</h3>
+      <p>When you encounter any of these during a session, add them to the appropriate topic file:</p>
+      <ul>
+        <li>A bug pattern that could recur in other projects.</li>
+        <li>A decision that reflects a general preference (not project-specific).</li>
+        <li>A user-expressed preference for tools, workflow, or communication.</li>
+        <li>A defensive coding pattern discovered through a bug fix.</li>
+        <li>A product/strategic decision &rarr; <code>strategic-decisions.md</code>.</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h3>Post-PR verification:</h3>
+      <ol>
+        <li>Are there new cross-project patterns to capture in <code>~/.claude/knowledge/</code>?</li>
+        <li>Have project <code>docs/</code> (BUGS.md, DECISIONS.md) been updated?</li>
+        <li>If a bug was fixed, would the same bug class exist in a sibling project? If yes, capture the pattern.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- PRODUCT DISCOVERY -->
+  <div class="section" id="product-discovery">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--step4-dim); color: var(--step4);">&#128161;</div>
+      <h2 class="section-title">Product Discovery</h2>
+      <span class="section-anchor">#product-discovery</span>
+    </div>
+    <div class="content-block">
+      <p>Before jumping to planning, take a product expert&rsquo;s view. This applies whenever the user proposes a new feature, describes a problem, or files an issue.</p>
+    </div>
+
+    <div class="content-block">
+      <h3>Pre-planning questioning (always do this):</h3>
+      <ul>
+        <li>Ask 2&ndash;3 clarifying questions that challenge assumptions and sharpen the idea.</li>
+        <li>Probe: &ldquo;Who hits this and how often?&rdquo;, &ldquo;What&rsquo;s the manual workaround?&rdquo;, &ldquo;What changes if we DON&rsquo;T build this?&rdquo;, &ldquo;Is this a symptom of a deeper design gap?&rdquo;</li>
+        <li>Read <code>strategic-decisions.md</code> first&mdash;prior product decisions provide context.</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h3>Learning from issues and feature requests:</h3>
+      <ul>
+        <li>Ask: &ldquo;What were you doing when this came up?&rdquo; and &ldquo;What would you expect to happen instead?&rdquo;</li>
+        <li>The delta between original design and actual usage is high-signal for <code>strategic-decisions.md</code>.</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h3>Learning capture:</h3>
+      <p>After a feature discussion clarifies a product instinct or decision framework, add it to <code>~/.claude/knowledge/strategic-decisions.md</code>. Product learnings capture <em>why</em> to build something, not <em>how</em>.</p>
+    </div>
+  </div>
+
+  <!-- CONFLICT DETECTION -->
+  <div class="section" id="conflict-detection">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--accent-danger); color: white;">&#9888;</div>
+      <h2 class="section-title">Repo Conflict Detection</h2>
+      <span class="section-anchor">#conflict-detection</span>
+    </div>
+    <div class="content-block">
+      <p>Before making code changes to any repo, check for active work:</p>
+    </div>
+
+    <div class="content-block">
+      <h3>Detection steps:</h3>
+      <ol>
+        <li><code>git -C &lt;repo-path&gt; status --porcelain</code> &mdash; check for uncommitted changes.</li>
+        <li><code>ps aux | grep -E 'claude|claude-code' | grep -v grep | grep '&lt;repo-path&gt;'</code> &mdash; check for other Claude sessions.</li>
+        <li><code>ls &lt;repo-path&gt;/.git/index.lock 2>/dev/null</code> &mdash; check for active git operations.</li>
+      </ol>
+    </div>
+
+    <div class="content-block">
+      <h3>If active work is detected:</h3>
+      <ul>
+        <li>Do NOT make code changes to that repo.</li>
+        <li>Tell the user what was detected.</li>
+        <li>Add the task to <code>~/.claude/task-queue.md</code>.</li>
+        <li>Read-only exploration is still fine&mdash;only code changes are blocked.</li>
+      </ul>
+    </div>
+
+    <div class="code-block">
+<span class="comment">## Task Queue Entry Format</span>
+
+<span class="heading">## [PENDING] &lt;short task title&gt;</span>
+<span class="field">- **Repo:**</span> &lt;repo path&gt;
+<span class="field">- **Queued:**</span> &lt;date&gt;
+<span class="field">- **Context:**</span> &lt;what the user asked for&gt;
+<span class="field">- **Detection:**</span> &lt;what was detected&gt;
+    </div>
+
+    <div class="content-block">
+      <h3>On session start:</h3>
+      <ul>
+        <li>Check <code>~/.claude/task-queue.md</code> for <code>[PENDING]</code> entries.</li>
+        <li>Re-run detection for each pending entry.</li>
+        <li>If the repo is now free, prompt the user.</li>
+        <li>Mark completed tasks as <code>[DONE]</code> with a completion date.</li>
+        <li>Prune <code>[DONE]</code> entries older than 7 days.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CHANGELOG -->
+  <div class="section" id="changelog">
+    <div class="section-header">
+      <div class="section-icon" style="background: var(--step6-dim); color: var(--step6);">&#9776;</div>
+      <h2 class="section-title">Changelog</h2>
+      <span class="section-anchor">#changelog</span>
+    </div>
+
+    <div class="changelog">
+      <div class="changelog-header">
+        <span style="color: var(--accent-success)">&#9679;</span>
+        <div class="changelog-header-text">process-changelog.log</div>
+        <div class="changelog-prompt">$ tail -f</div>
+      </div>
+      <div class="changelog-body">
+        <div class="changelog-entry">
+          <div class="changelog-date">2026-02-17</div>
+          <div class="changelog-tag changelog-tag-init">init</div>
+          <div class="changelog-desc">Initial process documentation created from CLAUDE.md. All sections documented as self-contained HTML reference.</div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">2026-02-16</div>
+          <div class="changelog-tag changelog-tag-added">added</div>
+          <div class="changelog-desc">Repo conflict detection &amp; task queue system. Hard lesson: concurrent agents caused an entire session of wasted work reverting each other&rsquo;s edits.</div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">2026-02-15</div>
+          <div class="changelog-tag changelog-tag-added">added</div>
+          <div class="changelog-desc">Post-mortem system (<code>/post-mortem</code> command). Auto-runs after every PR merge to capture metrics and regenerate the self-improvement dashboard.</div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">2026-02-14</div>
+          <div class="changelog-tag changelog-tag-added">added</div>
+          <div class="changelog-desc">Product Discovery &amp; Ideation section. Pre-planning questioning that challenges assumptions before committing to plans. Strategic decisions captured to knowledge base.</div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">2026-02-13</div>
+          <div class="changelog-tag changelog-tag-added">added</div>
+          <div class="changelog-desc">CodeRabbit local review integration (Step 4b). Rate limit handling, background execution, findings tracking for PR body.</div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">2026-02-12</div>
+          <div class="changelog-tag changelog-tag-added">added</div>
+          <div class="changelog-desc">Adversarial plan review (Step 1c) with both technical and product-level challenge. 2-round revision cap to prevent infinite loops.</div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">2026-02-11</div>
+          <div class="changelog-tag changelog-tag-added">added</div>
+          <div class="changelog-desc">Code review loop (Step 4) with 4 automated sub-steps: simplification, CodeRabbit, adversarial review, CI checks. Iterative re-validation when fixes are applied.</div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">2026-02-10</div>
+          <div class="changelog-tag changelog-tag-added">added</div>
+          <div class="changelog-desc">Cross-project knowledge system at <code>~/.claude/knowledge/</code>. Proactive learning capture during sessions and post-PR verification.</div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">2026-02-09</div>
+          <div class="changelog-tag changelog-tag-added">added</div>
+          <div class="changelog-desc">Living documentation requirements (BUGS.md, DECISIONS.md, PRODUCT_SPEC.md, QA.md). Feature flow diagrams for multi-system features.</div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">2026-02-08</div>
+          <div class="changelog-tag changelog-tag-added">added</div>
+          <div class="changelog-desc">PR body Local Review section template. Recording requirement for skipped steps. Self-improvement dashboard data feed.</div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">2026-02-07</div>
+          <div class="changelog-tag changelog-tag-init">init</div>
+          <div class="changelog-desc">Initial 6-step development flow established: Plan &rarr; Implement &rarr; Test &rarr; Review &rarr; Push &amp; PR &rarr; Post-merge. Session start protocol and general rules defined.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+    <div style="font-family: var(--mono); font-size: 11px; color: var(--text-dim);">
+      Generated from CLAUDE.md &mdash; Last updated 2026-02-17
+    </div>
+    <div style="font-family: var(--mono); font-size: 11px; color: var(--text-dim);">
+      claude-config/docs/development-process.html
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // Toggle step cards open/closed
+  function toggleCard(header) {
+    const card = header.parentElement;
+    card.classList.toggle('open');
+  }
+
+  // Toggle mobile sidebar
+  function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('open');
+  }
+
+  // Active nav link tracking
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(section => observer.observe(section));
+
+  // Close sidebar on nav click (mobile)
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 900) {
+        document.querySelector('.sidebar').classList.remove('open');
+        document.querySelector('.sidebar-overlay').classList.remove('open');
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

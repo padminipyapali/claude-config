@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Development Loop Analysis</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', -apple-system, sans-serif;
+    background: #F8F7F4;
+    color: #1a1a1a;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 64px 40px 80px;
+  }
+
+  /* --- Header --- */
+  .header {
+    margin-bottom: 56px;
+    padding-bottom: 32px;
+    border-bottom: 2px solid #1a1a1a;
+  }
+
+  .header h1 {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+  }
+
+  .header .dateline {
+    font-size: 13px;
+    color: #6b6b6b;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* --- Hero metrics row --- */
+  .hero-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: #d4d3cf;
+    margin-bottom: 56px;
+  }
+
+  .hero-metric {
+    background: #F8F7F4;
+    padding: 24px 20px;
+  }
+
+  .hero-metric .metric-label {
+    font-size: 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #888;
+    margin-bottom: 8px;
+  }
+
+  .hero-metric .metric-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    color: #1a1a1a;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .hero-metric .metric-change {
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .metric-change.positive { color: #16794A; }
+  .metric-change.negative { color: #b91c1c; }
+  .metric-change.neutral { color: #888; }
+
+  /* --- Sections --- */
+  .section {
+    margin-bottom: 56px;
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #888;
+    margin-bottom: 4px;
+  }
+
+  .section-title {
+    font-family: 'IBM Plex Serif', Georgia, serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+  }
+
+  .section-rule {
+    border: none;
+    border-top: 1px solid #d4d3cf;
+    margin-bottom: 24px;
+  }
+
+  .chart-canvas-wrap {
+    position: relative;
+    height: 260px;
+  }
+
+  .chart-canvas-wrap canvas {
+    display: block;
+  }
+
+  /* --- Two-column pair --- */
+  .chart-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    margin-bottom: 56px;
+  }
+
+  .chart-pair .section { margin-bottom: 0; }
+
+  /* --- Annotation --- */
+  .chart-annotation {
+    font-size: 12px;
+    color: #888;
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  /* --- Categories grid (small multiples) --- */
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: #d4d3cf;
+  }
+
+  .category-cell {
+    background: #F8F7F4;
+    padding: 16px;
+    position: relative;
+  }
+
+  .category-cell .cat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+
+  .category-cell .cat-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #1a1a1a;
+  }
+
+  .category-cell .cat-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .category-cell .cat-trend {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #888;
+  }
+
+  .category-cell .cat-spark-wrap {
+    height: 40px;
+    margin-top: 4px;
+  }
+
+  /* --- Scorecard table --- */
+  .scorecard {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .scorecard th {
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #888;
+    padding: 12px 16px;
+    border-bottom: 2px solid #1a1a1a;
+  }
+
+  .scorecard th.r { text-align: right; }
+
+  .scorecard td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e4e0;
+    color: #1a1a1a;
+  }
+
+  .scorecard td.r {
+    text-align: right;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+  }
+
+  .scorecard td.project-name {
+    font-weight: 500;
+  }
+
+  .scorecard .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  .scorecard tr:last-child td {
+    border-bottom: 2px solid #1a1a1a;
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 900px) {
+    .page { padding: 32px 20px 48px; }
+    .hero-row { grid-template-columns: repeat(2, 1fr); }
+    .chart-pair { grid-template-columns: 1fr; gap: 40px; }
+    .categories-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 560px) {
+    .categories-grid { grid-template-columns: 1fr 1fr; }
+    .hero-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header">
+    <h1>Development Loop Analysis</h1>
+    <div class="dateline">10 pull requests &middot; 4 projects &middot; Updated 2026-02-16</div>
+  </div>
+
+  <!-- Hero metrics -->
+  <div class="hero-row" id="heroRow"></div>
+
+  <!-- North stars: Comments + Rounds -->
+  <div class="chart-pair">
+    <div class="section">
+      <div class="section-label">North Star</div>
+      <div class="section-title">Review Comments</div>
+      <div class="chart-canvas-wrap"><canvas id="commentsChart"></canvas></div>
+      <div class="chart-annotation">Dashed line shows linear trend. Fewer comments = less rework.</div>
+    </div>
+    <div class="section">
+      <div class="section-label">North Star</div>
+      <div class="section-title">Review Rounds</div>
+      <div class="chart-canvas-wrap"><canvas id="roundsChart"></canvas></div>
+      <div class="chart-annotation">Recent 3 PRs highlighted. Target: single-round approval.</div>
+    </div>
+  </div>
+
+  <!-- Comment Categories — Small Multiples -->
+  <div class="section">
+    <hr class="section-rule">
+    <div class="section-label">Breakdown</div>
+    <div class="section-title">Comment Categories</div>
+    <div class="categories-grid" id="categoriesGrid"></div>
+    <div class="chart-annotation">Current value shown. Sparkline traces per-PR trend.</div>
+  </div>
+
+  <!-- Catch Rate + Time to Merge -->
+  <div class="chart-pair">
+    <div class="section">
+      <hr class="section-rule">
+      <div class="section-label">System Health</div>
+      <div class="section-title">Adversarial Catch Rate</div>
+      <div class="chart-canvas-wrap"><canvas id="catchRateChart"></canvas></div>
+      <div class="chart-annotation">Dashed red line at 80% target. Higher = more issues caught pre-review.</div>
+    </div>
+    <div class="section">
+      <hr class="section-rule">
+      <div class="section-label">Velocity</div>
+      <div class="section-title">Time to Merge</div>
+      <div class="chart-canvas-wrap"><canvas id="mergeChart"></canvas></div>
+      <div class="chart-annotation">Hours from PR open to merge. Dashed line at 24h target.</div>
+    </div>
+  </div>
+
+  <!-- Project Scorecard -->
+  <div class="section">
+    <hr class="section-rule">
+    <div class="section-label">Per Project</div>
+    <div class="section-title">Scorecard</div>
+    <table class="scorecard">
+      <thead>
+        <tr>
+          <th>Project</th>
+          <th class="r">PRs</th>
+          <th class="r">Avg Comments</th>
+          <th class="r">Avg Rounds</th>
+          <th class="r">Avg Merge</th>
+          <th class="r">Catch Rate</th>
+        </tr>
+      </thead>
+      <tbody id="scorecardBody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+const METRICS_DATA = {
+  "version": 1,
+  "prs": [
+    {"project": "second-brain", "prNumber": 38, "title": "Add memory search", "dateMerged": "2026-01-05T10:00:00Z", "reviewRounds": 3, "totalComments": 12, "commentCategories": {"security": 1, "correctness": 4, "architecture": 2, "style": 3, "performance": 0, "testing": 1, "documentation": 1, "other": 0}, "adversarialCatchRate": 0.42, "fixupCommitRatio": 0.45, "timeToMergeHours": 48, "planningQuality": "partial", "prSize": 320},
+    {"project": "lexica", "prNumber": 15, "title": "SM-2 algorithm implementation", "dateMerged": "2026-01-10T14:00:00Z", "reviewRounds": 2, "totalComments": 8, "commentCategories": {"security": 0, "correctness": 3, "architecture": 1, "style": 2, "performance": 1, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.50, "fixupCommitRatio": 0.33, "timeToMergeHours": 32, "planningQuality": "complete", "prSize": 245},
+    {"project": "nanny-app", "prNumber": 5, "title": "Multi-tenant security rules", "dateMerged": "2026-01-15T09:00:00Z", "reviewRounds": 3, "totalComments": 15, "commentCategories": {"security": 5, "correctness": 3, "architecture": 2, "style": 2, "performance": 0, "testing": 2, "documentation": 1, "other": 0}, "adversarialCatchRate": 0.47, "fixupCommitRatio": 0.40, "timeToMergeHours": 52, "planningQuality": "partial", "prSize": 410},
+    {"project": "command-center", "prNumber": 2, "title": "Telegram bot commands", "dateMerged": "2026-01-20T16:00:00Z", "reviewRounds": 2, "totalComments": 6, "commentCategories": {"security": 0, "correctness": 2, "architecture": 1, "style": 1, "performance": 0, "testing": 1, "documentation": 1, "other": 0}, "adversarialCatchRate": 0.55, "fixupCommitRatio": 0.25, "timeToMergeHours": 24, "planningQuality": "complete", "prSize": 180},
+    {"project": "second-brain", "prNumber": 42, "title": "Embedding pipeline refactor", "dateMerged": "2026-01-25T11:00:00Z", "reviewRounds": 2, "totalComments": 7, "commentCategories": {"security": 0, "correctness": 2, "architecture": 2, "style": 1, "performance": 1, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.60, "fixupCommitRatio": 0.28, "timeToMergeHours": 28, "planningQuality": "complete", "prSize": 195},
+    {"project": "lexica", "prNumber": 20, "title": "Streaming conversation UI", "dateMerged": "2026-01-30T13:00:00Z", "reviewRounds": 2, "totalComments": 9, "commentCategories": {"security": 0, "correctness": 2, "architecture": 1, "style": 3, "performance": 1, "testing": 1, "documentation": 1, "other": 0}, "adversarialCatchRate": 0.58, "fixupCommitRatio": 0.30, "timeToMergeHours": 26, "planningQuality": "complete", "prSize": 275},
+    {"project": "nanny-app", "prNumber": 8, "title": "Pay calculation engine", "dateMerged": "2026-02-03T10:00:00Z", "reviewRounds": 1, "totalComments": 4, "commentCategories": {"security": 0, "correctness": 1, "architecture": 1, "style": 1, "performance": 0, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.65, "fixupCommitRatio": 0.15, "timeToMergeHours": 18, "planningQuality": "complete", "prSize": 160},
+    {"project": "command-center", "prNumber": 5, "title": "PR status aggregation", "dateMerged": "2026-02-06T15:00:00Z", "reviewRounds": 1, "totalComments": 3, "commentCategories": {"security": 0, "correctness": 1, "architecture": 0, "style": 1, "performance": 0, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.72, "fixupCommitRatio": 0.12, "timeToMergeHours": 14, "planningQuality": "complete", "prSize": 130},
+    {"project": "second-brain", "prNumber": 47, "title": "Thread reply support", "dateMerged": "2026-02-10T12:00:00Z", "reviewRounds": 1, "totalComments": 5, "commentCategories": {"security": 0, "correctness": 1, "architecture": 1, "style": 1, "performance": 1, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.75, "fixupCommitRatio": 0.18, "timeToMergeHours": 20, "planningQuality": "complete", "prSize": 185},
+    {"project": "lexica", "prNumber": 24, "title": "Offline vocabulary sync", "dateMerged": "2026-02-14T14:00:00Z", "reviewRounds": 1, "totalComments": 3, "commentCategories": {"security": 0, "correctness": 1, "architecture": 0, "style": 1, "performance": 0, "testing": 1, "documentation": 0, "other": 0}, "adversarialCatchRate": 0.80, "fixupCommitRatio": 0.10, "timeToMergeHours": 12, "planningQuality": "complete", "prSize": 140}
+  ]
+};
+
+// --- Utilities ---
+const ABBREV = { 'second-brain': 'SB', 'lexica': 'LX', 'nanny-app': 'NA', 'command-center': 'CC' };
+const PROJECT_COLORS = { 'second-brain': '#2563EB', 'lexica': '#7C3AED', 'nanny-app': '#D97706', 'command-center': '#059669' };
+const prs = METRICS_DATA.prs;
+const labels = prs.map(p => ABBREV[p.project] + '#' + p.prNumber);
+
+function linReg(data) {
+  const n = data.length;
+  let sx = 0, sy = 0, sxy = 0, sx2 = 0;
+  data.forEach((y, x) => { sx += x; sy += y; sxy += x * y; sx2 += x * x; });
+  const m = (n * sxy - sx * sy) / (n * sx2 - sx * sx);
+  const b = (sy - m * sx) / n;
+  return data.map((_, x) => +(m * x + b).toFixed(2));
+}
+
+function avg(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
+
+// --- Chart.js Defaults ---
+const MONO = "'IBM Plex Mono', 'Menlo', monospace";
+const SANS = "'IBM Plex Sans', sans-serif";
+const BLUE = '#2563EB';
+const RED_MUTED = '#C53030';
+
+Chart.defaults.animation = false;
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
+Chart.defaults.font.family = SANS;
+Chart.defaults.font.size = 11;
+Chart.defaults.plugins.legend.display = false;
+Chart.defaults.plugins.tooltip.backgroundColor = '#1a1a1a';
+Chart.defaults.plugins.tooltip.titleColor = '#fff';
+Chart.defaults.plugins.tooltip.bodyColor = '#ccc';
+Chart.defaults.plugins.tooltip.borderWidth = 0;
+Chart.defaults.plugins.tooltip.cornerRadius = 2;
+Chart.defaults.plugins.tooltip.padding = { top: 8, bottom: 8, left: 12, right: 12 };
+Chart.defaults.plugins.tooltip.titleFont = { family: MONO, size: 11 };
+Chart.defaults.plugins.tooltip.bodyFont = { family: MONO, size: 11 };
+Chart.defaults.plugins.tooltip.displayColors = false;
+
+function scales(opts = {}) {
+  return {
+    x: {
+      grid: { display: false },
+      ticks: { color: '#999', font: { family: MONO, size: 10 }, maxRotation: 45 },
+      border: { color: '#d4d3cf' }
+    },
+    y: {
+      grid: { color: '#eeeee8', drawTicks: false },
+      ticks: {
+        color: '#999',
+        font: { family: MONO, size: 10 },
+        padding: 8,
+        ...(opts.yTicks || {})
+      },
+      border: { display: false },
+      beginAtZero: opts.beginAtZero !== false,
+      ...(opts.yMax !== undefined ? { max: opts.yMax } : {})
+    }
+  };
+}
+
+// --- Hero Metrics ---
+(function() {
+  const comments = prs.map(p => p.totalComments);
+  const rounds = prs.map(p => p.reviewRounds);
+  const mergeH = prs.map(p => p.timeToMergeHours);
+  const catchR = prs.map(p => p.adversarialCatchRate);
+
+  const first3 = (arr) => avg(arr.slice(0, 3));
+  const last3 = (arr) => avg(arr.slice(-3));
+
+  const metrics = [
+    {
+      label: 'Avg Comments',
+      value: last3(comments).toFixed(1),
+      change: ((last3(comments) - first3(comments)) / first3(comments) * 100).toFixed(0),
+      unit: '',
+      invert: true // lower is better
+    },
+    {
+      label: 'Avg Rounds',
+      value: last3(rounds).toFixed(1),
+      change: ((last3(rounds) - first3(rounds)) / first3(rounds) * 100).toFixed(0),
+      unit: '',
+      invert: true
+    },
+    {
+      label: 'Avg Merge Time',
+      value: last3(mergeH).toFixed(0) + 'h',
+      change: ((last3(mergeH) - first3(mergeH)) / first3(mergeH) * 100).toFixed(0),
+      unit: '',
+      invert: true
+    },
+    {
+      label: 'Catch Rate',
+      value: (last3(catchR) * 100).toFixed(0) + '%',
+      change: ((last3(catchR) - first3(catchR)) / first3(catchR) * 100).toFixed(0),
+      unit: '',
+      invert: false // higher is better
+    }
+  ];
+
+  const row = document.getElementById('heroRow');
+  metrics.forEach(m => {
+    const pct = parseFloat(m.change);
+    const improving = m.invert ? pct < 0 : pct > 0;
+    const cls = pct === 0 ? 'neutral' : improving ? 'positive' : 'negative';
+    const arrow = pct > 0 ? '+' : '';
+
+    const div = document.createElement('div');
+    div.className = 'hero-metric';
+    div.innerHTML =
+      '<div class="metric-label">' + m.label + '</div>' +
+      '<div class="metric-value">' + m.value + '</div>' +
+      '<div class="metric-change ' + cls + '">' + arrow + m.change + '% vs first 3 PRs</div>';
+    row.appendChild(div);
+  });
+})();
+
+// --- 1. Review Comments ---
+(function() {
+  const data = prs.map(p => p.totalComments);
+  const trend = linReg(data);
+
+  new Chart(document.getElementById('commentsChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          data,
+          borderColor: BLUE,
+          borderWidth: 2,
+          pointBackgroundColor: '#F8F7F4',
+          pointBorderColor: BLUE,
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          tension: 0.25,
+          fill: { target: 'origin', above: 'rgba(37, 99, 235, 0.06)' }
+        },
+        {
+          data: trend,
+          borderColor: '#bbb',
+          borderWidth: 1.5,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          tension: 0,
+          fill: false
+        }
+      ]
+    },
+    options: { scales: scales() }
+  });
+})();
+
+// --- 2. Review Rounds ---
+(function() {
+  const data = prs.map(p => p.reviewRounds);
+  const colors = data.map((_, i) => i >= data.length - 3 ? BLUE : '#d4d3cf');
+
+  new Chart(document.getElementById('roundsChart'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: colors,
+        borderWidth: 0,
+        barPercentage: 0.55,
+        categoryPercentage: 0.7
+      }]
+    },
+    options: {
+      scales: scales({ yTicks: { stepSize: 1 } })
+    }
+  });
+})();
+
+// --- 3. Comment Categories (Small Multiples Grid) ---
+(function() {
+  const cats = [
+    { key: 'correctness', name: 'Correctness', color: '#E65100' },
+    { key: 'security', name: 'Security', color: '#C53030' },
+    { key: 'architecture', name: 'Architecture', color: '#B45309' },
+    { key: 'style', name: 'Style', color: '#0E7490' },
+    { key: 'testing', name: 'Testing', color: '#2563EB' },
+    { key: 'performance', name: 'Performance', color: '#6D28D9' },
+    { key: 'documentation', name: 'Docs', color: '#047857' },
+    { key: 'other', name: 'Other', color: '#999' }
+  ];
+
+  const grid = document.getElementById('categoriesGrid');
+
+  cats.forEach(cat => {
+    const data = prs.map(p => p.commentCategories[cat.key]);
+    const current = data[data.length - 1];
+    const peak = Math.max(...data);
+    const trendDir = current < data[0] ? 'from ' + data[0] : current > data[0] ? 'from ' + data[0] : 'stable';
+
+    const cell = document.createElement('div');
+    cell.className = 'category-cell';
+
+    const canvas = document.createElement('canvas');
+
+    cell.innerHTML =
+      '<div class="cat-header">' +
+        '<span class="cat-name">' + cat.name + '</span>' +
+        '<span class="cat-value" style="color:' + cat.color + '">' + current + '</span>' +
+      '</div>' +
+      '<div class="cat-trend">' + trendDir + ' &middot; peak ' + peak + '</div>' +
+      '<div class="cat-spark-wrap"></div>';
+
+    cell.querySelector('.cat-spark-wrap').appendChild(canvas);
+    grid.appendChild(cell);
+
+    new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          borderColor: cat.color,
+          borderWidth: 1.5,
+          pointRadius: 0,
+          pointHoverRadius: 3,
+          pointBackgroundColor: cat.color,
+          tension: 0.3,
+          fill: { target: 'origin', above: cat.color + '18' }
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: (items) => items[0].label,
+              label: (item) => cat.name + ': ' + item.raw
+            }
+          }
+        },
+        scales: {
+          x: { display: false },
+          y: { display: false, beginAtZero: true }
+        }
+      }
+    });
+  });
+})();
+
+// --- 4. Adversarial Catch Rate ---
+(function() {
+  const data = prs.map(p => +(p.adversarialCatchRate * 100).toFixed(1));
+  const threshold = prs.map(() => 80);
+
+  new Chart(document.getElementById('catchRateChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          data,
+          borderColor: BLUE,
+          borderWidth: 2,
+          pointBackgroundColor: '#F8F7F4',
+          pointBorderColor: BLUE,
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          tension: 0.25,
+          fill: { target: 'origin', above: 'rgba(37, 99, 235, 0.06)' }
+        },
+        {
+          data: threshold,
+          borderColor: RED_MUTED,
+          borderWidth: 1.5,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      scales: scales({ yMax: 100, yTicks: { callback: v => v + '%' } }),
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (item) => item.datasetIndex === 1 ? 'Target: 80%' : item.raw + '%'
+          }
+        }
+      }
+    }
+  });
+})();
+
+// --- 5. Time to Merge ---
+(function() {
+  const data = prs.map(p => p.timeToMergeHours);
+  const target = prs.map(() => 24);
+
+  new Chart(document.getElementById('mergeChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          data,
+          borderColor: BLUE,
+          borderWidth: 2,
+          pointBackgroundColor: '#F8F7F4',
+          pointBorderColor: BLUE,
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          tension: 0.25,
+          fill: { target: 'origin', above: 'rgba(37, 99, 235, 0.06)' }
+        },
+        {
+          data: target,
+          borderColor: RED_MUTED,
+          borderWidth: 1.5,
+          borderDash: [6, 4],
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      scales: scales({ yTicks: { callback: v => v + 'h' } }),
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (item) => item.datasetIndex === 1 ? 'Target: 24h' : item.raw + ' hours'
+          }
+        }
+      }
+    }
+  });
+})();
+
+// --- 6. Scorecard Table ---
+(function() {
+  const agg = {};
+  prs.forEach(pr => {
+    if (!agg[pr.project]) agg[pr.project] = { n: 0, comments: 0, rounds: 0, merge: 0, catches: [], size: 0 };
+    const a = agg[pr.project];
+    a.n++; a.comments += pr.totalComments; a.rounds += pr.reviewRounds;
+    a.merge += pr.timeToMergeHours; a.catches.push(pr.adversarialCatchRate); a.size += pr.prSize;
+  });
+
+  const tbody = document.getElementById('scorecardBody');
+  ['second-brain', 'lexica', 'nanny-app', 'command-center'].forEach(name => {
+    const a = agg[name];
+    if (!a) return;
+    const latestCatch = a.catches[a.catches.length - 1];
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="project-name"><span class="dot" style="background:' + PROJECT_COLORS[name] + '"></span>' + name + '</td>' +
+      '<td class="r">' + a.n + '</td>' +
+      '<td class="r">' + (a.comments / a.n).toFixed(1) + '</td>' +
+      '<td class="r">' + (a.rounds / a.n).toFixed(1) + '</td>' +
+      '<td class="r">' + (a.merge / a.n).toFixed(0) + 'h</td>' +
+      '<td class="r">' + Math.round(latestCatch * 100) + '%</td>';
+    tbody.appendChild(tr);
+  });
+})();
+</script>
+
+</body>
+</html>

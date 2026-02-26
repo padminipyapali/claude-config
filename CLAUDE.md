@@ -157,22 +157,41 @@ This data feeds the self-improvement dashboard. Fewer GitHub review comments ove
 
 ## Living Documentation
 
-Every PR should update the relevant living documents, if the project maintains them:
+Documentation is organized **by feature**, not by type. Everything about a feature lives together.
 
-- `docs/BUGS.md` — Bug description, root cause, fix applied, lesson learned.
-- `docs/DECISIONS.md` — Decisions made during human-Claude discussions.
-- `docs/PRODUCT_SPEC.md` — New features and context for why they're added.
-- `docs/QA.md` — Technical Q&A to sharpen the human's intuition.
+### Directory structure
 
-## Feature Flow Diagrams
+```
+docs/
+  product-spec.md              # overall product direction & roadmap
+  features/
+    <feature-name>/
+      spec.md                  # feature spec (starts as proposal, evolves with the feature)
+      mockups/                 # UI mockups (self-contained HTML)
+      explainers/              # flow diagrams, architecture docs, PR explainers, tech docs
+      decisions.md             # feature-scoped decisions
+      bugs.md                  # feature-scoped bugs
+      post-mortems/            # one file per PR/incident
+    _cross-cutting/            # for things spanning multiple features
+      decisions.md
+      bugs.md
+```
 
-For features that span **multiple components, systems, or vendors**, create a flow diagram in `docs/features/<feature-name>/flow-diagram.html`. Use `/flow-diagram` to generate these.
+### Rules
 
-- **When to create:** The feature involves 3+ systems (e.g., external vendor → backend → DB → notification channel), crosses network boundaries, or has non-obvious failure modes.
+- **Feature directories are created when there's content** — mockups, a spec, a bug, or a decision. Don't create empty directories for theoretical features.
+- **Specs start in `docs/specs/`** during ideation. When a feature enters implementation, the spec moves to `docs/features/<feature>/spec.md`.
+- **Every PR** should update the relevant feature's docs (bugs, decisions, post-mortems). If the change is cross-cutting, update `_cross-cutting/`.
+- **`product-spec.md`** stays at the top level — it's the bird's-eye view of the whole product.
+- **QA entries** go in the feature's `decisions.md` (technical Q&A is just decisions with more context).
+
+### Flow diagrams
+
+For features spanning **3+ systems** (e.g., external vendor → backend → DB → notification channel), create a flow diagram at `docs/features/<feature-name>/explainers/flow-diagram.html`. Use `/flow-diagram` to generate these.
+
+- **When to create:** Crosses network boundaries or has non-obvious failure modes.
 - **When NOT to create:** Single-component features, simple CRUD, UI-only changes.
-- **Location:** `docs/features/<feature-name>/flow-diagram.html` — self-contained HTML, no external dependencies.
 - **Required sections:** Step-by-step flow, technologies & vendors (with doc links), security notes (if applicable), failure mode table.
-- **Not in mockups:** Flow diagrams are technical documentation, not UI mockups. They live in `docs/features/`, not `docs/mockups/`.
 
 ## Adversarial Self-Review
 
