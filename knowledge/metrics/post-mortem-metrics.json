@@ -5655,6 +5655,53 @@
         "complianceRate": 0.5,
         "skipAssessment": "bad"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 260,
+      "title": "feat: weekly review core \u2014 data queries, AI analysis, and email template",
+      "dateMerged": "2026-02-26T05:54:15Z",
+      "reviewRounds": 1,
+      "totalComments": 6,
+      "commentCategories": {
+        "security": 1,
+        "correctness": 3,
+        "architecture": 1,
+        "style": 0,
+        "performance": 0,
+        "testing": 1,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.33,
+      "timeToMergeHours": 0.98,
+      "planningQuality": "complete",
+      "prSize": 744,
+      "stepCompliance": {
+        "stepsRun": [
+          "2",
+          "5"
+        ],
+        "stepsSkipped": [
+          "1",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "1: stacked PR, 3-Playwright: backend-only, 4a-4e: stacked PR (will review on final PR) \u2014 but PR was merged independently",
+        "complianceRate": 0.25,
+        "skipAssessment": "bad"
+      }
     }
   ]
 }
