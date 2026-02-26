@@ -57,6 +57,24 @@ Every feature or fix follows these numbered steps. Print the step number and nam
 
 > **Recording requirement:** When any step is skipped, record it in the PR body's Local Review section with the reason. The post-mortem uses this data. Skipping without recording is itself a process violation.
 
+### Orchestrator Agent (MANDATORY)
+
+When starting ANY work that goes through the Development Flow — feature, bug fix, refactor, anything — **immediately spawn an orchestrator agent** (subagent_type: `general-purpose`, run in background) alongside the implementation work. No exceptions. For small fixes the orchestrator will simply have less to do. The orchestrator does NOT write code.
+
+**The orchestrator must:**
+
+1. **Track step completion.** Maintain a running log of which steps (1–6) have been started, completed, or skipped. Update this log in real time as work progresses.
+2. **Challenge skips.** If the implementing agent skips or attempts to skip any step, the orchestrator must ask **"Why is this step being skipped?"** and record the answer. Acceptable reasons are documented (e.g., "user explicitly requested skip AND diff < 50 LOC for step 4"). Unacceptable reasons (e.g., "seemed unnecessary", "saving time") must be flagged to the user.
+3. **Verify ordering.** Steps must execute in order. If an agent jumps from Step 2 to Step 5 (skipping testing and review), the orchestrator flags this immediately — even if the agent plans to "come back to it."
+4. **Take regular notes.** The orchestrator writes a session log to `~/.claude/orchestrator-logs/<date>-<feature-slug>.md` with:
+   - Timestamp of each step start/end
+   - Any steps skipped and the stated reason
+   - Any process violations detected
+   - Final summary: steps completed, steps skipped, violations found
+5. **Report at PR creation.** Before Step 5 (Push & create PR), the orchestrator verifies ALL prior steps were completed and provides a process compliance summary. If steps are missing, it blocks PR creation until they are addressed or the user explicitly overrides.
+
+**Communication:** The orchestrator communicates with the implementing agent via SendMessage. It reads task lists, checks git status, and monitors progress — but never edits code files.
+
 ### Step 1: Plan (sub-steps)
 
 #### Step 1a: Ask Clarifying Questions
