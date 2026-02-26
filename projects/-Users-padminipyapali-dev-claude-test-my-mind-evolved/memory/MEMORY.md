@@ -15,6 +15,7 @@
 All PR review patterns (27 items from PRs #23-#59), architecture learnings, LLM integration patterns, and adversarial review blindspots have been consolidated into ~/.claude/knowledge/. Load relevant topic files via INDEX.md.
 
 ## Process Learnings
+- **NEVER push directly to main.** Always create a feature branch and PR, even for one-line fixes. User explicitly confirmed this rule.
 - When spawning sub-agents for PRs, explicitly instruct them to run adversarial review. Agents follow feature correctness but skip security/robustness unless prompted.
 - Parallel agents must use separate branches/worktrees to avoid Edit tool "file modified since read" conflicts.
 - Always adversarial-review plans before presenting them. The first plan is often not the best.

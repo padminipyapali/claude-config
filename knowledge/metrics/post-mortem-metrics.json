@@ -5847,6 +5847,104 @@
         "complianceRate": 0.875,
         "skipAssessment": "good"
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 268,
+      "title": "Fix cold-start latency with eager pool warmup",
+      "dateMerged": "2026-02-26T12:28:07Z",
+      "reviewRounds": 1,
+      "totalComments": 2,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 0,
+        "performance": 1,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 0,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0,
+        "internalReviewFindings": 0,
+        "internalReviewFixed": 0,
+        "codeSimplifierFindings": 0,
+        "codeSimplifierFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 5.2,
+      "planningQuality": "complete",
+      "prSize": 8,
+      "stepCompliance": {
+        "stepsRun": [
+          "2",
+          "3",
+          "5"
+        ],
+        "stepsSkipped": [
+          "1",
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "1: trivial 1-line fix; 4a-4d: under 50 LOC, user approved skip; 3-Playwright: backend-only",
+        "complianceRate": 0.375,
+        "skipAssessment": "acceptable"
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 269,
+      "title": "Add Ideas panel with Active/Archived tabs and status transitions",
+      "dateMerged": "2026-02-26T12:35:10Z",
+      "reviewRounds": 2,
+      "totalComments": 2,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 1,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 4,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.67,
+      "timeToMergeHours": 5.19,
+      "planningQuality": "complete",
+      "prSize": 656,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3"
+        ],
+        "skipReasons": "3-Playwright: dev server not running in worktree",
+        "complianceRate": 0.875,
+        "skipAssessment": "neutral"
+      }
     }
   ]
 }

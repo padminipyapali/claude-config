@@ -1,0 +1,1300 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - heading "Mira’s Summer Camps 2026" [level=1] [ref=e3]
+    - paragraph [ref=e4]: A curated guide for your almost-3-year-old in San Francisco — filtered, compared, and reviewed so you can plan her whole summer.
+    - generic [ref=e5]: Mira · Born 6/30/2023 · Turns 3 on June 30, 2026
+  - navigation [ref=e6]:
+    - link "Calendar View" [ref=e7] [cursor=pointer]:
+      - /url: "#timeline"
+    - link "Quick Picks" [ref=e8] [cursor=pointer]:
+      - /url: "#quickpicks"
+    - link "My Shortlist" [ref=e9] [cursor=pointer]:
+      - /url: "#shortlist"
+    - link "Compare All" [ref=e10] [cursor=pointer]:
+      - /url: "#comparison"
+    - link "Stretch" [ref=e11] [cursor=pointer]:
+      - /url: "#stretch"
+    - link "Tier 1 Camps" [ref=e12] [cursor=pointer]:
+      - /url: "#tier1"
+    - link "Tier 2 Camps" [ref=e13] [cursor=pointer]:
+      - /url: "#tier2"
+    - link "Mom Tips" [ref=e14] [cursor=pointer]:
+      - /url: "#tips"
+  - generic [ref=e15]:
+    - heading "Mira’s Summer at a Glance" [level=2] [ref=e16]
+    - paragraph [ref=e17]: Visual calendar of every camp she qualifies for. The pink line marks her 3rd birthday (June 30). Closed weeks are grayed out.
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e20]: Stretch the Imagination
+      - generic [ref=e22]: JCCSF
+      - generic [ref=e24]: Camp Firedragon
+      - generic [ref=e26]: Forest Bloom
+      - generic [ref=e28]: Calvary
+      - generic [ref=e30]: Seabird
+      - generic [ref=e32]: Camp Commotion
+      - generic [ref=e34]: Dahlia
+      - generic [ref=e36]: Mira’s 3rd Birthday
+    - generic [ref=e39]:
+      - generic [ref=e40]: Camp
+      - generic [ref=e41]:
+        - text: Jun 1
+        - generic [ref=e42]: 6/1 – 6/5
+      - generic [ref=e43]:
+        - text: Jun 8
+        - generic [ref=e44]: 6/8 – 6/12
+      - generic [ref=e45]:
+        - text: Jun 15
+        - generic [ref=e46]: 6/15 – 6/26
+      - generic [ref=e47]:
+        - text: Jun 29
+        - generic [ref=e48]: 6/29 – 7/3
+      - generic [ref=e49]:
+        - text: Jul 6
+        - generic [ref=e50]: 7/6 – 7/17
+      - generic [ref=e51]:
+        - text: Jul 20
+        - generic [ref=e52]: 7/20 – 7/31
+      - generic [ref=e53]:
+        - text: Aug 3
+        - generic [ref=e54]: 8/3 – 8/7
+      - generic [ref=e55]:
+        - text: Aug 10
+        - generic [ref=e56]: 8/10 – 8/21
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - text: "Stretch: Ocean Explorers"
+          - generic [ref=e59]: Age 2.9+ · $575
+        - generic [ref=e62]: 6/8–6/12
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - text: "Stretch: Art Explosion!"
+          - generic [ref=e71]: Age 2.9+ · $1,150
+        - generic [ref=e75]: 6/15–6/26
+      - generic [ref=e81]:
+        - generic [ref=e82]:
+          - text: "Stretch: Tinkering & 3D Art"
+          - generic [ref=e83]: Age 2.9+ · $1,150
+        - generic [ref=e89]: 7/6–7/17
+      - generic [ref=e93]:
+        - generic [ref=e94]:
+          - text: "Stretch: Not A Box & Beyond!"
+          - generic [ref=e95]: Age 2.9+ · $1,150
+        - generic [ref=e102]: 7/20–7/31
+      - generic [ref=e105]:
+        - generic [ref=e106]:
+          - text: "Stretch: Science & Magic"
+          - generic [ref=e107]: Age 2.9+ · $1,150
+        - generic [ref=e116]: 8/10–8/21
+      - generic [ref=e117]:
+        - generic [ref=e118]:
+          - text: JCCSF
+          - generic [ref=e119]: Age 2+ · ~$465+/wk
+        - generic [ref=e121]: May 26 – Aug 21 (full summer)
+      - generic [ref=e129]:
+        - generic [ref=e130]:
+          - text: Camp Firedragon
+          - generic [ref=e131]: Age 2.5+ · Varies
+        - generic [ref=e135]: Jun 15 – Aug 21
+      - generic [ref=e141]:
+        - generic [ref=e142]:
+          - text: Forest Bloom Outdoor
+          - generic [ref=e143]: Age 2.5+ · Varies
+        - generic [ref=e145]: Jun 4 – Sep 4 (longest season!)
+      - generic [ref=e153]:
+        - generic [ref=e154]:
+          - text: Calvary Nursery
+          - generic [ref=e155]: Age 2.5+ · $400–675/wk
+        - generic [ref=e159]: Jun 16 – Aug 8
+      - generic [ref=e165]:
+        - generic [ref=e166]:
+          - text: Seabird Preschool
+          - generic [ref=e167]: Age 2+ · $550–680/wk
+        - generic [ref=e170]: Jun 9 – Aug 15
+      - generic [ref=e177]:
+        - generic [ref=e178]:
+          - text: Camp Commotion
+          - generic [ref=e179]: Age 2+ · $500/wk
+        - generic [ref=e184]: Jun 30 – Aug 1
+      - generic [ref=e189]:
+        - generic [ref=e190]:
+          - text: Dahlia School
+          - generic [ref=e191]: Age 2+ · Varies
+        - generic [ref=e193]: Jun 5 – Jul 26
+      - generic [ref=e201]:
+        - generic [ref=e202]:
+          - text: GG Art & Nature
+          - generic [ref=e203]: Age 3+ · $270–700/wk
+        - generic [ref=e205]: "Jun 1 – Aug 21 (age 3+ — call re: birthday)"
+      - generic [ref=e213]:
+        - generic [ref=e214]:
+          - text: Coyote Camp
+          - generic [ref=e215]: Age 3+ · Varies
+        - generic [ref=e218]: Jun 8 – Aug 7 (age 3+)
+      - generic [ref=e225]:
+        - generic [ref=e226]:
+          - text: Little Llamas
+          - generic [ref=e227]: Age 3+ · $650/wk
+        - generic [ref=e233]: 7/7 – 7/25 (she’ll be 3!)
+      - generic [ref=e237]:
+        - generic [ref=e238]:
+          - text: Peekadoodle
+          - generic [ref=e239]: Age 3+ · $725/wk
+        - generic [ref=e243]: Jun 15 – Aug 20 (age 3+)
+    - generic [ref=e249]: "Solid bars = she definitely qualifies · Faded bars = age 3+ (call to confirm birthday policy) · Stretch closed weeks: 6/1–6/5, 6/29–7/3, 8/3–8/7"
+  - generic [ref=e250]:
+    - heading "If You Prioritize…" [level=2] [ref=e251]
+    - paragraph [ref=e252]: Quick picks based on what matters most to you.
+  - generic [ref=e253]:
+    - generic [ref=e254]:
+      - generic [ref=e256]: ⭐
+      - generic [ref=e257]: Mira’s Own School
+      - generic [ref=e258]: Stretch the Imagination — 5 themed sessions all summer, she knows the teachers and space
+    - generic [ref=e259]:
+      - generic [ref=e261]: 🩷
+      - generic [ref=e262]: Best Care Ratios
+      - generic [ref=e263]: Calvary (1:5), Seabird, Peekadoodle
+    - generic [ref=e264]:
+      - generic [ref=e266]: 🌳
+      - generic [ref=e267]: Outdoor / Nature
+      - generic [ref=e268]: Forest Bloom, Stretch (Fridays in nature), Coyote Camp, Little Forest Explorers
+    - generic [ref=e269]:
+      - generic [ref=e271]: 🌐
+      - generic [ref=e272]: Language Immersion
+      - generic [ref=e273]: Camp Firedragon (Mandarin), Dahlia (Spanish), Little Llamas (Spanish), L’Academy
+    - generic [ref=e274]:
+      - generic [ref=e276]: ⏰
+      - generic [ref=e277]: Longest Hours
+      - generic [ref=e278]: Seabird (7:30a–5:30p), Camp Firedragon (8:30a–4p), JCCSF
+    - generic [ref=e279]:
+      - generic [ref=e281]: 💰
+      - generic [ref=e282]: Most Affordable
+      - generic [ref=e283]: Camp Commotion ($500/wk sliding), GG Art & Nature ($270/wk), Dahlia (50% aid)
+    - generic [ref=e284]:
+      - generic [ref=e286]: 🌞
+      - generic [ref=e287]: Half-Day Options
+      - generic [ref=e288]: Stretch (all sessions!), Calvary, Seabird, Peekadoodle, GG Art & Nature
+    - generic [ref=e289]:
+      - generic [ref=e291]: ✔️
+      - generic [ref=e292]: No Birthday Worries
+      - generic [ref=e293]: Stretch (2.9+), JCCSF (2+), Seabird (2+), Dahlia (2+), Camp Commotion (2+), Forest Bloom (2.5+)
+  - generic [ref=e294]:
+    - heading "Side-by-Side Comparison" [level=2] [ref=e295]
+    - paragraph [ref=e296]: All 16 camps in one view. Stretch sessions are highlighted in orange.
+  - table "Comparison of all 16 summer camps for Mira" [ref=e298]:
+    - caption [ref=e299]: Comparison of all 16 summer camps for Mira
+    - rowgroup [ref=e300]:
+      - row "Camp ☆ Tier Ages Location Dates Hours Cost Half-Day? Focus" [ref=e301]:
+        - columnheader "Camp" [ref=e302]
+        - columnheader "☆" [ref=e303]
+        - columnheader "Tier" [ref=e304]
+        - columnheader "Ages" [ref=e305]
+        - columnheader "Location" [ref=e306]
+        - columnheader "Dates" [ref=e307]
+        - columnheader "Hours" [ref=e308]
+        - columnheader "Cost" [ref=e309]
+        - columnheader "Half-Day?" [ref=e310]
+        - columnheader "Focus" [ref=e311]
+    - rowgroup [ref=e312]:
+      - 'row "Stretch the Imagination Star Stretch the Imagination Stretch 2.9–3.9 Presidio / nature Jun 8 – Aug 21 (5 sessions) 8:10a – 12:40p $575–$1,150/session Half-day Themed: ocean, art, tinkering, imagination, science" [ref=e313]':
+        - cell "Stretch the Imagination" [ref=e314]
+        - cell "Star Stretch the Imagination" [ref=e315]:
+          - button "Star Stretch the Imagination" [ref=e316] [cursor=pointer]: ☆
+        - cell "Stretch" [ref=e317]:
+          - generic [ref=e318]: Stretch
+        - cell "2.9–3.9" [ref=e319]
+        - cell "Presidio / nature" [ref=e320]
+        - cell "Jun 8 – Aug 21 (5 sessions)" [ref=e321]
+        - cell "8:10a – 12:40p" [ref=e322]
+        - cell "$575–$1,150/session" [ref=e323]
+        - cell "Half-day" [ref=e324]:
+          - generic [ref=e325]: Half-day
+        - 'cell "Themed: ocean, art, tinkering, imagination, science" [ref=e326]'
+      - 'row "JCCSF Summer Camp Star JCCSF Summer Camp Tier 1 2–16 Presidio Heights May 26 – Aug 21 ~8:35a – 4p ~$465+/wk — All-around: swim, sports, arts" [ref=e327]':
+        - cell "JCCSF Summer Camp" [ref=e328]
+        - cell "Star JCCSF Summer Camp" [ref=e329]:
+          - button "Star JCCSF Summer Camp" [ref=e330] [cursor=pointer]: ☆
+        - cell "Tier 1" [ref=e331]:
+          - generic [ref=e332]: Tier 1
+        - cell "2–16" [ref=e333]
+        - cell "Presidio Heights" [ref=e334]
+        - cell "May 26 – Aug 21" [ref=e335]
+        - cell "~8:35a – 4p" [ref=e336]
+        - cell "~$465+/wk" [ref=e337]
+        - cell "—" [ref=e338]
+        - 'cell "All-around: swim, sports, arts" [ref=e339]'
+      - row "Camp Firedragon Star Camp Firedragon Tier 1 2.5–14 Park Merced (CAIS) Jun 15 – Aug 21 8:30a – 4p Varies — STEAM + Mandarin immersion" [ref=e340]:
+        - cell "Camp Firedragon" [ref=e341]
+        - cell "Star Camp Firedragon" [ref=e342]:
+          - button "Star Camp Firedragon" [ref=e343] [cursor=pointer]: ☆
+        - cell "Tier 1" [ref=e344]:
+          - generic [ref=e345]: Tier 1
+        - cell "2.5–14" [ref=e346]
+        - cell "Park Merced (CAIS)" [ref=e347]
+        - cell "Jun 15 – Aug 21" [ref=e348]
+        - cell "8:30a – 4p" [ref=e349]
+        - cell "Varies" [ref=e350]
+        - cell "—" [ref=e351]
+        - cell "STEAM + Mandarin immersion" [ref=e352]
+      - row "Forest Bloom Outdoor Camp Star Forest Bloom Outdoor Camp Tier 1 2.5–6 Golden Gate Park Jun 4 – Sep 4 9a – 3p Varies — 100% outdoor, nature-based" [ref=e353]:
+        - cell "Forest Bloom Outdoor Camp" [ref=e354]
+        - cell "Star Forest Bloom Outdoor Camp" [ref=e355]:
+          - button "Star Forest Bloom Outdoor Camp" [ref=e356] [cursor=pointer]: ☆
+        - cell "Tier 1" [ref=e357]:
+          - generic [ref=e358]: Tier 1
+        - cell "2.5–6" [ref=e359]
+        - cell "Golden Gate Park" [ref=e360]
+        - cell "Jun 4 – Sep 4" [ref=e361]
+        - cell "9a – 3p" [ref=e362]
+        - cell "Varies" [ref=e363]
+        - cell "—" [ref=e364]
+        - cell "100% outdoor, nature-based" [ref=e365]
+      - row "Calvary Nursery School Star Calvary Nursery School Tier 1 2.5–6 Pacific Heights Jun 16 – Aug 8 8:30a–12:30p or 3p $400–$675/wk Half-day Play-based, intimate (1:5)" [ref=e366]:
+        - cell "Calvary Nursery School" [ref=e367]
+        - cell "Star Calvary Nursery School" [ref=e368]:
+          - button "Star Calvary Nursery School" [ref=e369] [cursor=pointer]: ☆
+        - cell "Tier 1" [ref=e370]:
+          - generic [ref=e371]: Tier 1
+        - cell "2.5–6" [ref=e372]
+        - cell "Pacific Heights" [ref=e373]
+        - cell "Jun 16 – Aug 8" [ref=e374]
+        - cell "8:30a–12:30p or 3p" [ref=e375]
+        - cell "$400–$675/wk" [ref=e376]
+        - cell "Half-day" [ref=e377]:
+          - generic [ref=e378]: Half-day
+        - cell "Play-based, intimate (1:5)" [ref=e379]
+      - row "Seabird Preschool Star Seabird Preschool Tier 1 2–6 Financial District Jun 9 – Aug 15 7:30a–12:15p or 5:30p $550–$680/wk Half-day Themed weeks, organic garden" [ref=e380]:
+        - cell "Seabird Preschool" [ref=e381]
+        - cell "Star Seabird Preschool" [ref=e382]:
+          - button "Star Seabird Preschool" [ref=e383] [cursor=pointer]: ☆
+        - cell "Tier 1" [ref=e384]:
+          - generic [ref=e385]: Tier 1
+        - cell "2–6" [ref=e386]
+        - cell "Financial District" [ref=e387]
+        - cell "Jun 9 – Aug 15" [ref=e388]
+        - cell "7:30a–12:15p or 5:30p" [ref=e389]
+        - cell "$550–$680/wk" [ref=e390]
+        - cell "Half-day" [ref=e391]:
+          - generic [ref=e392]: Half-day
+        - cell "Themed weeks, organic garden" [ref=e393]
+      - row "Camp Commotion Star Camp Commotion Tier 1 2–6 Mission Jun 30 – Aug 1 TBD $500/wk sliding — Movement + neuroscience" [ref=e394]:
+        - cell "Camp Commotion" [ref=e395]
+        - cell "Star Camp Commotion" [ref=e396]:
+          - button "Star Camp Commotion" [ref=e397] [cursor=pointer]: ☆
+        - cell "Tier 1" [ref=e398]:
+          - generic [ref=e399]: Tier 1
+        - cell "2–6" [ref=e400]
+        - cell "Mission" [ref=e401]
+        - cell "Jun 30 – Aug 1" [ref=e402]
+        - cell "TBD" [ref=e403]
+        - cell "$500/wk sliding" [ref=e404]
+        - cell "—" [ref=e405]
+        - cell "Movement + neuroscience" [ref=e406]
+      - row "Dahlia School Star Dahlia School Tier 1 2–11 Mission Bay Jun 5 – Jul 26 Varies Varies (50% aid) — Montessori + Spanish immersion" [ref=e407]:
+        - cell "Dahlia School" [ref=e408]
+        - cell "Star Dahlia School" [ref=e409]:
+          - button "Star Dahlia School" [ref=e410] [cursor=pointer]: ☆
+        - cell "Tier 1" [ref=e411]:
+          - generic [ref=e412]: Tier 1
+        - cell "2–11" [ref=e413]
+        - cell "Mission Bay" [ref=e414]
+        - cell "Jun 5 – Jul 26" [ref=e415]
+        - cell "Varies" [ref=e416]
+        - cell "Varies (50% aid)" [ref=e417]
+        - cell "—" [ref=e418]
+        - cell "Montessori + Spanish immersion" [ref=e419]
+      - row "Golden Gate Art & Nature Star Golden Gate Art & Nature Tier 2 3–7 Laurel Heights Jun 1 – Aug 21 Varies $270–$700/wk Half-day Reggio Emilia art + nature" [ref=e420]:
+        - cell "Golden Gate Art & Nature" [ref=e421]
+        - cell "Star Golden Gate Art & Nature" [ref=e422]:
+          - button "Star Golden Gate Art & Nature" [ref=e423] [cursor=pointer]: ☆
+        - cell "Tier 2" [ref=e424]:
+          - generic [ref=e425]: Tier 2
+        - cell "3–7" [ref=e426]
+        - cell "Laurel Heights" [ref=e427]
+        - cell "Jun 1 – Aug 21" [ref=e428]
+        - cell "Varies" [ref=e429]
+        - cell "$270–$700/wk" [ref=e430]
+        - cell "Half-day" [ref=e431]:
+          - generic [ref=e432]: Half-day
+        - cell "Reggio Emilia art + nature" [ref=e433]
+      - row "Parks + Creation’s Coyote Camp Star Parks + Creation’s Coyote Camp Tier 2 3–6 Presidio Jun 8 – Aug 7 Varies Varies — Forest school, hiking, nature" [ref=e434]:
+        - cell "Parks + Creation’s Coyote Camp" [ref=e435]
+        - cell "Star Parks + Creation’s Coyote Camp" [ref=e436]:
+          - button "Star Parks + Creation’s Coyote Camp" [ref=e437] [cursor=pointer]: ☆
+        - cell "Tier 2" [ref=e438]:
+          - generic [ref=e439]: Tier 2
+        - cell "3–6" [ref=e440]
+        - cell "Presidio" [ref=e441]
+        - cell "Jun 8 – Aug 7" [ref=e442]
+        - cell "Varies" [ref=e443]
+        - cell "Varies" [ref=e444]
+        - cell "—" [ref=e445]
+        - cell "Forest school, hiking, nature" [ref=e446]
+      - row "Peekadoodle Preschool Camp Star Peekadoodle Preschool Camp Tier 2 3–5 Inner Richmond Jun 15 – Aug 20 8:45a–12:45p or 3p $725/wk Half-day Preschool enrichment" [ref=e447]:
+        - cell "Peekadoodle Preschool Camp" [ref=e448]
+        - cell "Star Peekadoodle Preschool Camp" [ref=e449]:
+          - button "Star Peekadoodle Preschool Camp" [ref=e450] [cursor=pointer]: ☆
+        - cell "Tier 2" [ref=e451]:
+          - generic [ref=e452]: Tier 2
+        - cell "3–5" [ref=e453]
+        - cell "Inner Richmond" [ref=e454]
+        - cell "Jun 15 – Aug 20" [ref=e455]
+        - cell "8:45a–12:45p or 3p" [ref=e456]
+        - cell "$725/wk" [ref=e457]
+        - cell "Half-day" [ref=e458]:
+          - generic [ref=e459]: Half-day
+        - cell "Preschool enrichment" [ref=e460]
+      - row "Little Llamas Star Little Llamas Tier 2 3–10 Outer Richmond Jul 7 – Jul 25 9a – 3p $650/wk — Spanish + South American culture" [ref=e461]:
+        - cell "Little Llamas" [ref=e462]
+        - cell "Star Little Llamas" [ref=e463]:
+          - button "Star Little Llamas" [ref=e464] [cursor=pointer]: ☆
+        - cell "Tier 2" [ref=e465]:
+          - generic [ref=e466]: Tier 2
+        - cell "3–10" [ref=e467]
+        - cell "Outer Richmond" [ref=e468]
+        - cell "Jul 7 – Jul 25" [ref=e469]
+        - cell "9a – 3p" [ref=e470]
+        - cell "$650/wk" [ref=e471]
+        - cell "—" [ref=e472]
+        - cell "Spanish + South American culture" [ref=e473]
+      - row "Little Forest Explorers Star Little Forest Explorers Tier 2 3–9 Golden Gate Park Jun 16 – Jul 25 8:45a – 3p Register — 100% outdoor forest school" [ref=e474]:
+        - cell "Little Forest Explorers" [ref=e475]
+        - cell "Star Little Forest Explorers" [ref=e476]:
+          - button "Star Little Forest Explorers" [ref=e477] [cursor=pointer]: ☆
+        - cell "Tier 2" [ref=e478]:
+          - generic [ref=e479]: Tier 2
+        - cell "3–9" [ref=e480]
+        - cell "Golden Gate Park" [ref=e481]
+        - cell "Jun 16 – Jul 25" [ref=e482]
+        - cell "8:45a – 3p" [ref=e483]
+        - cell "Register" [ref=e484]
+        - cell "—" [ref=e485]
+        - cell "100% outdoor forest school" [ref=e486]
+      - row "Infinite Martial Arts Star Infinite Martial Arts Tier 2 3–12 Marina Jun 1 – Aug 28 9:30a – 3p Register — Martial arts + active play" [ref=e487]:
+        - cell "Infinite Martial Arts" [ref=e488]
+        - cell "Star Infinite Martial Arts" [ref=e489]:
+          - button "Star Infinite Martial Arts" [ref=e490] [cursor=pointer]: ☆
+        - cell "Tier 2" [ref=e491]:
+          - generic [ref=e492]: Tier 2
+        - cell "3–12" [ref=e493]
+        - cell "Marina" [ref=e494]
+        - cell "Jun 1 – Aug 28" [ref=e495]
+        - cell "9:30a – 3p" [ref=e496]
+        - cell "Register" [ref=e497]
+        - cell "—" [ref=e498]
+        - cell "Martial arts + active play" [ref=e499]
+      - row "Grasshopper Kids Camp Star Grasshopper Kids Camp Tier 2 3–12 Your home Jun 1 – Aug 31 Half-day only Varies Half-day At-home enrichment" [ref=e500]:
+        - cell "Grasshopper Kids Camp" [ref=e501]
+        - cell "Star Grasshopper Kids Camp" [ref=e502]:
+          - button "Star Grasshopper Kids Camp" [ref=e503] [cursor=pointer]: ☆
+        - cell "Tier 2" [ref=e504]:
+          - generic [ref=e505]: Tier 2
+        - cell "3–12" [ref=e506]
+        - cell "Your home" [ref=e507]
+        - cell "Jun 1 – Aug 31" [ref=e508]
+        - cell "Half-day only" [ref=e509]
+        - cell "Varies" [ref=e510]
+        - cell "Half-day" [ref=e511]:
+          - generic [ref=e512]: Half-day
+        - cell "At-home enrichment" [ref=e513]
+      - row "L’Academy Summer Enrichment Star L’Academy Summer Enrichment Tier 2 3–5 Multiple SF Jun 1 – Aug 8 Register Register — Mandarin / Spanish immersion" [ref=e514]:
+        - cell "L’Academy Summer Enrichment" [ref=e515]
+        - cell "Star L’Academy Summer Enrichment" [ref=e516]:
+          - button "Star L’Academy Summer Enrichment" [ref=e517] [cursor=pointer]: ☆
+        - cell "Tier 2" [ref=e518]:
+          - generic [ref=e519]: Tier 2
+        - cell "3–5" [ref=e520]
+        - cell "Multiple SF" [ref=e521]
+        - cell "Jun 1 – Aug 8" [ref=e522]
+        - cell "Register" [ref=e523]
+        - cell "Register" [ref=e524]
+        - cell "—" [ref=e525]
+        - cell "Mandarin / Spanish immersion" [ref=e526]
+  - generic [ref=e527]:
+    - heading "Stretch the Imagination" [level=3] [ref=e528]
+    - paragraph [ref=e529]: Mira’s school! Five themed sessions across the whole summer, each with nature days in the Presidio.
+  - generic [ref=e531]:
+    - generic [ref=e532]:
+      - generic [ref=e533]:
+        - generic [ref=e534]: 🌱
+        - generic [ref=e535]: Mira’s School · Presidio + Nature
+      - generic [ref=e536]:
+        - generic [ref=e537]:
+          - heading "Stretch the Imagination" [level=3] [ref=e538]
+          - generic [ref=e539]:
+            - button "Star Stretch the Imagination" [ref=e540] [cursor=pointer]: ☆
+            - button "Add notes…" [ref=e541] [cursor=pointer]
+          - generic [ref=e542]:
+            - generic [ref=e543]: Mira’s School
+            - generic [ref=e544]: Arts
+            - generic [ref=e545]: Nature Days
+            - generic [ref=e546]: STEM
+        - generic [ref=e547]:
+          - generic [ref=e548]:
+            - generic [ref=e549]: Ages
+            - generic [ref=e550]: 2.9 – 3.9 (her group)
+          - generic [ref=e551]:
+            - generic [ref=e552]: Season
+            - generic [ref=e553]: Jun 8 – Aug 21
+          - generic [ref=e554]:
+            - generic [ref=e555]: Hours
+            - generic [ref=e556]: 8:10am – 12:40pm
+          - generic [ref=e557]:
+            - generic [ref=e558]: Cost Range
+            - generic [ref=e559]: $575 – $1,150 per session
+          - generic [ref=e560]:
+            - generic [ref=e561]: Location
+            - generic [ref=e562]: Stretch + Presidio forest
+          - generic [ref=e563]:
+            - generic [ref=e564]: Refund Policy
+            - generic [ref=e565]: Full refund before Apr 30
+        - paragraph [ref=e566]: "Stretch offers five distinct themed sessions across the summer, each combining classroom time (Mon–Thu) with forest/nature days (Fridays). The curriculum blends art, science, dramatic play, and tinkering — all in a setting Mira already knows with teachers she trusts. Perfect for continuity and a smooth summer transition. Closed weeks: 6/1–6/5, 6/29–7/3, 8/3–8/7."
+        - generic [ref=e567]:
+          - generic [ref=e568]:
+            - heading "Ocean Explorers" [level=5] [ref=e569]
+            - generic [ref=e570]: Jun 8 – Jun 12 (1 week)
+            - generic [ref=e571]: 8:10am – 12:40pm · Mon–Thu at Stretch, Fri in nature
+            - generic [ref=e572]: Sea creatures, submarines, water explorations, sand play. Dramatic play through projected underwater worlds, drawing ocean animals, investigating sea shells.
+            - generic [ref=e573]: $575
+          - generic [ref=e574]:
+            - heading "Art Explosion!" [level=5] [ref=e575]
+            - generic [ref=e576]: Jun 15 – Jun 26 (2 weeks)
+            - generic [ref=e577]: 8:10am – 12:40pm · Mon–Thu at Stretch, Fri in forest
+            - generic [ref=e578]: Painting, sculpting, paper making, collaging, splattering. Experiment with new materials, explore different techniques, let imaginations run wild. Joyful messes evolve into unique creations.
+            - generic [ref=e579]: $1,150
+          - generic [ref=e580]:
+            - heading "Tinkering, Building & 3D Art" [level=5] [ref=e581]
+            - generic [ref=e582]: Jul 6 – Jul 17 (2 weeks)
+            - generic [ref=e583]: 8:10am – 12:40pm · Mon–Thu at Stretch, Fri in forest
+            - generic [ref=e584]: Plan, build, and create collaboratively and individually. Projects evolve over two weeks. Structures, inventions, and 3D creations both at Stretch and in Nature.
+            - generic [ref=e585]: $1,150
+          - generic [ref=e586]:
+            - heading "Not A Box & Beyond!" [level=5] [ref=e587]
+            - generic [ref=e588]: Jul 20 – Jul 31 (2 weeks)
+            - generic [ref=e589]: 8:10am – 12:40pm · Mon–Thu at Stretch, Fri in forest
+            - generic [ref=e590]: Imagination meets art & tinkering with ordinary, found materials. Creating worlds, props, homes — whatever their imaginations come up with! Recycled and open-ended materials brought to life visually and in 3D.
+            - generic [ref=e591]: $1,150
+          - generic [ref=e592]:
+            - heading "Science & Magic" [level=5] [ref=e593]
+            - generic [ref=e594]: Aug 10 – Aug 21 (2 weeks)
+            - generic [ref=e595]: 8:10am – 12:40pm · Mon–Thu at Stretch, Fri in forest
+            - generic [ref=e596]: A Stretch favorite! Growing crystals, exploding volcanoes, creating special potions. Science through experimentation and imaginative play — fantasy play woven with cause and effect.
+            - generic [ref=e597]: $1,150
+        - generic [ref=e598]:
+          - strong [ref=e599]: "Incoming 2 & 3 Year Olds:"
+          - text: Stretch also offers special transition camps for new students (ages 2.0–3.0) in July (7/20–7/31) and August (8/10–8/21), 8:30am–12pm, $1,375/session. These help kids acclimate to preschool before the fall school year — designed for kids brand new to Stretch.
+    - generic [ref=e600]:
+      - generic [ref=e601]:
+        - heading "Pros" [level=4] [ref=e602]
+        - list [ref=e603]:
+          - listitem [ref=e604]: + Mira already knows the teachers and space
+          - listitem [ref=e605]: + Half-day format perfect for almost-3
+          - listitem [ref=e606]: + 5 sessions cover the entire summer
+          - listitem [ref=e607]: + Nature days every Friday (Presidio forest)
+          - listitem [ref=e608]: + Each session is a unique theme
+          - listitem [ref=e609]: + Age 2.9+ — she qualifies for all sessions
+          - listitem [ref=e610]: + Full refund available through Apr 30
+      - generic [ref=e611]:
+        - heading "Cons" [level=4] [ref=e612]
+        - list [ref=e613]:
+          - listitem [ref=e614]: "- Half-day only (ends 12:40pm)"
+          - listitem [ref=e615]: "- 3 closed weeks leave gaps (6/1–5, 6/29–7/3, 8/3–7)"
+          - listitem [ref=e616]: "- $575–$1,150/session adds up for full summer"
+          - listitem [ref=e617]: "- Friday nature day drop-off location TBD"
+          - listitem [ref=e618]: "- All 5 sessions = ~$5,175 total"
+      - generic [ref=e619]:
+        - heading "Why It Stands Out" [level=4] [ref=e620]
+        - generic [ref=e621]: “The camp is similar in structure to a regular preschool day. Children that come in the summer have an easier transition into school in the fall.”
+        - generic [ref=e622]: "Stretch the Imagination · Continuity is the #1 advantage for a toddler"
+    - link "Visit Website →" [ref=e624] [cursor=pointer]:
+      - /url: https://www.stretchsf.com
+  - generic [ref=e625]:
+    - 'heading "Tier 1: She Qualifies All Summer" [level=3] [ref=e626]'
+    - paragraph [ref=e627]: These camps accept ages 2 or 2.5+, so there are zero birthday cutoff concerns.
+  - generic [ref=e628]:
+    - generic [ref=e629]:
+      - generic [ref=e630]:
+        - generic [ref=e631]:
+          - generic [ref=e632]: 🏂
+          - generic [ref=e633]: Swimming · Sports · Arts
+        - generic [ref=e634]:
+          - generic [ref=e635]:
+            - heading "JCCSF Summer Camp" [level=3] [ref=e636]
+            - generic [ref=e637]:
+              - button "Star JCCSF Summer Camp" [ref=e638] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e639] [cursor=pointer]
+            - generic [ref=e640]:
+              - generic [ref=e641]: All-Around
+              - generic [ref=e642]: Swimming
+          - generic [ref=e643]:
+            - generic [ref=e644]:
+              - generic [ref=e645]: Ages
+              - generic [ref=e646]: 2 – 16
+            - generic [ref=e647]:
+              - generic [ref=e648]: Dates
+              - generic [ref=e649]: May 26 – Aug 21
+            - generic [ref=e650]:
+              - generic [ref=e651]: Hours
+              - generic [ref=e652]: ~8:35am – 4pm
+            - generic [ref=e653]:
+              - generic [ref=e654]: Cost
+              - generic [ref=e655]: ~$465+/wk (members)
+            - generic [ref=e656]:
+              - generic [ref=e657]: Location
+              - generic [ref=e658]: 3200 California St
+          - paragraph [ref=e659]: One of SF’s largest and most established camp programs. Award-winning preschool with two on-site swimming pools, sports, arts, outdoor play, and a dance school. Preschool camp is separate from older kids. AM & PM extended care available.
+      - generic [ref=e660]:
+        - generic [ref=e661]:
+          - heading "Pros" [level=4] [ref=e662]
+          - list [ref=e663]:
+            - listitem [ref=e664]: + Longest season (starts late May)
+            - listitem [ref=e665]: + On-site pools
+            - listitem [ref=e666]: + Award-winning, massive resources
+            - listitem [ref=e667]: + Extended care for working parents
+            - listitem [ref=e668]: + Age 2 minimum
+        - generic [ref=e669]:
+          - heading "Cons" [level=4] [ref=e670]
+          - list [ref=e671]:
+            - listitem [ref=e672]: "- Membership may add cost"
+            - listitem [ref=e673]: "- Large institution — less intimate"
+            - listitem [ref=e674]: "- Pricing requires login"
+        - generic [ref=e675]:
+          - heading "What Parents Say" [level=4] [ref=e676]
+          - generic [ref=e677]: “3 award-winning preschools, swim school with two pools, on-site sports leagues and a dance school.”
+          - generic [ref=e678]: JCCSF website
+      - generic [ref=e679]:
+        - link "Visit Website →" [ref=e680] [cursor=pointer]:
+          - /url: https://www.jccsf.org/program/summer-camp/
+        - link "Yelp Reviews" [ref=e681] [cursor=pointer]:
+          - /url: https://www.yelp.com/biz/jccsf-helen-diller-family-preschool-san-francisco
+    - generic [ref=e682]:
+      - generic [ref=e683]:
+        - generic [ref=e684]:
+          - generic [ref=e685]: 🐉
+          - generic [ref=e686]: STEAM · Mandarin · 5.4 Acres
+        - generic [ref=e687]:
+          - generic [ref=e688]:
+            - heading "Camp Firedragon" [level=3] [ref=e689]
+            - generic [ref=e690]:
+              - button "Star Camp Firedragon" [ref=e691] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e692] [cursor=pointer]
+            - generic [ref=e693]:
+              - generic [ref=e694]: STEAM
+              - generic [ref=e695]: Mandarin
+          - generic [ref=e696]:
+            - generic [ref=e697]:
+              - generic [ref=e698]: Ages
+              - generic [ref=e699]: 2.5 – 14
+            - generic [ref=e700]:
+              - generic [ref=e701]: Dates
+              - generic [ref=e702]: Jun 15 – Aug 21
+            - generic [ref=e703]:
+              - generic [ref=e704]: Hours
+              - generic [ref=e705]: 8:30am – 4pm
+            - generic [ref=e706]:
+              - generic [ref=e707]: Cost
+              - generic [ref=e708]: Varies by program
+            - generic [ref=e709]:
+              - generic [ref=e710]: Location
+              - generic [ref=e711]: 3250 19th Ave (CAIS)
+          - paragraph [ref=e712]: Housed on the newly renovated CAIS campus with a 455-seat auditorium, theater, gymnasium, ceramics studio, outdoor turf field, and three play structures across 5.4 acres. English or full Mandarin immersion for preschool. Updated STEAM curriculum.
+      - generic [ref=e713]:
+        - generic [ref=e714]:
+          - heading "Pros" [level=4] [ref=e715]
+          - list [ref=e716]:
+            - listitem [ref=e717]: + Mandarin immersion unique at this age
+            - listitem [ref=e718]: + 5.4-acre purpose-built campus
+            - listitem [ref=e719]: + Brand-new renovated facilities
+            - listitem [ref=e720]: + STEAM for preschoolers
+            - listitem [ref=e721]: + Accepts 2.5+
+        - generic [ref=e722]:
+          - heading "Cons" [level=4] [ref=e723]
+          - list [ref=e724]:
+            - listitem [ref=e725]: "- Registration opens Jan 16 — fills fast"
+            - listitem [ref=e726]: "- Park Merced may be far"
+            - listitem [ref=e727]: "- Pricing not published"
+        - generic [ref=e728]:
+          - heading "What Parents Say" [level=4] [ref=e729]
+          - generic [ref=e730]: “Purpose-built spaces including theater, gymnasium, performing arts studio, ceramics studio, and three play structures on a 5.4 acre oasis.”
+          - generic [ref=e731]: Camp Firedragon
+      - link "Visit Website →" [ref=e733] [cursor=pointer]:
+        - /url: https://campfiredragon.org/
+    - generic [ref=e734]:
+      - generic [ref=e735]:
+        - generic [ref=e736]:
+          - generic [ref=e737]: 🌳
+          - generic [ref=e738]: 100% Outdoor · Golden Gate Park
+        - generic [ref=e739]:
+          - generic [ref=e740]:
+            - heading "Forest Bloom Outdoor Camp" [level=3] [ref=e741]
+            - generic [ref=e742]:
+              - button "Star Forest Bloom Outdoor Camp" [ref=e743] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e744] [cursor=pointer]
+            - generic [ref=e745]:
+              - generic [ref=e746]: Outdoor
+              - generic [ref=e747]: Nature Arts
+          - generic [ref=e748]:
+            - generic [ref=e749]:
+              - generic [ref=e750]: Ages
+              - generic [ref=e751]: 2.5 – 6
+            - generic [ref=e752]:
+              - generic [ref=e753]: Dates
+              - generic [ref=e754]: Jun 4 – Sep 4
+            - generic [ref=e755]:
+              - generic [ref=e756]: Hours
+              - generic [ref=e757]: 9am – 3pm
+            - generic [ref=e758]:
+              - generic [ref=e759]: Cost
+              - generic [ref=e760]: Varies
+            - generic [ref=e761]:
+              - generic [ref=e762]: Location
+              - generic [ref=e763]: Golden Gate Park / Presidio
+          - paragraph [ref=e764]: Fully outdoor, Reggio-Emilia inspired nature program. Kids spend all day in Golden Gate Park — hiking, nature crafts, gardening, outdoor art, music, yoga, and sensory play. Small groups. Morning-only option (9am–1:30pm) available.
+      - generic [ref=e765]:
+        - generic [ref=e766]:
+          - heading "Pros" [level=4] [ref=e767]
+          - list [ref=e768]:
+            - listitem [ref=e769]: + Longest season (Jun 4 – Sep 4)
+            - listitem [ref=e770]: + Pure outdoor immersion in GG Park
+            - listitem [ref=e771]: + Small, intimate groups
+            - listitem [ref=e772]: + Experienced with 2.5-year-olds
+            - listitem [ref=e773]: + Morning-only option
+        - generic [ref=e774]:
+          - heading "Cons" [level=4] [ref=e775]
+          - list [ref=e776]:
+            - listitem [ref=e777]: "- 100% outdoor = dress for SF weather"
+            - listitem [ref=e778]: "- Kids come home dirty"
+            - listitem [ref=e779]: "- No indoor shelter"
+        - generic [ref=e780]:
+          - heading "What Parents Say" [level=4] [ref=e781]
+          - generic [ref=e782]: “My sons, ages 4 and 2.5, have been going to Forest Bloom on holidays for the past year.”
+          - generic [ref=e783]: ActivityHero parent review
+      - generic [ref=e784]:
+        - link "Visit Website →" [ref=e785] [cursor=pointer]:
+          - /url: https://forestbloomschool.com/our-camps
+        - link "Yelp" [ref=e786] [cursor=pointer]:
+          - /url: https://www.yelp.com/biz/forest-bloom-outdoor-school-san-francisco-3
+    - generic [ref=e787]:
+      - generic [ref=e788]:
+        - generic [ref=e789]:
+          - generic [ref=e790]: 🎨
+          - generic [ref=e791]: Play-Based · 1:5 Ratio · Since 1954
+        - generic [ref=e792]:
+          - generic [ref=e793]:
+            - heading "Calvary Nursery School" [level=3] [ref=e794]
+            - generic [ref=e795]:
+              - button "Star Calvary Nursery School" [ref=e796] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e797] [cursor=pointer]
+            - generic [ref=e799]: Play-Based
+          - generic [ref=e800]:
+            - generic [ref=e801]:
+              - generic [ref=e802]: Ages
+              - generic [ref=e803]: 2.5 – 6
+            - generic [ref=e804]:
+              - generic [ref=e805]: Dates
+              - generic [ref=e806]: Jun 16 – Aug 8
+            - generic [ref=e807]:
+              - generic [ref=e808]: Hours
+              - generic [ref=e809]: 8:30a–12:30p or 3p
+            - generic [ref=e810]:
+              - generic [ref=e811]: Cost
+              - generic [ref=e812]: $400/wk (half) · $675 (full)
+            - generic [ref=e813]:
+              - generic [ref=e814]: Location
+              - generic [ref=e815]: 2515 Fillmore St
+          - paragraph [ref=e816]: Operating since 1954 with a 1:5 teacher-to-child ratio for the youngest kids — among the best anywhere. Play-based, child-initiated curriculum. Beautiful Pacific Heights campus with indoor and outdoor environments.
+      - generic [ref=e817]:
+        - generic [ref=e818]:
+          - heading "Pros" [level=4] [ref=e819]
+          - list [ref=e820]:
+            - listitem [ref=e821]: + 1:5 teacher ratio — best on this list
+            - listitem [ref=e822]: + Half-day option perfect for toddlers
+            - listitem [ref=e823]: + 70+ years of experience
+            - listitem [ref=e824]: + Beautiful campus
+            - listitem [ref=e825]: + Clear pricing
+        - generic [ref=e826]:
+          - heading "Cons" [level=4] [ref=e827]
+          - list [ref=e828]:
+            - listitem [ref=e829]: "- Potty training likely required"
+            - listitem [ref=e830]: "- Shorter season (Jun 16 – Aug 8)"
+            - listitem [ref=e831]: "- Small = may fill quickly"
+        - generic [ref=e832]:
+          - heading "What Parents Say" [level=4] [ref=e833]
+          - generic [ref=e834]: “Calvary has been the perfect first school experience for my kids. I cannot recommend Calvary Nursery School highly enough.”
+          - generic [ref=e835]: Multiple parent reviews
+      - generic [ref=e836]:
+        - link "Visit Website →" [ref=e837] [cursor=pointer]:
+          - /url: https://www.calvarynurseryschoolsf.org/summer-school
+        - link "Yelp" [ref=e838] [cursor=pointer]:
+          - /url: https://www.yelp.com/biz/calvary-nursery-school-san-francisco
+    - generic [ref=e839]:
+      - generic [ref=e840]:
+        - generic [ref=e841]:
+          - generic [ref=e842]: 🐦
+          - generic [ref=e843]: Themed Weeks · Organic Garden · 7:30am
+        - generic [ref=e844]:
+          - generic [ref=e845]:
+            - heading "Seabird Preschool" [level=3] [ref=e846]
+            - generic [ref=e847]:
+              - button "Star Seabird Preschool" [ref=e848] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e849] [cursor=pointer]
+            - generic [ref=e850]:
+              - generic [ref=e851]: Themed Weeks
+              - generic [ref=e852]: Organic Garden
+          - generic [ref=e853]:
+            - generic [ref=e854]:
+              - generic [ref=e855]: Ages
+              - generic [ref=e856]: 2 – 6
+            - generic [ref=e857]:
+              - generic [ref=e858]: Dates
+              - generic [ref=e859]: Jun 9 – Aug 15
+            - generic [ref=e860]:
+              - generic [ref=e861]: Hours
+              - generic [ref=e862]: 7:30a–12:15p or 5:30p
+            - generic [ref=e863]:
+              - generic [ref=e864]: Cost
+              - generic [ref=e865]: $550 (half) · $680 (full)
+            - generic [ref=e866]:
+              - generic [ref=e867]: Location
+              - generic [ref=e868]: 9 Pelton Pl (FiDi)
+          - paragraph [ref=e869]: "Weekly changing themes: nature, art, science, space, outdoor activities. Culminates in Carnival week. Private playground with organic garden. Modern, impeccably clean. Strong ratios with individualized attention."
+      - generic [ref=e870]:
+        - generic [ref=e871]:
+          - heading "Pros" [level=4] [ref=e872]
+          - list [ref=e873]:
+            - listitem [ref=e874]: + Earliest drop-off (7:30am) + latest pickup (5:30pm)
+            - listitem [ref=e875]: + Age 2 — zero birthday concerns
+            - listitem [ref=e876]: + Themed weeks keep it fresh
+            - listitem [ref=e877]: + Organic garden
+            - listitem [ref=e878]: + 14 Yelp reviews, very positive
+        - generic [ref=e879]:
+          - heading "Cons" [level=4] [ref=e880]
+          - list [ref=e881]:
+            - listitem [ref=e882]: "- FiDi may not be convenient"
+            - listitem [ref=e883]: "- Not a nature immersion program"
+        - generic [ref=e884]:
+          - heading "What Parents Say" [level=4] [ref=e885]
+          - generic [ref=e886]: “Safe and creative learning environment. Impeccably clean and modern. Teacher-student ratios ensure individualized attention.”
+          - generic [ref=e887]: Yelp · 14 reviews · 32 photos
+      - generic [ref=e888]:
+        - link "Visit Website →" [ref=e889] [cursor=pointer]:
+          - /url: https://www.seabirdpreschool.com/summercamp
+        - link "Yelp" [ref=e890] [cursor=pointer]:
+          - /url: https://www.yelp.com/biz/seabird-preschool-san-francisco
+    - generic [ref=e891]:
+      - generic [ref=e892]:
+        - generic [ref=e893]:
+          - generic [ref=e894]: 🤸
+          - generic [ref=e895]: Movement · Neuroscience · Sliding Scale
+        - generic [ref=e896]:
+          - generic [ref=e897]:
+            - heading "Camp Commotion" [level=3] [ref=e898]
+            - generic [ref=e899]:
+              - button "Star Camp Commotion" [ref=e900] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e901] [cursor=pointer]
+            - generic [ref=e902]:
+              - generic [ref=e903]: Movement
+              - generic [ref=e904]: Neuroscience
+          - generic [ref=e905]:
+            - generic [ref=e906]:
+              - generic [ref=e907]: Ages
+              - generic [ref=e908]: 2 – 6
+            - generic [ref=e909]:
+              - generic [ref=e910]: Dates
+              - generic [ref=e911]: Jun 30 – Aug 1
+            - generic [ref=e912]:
+              - generic [ref=e913]: Cost
+              - generic [ref=e914]: $500/wk sliding scale
+            - generic [ref=e915]:
+              - generic [ref=e916]: Location
+              - generic [ref=e917]: Mission
+          - paragraph [ref=e918]: Curriculum based on emerging neuroscience and child development research. Movement, arts & literacy, social skills, self-discovery, and play. Starts exactly on Mira’s birthday!
+      - generic [ref=e919]:
+        - generic [ref=e920]:
+          - heading "Pros" [level=4] [ref=e921]
+          - list [ref=e922]:
+            - listitem [ref=e923]: + Starts on her birthday (6/30)!
+            - listitem [ref=e924]: + Sliding scale — most accessible
+            - listitem [ref=e925]: + Neuroscience-informed
+            - listitem [ref=e926]: + Movement-focused
+        - generic [ref=e927]:
+          - heading "Cons" [level=4] [ref=e928]
+          - list [ref=e929]:
+            - listitem [ref=e930]: "- Shortest season (5 weeks)"
+            - listitem [ref=e931]: "- Limited online info"
+        - generic [ref=e932]:
+          - heading "What Parents Say" [level=4] [ref=e933]
+          - generic [ref=e934]: “Activities based on emerging research in neuroscience and child development.”
+          - generic [ref=e935]: Project Commotion
+      - link "Visit Website →" [ref=e937] [cursor=pointer]:
+        - /url: https://www.projectcommotion.org/camp
+    - generic [ref=e938]:
+      - generic [ref=e939]:
+        - generic [ref=e940]:
+          - generic [ref=e941]: 🌼
+          - generic [ref=e942]: Montessori · Spanish · Lunch Included
+        - generic [ref=e943]:
+          - generic [ref=e944]:
+            - heading "Dahlia School" [level=3] [ref=e945]
+            - generic [ref=e946]:
+              - button "Star Dahlia School" [ref=e947] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e948] [cursor=pointer]
+            - generic [ref=e949]:
+              - generic [ref=e950]: Montessori
+              - generic [ref=e951]: Spanish
+          - generic [ref=e952]:
+            - generic [ref=e953]:
+              - generic [ref=e954]: Ages
+              - generic [ref=e955]: 2 – 11
+            - generic [ref=e956]:
+              - generic [ref=e957]: Dates
+              - generic [ref=e958]: Jun 5 – Jul 26
+            - generic [ref=e959]:
+              - generic [ref=e960]: Cost
+              - generic [ref=e961]: Varies (up to 50% aid)
+            - generic [ref=e962]:
+              - generic [ref=e963]: Location
+              - generic [ref=e964]: 116 Channel St (Mission Bay)
+          - paragraph [ref=e965]: Montessori Spanish immersion. Healthy plant-based lunch and snacks included daily. Up to 50% scholarship. Rich arts and cultural environment.
+      - generic [ref=e966]:
+        - generic [ref=e967]:
+          - heading "Pros" [level=4] [ref=e968]
+          - list [ref=e969]:
+            - listitem [ref=e970]: + Lunch & snacks included
+            - listitem [ref=e971]: + Up to 50% scholarship
+            - listitem [ref=e972]: + Montessori + Spanish rare combo
+            - listitem [ref=e973]: + Age 2 — no concerns
+        - generic [ref=e974]:
+          - heading "Cons" [level=4] [ref=e975]
+          - list [ref=e976]:
+            - listitem [ref=e977]: "- Ends Jul 26"
+            - listitem [ref=e978]: "- Plant-based menu may not suit all"
+        - generic [ref=e979]:
+          - heading "What Parents Say" [level=4] [ref=e980]
+          - generic [ref=e981]: “My child has grown to be independent and communicative. Clean and friendly with work tailored to each child’s needs.”
+          - generic [ref=e982]: Yelp
+      - generic [ref=e983]:
+        - link "Visit Website →" [ref=e984] [cursor=pointer]:
+          - /url: https://thedahliaschoolsf.org/camps-and-classes
+        - link "Yelp" [ref=e985] [cursor=pointer]:
+          - /url: https://www.yelp.com/biz/the-dahlia-school-san-francisco
+  - generic [ref=e986]:
+    - 'heading "Tier 2: She Qualifies After June 30" [level=3] [ref=e987]'
+    - paragraph [ref=e988]: These require age 3+. Mira turns 3 on 6/30 — sessions on/after that date are safe. For earlier sessions, call to confirm.
+  - generic [ref=e989]:
+    - generic [ref=e990]:
+      - generic [ref=e991]:
+        - generic [ref=e992]:
+          - generic [ref=e993]: 🎨
+          - generic [ref=e994]: Reggio Emilia · Art + Nature
+        - generic [ref=e995]:
+          - generic [ref=e996]:
+            - heading "Golden Gate Art & Nature" [level=3] [ref=e997]
+            - generic [ref=e998]:
+              - button "Star Golden Gate Art & Nature" [ref=e999] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e1000] [cursor=pointer]
+            - generic [ref=e1001]:
+              - generic [ref=e1002]: Reggio Emilia
+              - generic [ref=e1003]: Nature
+          - generic [ref=e1004]:
+            - generic [ref=e1005]:
+              - generic [ref=e1006]: Ages
+              - generic [ref=e1007]: 3 – 7 (classes from 1.5+)
+            - generic [ref=e1008]:
+              - generic [ref=e1009]: Dates
+              - generic [ref=e1010]: Jun 1 – Aug 21
+            - generic [ref=e1011]:
+              - generic [ref=e1012]: Cost
+              - generic [ref=e1013]: $270 – $700/wk
+            - generic [ref=e1014]:
+              - generic [ref=e1015]: Location
+              - generic [ref=e1016]: 3429 Sacramento St / Park Presidio
+          - paragraph [ref=e1017]: Reggio Emilia-inspired art and nature enrichment. Art at their Laurel Heights studio + outdoor camps in Park Presidio. Teacher Kelly praised for her work with toddlers. Regular classes from age 1.5.
+      - generic [ref=e1018]:
+        - generic [ref=e1019]:
+          - heading "Pros" [level=4] [ref=e1020]
+          - list [ref=e1021]:
+            - listitem [ref=e1022]: + Most affordable ($270/wk half-day)
+            - listitem [ref=e1023]: + Experienced with toddlers (1.5+)
+            - listitem [ref=e1024]: + Art studio + outdoor play
+        - generic [ref=e1025]:
+          - heading "Cons" [level=4] [ref=e1026]
+          - list [ref=e1027]:
+            - listitem [ref=e1028]: "- Camp minimum age 3 — call"
+            - listitem [ref=e1029]: "- Smaller operation"
+        - generic [ref=e1030]:
+          - heading "What Parents Say" [level=4] [ref=e1031]
+          - generic [ref=e1032]: “Teacher Kelly is the best! She works amazingly well with toddlers. Filled with exploration, fun, and excitement.”
+          - generic [ref=e1033]: Yelp · 24 photos
+      - generic [ref=e1034]:
+        - link "Visit Website →" [ref=e1035] [cursor=pointer]:
+          - /url: https://ggartnature.com/
+        - link "Yelp" [ref=e1036] [cursor=pointer]:
+          - /url: https://www.yelp.com/biz/golden-gate-art-and-nature-san-francisco
+    - generic [ref=e1037]:
+      - generic [ref=e1038]:
+        - generic [ref=e1039]:
+          - generic [ref=e1040]: 🌲
+          - generic [ref=e1041]: Forest School · Presidio · Since 2013
+        - generic [ref=e1042]:
+          - generic [ref=e1043]:
+            - heading "Parks + Creation’s Coyote Camp" [level=3] [ref=e1044]
+            - generic [ref=e1045]:
+              - button "Star Parks + Creation’s Coyote Camp" [ref=e1046] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e1047] [cursor=pointer]
+            - generic [ref=e1049]: Forest School
+          - generic [ref=e1050]:
+            - generic [ref=e1051]:
+              - generic [ref=e1052]: Ages
+              - generic [ref=e1053]: 3 – 6
+            - generic [ref=e1054]:
+              - generic [ref=e1055]: Dates
+              - generic [ref=e1056]: Jun 8 – Aug 7
+            - generic [ref=e1057]:
+              - generic [ref=e1058]: Location
+              - generic [ref=e1059]: Presidio
+          - paragraph [ref=e1060]: 100% outdoor forest camp. Hiking, songs, stories, nature play. Run by Spire School (since 2013). Chickadee toddler class for 18mo+ shows they understand very young kids.
+      - generic [ref=e1061]:
+        - generic [ref=e1062]:
+          - heading "Pros" [level=4] [ref=e1063]
+          - list [ref=e1064]:
+            - listitem [ref=e1065]: + Beautiful Presidio setting
+            - listitem [ref=e1066]: + Established since 2013
+            - listitem [ref=e1067]: + Toddler program (18mo+)
+        - generic [ref=e1068]:
+          - heading "Cons" [level=4] [ref=e1069]
+          - list [ref=e1070]:
+            - listitem [ref=e1071]: "- Age 3 minimum — call"
+            - listitem [ref=e1072]: "- Fully outdoor in all weather"
+        - generic [ref=e1073]:
+          - heading "What Parents Say" [level=4] [ref=e1074]
+          - generic [ref=e1075]: “Our family couldn’t be happier with Spire School, a fully outdoor forest preschool in the Presidio.”
+          - generic [ref=e1076]: Yelp · 13 reviews
+      - generic [ref=e1077]:
+        - link "Visit Website →" [ref=e1078] [cursor=pointer]:
+          - /url: https://www.parkspluscreation.com/coyote-camp
+        - link "Yelp" [ref=e1079] [cursor=pointer]:
+          - /url: https://www.yelp.com/biz/parks-plus-creation-san-francisco-2
+    - generic [ref=e1080]:
+      - generic [ref=e1081]:
+        - generic [ref=e1082]:
+          - generic [ref=e1083]: 🎉
+          - generic [ref=e1084]: Preschool Enrichment · Warm & Cozy
+        - generic [ref=e1085]:
+          - generic [ref=e1086]:
+            - heading "Peekadoodle Preschool Camp" [level=3] [ref=e1087]
+            - generic [ref=e1088]:
+              - button "Star Peekadoodle Preschool Camp" [ref=e1089] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e1090] [cursor=pointer]
+            - generic [ref=e1092]: Preschool
+          - generic [ref=e1093]:
+            - generic [ref=e1094]:
+              - generic [ref=e1095]: Ages
+              - generic [ref=e1096]: 3 – 5
+            - generic [ref=e1097]:
+              - generic [ref=e1098]: Dates
+              - generic [ref=e1099]: Jun 15 – Aug 20
+            - generic [ref=e1100]:
+              - generic [ref=e1101]: Hours
+              - generic [ref=e1102]: 8:45a–12:45p or 3p
+            - generic [ref=e1103]:
+              - generic [ref=e1104]: Cost
+              - generic [ref=e1105]: $725/wk or $1,400/2wks
+            - generic [ref=e1106]:
+              - generic [ref=e1107]: Location
+              - generic [ref=e1108]: 4228 Geary Blvd
+          - paragraph [ref=e1109]: Preschool-focused camp by experienced teachers. Beautiful, warm, tight-knit environment. Session transfers available by May 1.
+      - generic [ref=e1110]:
+        - generic [ref=e1111]:
+          - heading "Pros" [level=4] [ref=e1112]
+          - list [ref=e1113]:
+            - listitem [ref=e1114]: + Half-day option for toddlers
+            - listitem [ref=e1115]: + Experienced preschool teachers
+            - listitem [ref=e1116]: + Warm, tight-knit
+            - listitem [ref=e1117]: + Flexible transfer policy
+        - generic [ref=e1118]:
+          - heading "Cons" [level=4] [ref=e1119]
+          - list [ref=e1120]:
+            - listitem [ref=e1121]: "- Pricey ($725/wk)"
+            - listitem [ref=e1122]: "- Age 3 minimum — call"
+            - listitem [ref=e1123]: "- Non-refundable"
+        - generic [ref=e1124]:
+          - heading "What Parents Say" [level=4] [ref=e1125]
+          - generic [ref=e1126]: “Teachers are incredibly supportive and genuinely caring about each student’s growth. Warm, tight-knit and beautiful facility.”
+          - generic [ref=e1127]: Yelp · 152 photos
+      - generic [ref=e1128]:
+        - link "Visit Website →" [ref=e1129] [cursor=pointer]:
+          - /url: https://www.peekadoodle.com/camp
+        - link "Yelp" [ref=e1130] [cursor=pointer]:
+          - /url: https://www.yelp.com/biz/peekadoodle-san-francisco
+    - generic [ref=e1131]:
+      - generic [ref=e1132]:
+        - generic [ref=e1133]:
+          - generic [ref=e1134]: 🦙
+          - generic [ref=e1135]: Spanish · South American Culture
+        - generic [ref=e1136]:
+          - generic [ref=e1137]:
+            - heading "Little Llamas" [level=3] [ref=e1138]
+            - generic [ref=e1139]:
+              - button "Star Little Llamas" [ref=e1140] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e1141] [cursor=pointer]
+            - generic [ref=e1142]:
+              - generic [ref=e1143]: Spanish
+              - generic [ref=e1144]: Cultural Arts
+          - generic [ref=e1145]:
+            - generic [ref=e1146]:
+              - generic [ref=e1147]: Ages
+              - generic [ref=e1148]: 3 – 10
+            - generic [ref=e1149]:
+              - generic [ref=e1150]: Dates
+              - generic [ref=e1151]: Jul 7 – Jul 25 (she’s 3!)
+            - generic [ref=e1152]:
+              - generic [ref=e1153]: Hours
+              - generic [ref=e1154]: 9am – 3pm (ext to 5:30p)
+            - generic [ref=e1155]:
+              - generic [ref=e1156]: Cost
+              - generic [ref=e1157]: $650/wk or $1,800/3wks
+            - generic [ref=e1158]:
+              - generic [ref=e1159]: Location
+              - generic [ref=e1160]: 4420 Geary Blvd
+          - paragraph [ref=e1161]: Spanish language + South American culture through gentle, gradual immersion. Art, music, reading, history indoors + outdoor activities. Limited spots.
+      - generic [ref=e1162]:
+        - generic [ref=e1163]:
+          - heading "Pros" [level=4] [ref=e1164]
+          - list [ref=e1165]:
+            - listitem [ref=e1166]: + Starts July 7 — she’ll be 3
+            - listitem [ref=e1167]: + Gentle Spanish approach
+            - listitem [ref=e1168]: + Extended hours (8:30a–5:30p)
+        - generic [ref=e1169]:
+          - heading "Cons" [level=4] [ref=e1170]
+          - list [ref=e1171]:
+            - listitem [ref=e1172]: "- Only 3 weeks"
+            - listitem [ref=e1173]: "- Limited spots"
+        - generic [ref=e1174]:
+          - heading "What Parents Say" [level=4] [ref=e1175]
+          - generic [ref=e1176]: “Fun camp focusing on Spanish and South American culture. The kids are happy and cared for.”
+          - generic [ref=e1177]: Yelp
+      - generic [ref=e1178]:
+        - link "Visit Website →" [ref=e1179] [cursor=pointer]:
+          - /url: https://thelittlellamas.com/
+        - link "Yelp" [ref=e1180] [cursor=pointer]:
+          - /url: https://www.yelp.com/biz/the-little-llamas-summer-camp-san-francisco
+    - generic [ref=e1181]:
+      - generic [ref=e1182]:
+        - generic [ref=e1183]:
+          - generic [ref=e1184]: 🍃
+          - generic [ref=e1185]: 100% Outdoor · GG Park & Ocean Beach
+        - generic [ref=e1186]:
+          - generic [ref=e1187]:
+            - heading "Little Forest Explorers" [level=3] [ref=e1188]
+            - generic [ref=e1189]:
+              - button "Star Little Forest Explorers" [ref=e1190] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e1191] [cursor=pointer]
+            - generic [ref=e1193]: Forest School
+          - generic [ref=e1194]:
+            - generic [ref=e1195]:
+              - generic [ref=e1196]: Ages
+              - generic [ref=e1197]: 3 – 9
+            - generic [ref=e1198]:
+              - generic [ref=e1199]: Dates
+              - generic [ref=e1200]: Jun 16 – Jul 25
+            - generic [ref=e1201]:
+              - generic [ref=e1202]: Hours
+              - generic [ref=e1203]: 8:45am – 3pm
+            - generic [ref=e1204]:
+              - generic [ref=e1205]: Location
+              - generic [ref=e1206]: GG Park & Ocean Beach
+          - paragraph [ref=e1207]: 100% outdoor in Golden Gate Park and Ocean Beach. Nature-based learning building self-regulated, confident, adaptable kids. Innovative approach. Kids come home dirty!
+      - generic [ref=e1208]:
+        - generic [ref=e1209]:
+          - heading "Pros" [level=4] [ref=e1210]
+          - list [ref=e1211]:
+            - listitem [ref=e1212]: + GG Park AND Ocean Beach
+            - listitem [ref=e1213]: + 33 Yelp reviews — most reviewed
+            - listitem [ref=e1214]: + Builds independence
+        - generic [ref=e1215]:
+          - heading "Cons" [level=4] [ref=e1216]
+          - list [ref=e1217]:
+            - listitem [ref=e1218]: "- Age 3 — call about birthday"
+            - listitem [ref=e1219]: "- Fully outdoor"
+            - listitem [ref=e1220]: "- Ends Jul 25"
+        - generic [ref=e1221]:
+          - heading "What Parents Say" [level=4] [ref=e1222]
+          - generic [ref=e1223]: “Innovative outdoor preschool that harnesses the power of nature.”
+          - generic [ref=e1224]: Yelp · 33 reviews · 79 photos
+      - generic [ref=e1225]:
+        - link "Visit Website →" [ref=e1226] [cursor=pointer]:
+          - /url: https://www.littleforestexplorers.com/basic-01
+        - link "Yelp" [ref=e1227] [cursor=pointer]:
+          - /url: https://www.yelp.com/biz/little-forest-explorers-san-francisco-2
+    - generic [ref=e1228]:
+      - generic [ref=e1229]:
+        - generic [ref=e1230]:
+          - generic [ref=e1231]: 🥋
+          - generic [ref=e1232]: Martial Arts · Hikes · Pizza Fridays
+        - generic [ref=e1233]:
+          - generic [ref=e1234]:
+            - heading "Infinite Martial Arts" [level=3] [ref=e1235]
+            - generic [ref=e1236]:
+              - button "Star Infinite Martial Arts" [ref=e1237] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e1238] [cursor=pointer]
+            - generic [ref=e1239]:
+              - generic [ref=e1240]: Martial Arts
+              - generic [ref=e1241]: Active Play
+          - generic [ref=e1242]:
+            - generic [ref=e1243]:
+              - generic [ref=e1244]: Ages
+              - generic [ref=e1245]: 3 – 12
+            - generic [ref=e1246]:
+              - generic [ref=e1247]: Dates
+              - generic [ref=e1248]: Jun 1 – Aug 28
+            - generic [ref=e1249]:
+              - generic [ref=e1250]: Hours
+              - generic [ref=e1251]: 9:30am – 3pm
+            - generic [ref=e1252]:
+              - generic [ref=e1253]: Location
+              - generic [ref=e1254]: Marina District
+          - paragraph [ref=e1255]: Taekwondo, jiu-jitsu, judo, boxing, muay thai fundamentals mixed with hikes, playground time, arts & crafts, and Pizza Fridays. Builds confidence and character.
+      - generic [ref=e1256]:
+        - generic [ref=e1257]:
+          - heading "Pros" [level=4] [ref=e1258]
+          - list [ref=e1259]:
+            - listitem [ref=e1260]: + Builds confidence early
+            - listitem [ref=e1261]: + Fun activity mix
+            - listitem [ref=e1262]: + Long season
+            - listitem [ref=e1263]: + Pizza Fridays!
+        - generic [ref=e1264]:
+          - heading "Cons" [level=4] [ref=e1265]
+          - list [ref=e1266]:
+            - listitem [ref=e1267]: "- Age 3 — not until 6/30"
+            - listitem [ref=e1268]: "- Wide age range (to 12)"
+        - generic [ref=e1269]:
+          - heading "What Parents Say" [level=4] [ref=e1270]
+          - generic [ref=e1271]: “Teachers shape children as personalities — teaching them to be confident, respectful and successful.”
+          - generic [ref=e1272]: Parent review
+      - link "Visit Website →" [ref=e1274] [cursor=pointer]:
+        - /url: https://infinite-martialarts.com/summer-camp-program/
+    - generic [ref=e1275]:
+      - generic [ref=e1276]:
+        - generic [ref=e1277]:
+          - generic [ref=e1278]: 🏠
+          - generic [ref=e1279]: At Your Home · Vetted Instructors
+        - generic [ref=e1280]:
+          - generic [ref=e1281]:
+            - heading "Grasshopper Kids Camp" [level=3] [ref=e1282]
+            - generic [ref=e1283]:
+              - button "Star Grasshopper Kids Camp" [ref=e1284] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e1285] [cursor=pointer]
+            - generic [ref=e1287]: At-Home
+          - generic [ref=e1288]:
+            - generic [ref=e1289]:
+              - generic [ref=e1290]: Ages
+              - generic [ref=e1291]: 3 – 12
+            - generic [ref=e1292]:
+              - generic [ref=e1293]: Dates
+              - generic [ref=e1294]: Jun 1 – Aug 31
+            - generic [ref=e1295]:
+              - generic [ref=e1296]: Hours
+              - generic [ref=e1297]: "Half-day: 9a–12p or 1p–4p"
+            - generic [ref=e1298]:
+              - generic [ref=e1299]: Location
+              - generic [ref=e1300]: Your home
+          - paragraph [ref=e1301]: Vetted teachers, musicians, and chefs come to your house. No commute, familiar environment. Pairs well with a morning camp — e.g. Stretch in the AM, Grasshopper in the PM.
+      - generic [ref=e1302]:
+        - generic [ref=e1303]:
+          - heading "Pros" [level=4] [ref=e1304]
+          - list [ref=e1305]:
+            - listitem [ref=e1306]: + Zero commute
+            - listitem [ref=e1307]: + Familiar environment
+            - listitem [ref=e1308]: + Longest availability
+            - listitem [ref=e1309]: + Pairs with other camps
+        - generic [ref=e1310]:
+          - heading "Cons" [level=4] [ref=e1311]
+          - list [ref=e1312]:
+            - listitem [ref=e1313]: "- No peer interaction"
+            - listitem [ref=e1314]: "- Half-day only"
+        - generic [ref=e1315]:
+          - heading "What Parents Say" [level=4] [ref=e1316]
+          - generic [ref=e1317]: “Supercharged learning experiences with vetted teachers, musicians, and chefs.”
+          - generic [ref=e1318]: 510 Families
+      - link "Visit Website →" [ref=e1320] [cursor=pointer]:
+        - /url: https://www.grasshopperkids.com/camps
+    - generic [ref=e1321]:
+      - generic [ref=e1322]:
+        - generic [ref=e1323]:
+          - generic [ref=e1324]: 🏫
+          - generic [ref=e1325]: Mandarin · Spanish · Montessori + Reggio
+        - generic [ref=e1326]:
+          - generic [ref=e1327]:
+            - heading "L’Academy Summer Enrichment" [level=3] [ref=e1328]
+            - generic [ref=e1329]:
+              - button "Star L’Academy Summer Enrichment" [ref=e1330] [cursor=pointer]: ☆
+              - button "Add notes…" [ref=e1331] [cursor=pointer]
+            - generic [ref=e1332]:
+              - generic [ref=e1333]: Mandarin / Spanish
+              - generic [ref=e1334]: Montessori
+          - generic [ref=e1335]:
+            - generic [ref=e1336]:
+              - generic [ref=e1337]: Ages
+              - generic [ref=e1338]: 3 – 5
+            - generic [ref=e1339]:
+              - generic [ref=e1340]: Dates
+              - generic [ref=e1341]: Jun 1 – Aug 8
+            - generic [ref=e1342]:
+              - generic [ref=e1343]: Location
+              - generic [ref=e1344]: Multiple SF locations
+          - paragraph [ref=e1345]: Mandarin or Spanish immersion. Blends Montessori, Reggio Emilia, and play-based learning. 20+ locations across California. Play-based language learning.
+      - generic [ref=e1346]:
+        - generic [ref=e1347]:
+          - heading "Pros" [level=4] [ref=e1348]
+          - list [ref=e1349]:
+            - listitem [ref=e1350]: + Choose Mandarin OR Spanish
+            - listitem [ref=e1351]: + Multiple SF locations
+            - listitem [ref=e1352]: + Consistent quality
+        - generic [ref=e1353]:
+          - heading "Cons" [level=4] [ref=e1354]
+          - list [ref=e1355]:
+            - listitem [ref=e1356]: "- Age 3 — call about birthday"
+            - listitem [ref=e1357]: "- Limited summer details online"
+        - generic [ref=e1358]:
+          - heading "What Parents Say" [level=4] [ref=e1359]
+          - generic [ref=e1360]: “L’Academy is the best! Teachers are great, administration is professional, and the kids have a ton of fun learning.”
+          - generic [ref=e1361]: Yelp
+      - generic [ref=e1362]:
+        - link "Visit Website →" [ref=e1363] [cursor=pointer]:
+          - /url: https://lacademyschools.com/
+        - link "Yelp" [ref=e1364] [cursor=pointer]:
+          - /url: https://www.yelp.com/biz/l-academy-language-immersion-preschool-san-francisco-6
+  - generic [ref=e1366]:
+    - heading "Questions to Ask Every Camp" [level=2] [ref=e1367]
+    - list [ref=e1368]:
+      - listitem [ref=e1369]:
+        - strong [ref=e1370]: Potty training requirement?
+        - text: Most preschool camps require it. Mira will need to be trained or in progress.
+      - listitem [ref=e1371]:
+        - strong [ref=e1372]: Nap or rest time?
+        - text: Almost-3s still nap. Ask about a quiet rest period.
+      - listitem [ref=e1373]:
+        - strong [ref=e1374]: Teacher-to-child ratio
+        - text: for the youngest group? Calvary’s 1:5 is the gold standard.
+      - listitem [ref=e1375]:
+        - strong [ref=e1376]: Separation anxiety protocol?
+        - text: If this is her first camp outside Stretch, how do they handle difficult drop-offs?
+      - listitem [ref=e1377]:
+        - strong [ref=e1378]: "Snacks & lunch:"
+        - text: Bring your own or provided? Dahlia includes meals. Most others are BYO.
+      - listitem [ref=e1379]:
+        - strong [ref=e1380]: Sunscreen & outdoor policy?
+        - text: Especially for Forest Bloom, Coyote Camp, Little Forest Explorers.
+      - listitem [ref=e1381]:
+        - strong [ref=e1382]: Diaper / pull-up policy?
+        - text: Accidents happen at this age.
+      - listitem [ref=e1383]:
+        - strong [ref=e1384]: Trial day available?
+        - text: Some camps allow a trial day before committing to a full week.
+  - contentinfo [ref=e1385]:
+    - paragraph [ref=e1386]:
+      - text: Curated from
+      - link "Sherri’s 2026 SF Summer Camp List" [ref=e1387] [cursor=pointer]:
+        - /url: https://docs.google.com/spreadsheets/u/0/d/1XhJnHqu3eXCw3E8vxdo-yitFulE-yh0vk6oIOwpa4RA/htmlview#gid=1602356659
+      - text: + Stretch the Imagination parent handout · Filtered for Mira (age 2.9–3) · Reviews from Yelp, ActivityHero, camp websites · February 2026
+  - alert [ref=e1388]

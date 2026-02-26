@@ -1,0 +1,32 @@
+[  614422ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5199/src/App.tsx?t=1772061748450:0
+[  614422ms] [ERROR] [vite] Failed to reload /src/App.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614426ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5199/src/App.tsx?t=1772061748452:0
+[  614426ms] [ERROR] [vite] Failed to reload /src/App.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614454ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5199/src/hooks.ts?t=1772061748461:0
+[  614454ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5199/src/api.ts?t=1772061748452:0
+[  614454ms] [ERROR] [vite] Failed to reload /src/components/TodoPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614454ms] [ERROR] [vite] Failed to reload /src/components/InboxPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614454ms] [ERROR] [vite] Failed to reload /src/components/ThreadPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614454ms] [ERROR] [vite] Failed to reload /src/components/PromoteModal.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614454ms] [ERROR] [vite] Failed to reload /src/components/EntryMedia.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614455ms] [ERROR] [vite] Failed to reload /src/components/EntryFeed.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614482ms] [ERROR] [vite] Failed to reload /src/components/EntryCard.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614483ms] [ERROR] [vite] Failed to reload /src/components/EntryFeed.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614485ms] [ERROR] [vite] Failed to reload /src/components/ThreadPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614487ms] [ERROR] [vite] Failed to reload /src/components/ThreadPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614487ms] [ERROR] [vite] Failed to reload /src/components/EntryFeed.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614487ms] [ERROR] [vite] Failed to reload /src/components/TodoPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614487ms] [ERROR] [vite] Failed to reload /src/components/InboxPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  614488ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5199/src/App.tsx?t=1772061748461:0
+[  614488ms] [ERROR] [vite] Failed to reload /src/App.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  904065ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5199/src/App.tsx?t=1772062038093:0
+[  904065ms] [ERROR] [vite] Failed to reload /src/App.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  904067ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5199/src/hooks.ts?t=1772062038093:0
+[  904067ms] [ERROR] [vite] Failed to reload /src/components/TodoPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  904067ms] [ERROR] [vite] Failed to reload /src/components/ThreadPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  904067ms] [ERROR] [vite] Failed to reload /src/components/InboxPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  904067ms] [ERROR] [vite] Failed to reload /src/components/EntryFeed.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[  967117ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5199/src/App.tsx?t=1772062101147:0
+[  967117ms] [ERROR] [vite] Failed to reload /src/App.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
+[ 1034270ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5199/src/components/ChangelogRow.tsx?t=1772062168302:0
+[ 1034270ms] [ERROR] [vite] Failed to reload /src/components/ChangelogRow.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5199/@vite/client:808
