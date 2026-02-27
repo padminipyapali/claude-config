@@ -16,6 +16,7 @@ Cross-project learnings for Telegram bots (grammY, Bot API).
 
 - **Webhook latency: decouple processing from response.** Respond 200 to the webhook immediately, then process the message asynchronously. Long processing blocks subsequent updates.
 - **Keepalive self-ping prevents cold starts.** On PaaS platforms, periodic self-pings keep the service warm.
+- **`bot.start()` is fire-and-forget — add `.catch()`.** grammY's `bot.start()` returns a Promise but is typically called without `await` (polling runs indefinitely). While polling loop errors route to `bot.catch()`, an immediate rejection from `bot.start()` itself (e.g., network failure before polling begins) would be unhandled. Always append `.catch()`. <!-- Source: PR review, command-center #40, 2026-02-27 -->
 
 ## HTML-Mode Safety
 

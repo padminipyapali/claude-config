@@ -23,6 +23,12 @@ Cross-project learnings for testing strategy, mocking, and assertions.
 
 - **Test every error path in try/catch blocks, not just the primary one.** When a try block contains multiple `await` calls (e.g., `findUser()` then `linkUser()`), each can fail independently. A test for `findUser()` throwing doesn't cover `linkUser()` throwing -- both reach the same catch block but via different code paths. Write a separate test for each `await` that can throw, mocking the preceding calls to succeed and the target call to reject. This is especially important for linking/creation flows where the first call is a lookup and the second is a write. <!-- Source: PR review, second-brain #234, 2026-02-25 -->
 
+- **Use specific patterns in negative assertions, not short substrings.** `not.toContain("View")` will break when any unrelated text contains the word "View" (e.g., "Weekly Review"). Use `not.toMatch(/View \d+ more in dashboard/)` or assert absence of the specific element/pattern you care about. The shorter the negative assertion string, the more likely it matches unintended content. <!-- Source: PR review, second-brain #276, 2026-02-26 -->
+
+## Mocking Pitfalls
+
+- **`vi.doMock` does not affect already-resolved static imports.** `vi.doMock()` only applies to subsequent dynamic `import()` calls, not modules already loaded via static `import` at the top of the file. If you import `Foo` statically and then `vi.doMock("foo-module", ...)`, the imported `Foo` still points to the real module. Either use `vi.mock()` (hoisted to file top) or manually override the dependency on the instance (e.g., `(obj as any).client = mockClient`). Dead `vi.doMock` blocks are common — they appear to work only because a manual override elsewhere does the real mocking. <!-- Source: PR review, command-center #40, 2026-02-27 -->
+
 ## Test Cleanup
 
 - **`vi.restoreAllMocks()` belongs in `afterEach`, never inside individual tests.** Placing `vi.restoreAllMocks()` at the end of a specific test is fragile — if the test fails or is skipped, mocks leak into subsequent tests. Move to `afterEach(() => { vi.restoreAllMocks(); })`. Same applies to `vi.useRealTimers()`, `vi.unstubAllEnvs()`, and any state restoration. General rule: cleanup that undoes test-specific mutations goes in `afterEach`, not in the test body. <!-- Source: PR review, second-brain #256, 2026-02-25 -->
