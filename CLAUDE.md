@@ -17,7 +17,7 @@ On EVERY session start — including continuations from previous sessions — ru
    - `ps aux | grep -E 'claude|claude-code' | grep -v grep | grep '<path>'` — check for active agents.
    - `ls <path>/.git/index.lock 2>/dev/null` — check for git lock files.
 2. **Do NOT trust continuation summaries about repo state.** The summary reflects the *previous* session. Other agents may have started, files may have changed, branches may have moved. Verify it yourself.
-3. **Development cycle checkpoint.** Before creating a PR or merging, verify which development cycle steps (1-6) have been completed in the *current* session. Continuation summaries saying "code pushed, PR not created" do NOT mean prior sessions completed the review loop — they often stopped mid-cycle. Walk through the steps explicitly.
+3. **Development cycle checkpoint.** Before creating a PR or merging, verify which development cycle steps (1, 2, 3, 4a-4d, 5) have been completed in the *current* session. Continuation summaries saying "code pushed, PR not created" do NOT mean prior sessions completed the review loop — they often stopped mid-cycle. Walk through the 8 trackable steps explicitly.
 4. **Never merge a PR without explicit user approval.** Creating the PR is step 5. The user decides when to merge. Merging autonomously is never acceptable, even if the summary implies "just finish up."
 5. **If conflicts are detected**, follow the Repo Conflict Detection rules below (queue the task, don't edit).
 6. **Project infrastructure check.** Check if the project has a `CLAUDE.md` file. If not, run `/project-setup` before any code changes — even if the codebase already has code, tests, and a working build. A project with code but no CLAUDE.md is un-initialized: it's missing the adversarial review hook, CodeRabbit config, and conventions that every PR depends on. This check is mechanical — don't try to judge whether the project "feels" initialized.
@@ -45,7 +45,7 @@ When creating a new project or initializing a new codebase, always run `/project
 
 ## Development Flow (Numbered Steps)
 
-Every feature or fix follows these numbered steps. When the orchestrator is running, **let the orchestrator announce step transitions** — don't duplicate the announcement yourself. When the orchestrator is NOT running (e.g., spawning failed), fall back to printing the step number and name yourself (e.g., "**Step 3: Test locally**"). Either way, step progress must be visible to the user.
+Every feature or fix follows these numbered steps. When the dev team is running, the orchestrator (team lead / main agent) announces step transitions directly to the user. The implementer teammate sends progress updates via SendMessage but does not narrate to the user. When the team is NOT running (e.g., TeamCreate failed), the main agent falls back to printing the step number and name itself (e.g., "**Step 3: Test locally**"). Either way, step progress must be visible to the user.
 
 | Step | Name | What happens |
 |------|------|-------------|
@@ -58,9 +58,64 @@ Every feature or fix follows these numbered steps. When the orchestrator is runn
 
 > **Recording requirement:** When any step is skipped, record it in the PR body's Local Review section with the reason. The post-mortem uses this data. Skipping without recording is itself a process violation.
 
-### Orchestrator Agent (MANDATORY)
+### Orchestrator via Team Pattern (MANDATORY)
 
-When starting ANY work that goes through the Development Flow — feature, bug fix, refactor, anything — **immediately spawn an orchestrator agent** (subagent_type: `general-purpose`, run in background) alongside the implementation work. No exceptions. For small fixes the orchestrator will simply have less to do. The orchestrator does NOT write code.
+When starting ANY work that goes through the Development Flow — feature, bug fix, refactor, anything — **the main conversation agent IS the orchestrator**. It creates a team, spawns an implementer teammate, and narrates progress directly to the user. No exceptions. For small fixes the orchestrator will simply have less to do.
+
+**Key design decision:** The user's primary agent is the orchestrator (team lead). This inverts the old pattern where the orchestrator was a background sidecar that went silent. Now:
+- The orchestrator speaks directly to the user (no relaying needed).
+- The implementer is a spawned teammate that communicates via `SendMessage`.
+- The orchestrator creates tasks, assigns work, narrates progress, and enforces process.
+
+**Team structure:**
+- **Team name:** `dev-<feature-slug>` (e.g., `dev-media-highlights`).
+- **Team lead (orchestrator):** The main conversation agent. Creates the team, manages the shared task list, prints status, enforces process. Does NOT write code.
+- **Teammate (implementer):** A `general-purpose` agent spawned via `Task` with `team_name` and `isolation: "worktree"`. Does the actual code work.
+
+**Sequencing:**
+1. Steps 1a-1c (Plan) are handled by the orchestrator directly — no team needed yet.
+2. After plan approval, the orchestrator creates the team via `TeamCreate` and pre-populates the 8 trackable step tasks.
+3. The implementer is spawned and assigned Step 2 (Implement).
+4. Steps 2-5 flow through the implementer, with the orchestrator narrating each transition.
+
+**Step tracking via shared task list (8 trackable steps):**
+
+Each development step becomes a task on the shared task list:
+
+| Task | Step | Owner |
+|------|------|-------|
+| 1 | Step 1: Plan | orchestrator (completed before team creation) |
+| 2 | Step 2: Implement | implementer |
+| 3 | Step 3: Test locally | implementer |
+| 4 | Step 4a: Code simplification | implementer |
+| 5 | Step 4b: Internal review | implementer |
+| 6 | Step 4c: CodeRabbit review | implementer |
+| 7 | Step 4d: Adversarial review | implementer |
+| 8 | Step 5: Push & create PR | implementer (orchestrator runs PRE-PR GATE first) |
+
+Step 6 (Post-merge) runs after merge, outside the team context — the orchestrator handles it as a standalone action after team teardown.
+
+**Communication flow:**
+
+1. **Implementer finishes a step** → sends `SendMessage` to orchestrator with summary.
+2. **Orchestrator receives message** (automatic via team infrastructure) → prints STEP CHECK-IN to user → marks task complete → assigns next task.
+3. **Orchestrator detects a skip** → sends `SendMessage` to implementer with SKIP CHALLENGE.
+4. **Before Step 5** → orchestrator reads `TaskList`, verifies all 7 prior tasks complete, prints PRE-PR GATE.
+
+**Worktree interaction:**
+
+- The implementer teammate is spawned with `isolation: "worktree"` on the `Task` call, giving it an isolated copy of the repo automatically.
+- The orchestrator remains in the main checkout for git status monitoring and narration.
+- On team teardown, the worktree is cleaned up if no changes were made; if changes were pushed, it persists for the user to manage.
+
+**Error recovery:** If a team with the same name exists at session start (stale from a previous crash), the orchestrator cleans it up via `TeamDelete` before creating a new one.
+
+**Session end / team teardown:**
+
+After Step 5 (PR created):
+1. Orchestrator sends `shutdown_request` to implementer.
+2. Orchestrator calls `TeamDelete` to clean up team and task files.
+3. Orchestrator writes session log to `~/.claude/orchestrator-logs/`.
 
 **Personality & Voice: "The Stage Manager"**
 
@@ -75,7 +130,7 @@ Tone guidelines:
 
 **Message Formatting:**
 
-The orchestrator outputs status messages as plain-text markdown. No Bash tool or ANSI escape codes required — just direct text output.
+The orchestrator outputs status messages as plain-text markdown directly to the user. No ANSI escape codes or Bash tool needed — plain markdown with emoji markers and box-drawing characters provides sufficient structure.
 
 **Status message template:**
 
@@ -85,7 +140,10 @@ ORCHESTRATOR — [STATUS TYPE]
   ✅  Step 1: Plan — complete
   ✅  Step 2: Implement — complete
   🔄  Step 3: Test locally — in progress
-  ⬜  Step 4: Code review loop
+  ⬜  Step 4a: Code simplification
+  ⬜  Step 4b: Internal review
+  ⬜  Step 4c: CodeRabbit review
+  ⬜  Step 4d: Adversarial review
   ⬜  Step 5: Push & create PR
 
   📝  Build passed. Moving to lint...
@@ -105,25 +163,15 @@ ORCHESTRATOR — [STATUS TYPE]
 
 **The orchestrator must:**
 
-1. **Track step completion.** Maintain a running log of which steps (1–6) have been started, completed, or skipped. Update this log in real time as work progresses. Send a formatted `STEP CHECK-IN` message after each step completes.
-2. **Challenge skips.** If the implementing agent skips or attempts to skip any step, the orchestrator must send a `SKIP CHALLENGE` message asking **"Why is this step being skipped?"** and record the answer. Acceptable reasons are documented (e.g., "user explicitly requested skip AND diff < 50 LOC for step 4"). Unacceptable reasons (e.g., "seemed unnecessary", "saving time") must be flagged to the user with a `VIOLATION` message.
-3. **Verify ordering.** Steps must execute in order. If an agent jumps from Step 2 to Step 5 (skipping testing and review), the orchestrator flags this immediately with a `VIOLATION` message — even if the agent plans to "come back to it."
+1. **Track step completion.** Maintain a running log of the 8 trackable steps via the shared task list. Update task status in real time as work progresses. Print a formatted `STEP CHECK-IN` message to the user after each step completes.
+2. **Challenge skips.** If the implementer skips or attempts to skip any step, the orchestrator must send a `SKIP CHALLENGE` via `SendMessage` asking **"Why is this step being skipped?"** and record the answer. Acceptable reasons are documented (e.g., "user explicitly requested skip AND diff < 50 LOC for step 4"). Unacceptable reasons (e.g., "seemed unnecessary", "saving time") must be flagged to the user with a `VIOLATION` message.
+3. **Verify ordering.** Steps must execute in order. If the implementer jumps from Step 2 to Step 5 (skipping testing and review), the orchestrator flags this immediately with a `VIOLATION` message — even if the implementer plans to "come back to it."
 4. **Take regular notes.** The orchestrator writes a session log to `~/.claude/orchestrator-logs/<date>-<feature-slug>.md` with:
    - Timestamp of each step start/end
    - Any steps skipped and the stated reason
    - Any process violations detected
    - Final summary: steps completed, steps skipped, violations found
-5. **Report at PR creation.** Before Step 5 (Push & create PR), the orchestrator sends a `PRE-PR GATE` message verifying ALL prior steps were completed, with a process compliance summary. If steps are missing, it blocks PR creation until they are addressed or the user explicitly overrides. On a clean run, it sends an `ALL CLEAR` with a brief celebration.
-
-**Communication & Visibility:**
-
-The orchestrator is the **primary narrator** of the development session. The user should see the orchestrator's voice as the main thread of what's happening.
-
-- **The orchestrator speaks to the user directly.** It outputs status updates as plain-text markdown messages to the user (via the implementing agent relaying them). The implementing agent MUST print the orchestrator's messages verbatim when received — these are the user-facing progress narration. The implementing agent should NOT duplicate step announcements; the orchestrator owns step transitions.
-- **The implementing agent defers narration to the orchestrator.** Instead of printing "Step 3: Test locally" itself, the implementing agent sends a message to the orchestrator saying what it's about to do, and the orchestrator announces it to the user. The implementing agent focuses on doing the work silently; the orchestrator provides the running commentary.
-- **Proactive updates, not just milestones.** The orchestrator doesn't wait for steps to complete before speaking. It narrates what's happening in real time: "Kicking off code simplification on 4 changed files...", "Build passed, moving to lint...", "CodeRabbit review running — this usually takes 7-15 min, I'll check back."
-- **The orchestrator also communicates directly with the implementing agent** via SendMessage for process enforcement (skip challenges, violation flags). These internal messages don't need to be shown to the user unless they contain violations.
-- The orchestrator reads task lists, checks git status, and monitors progress — but never edits code files.
+5. **Report at PR creation.** Before Step 5 (Push & create PR), the orchestrator reads `TaskList` to verify ALL 7 prior tasks are complete, then prints a `PRE-PR GATE` message with a process compliance summary. If steps are missing, it blocks PR creation until they are addressed or the user explicitly overrides. On a clean run, it prints an `ALL CLEAR` with a brief celebration.
 
 ### Step 1: Plan (sub-steps)
 
