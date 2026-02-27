@@ -6,6 +6,8 @@ Cross-project learnings for service design, error handling, and system architect
 
 - **Optional services via env var presence.** When a feature depends on external credentials (bot token, API key, calendar service account), check env var presence at startup and skip initialization entirely when missing. Log the mode ("starting in dashboard-only mode") but don't fail. This enables deployment flexibility (bot-only, API-only, full-stack) without code changes or feature flags. <!-- Source: command-center D8, dashboard-only mode, 2026-02-15 -->
 - **For single-user apps, service accounts > OAuth for external API access.** No consent screen, no token refresh, no callback URLs. The user shares their resource (calendar, drive) with the service account email. OAuth can be added later behind the same service interface.
+- **Build hooks must not default to reading from user home directories.** Scripts triggered by `prebuild`/`predev` should never silently copy files from `$HOME` paths. If someone forks the repo and runs `npm run build`, it should not touch their personal files. Gate home-directory access behind an explicit env var (e.g., `INCLUDE_HOME_DOCS=true`). <!-- Source: PR review, command-center #41, 2026-02-27 -->
+- **Build hooks should only depend on project-stack runtimes.** A Node.js project's `prebuild`/`predev` scripts should not require `python3`, `ruby`, or other runtimes not in the project's dependency tree. Use `node -e` for URL encoding, JSON manipulation, etc. instead of `python3 -c`. This avoids CI failures in Node-only environments. <!-- Source: post-mortem, command-center #41, 2026-02-27 -->
 
 ## Async Initialization
 

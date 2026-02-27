@@ -175,7 +175,7 @@ Heuristic — flags `if (!variable)` guards on string inputs that don't call `.t
 ```bash
 git diff main...HEAD -U3 -- '*.ts' '*.tsx' | grep -E '^\+.*`<\w+[^>]*\$\{' 2>/dev/null
 ```
-Catches: template literals building XML/HTML tags with `${variable}` interpolation. Any match needs verification that the interpolated values are escaped (attribute values with `escapeXml`/`escapeHtml`, element content if user-sourced). Common miss: escaping attributes but not body content, or escaping `<`/`>` but missing `&`/`"`/`'`. <!-- Source: post-mortem, second-brain #237, 2026-02-25 -->
+Catches: template literals building XML/HTML tags with `${variable}` interpolation. Any match needs verification that the interpolated values are escaped (attribute values with `escapeXml`/`escapeHtml`, element content if user-sourced). Common miss: escaping attributes but not body content, or escaping `<`/`>` but missing `&`/`"`/`'`. Also applies to shell scripts generating HTML via `echo`/`cat` — variables interpolated into `<h2>`, `<a>`, etc. need the same escaping discipline. Use `sed` for HTML entity replacement and `python3 urllib.parse.quote` or `node encodeURIComponent` for URL encoding in bash. <!-- Strengthened: PR review, command-center #41, 2026-02-27 -->
 
 ### 0.11 DELETE + INSERT loop without transaction
 ```bash
