@@ -190,16 +190,23 @@ Read `~/.claude/knowledge/strategic-decisions.md` before questioning — prior p
 
 With the user's answers in hand, write the plan. Read relevant knowledge files from `~/.claude/knowledge/`. Enumerate all entry points, trace each path end-to-end, plan the approach. For non-trivial work, enter plan mode.
 
+Every plan must include a `### Knowledge Loaded` section listing:
+- Which topic files from `~/.claude/knowledge/` were read (must align with INDEX.md's Stack Matching Guide for the project's stack).
+- 1-3 relevant patterns from those files that informed the plan, with file attribution.
+
+**Escape hatch:** Changes that do not modify application source code or test files (e.g., config, CI, docs) may use `### Knowledge Loaded: N/A — [justification]` instead.
+
 #### Step 1c: Adversarial Plan Review (automatic after plan is written)
 
 After writing the plan in Step 1b, spawn a separate agent (subagent_type: `Plan`) to adversarially review it. The reviewing agent receives the plan and checks:
 
+- **Knowledge consumption verification.** Check the plan's "Knowledge Loaded" section: (1) Is it present? (2) Were the correct topic files listed for this project's stack per INDEX.md's Stack Matching Guide? (3) Were relevant patterns cited and connected to plan decisions? Spot-check that cited patterns actually exist in the claimed files. Verdict: "revise" if the section is missing, lists wrong files for the stack, or cites no patterns.
 - **Missed entry points.** Are there user paths, edge cases, or state transitions the plan doesn't account for?
 - **Assumption challenges.** Does the plan assume things about existing code that haven't been verified? Are there implicit dependencies?
 - **Scope creep or under-scoping.** Is the plan doing too much for one PR, or missing something that will cause a follow-up?
 - **Alternative approaches.** Is there a simpler or more robust way to achieve the same goal?
 - **Risk flags.** Data loss potential, breaking changes, performance concerns, security gaps.
-- **Knowledge file gaps.** Does the plan contradict or ignore patterns from `~/.claude/knowledge/`?
+- **Knowledge file contradictions.** Does the plan contradict or ignore established patterns from `~/.claude/knowledge/`?
 
 The reviewing agent also performs a **product-level adversarial review**:
 
