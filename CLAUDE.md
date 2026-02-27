@@ -134,8 +134,10 @@ The orchestrator outputs status messages as plain-text markdown directly to the 
 
 **Status message template:**
 
+The header line includes the project name and a short task description for context, especially when multiple threads are active. Format: `ORCHESTRATOR (project / task) — [STATUS TYPE]`. Derive the project name from the repo name (e.g., `second-brain`, `nanny-app`) and the task description from the PR title or feature slug (e.g., `align route path`, `media highlights`).
+
 ```
-ORCHESTRATOR — [STATUS TYPE]
+ORCHESTRATOR (second-brain / align route path) — [STATUS TYPE]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   ✅  Step 1: Plan — complete
   ✅  Step 2: Implement — complete
