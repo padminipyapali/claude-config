@@ -94,6 +94,25 @@ System-level visualizations live in `~/.claude/docs/`:
 - Key patterns: thin command dispatchers to services, interface-first (AgentRunner, TaskQueue), env-driven project paths
 - Docs features: web-dashboard, coding-sessions, config-changelog + _cross-cutting
 
+## Project: cultural-coordinator-curriculum (Vidyarambh)
+- Path: /Users/padminipyapali/dev/claude_test/cultural-coordinator-curriculum
+- Repo: https://github.com/padminipyapali/cultural-coordinator-curriculum (private)
+- Stack: React 19 + Vite 6 + TypeScript (strict), Supabase (PostgreSQL), Zustand 5
+- Purpose: Mobile-first curriculum planner for Vidyarambh Hindu cultural school. 3 class groups (Gr 4-5, Gr 2-3, PreK-K), Sep 2025 – Jun 2026.
+- Solo user, no auth. Cross-device sync via Supabase.
+- 22 HTML mockups in `mockups/` (primary: 16-mobile-weekly-planner.html)
+- Key patterns: Result<T> services, soft delete (is_active), lazy tracking init, carry-forward logic
+- **Status (2026-02-27): CODE COMPLETE, NOT YET RUNNABLE.**
+  - All source code written and reviewed (82 files, ~7.5K LOC app code).
+  - Full code review loop completed (internal, CodeRabbit, adversarial). Critical bugs fixed (tracking init, timezone, wrong-week filter, SQL constraint).
+  - **Next steps to resume:**
+    1. Set up Supabase (local or hosted) — migration + seed files ready in `supabase/`
+    2. Copy Supabase URL + anon key to `.env` (see `.env.example`)
+    3. `npm install && npm run dev`
+    4. Manual QA walkthrough against mockup 16
+    5. Future features: Email generation (mockup 18), Month overview (mockup 17)
+  - Was originally in claude-test repo (PR #2 closed), moved to standalone repo.
+
 ## Project: memoir-helper
 - Path: /Users/padminipyapali/dev/claude_test/memoir-helper
 - Early stage — has docs/features/story-capture/mockups/ (5 HTML mockups) but no product-spec yet
