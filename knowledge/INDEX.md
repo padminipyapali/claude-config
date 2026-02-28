@@ -23,6 +23,7 @@ Cross-project learnings organized by topic. These files contain detailed pattern
 | [strategic-decisions.md](strategic-decisions.md) | All | Product thinking, MVP strategy, feature scope, decision frameworks |
 | [orchestrator-protocol.md](orchestrator-protocol.md) | All | Team pattern: 3-role structure, sequencing, status messages, duties |
 | [process-patterns.md](process-patterns.md) | All | Development process: review efficiency, planning, iteration velocity |
+| [convention-violations.md](convention-violations.md) | All | Convention violation tracker: recurrence counts, enforcement status, escalation |
 
 ## Stack Matching Guide
 
@@ -38,7 +39,7 @@ When starting work on a project, load files matching these stacks:
 - **Any project (dev workflow)** → orchestrator-protocol
 - **Any project pre-PR** → adversarial-review
 - **Any project pre-plan** → strategic-decisions
-- **Any project post-merge** → process-patterns
+- **Any project post-merge** → process-patterns, convention-violations
 
 ## Last Updated
 
