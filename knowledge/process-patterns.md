@@ -7,6 +7,9 @@ planning discipline, iteration velocity, and automation opportunities.
 
 - **Bot-only review catches real bugs but inflates round count.** CodeRabbit found 4 correctness issues on first review of PR #131, producing 2 review rounds and 75% fix-up ratio. All fixes were mechanical (<20 min total), but the commit noise adds up. Expect 2+ rounds as baseline when only bot reviews. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
 - **Self-merge with bot-only review misses architectural feedback.** Bot reviewers catch syntax and correctness but can't assess "is this the right abstraction?" or "does this belong in this file?" No human review means architecture debt accumulates silently. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
+- **Critically evaluate automated reviewer comments before fixing.** CodeRabbit frequently flags non-issues — nitpicks on docs wording, overly conservative null guards on typed fields, style suggestions that don't improve the code. Categorize each finding as **must fix** (real bug, security, correctness), **should fix** (valid improvement), or **disagree** (explain why and skip). Blindly fixing all comments wastes time and can make code worse. <!-- Source: lexica review workflow, 2026-02 -->
+- **CodeRabbit "outside diff range" comments are valid and actionable.** Comments marked "outside diff range" flag bugs in existing code related to the PR's changes. Don't dismiss them as out-of-scope — they catch real issues that the PR's changes expose or interact with. <!-- Source: lexica PR #23 review, 2026-02 -->
+- **CodeRabbit prompt injection warnings on XML tags are usually false positives.** When code uses XML tags with HTML entity escaping inside Claude API user messages (the recommended Anthropic approach), CodeRabbit flags "potential prompt injection." Safe to disagree when the escaping is already in place. <!-- Source: lexica review, 2026-02 -->
 
 ## Session Start Discipline
 
