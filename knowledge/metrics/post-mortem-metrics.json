@@ -6507,6 +6507,52 @@
         "complianceRate": 0.5,
         "skipAssessment": "good"
       }
+    },
+    {
+      "project": "command-center",
+      "prNumber": 61,
+      "title": "Use curated color palette for project color-coding",
+      "dateMerged": "2026-02-28T16:08:37Z",
+      "reviewRounds": 1,
+      "totalComments": 1,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 3,
+        "coderabbitFixed": 1,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 2.5,
+      "planningQuality": "complete",
+      "prSize": 173,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": null
+      }
     }
   ]
 }
