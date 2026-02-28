@@ -61,6 +61,32 @@ The 8 trackable steps are: 1 (plan), 2 (implement), 3 (test), 4a (simplification
 
 Store the extracted data for use in Step 9 (metrics append).
 
+## Step 2.7: Step Timing Extraction
+
+Parse the PR body for the `## Step Timing` section. This section is added by the orchestrator and records per-step durations from the dev flow.
+
+Expected format:
+```
+## Step Timing
+| Step | Duration | Notes |
+|------|----------|-------|
+| 1a-1c Plan | ~15 min | 2 adversarial review rounds |
+| 2 Implement | ~5 min | |
+| 3 Test | ~2 min | Included in Step 2 |
+| 4a-4e Review | ~43 min | CodeRabbit was bottleneck |
+| 5 Push/PR | ~2 min | |
+| **Total** | **~67 min** | |
+```
+
+Extract:
+- Per-step durations in minutes (parse "~N min", "~N hours", "Nh Mm" formats).
+- Total duration.
+- Notes (especially bottleneck identification).
+
+If the section is missing (older PRs), set `stepTiming` to `null`.
+
+Store the extracted data for use in Step 9 (metrics append).
+
 ## Step 3: Review Friction Analysis
 
 Compute these metrics:
@@ -164,10 +190,20 @@ Analyze:
        "skipReasons": "",
        "complianceRate": <0-1 float>,
        "skipAssessment": "<good|bad|neutral|null>"
+     },
+     "stepTiming": {
+       "planMinutes": <number or null>,
+       "implementMinutes": <number or null>,
+       "testMinutes": <number or null>,
+       "reviewMinutes": <number or null>,
+       "pushMinutes": <number or null>,
+       "totalMinutes": <number or null>,
+       "bottleneck": "<step name or null>",
+       "notes": "<free text or null>"
      }
    }
    ```
-   Note: `localReview` fields are `null` for PRs created before the local review flow was added. This distinguishes "not tracked" from "tracked, zero findings." The `stepCompliance` object is `null` for older PRs that predate step compliance tracking.
+   Note: `localReview` fields are `null` for PRs created before the local review flow was added. This distinguishes "not tracked" from "tracked, zero findings." The `stepCompliance` object is `null` for older PRs that predate step compliance tracking. The `stepTiming` object is `null` for older PRs that predate timing tracking.
 3. Write back the JSON file.
 4. **Regenerate the dashboard**: Read `~/.claude/knowledge/metrics/dashboard.html`, find the `const METRICS_DATA = ` line, replace the entire JSON object with the updated metrics data. This embeds the fresh data into the HTML file so opening it shows all PRs.
 
@@ -202,6 +238,17 @@ STEP COMPLIANCE
   Skip assessment: neutral (no review data to compare against)
   [or when not tracked:]
   Step compliance: not tracked (pre-dates tracking)
+
+STEP TIMING
+  | Step | Duration | Notes |
+  |------|----------|-------|
+  | Plan | ~Xm | ... |
+  | Implement | ~Xm | ... |
+  | Test | ~Xm | ... |
+  | Review (4a-4e) | ~Xm | bottleneck: ... |
+  | Push/PR | ~Xm | ... |
+  | Total | ~Xm | ... |
+  [or "not tracked" for older PRs]
 
 REVIEW FRICTION (post-push)
   Review rounds: N (M CHANGES_REQUESTED before APPROVED)

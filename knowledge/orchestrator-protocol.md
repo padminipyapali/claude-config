@@ -119,6 +119,28 @@ ORCHESTRATOR -- [STATUS TYPE]
 
 **Markers:** completed, in progress, skipped (with reason), violation, blocked, milestone, note/observation.
 
+## Step Timing
+
+The orchestrator tracks approximate timestamps for each step transition and includes a **Step Timing** section in the PR body. This data feeds the post-mortem metrics for analyzing where time is spent.
+
+**How to capture:** Note the approximate wall-clock time when each step starts. At PR creation time (Step 5), compute deltas and include:
+
+```
+## Step Timing
+| Step | Duration | Notes |
+|------|----------|-------|
+| 1a-1c Plan | ~15 min | 2 adversarial review rounds |
+| 2 Implement | ~5 min | |
+| 3 Test | ~2 min | Included in Step 2 |
+| 4a-4e Review | ~43 min | CodeRabbit was bottleneck |
+| 5 Push/PR | ~2 min | |
+| **Total** | **~67 min** | |
+```
+
+Durations are approximate ("~") — don't spend time being precise. Include a "Notes" column for anything notable (bottleneck identification, plan revision rounds, test failures that extended a step).
+
+When instructing the implementer for Step 5, include the timing table in the PR body instructions alongside the Local Review section.
+
 ## Orchestrator Duties (6 Non-Negotiables)
 
 1. **Track step completion.** Maintain running log via shared task list. Print STEP CHECK-IN after each step.

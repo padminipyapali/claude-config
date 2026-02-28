@@ -200,7 +200,21 @@ Include in every PR body:
 - **CI status:** all passed / failures fixed
 ```
 
-This data feeds the self-improvement dashboard.
+When the orchestrator team pattern is used, also include a **Step Timing** section:
+
+```
+## Step Timing
+| Step | Duration | Notes |
+|------|----------|-------|
+| 1a-1c Plan | ~X min | |
+| 2 Implement | ~X min | |
+| 3 Test | ~X min | |
+| 4a-4e Review | ~X min | bottleneck if applicable |
+| 5 Push/PR | ~X min | |
+| **Total** | **~X min** | |
+```
+
+This data feeds the self-improvement dashboard and post-mortem metrics.
 
 ## Living Documentation
 
