@@ -12,6 +12,8 @@
       "Read",
       "Edit",
       "Write",
+      "Grep",
+      "Glob",
       "Agent",
       "SendMessage",
       "TeamCreate",

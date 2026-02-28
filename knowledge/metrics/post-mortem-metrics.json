@@ -6600,6 +6600,58 @@
         "skipAssessment": null
       },
       "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 288,
+      "title": "Fix research display: show all states in thread panel, fix misleading badge",
+      "dateMerged": "2026-02-28T19:07:00Z",
+      "reviewRounds": 4,
+      "totalComments": 6,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 4,
+        "architecture": 0,
+        "style": 1,
+        "performance": 0,
+        "testing": 1,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "internalReviewFindings": 2,
+        "internalReviewFixed": 2,
+        "coderabbitFindings": 1,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.49,
+      "planningQuality": "complete",
+      "prSize": 477,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "4e",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3-Playwright"
+        ],
+        "skipReasons": "no dev server without external credentials",
+        "complianceRate": 1.0,
+        "skipAssessment": "justified-with-caveats"
+      },
+      "stepTiming": null
     }
   ]
 }

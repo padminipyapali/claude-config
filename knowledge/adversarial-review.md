@@ -72,7 +72,7 @@ If no semantic tags are detected, skip this step and proceed to Step 4.
 | **async-ts** | Tier 1: all (1.1–1.3). Tier 3: null guards, error message specificity |
 | **routes-api** | Tier 2: all. Tier 4: business logic in service not routes |
 | **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create→reload, trigger event scope (INSERT vs UPDATE vs both), transaction client affinity |
-| **ui-react** | Tier 0: 0.4 (semantic elements), 0.4b (form input labels), 0.5 (escape handler), 0.13 (focus-visible parity), 0.14 (iOS auto-zoom). Tier 1: 1.4 (grammar), 1.5 (optimistic UI), 1.6 (portal/popover positioning), 1.7 (interactive mode state cleanup). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh, render-phase setState, instance-unique IDs, React key uniqueness, click propagation on interactive→non-interactive refactors, key-based state reset for context-dependent children |
+| **ui-react** | Tier 0: 0.4 (semantic elements), 0.4b (form input labels), 0.5 (escape handler), 0.13 (focus-visible parity), 0.14 (iOS auto-zoom), 0.15 (render-phase setState), 0.16 (stale async guards), 0.17 (conditional branch tests). Tier 1: 1.4 (grammar), 1.5 (optimistic UI), 1.6 (portal/popover positioning), 1.7 (interactive mode state cleanup). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh, render-phase setState, instance-unique IDs, React key uniqueness, click propagation on interactive→non-interactive refactors, key-based state reset for context-dependent children, isMountedRef strict-mode safety |
 | **shell** | Tier 2: shell command validation |
 | **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
@@ -254,6 +254,34 @@ git diff main...HEAD --name-only -- '*.css' | xargs grep -nE '(input|textarea|\.
 ```
 Catches: `<input>` or `<textarea>` elements styled with `font-size` below 16px (1rem). iOS Safari auto-zooms the viewport on focus when input font-size is under 16px, disrupting mobile UX. Fix: use `font-size: 1rem` (16px) or larger on all form inputs. Heuristic -- not all matches are actual inputs; verify the selector targets a form element. <!-- Source: CodeRabbit review, second-brain #272, 2026-02-26 -->
 
+### 0.15 Render-phase setState
+```bash
+git diff main...HEAD --name-only -- '*.tsx' | xargs grep -nE 'if\s*\(.*\)\s*\{?\s*set[A-Z]' 2>/dev/null
+```
+Catches: `if (condition) setState(...)` patterns that may be in the render body. For each match, verify it is inside a `useEffect`, `useCallback`, or event handler — not the component function's render phase. Calling `setState` during render violates React's "render must be pure" rule, causes re-render loops, and triggers lint errors. Fix: move the conditional setState into `useEffect(() => { ... }, [trigger])`. <!-- Source: command-center #46, 2026-02-28 -->
+
+### 0.16 Stale async response guards
+```bash
+git diff main...HEAD --name-only -- '*.tsx' | xargs grep -lE 'useCallback' 2>/dev/null | while read f; do
+  grep -n 'await' "$f" | while read awaitline; do
+    lineno=$(echo "$awaitline" | cut -d: -f1)
+    tail_lines=$(sed -n "${lineno},\$p" "$f" | head -10)
+    if echo "$tail_lines" | grep -qE 'set[A-Z]'; then
+      if ! grep -qE 'isMountedRef|currentKeyRef|abortController|signal' "$f"; then
+        echo "STALE ASYNC: $f:$lineno (setState after await without mount/key guard)"
+      fi
+    fi
+  done
+done
+```
+Catches: `useCallback` functions that call `setState` after an `await` without an `isMountedRef`, `currentKeyRef`, or `AbortController` guard. Without a guard, a slow async response can update state after the component unmounts or after the user navigates to a different context, causing "Can't perform a React state update on an unmounted component" warnings or stale data overwrites. Fix: add `const isMountedRef = useRef(false)` with a `useEffect` lifecycle, and check `if (isMountedRef.current)` before each post-await `setState`. Heuristic — the guard may be in a parent component or custom hook; verify the full call chain. <!-- Source: command-center #46, 2026-02-28 -->
+
+### 0.17 Conditional UI branch completeness
+```bash
+git diff main...HEAD --name-only -- '*.tsx' | xargs grep -nE 'if\s*\(\s*(is|has|show|hide|can)[A-Z]' 2>/dev/null
+```
+Catches: boolean-gated UI branches like `if (isNightNurse)`, `if (hasPermission)`, `if (showBanner)`. For each match in a JSX-rendering component, verify the corresponding test file has test cases for BOTH the `true` and `false` branches. Missing a branch means half the UI is untested — the default path works but the conditional path may be broken. Fix: add `describe('when isX is true/false', ...)` test blocks covering each branch. Heuristic — not all boolean conditions gate UI; verify the match is in a render path, not pure logic. <!-- Source: command-center #46, 2026-02-28 -->
+
 ### Adding new patterns
 When a bug class is caught 2+ times across PRs, add a grep pattern here.
 Requirements: expressible as regex on changed lines, low false-positive rate (<20%).
@@ -307,6 +335,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 3. **Staleness guard on revert:** In the catch block, verify the revert only applies if the item's current value still matches the optimistic value set by THIS call (`e.status === newStatus`). Without this guard, a slow-failing request reverts over a later successful update when the user rapidly triggers the same action. <!-- Source: post-mortem, second-brain #269, 2026-02-26 -->
 4. After revert, verify there is **user-visible error feedback** (toast, inline error, temporary message). Silent revert without feedback confuses users — they see a change, then it disappears with no explanation. <!-- Source: post-mortem, second-brain #186, 2026-02-20 -->
 5. **Await async completion instead of setTimeout heuristics.** When optimistic state is cleared after an async operation (refetch, save, etc.), verify the code `await`s the actual Promise rather than using `setTimeout(fn, N)` as a timing heuristic. Timeouts race with network latency — slow responses clear optimistic state before real data arrives (brief empty state), fast responses waste the remaining timeout. Fix: make the async function return a Promise, `await` it, then clear state. <!-- Source: post-mortem, second-brain #287, 2026-02-28 -->
+6. **Reset ALL local state on identity prop changes.** When a component stays mounted but its identity prop changes (e.g., `entryId`, `threadId`, `userId`), verify ALL local state — error messages, loading/retry flags, form inputs — is explicitly reset via `useEffect` with the identity prop as a dependency. Error/retry state leaking across context changes is a common source of stale UI. Fix: add `useEffect(() => { setError(null); setRetrying(false); }, [identityProp])`. <!-- Source: post-mortem, second-brain #288, 2026-02-28 -->
 
 ### 1.6 Portal/Popover Positioning
 
@@ -374,6 +403,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Render-phase setState detection.** Grep changed `.tsx` files for `if (...) set[A-Z]` patterns in the component function body (outside `useEffect`, `useCallback`, or event handlers). Calling `setState` during render violates React's "render must be pure" rule — it works in some cases but triggers lint errors (`useExhaustiveDependencies`) and is harder to reason about. Fix: move to `useEffect(() => { ... }, [trigger])`. Mechanical check: `grep -nE 'if\s*\(.*\)\s*\{?\s*set[A-Z]' *.tsx` then verify each match is inside an effect/handler, not the render body. <!-- Source: post-mortem, second-brain #215, 2026-02-24 -->
 - [ ] **Instance-unique element IDs in reusable components.** Grep changed `.tsx` files for hardcoded `id="..."` and `name="..."` attributes. If the component can render multiple times on a page, static IDs collide — breaking `<label htmlFor>` associations, radio button grouping, and accessibility. Fix: suffix with a unique prop (e.g., `id={\`refine-textarea-${item.id}\`}`) or use React's `useId()`. Mechanical check: `grep -nE '(id|name|htmlFor)="[^"]*"' *.tsx` in changed files, verify each is unique per instance. <!-- Source: post-mortem, second-brain #215, 2026-02-24 -->
 - [ ] **React key uniqueness for data-derived values.** When `key={value}` in `.map()` uses a data-derived value (not an ID), verify the value is unique within the list. Duplicate keys cause React to skip re-renders or mount/unmount incorrectly. Common trap: `key={item.name}` when names repeat. Fix: use a unique ID, or a composite key like `key={\`${index}-${item.name}\`}` when no stable ID exists. Mechanical check: find `key={` in changed `.tsx` files, trace the value source, ask "can two items in this array have the same value?" <!-- Source: post-mortem, second-brain #215, 2026-02-24 -->
+- [ ] **isMountedRef strict-mode safety.** When a component uses `useRef` to track mount state (for guarding async state updates after unmount), verify the ref is initialized to `false` and set to `true` inside a `useEffect` body — NOT initialized to `true` at declaration. Under React strict-mode, the double-invoke sequence is: mount → cleanup → mount. A ref initialized to `true` becomes `false` after the first cleanup and stays `false` on the second mount. Correct pattern: `const ref = useRef(false); useEffect(() => { ref.current = true; return () => { ref.current = false; }; }, []);`. Mechanical check: `grep -nE 'useRef\s*\(\s*true\s*\)' *.tsx` — each match needs a corresponding `useEffect` that sets it to `true`. <!-- Source: post-mortem, second-brain #288, 2026-02-28 -->
 
 ---
 
