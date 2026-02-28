@@ -29,7 +29,43 @@ Run `git diff main...HEAD --name-only` and classify each file:
 
 A file can belong to multiple categories.
 
-### Step 2: Run only matching sections
+### Step 2: Semantic change classification
+
+After file-type classification, run a second pass on the diff **content** to tag semantic change signals. These tags drive automatic checklist injection in Step 3.
+
+```bash
+# Run these greps against `git diff main...HEAD` and tag any that match
+```
+
+| Signal | Detection (grep the diff for) | Tag |
+|---|---|---|
+| **Introduces restriction** | `includes(`, `has(`, `new Set(`, `VALID_`, `ALLOWED_`, `PALETTE`, `if (!.*includes` | `restriction-introduced` |
+| **Adds validation** | `return res.status(400)`, `throw.*[Ii]nvalid`, `throw.*Error`, `!.*\.includes(` | `validation-added` |
+| **Changes enum/union** | New literal in `type.*=.*\|`, `enum {`, string added to validation Set | `enum-changed` |
+| **Removes a value** | Deleted lines containing enum/union members, removed items from Sets/arrays | `value-removed` |
+| **Changes error behavior** | `throw` added where `return null`/`return []` existed; catch block modified | `error-behavior-changed` |
+| **Migration-gated change** | Schema change + runtime filter, references to manual migration step | `migration-gated` |
+
+A diff can have multiple tags. Record all detected tags before proceeding.
+
+### Step 3: Pattern-triggered checklist injection + forced questions
+
+Based on semantic tags from Step 2, **auto-inject** specific checklist items AND mandatory questions. These are added to the matching sections from Step 4 — the critic MUST answer them with specific, verifiable evidence. "N/A" requires justification with grep output proving non-applicability.
+
+| Tag | Auto-injected checklist items | Forced question(s) |
+|---|---|---|
+| `restriction-introduced` | Tier 4: Migration-gated defensive filtering, Fallback path semantic parity | **"What happens to existing data that doesn't match the new restriction?"** List every query that returns affected rows and verify each filters or handles legacy values. |
+| `validation-added` | Tier 3: Newly-throwing functions caller audit | **"Which callers now receive errors they didn't before?"** Trace each caller by file:line. |
+| `enum-changed` | Tier 3: New union member completeness | **"List every switch/map/conditional that handles this type."** Paste grep output + disposition of each match. |
+| `value-removed` | Tier 4: Documentation sync, Type sync between SQL and TS | **"Where in the codebase is the removed value still referenced?"** Grep for the literal value; list every match. |
+| `error-behavior-changed` | Tier 3: Newly-throwing functions caller audit | **"Trace every caller — do they handle the new error path?"** List each caller by file:line with HANDLES/UNHANDLED verdict. |
+| `migration-gated` | Tier 4: Migration-gated defensive filtering | **"What query results include legacy data until migration runs?"** List each query and its defensive filter (or lack thereof). |
+
+**Forced questions are non-negotiable.** The "covered but not executed" pattern (8 occurrences across post-mortems) happens because the checklist item exists but the critic mentally skips it without confronting the specific question. Forced questions make the relevant item impossible to skip — you must produce an answer with evidence, or explicitly justify "N/A" with a grep showing the condition doesn't apply.
+
+If no semantic tags are detected, skip this step and proceed to Step 4.
+
+### Step 4: Run only matching sections
 
 | Category | Checklist sections to run |
 |---|---|
@@ -48,7 +84,7 @@ A file can belong to multiple categories.
 
 If no categories match (e.g., docs-only change), skip directly to the Learning Capture Gate.
 
-### Step 3: Structured evidence per checklist item
+### Step 5: Structured evidence per checklist item
 
 For every checklist item in the matched sections, record an explicit verdict with **specific, verifiable evidence**. Do not skip items or assess by "glancing at the code."
 
@@ -72,7 +108,7 @@ This is non-negotiable. Four consecutive PRs (#206, #208, #209, #211) had post-p
 
 Also state which categories were detected and which checklist sections were skipped, so the author can verify coverage.
 
-### Step 4: Default to fix — no deferrals
+### Step 6: Default to fix — no deferrals
 
 When the review identifies ANY finding — regardless of severity — **fix it immediately**. Do not classify findings as "low", "acceptable", "non-blocking", or "deferred."
 

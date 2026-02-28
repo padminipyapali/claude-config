@@ -30,7 +30,7 @@ The orchestrator team pattern is mandatory for ALL dev flow work (features, fixe
 | 1 | Step 1: Plan | orchestrator (pre-team) |
 | 2 | Step 2: Implement | implementer |
 | 3 | Step 3: Test locally (incl. Playwright) | implementer |
-| 4 | Step 4a: Code simplification | critic |
+| 4 | Step 4a: Code simplification (`/simplify`) | critic |
 | 5 | Step 4b: Internal review | critic |
 | 6 | Step 4c: CodeRabbit review | critic |
 | 7 | Step 4d: Adversarial review | critic |

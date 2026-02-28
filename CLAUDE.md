@@ -162,7 +162,7 @@ git diff main...HEAD --stat | tail -1 | grep -oE '[0-9]+ insertion' | grep -oE '
 
 | Sub-step | Name | What happens |
 |----------|------|-------------|
-| 4a | **Code simplification** | Run `code-simplifier:code-simplifier` agent on changed files (vs main). |
+| 4a | **Code simplification** | Run `/simplify` on changed files (vs main). |
 | 4b | **Internal review** | Read the full diff for cross-file consistency, interface compliance, missed siblings. See details below. |
 | 4c | **CodeRabbit review** | Run `coderabbit review --plain -t all --base main -c .coderabbit.yaml CLAUDE.md` (fall back to `/coderabbit:review --base main`). Fix critical/high findings. Re-run to confirm. |
 | 4d | **Adversarial review** | Run the adversarial review checklist. May spawn focused subagents per file category. |
