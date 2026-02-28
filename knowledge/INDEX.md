@@ -21,6 +21,7 @@ Cross-project learnings organized by topic. These files contain detailed pattern
 | [adversarial-review.md](adversarial-review.md) | All | The shared mechanical review checklist |
 | [testing-patterns.md](testing-patterns.md) | Vitest, testing in general | Test strategy, mocking pitfalls, assertion patterns |
 | [strategic-decisions.md](strategic-decisions.md) | All | Product thinking, MVP strategy, feature scope, decision frameworks |
+| [orchestrator-protocol.md](orchestrator-protocol.md) | All | Team pattern: 3-role structure, sequencing, status messages, duties |
 | [process-patterns.md](process-patterns.md) | All | Development process: review efficiency, planning, iteration velocity |
 
 ## Stack Matching Guide
@@ -34,6 +35,7 @@ When starting work on a project, load files matching these stacks:
 - **Firebase** → firebase-patterns
 - **Telegram bot** → telegram-bot-patterns, architecture-patterns
 - **LLM/AI features** → llm-integration
+- **Any project (dev workflow)** → orchestrator-protocol
 - **Any project pre-PR** → adversarial-review
 - **Any project pre-plan** → strategic-decisions
 - **Any project post-merge** → process-patterns
