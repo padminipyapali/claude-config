@@ -6366,6 +6366,100 @@
         "complianceRate": 1.0,
         "skipAssessment": null
       }
+    },
+    {
+      "project": "cultural-coordinator-curriculum",
+      "prNumber": 1,
+      "title": "Enable react/button-has-type ESLint rule",
+      "dateMerged": "2026-02-28T06:21:07Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": null,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.04,
+      "planningQuality": "partial",
+      "prSize": 1992,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "config-only change, under 50 LOC",
+        "complianceRate": 0.5,
+        "skipAssessment": "neutral"
+      }
+    },
+    {
+      "project": "command-center",
+      "prNumber": 59,
+      "title": "Set up ESLint with react/button-has-type rule for web package",
+      "dateMerged": "2026-02-28T06:24:15Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": null,
+      "fixupCommitRatio": 0.0,
+      "timeToMergeHours": 0.08,
+      "planningQuality": "partial",
+      "prSize": 5241,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "config-only change, under 50 LOC of application code",
+        "complianceRate": 0.5,
+        "skipAssessment": "good"
+      }
     }
   ]
 }
