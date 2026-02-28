@@ -22,6 +22,17 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 - **`COUNT(*) OVER()` returns 0 when `LIMIT` yields no rows.** The window function `COUNT(*) OVER()` counts only the rows in the result set, not the total matching rows before LIMIT is applied. When `LIMIT 0` (or any limit smaller than the matching set that results in 0 rows), total becomes 0 even when matches exist. Guard with a separate count-only query for `limit <= 0`, or use a CTE that computes the count before limiting. <!-- Source: PR review, second-brain #276, 2026-02-26 -->
 - **FTS: use OR semantics for personal knowledge retrieval.** `plainto_tsquery` (AND) fails when users search with metadata terms — proper nouns, category labels, or concept names that don't appear verbatim in the stored text (e.g., "Bene Gesserit fear mantra" for an entry containing only the Litany text). Use `websearch_to_tsquery` with OR-joined terms so entries matching ANY term surface, ranked by `ts_rank_cd`. AND semantics is only appropriate when false positives are dangerous (e.g., matching TODOs for completion).
 
+## Indexing
+
+- **Use partial unique indexes for nullable columns.** `CREATE UNIQUE INDEX ... ON table(col) WHERE col IS NOT NULL` enforces uniqueness only when the column has a value, allowing multiple NULLs.
+- **FTS indexes must cover ALL searchable text columns.** When adding full-text search, include every column users might search — title, body, tags, metadata. A missing column means silently incomplete results.
+- **Index leading columns must match WHERE clause order.** A composite index `(A, B)` or composite PK only accelerates queries filtering on `A` or `(A, B)` — not `B` alone.
+- **Never use OR in WHERE clauses that defeat index usage.** `WHERE a = 1 OR b = 2` cannot use an index on `(a)` or `(b)` efficiently. Split into two queries and UNION, or use separate indexed lookups.
+
+## Timestamp Management
+
+- **Timestamp propagation: child changes should touch parent updated_at.** For recency-sorted feeds, when a child record changes (comment added, subtask completed), update the parent's `updated_at` via trigger or application code. Without this, the parent appears stale in lists sorted by last activity.
+
 ## Connection Management
 
 - **Set `connectionTimeoutMillis` on every pg.Pool.** The default of `0` means connection attempts wait indefinitely. A single slow connection (transient network issue, cold start after idle) makes the entire service appear dead with no error logged. Use `connectionTimeoutMillis: 5_000` (5s) — normal connections establish in 50-200ms, so 5s has no impact on healthy operations but ensures hung attempts fail fast. <!-- Source: BUG-023, second-brain, 2026-02-15 -->
@@ -33,6 +44,11 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 - **Auto-timestamp triggers must fire on INSERT OR UPDATE, not UPDATE only.** If a trigger auto-manages a timestamp (e.g., `completed_at = now()` when status = 'DONE'), make it fire `BEFORE INSERT OR UPDATE` — not just `BEFORE UPDATE`. UPDATE-only triggers silently skip direct INSERTs with terminal status (test data seeding, manual migrations, data repairs). The function body handles INSERT safely when using `OLD IS NULL OR OLD.status IS DISTINCT FROM 'DONE'` — `OLD IS NULL` is true for INSERTs, so `IS DISTINCT FROM` already works. <!-- Source: PR review, second-brain #206, 2026-02-22 -->
 
 - **Enumerate ALL transition paths when expanding a state machine.** When adding a new status to a DB-managed state machine with triggers, enumerate every possible transition (N states = N*(N-1) directional transitions). It's easy to handle forward paths (OPEN→IN_PROGRESS→DONE) and forget reversal paths (DONE→IN_PROGRESS). Missing a transition branch leaves derived timestamps in an inconsistent state (e.g., `completed_at` stays set when moving a DONE item back to IN_PROGRESS). <!-- Source: adversarial review, second-brain #156, 2026-02-19 -->
+
+## PostgreSQL-Specific
+
+- **`AT TIME ZONE`: always cast to `::timestamp` before applying.** `date` implicitly casts to `timestamptz` which reverses the timezone conversion. Use `my_date::timestamp AT TIME ZONE 'America/New_York'` to get correct results.
+- **(node-postgres) pg driver return types differ from expectations.** `DATE` columns return JS `Date`, `TIMESTAMPTZ` returns `Date`, `JSONB` returns parsed object. Mock-based tests can't catch these type mismatches — verify pg's actual return type when adding new columns.
 
 ## SQLite-Specific
 

@@ -25,6 +25,10 @@ Cross-project learnings for testing strategy, mocking, and assertions.
 
 - **Use specific patterns in negative assertions, not short substrings.** `not.toContain("View")` will break when any unrelated text contains the word "View" (e.g., "Weekly Review"). Use `not.toMatch(/View \d+ more in dashboard/)` or assert absence of the specific element/pattern you care about. The shorter the negative assertion string, the more likely it matches unintended content. <!-- Source: PR review, second-brain #276, 2026-02-26 -->
 
+## Async Test Patterns
+
+- **Negative async assertions need settle time.** Polling helpers like `waitFor` pass immediately for negative assertions ("should NOT have been called") because the condition is true from the start. Use an explicit timeout to let promises settle before asserting: `await new Promise(r => setTimeout(r, 50)); expect(mock).not.toHaveBeenCalled();`. Without the settle delay, the assertion passes vacuously even if the mock IS called a microtask later.
+
 ## Mocking Pitfalls
 
 - **`vi.doMock` does not affect already-resolved static imports.** `vi.doMock()` only applies to subsequent dynamic `import()` calls, not modules already loaded via static `import` at the top of the file. If you import `Foo` statically and then `vi.doMock("foo-module", ...)`, the imported `Foo` still points to the real module. Either use `vi.mock()` (hoisted to file top) or manually override the dependency on the instance (e.g., `(obj as any).client = mockClient`). Dead `vi.doMock` blocks are common — they appear to work only because a manual override elsewhere does the real mocking. <!-- Source: PR review, command-center #40, 2026-02-27 -->

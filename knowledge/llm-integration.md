@@ -30,6 +30,12 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 
 - **System prompt must not reference optional context that may be absent.** When the system prompt says "The <X> section lists..." but the context injection is wrapped in a try/catch with graceful degradation, the section may not exist. The LLM then hallucinates about nonexistent data or confuses the user. Fix: check `context?.includes("<X>")` before including the instruction sentence. This applies to any optional data source (changelog, calendar, external API) injected into an LLM prompt — the prompt description must match the actual content provided. <!-- Source: PR review, second-brain #256, 2026-02-25 -->
 
+## Technique Selection
+
+- **For open-ended natural language parsing, use LLM extraction not regex/stopword lists.** Regex and keyword lists are brittle for natural language — they miss synonyms, paraphrases, and context. LLM extraction handles variation gracefully. Reserve regex for structured formats (dates, URLs, IDs).
+- **Few-shot examples at decision boundaries are more effective than abstract rules.** When a classifier struggles with ambiguous cases, adding 2-3 examples at the exact boundary (inputs that could go either way) is more effective than rewording the abstract instruction.
+- **Classification intents designed for one input mode may not apply in another.** An intent taxonomy built for standalone messages (e.g., "query" vs "thought") may not work for thread replies, inline edits, or voice input. Verify each classification outcome makes sense per input context.
+
 ## Handler-Level Error Wrapping
 
 - **Wrap LLM generation calls in try/catch at the handler level.** When an intent handler calls an LLM to generate a user-facing response, wrap the call in its own try/catch and return a user-safe fallback message on failure (e.g., "I'm having trouble answering that right now. Please try again."). Don't let LLM API errors (rate limits, timeouts, malformed responses) propagate as unhandled exceptions — they crash the request and show raw error messages. The entry/storage side of the handler should still succeed even if response generation fails. <!-- Source: PR review, second-brain #237, 2026-02-24 -->

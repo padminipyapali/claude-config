@@ -77,6 +77,12 @@ Cross-project learnings for TypeScript and Node.js development.
 
 - **Use module-level imports, not inline `import()` types.** Inline type references like `import("../../services/entry.js").TodoMatch` are harder to read and break import organization conventions. Hoist them to module-level `import type { TodoMatch } from "../../services/entry.js"` for consistency and discoverability. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
 
+## Package & Module Config
+
+- **Build tools in devDependencies.** `@types/*`, `typescript`, `vite`, `tsx`, `vitest` belong in `devDependencies`, not `dependencies`.
+- **npm workspaces use `*` not `workspace:*`.** The `workspace:*` protocol is pnpm/yarn-specific. npm uses plain `*` for workspace references.
+- **Runtime arrays derived from TS types need "keep in sync" comments.** When a runtime array mirrors a TypeScript union (e.g., `const TYPES = ["a", "b"]` matching `type T = "a" | "b"`), add a comment: `// keep in sync with T`. Types are erased at runtime, so the compiler can't catch drift between the array and the union.
+
 ## Code Hygiene
 
 - **Remove unnecessary `as const`.** String literals assigned to typed fields don't need `as const` — TS infers from context.

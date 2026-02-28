@@ -306,6 +306,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 2. In catch/error path, verify revert uses a CAPTURED snapshot, not an inverted value.
 3. **Staleness guard on revert:** In the catch block, verify the revert only applies if the item's current value still matches the optimistic value set by THIS call (`e.status === newStatus`). Without this guard, a slow-failing request reverts over a later successful update when the user rapidly triggers the same action. <!-- Source: post-mortem, second-brain #269, 2026-02-26 -->
 4. After revert, verify there is **user-visible error feedback** (toast, inline error, temporary message). Silent revert without feedback confuses users — they see a change, then it disappears with no explanation. <!-- Source: post-mortem, second-brain #186, 2026-02-20 -->
+5. **Await async completion instead of setTimeout heuristics.** When optimistic state is cleared after an async operation (refetch, save, etc.), verify the code `await`s the actual Promise rather than using `setTimeout(fn, N)` as a timing heuristic. Timeouts race with network latency — slow responses clear optimistic state before real data arrives (brief empty state), fast responses waste the remaining timeout. Fix: make the async function return a Promise, `await` it, then clear state. <!-- Source: post-mortem, second-brain #287, 2026-02-28 -->
 
 ### 1.6 Portal/Popover Positioning
 

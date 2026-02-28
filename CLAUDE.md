@@ -367,55 +367,47 @@ This is not optional. Skipping means repeating bugs already solved elsewhere.
 
 # When Applicable: TypeScript / JavaScript
 
+> Full patterns: `~/.claude/knowledge/typescript-patterns.md`, `testing-patterns.md`
+
 - Don't mark functions `async` unless they `await` something.
 - Exhaustive `never` checks should throw, not return — fail fast on unhandled types.
-- When adding a new value to a type union, grep the ENTIRE codebase for every switch/conditional that maps that type to a style, label, color, or behavior. Each consumer needs explicit handling — fallthrough to default produces wrong results.
-- Fire-and-forget operations MUST have `.catch()` handlers to prevent unhandled rejections. Inside those methods, each `await` needs its own try/catch — a single outer try/catch means one failure skips all subsequent awaits.
-- Runtime arrays derived from TS types need "keep in sync" comments (types erased at runtime).
-- Build tools (@types, typescript, vite, tsx, vitest) in devDependencies.
-- npm workspaces use `*` not `workspace:*` (that's pnpm/yarn).
-- Full object assertions in tests, not `objectContaining`, unless partial matching is intentional.
-- `new Date("2026-02-14T10:00:00")` without `Z` suffix parses in local timezone, making tests flaky on CI. Always use `new Date("2026-02-14T10:00:00Z")`.
-- Negative async assertions ("should NOT have been called") need settle time — polling helpers (waitFor) pass immediately for negatives. Use a timeout to let promises settle first.
+- When adding a new value to a type union, grep the ENTIRE codebase for every switch/conditional that maps that type. Each consumer needs explicit handling.
+- Fire-and-forget operations MUST have `.catch()` handlers. Inside those methods, each `await` needs its own try/catch.
+- `new Date("2026-02-14T10:00:00")` without `Z` suffix parses in local timezone, making tests flaky on CI.
 
 # When Applicable: Web UI
 
+> Full patterns: `~/.claude/knowledge/react-patterns.md` (UI Patterns section)
+
 - Explicit `type` on every `<button>`: `type="button"` (default) or `type="submit"` (forms only).
-- When a hook returns `{ data, loading, error }`, ALWAYS destructure and render the `error`. Silently ignoring errors creates invisible failures.
-- Don't rely on Unicode characters for icons — use SVG for consistent sizing across platforms.
-- Don't impose arbitrary UI truncation — make content expandable if length varies.
-- Use placeholder hints instead of default values for user-configurable settings.
-- CSS viewport units (`dvh`/`svh`/`lvh`) don't account for virtual keyboards on mobile. Use the `visualViewport` API for panels with fixed-position input fields.
+- When a hook returns `{ data, loading, error }`, ALWAYS destructure and render the `error`.
+- CSS viewport units (`dvh`/`svh`/`lvh`) don't account for virtual keyboards on mobile. Use the `visualViewport` API.
 
 # When Applicable: React Native
 
-- FlatList memoizes renderItem aggressively. External state used in renderItem MUST be passed via `extraData`, or items won't re-render when that state changes.
+- FlatList memoizes renderItem aggressively. External state used in renderItem MUST be passed via `extraData`.
 
 # When Applicable: Databases (SQL)
 
+> Full patterns: `~/.claude/knowledge/database-patterns.md`
+
 - Enforce invariants at DB level with triggers, not application code.
 - Bidirectional enforcement: guard both child INSERT and parent UPDATE.
-- Use partial unique indexes (`WHERE col IS NOT NULL`) for nullable columns that should be unique when present.
 - Never use OR in WHERE clauses that defeat index usage — split into two queries.
-- FTS indexes must cover ALL searchable text columns.
-- Auto-manage derived fields (completed_at, updated_at) via triggers.
 - Index leading columns must match WHERE clause order. Composite PK (A,B) only indexes queries by A.
-- Timestamp propagation: child changes should touch parent updated_at for recency-sorted feeds.
 - SQL constraints and application-level type unions must stay in sync. Document which is source of truth.
-- (PostgreSQL) `AT TIME ZONE`: always cast to `::timestamp` before applying — `date` implicitly casts to `timestamptz` which reverses the conversion.
-- (node-postgres) pg returns DATE as JS Date, TIMESTAMPTZ as Date, JSONB as object — mock-based tests can't catch these type mismatches. Verify pg's actual return type when adding new columns.
 
 # When Applicable: LLM Integration
 
-- Always strip markdown code fences before parsing LLM output as structured data. This is the common case, not an edge case.
+> Full patterns: `~/.claude/knowledge/llm-integration.md`
+
+- Always strip markdown code fences before parsing LLM output as structured data.
 - Always validate/filter LLM structured output against the source of truth before sending to clients.
-- For open-ended natural language parsing, use LLM extraction not regex/stopword lists.
-- Classifier prompts need explicit negative examples for ambiguous categories.
-- Few-shot examples at decision boundaries are more effective than abstract rules.
-- Separate user-provided content from system instructions to prevent prompt injection. For Claude API: user content in the user message (inside XML tags), not the system prompt.
-- Classification intents designed for one input mode (standalone messages) may not apply in another (thread replies). Verify each classification outcome makes sense per input context.
+- Separate user-provided content from system instructions to prevent prompt injection.
 
 # When Applicable: Firebase / Firestore
+
+> Full patterns: `~/.claude/knowledge/firebase-patterns.md`
 
 - Wildcard security rules can hide permission gaps — use specific subcollection rules for fine-grained permissions.
 - Test security rule changes across every role/account type defined in the app.
