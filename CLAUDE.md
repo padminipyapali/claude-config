@@ -67,18 +67,26 @@ When starting ANY work that goes through the Development Flow — feature, bug f
 - The implementer is a spawned teammate that communicates via `SendMessage`.
 - The orchestrator creates tasks, assigns work, narrates progress, and enforces process.
 
-**Team structure:**
+**Team structure (three roles):**
 - **Team name:** `dev-<feature-slug>` (e.g., `dev-media-highlights`).
-- **Team lead (orchestrator):** The main conversation agent. Creates the team, manages the shared task list, prints status, enforces process. Does NOT write code.
-- **Teammate (implementer):** A `general-purpose` agent spawned via `Task` with `team_name` and `isolation: "worktree"`. Does the actual code work.
+- **Team lead (orchestrator):** The main conversation agent. Creates the team, manages the shared task list, prints status, enforces process. Does NOT write code or review code.
+- **Implementer:** A `general-purpose` agent spawned via `Task` with `team_name` and `isolation: "worktree"`. Writes code, runs tests (Steps 2-3). Does NOT review its own code.
+- **Critic:** A `general-purpose` agent spawned via `Task` with `team_name`. Runs ALL review steps (Steps 4a-4d). Receives ONLY the diff, the adversarial-review.md checklist, and the project CLAUDE.md — never the implementation context. This separation breaks the author-reviewer identity collapse that caused 6+ consecutive adversarial review execution failures.
+
+**Why three roles:** Post-mortem data proved the implementer cannot reliably review its own code. PR #143: adversarial review "claimed to find and fix 3 issues" — all 3 shipped incomplete. PR #211: adversarial review caught 0 of 3 findings with matching checklist items. The implementer's optimization target is shipping; the critic's optimization target is finding problems. These goals conflict in a single agent.
+
+**Critic subagent army:** The critic MAY spawn focused subagents (via `Task` with `subagent_type: general-purpose`) to parallelize checklist execution. For example, on a PR touching UI + async + DB files, the critic can spawn 3 subagents — one per file category — each running only the relevant checklist section. This keeps each subagent's context window focused on a small number of items, addressing the attention budget exhaustion that causes Tier 3 items to get ~10% execution rate. Each subagent returns its findings; the critic aggregates and fixes.
 
 **Sequencing:**
 1. Steps 1a-1c (Plan) are handled by the orchestrator directly — no team needed yet.
-2. After plan approval, the orchestrator creates the team via `TeamCreate` and pre-populates the 8 trackable step tasks.
+2. After plan approval, the orchestrator creates the team via `TeamCreate` and pre-populates the 9 trackable step tasks.
 3. The implementer is spawned and assigned Step 2 (Implement).
-4. Steps 2-5 flow through the implementer, with the orchestrator narrating each transition.
+4. Steps 2-3 flow through the implementer.
+5. After Step 3 passes, the orchestrator spawns the critic and assigns Steps 4a-4d.
+6. The critic runs the full review loop, fixes issues in the implementer's worktree, and reports findings.
+7. Step 5 (Push & create PR) is assigned back to the implementer after the critic completes.
 
-**Step tracking via shared task list (8 trackable steps):**
+**Step tracking via shared task list (9 trackable steps):**
 
 Each development step becomes a task on the shared task list:
 
@@ -86,21 +94,34 @@ Each development step becomes a task on the shared task list:
 |------|------|-------|
 | 1 | Step 1: Plan | orchestrator (completed before team creation) |
 | 2 | Step 2: Implement | implementer |
-| 3 | Step 3: Test locally | implementer |
-| 4 | Step 4a: Code simplification | implementer |
-| 5 | Step 4b: Internal review | implementer |
-| 6 | Step 4c: CodeRabbit review | implementer |
-| 7 | Step 4d: Adversarial review | implementer |
-| 8 | Step 5: Push & create PR | implementer (orchestrator runs PRE-PR GATE first) |
+| 3 | Step 3: Test locally (including Playwright) | implementer |
+| 4 | Step 4a: Code simplification | critic |
+| 5 | Step 4b: Internal review | critic |
+| 6 | Step 4c: CodeRabbit review | critic |
+| 7 | Step 4d: Adversarial review | critic |
+| 8 | Step 4e: Fix verification | critic (re-run tests after review fixes) |
+| 9 | Step 5: Push & create PR | implementer (orchestrator runs PRE-PR GATE first) |
 
 Step 6 (Post-merge) runs after merge, outside the team context — the orchestrator handles it as a standalone action after team teardown.
 
+**Critic's fresh context:** When spawning the critic, the orchestrator provides ONLY:
+- The worktree path (so the critic can read files and run commands)
+- The `git diff main...HEAD` output
+- A pointer to `~/.claude/knowledge/adversarial-review.md`
+- The project's CLAUDE.md path
+- The file category classification from Step 2
+
+The critic does NOT receive: the plan, the implementation reasoning, test output from Step 3, or any chat context from the implementer. This is intentional — a fresh context window executes the checklist more thoroughly because nothing competes for attention.
+
 **Communication flow:**
 
-1. **Implementer finishes a step** → sends `SendMessage` to orchestrator with summary.
-2. **Orchestrator receives message** (automatic via team infrastructure) → prints STEP CHECK-IN to user → marks task complete → assigns next task.
-3. **Orchestrator detects a skip** → sends `SendMessage` to implementer with SKIP CHALLENGE.
-4. **Before Step 5** → orchestrator reads `TaskList`, verifies all 7 prior tasks complete, prints PRE-PR GATE.
+1. **Implementer finishes Step 2 or 3** → sends `SendMessage` to orchestrator with summary.
+2. **Orchestrator receives message** → prints STEP CHECK-IN to user → marks task complete.
+3. **After Step 3 passes** → orchestrator spawns the critic, assigns Steps 4a-4d.
+4. **Critic finishes review loop** → sends `SendMessage` to orchestrator with findings summary and fix count.
+5. **Orchestrator receives critic results** → prints STEP CHECK-IN → assigns Step 5 to implementer.
+6. **Orchestrator detects a skip** → sends `SendMessage` to the relevant agent (implementer or critic) with SKIP CHALLENGE.
+7. **Before Step 5** → orchestrator reads `TaskList`, verifies all 8 prior tasks complete, prints PRE-PR GATE.
 
 **Worktree interaction:**
 
@@ -113,7 +134,7 @@ Step 6 (Post-merge) runs after merge, outside the team context — the orchestra
 **Session end / team teardown:**
 
 After Step 5 (PR created):
-1. Orchestrator sends `shutdown_request` to implementer.
+1. Orchestrator sends `shutdown_request` to implementer and critic.
 2. Orchestrator calls `TeamDelete` to clean up team and task files.
 3. Orchestrator writes session log to `~/.claude/orchestrator-logs/`.
 
@@ -138,13 +159,14 @@ The orchestrator outputs status messages as plain-text markdown directly to the 
 ORCHESTRATOR — [STATUS TYPE]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   ✅  Step 1: Plan — complete
-  ✅  Step 2: Implement — complete
-  🔄  Step 3: Test locally — in progress
-  ⬜  Step 4a: Code simplification
-  ⬜  Step 4b: Internal review
-  ⬜  Step 4c: CodeRabbit review
-  ⬜  Step 4d: Adversarial review
-  ⬜  Step 5: Push & create PR
+  ✅  Step 2: Implement — complete          [implementer]
+  🔄  Step 3: Test locally — in progress    [implementer]
+  ⬜  Step 4a: Code simplification          [critic]
+  ⬜  Step 4b: Internal review              [critic]
+  ⬜  Step 4c: CodeRabbit review            [critic]
+  ⬜  Step 4d: Adversarial review           [critic]
+  ⬜  Step 4e: Fix verification             [critic]
+  ⬜  Step 5: Push & create PR              [implementer]
 
   📝  Build passed. Moving to lint...
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -171,7 +193,7 @@ ORCHESTRATOR — [STATUS TYPE]
    - Any steps skipped and the stated reason
    - Any process violations detected
    - Final summary: steps completed, steps skipped, violations found
-5. **Report at PR creation.** Before Step 5 (Push & create PR), the orchestrator reads `TaskList` to verify ALL 7 prior tasks are complete, then prints a `PRE-PR GATE` message with a process compliance summary. If steps are missing, it blocks PR creation until they are addressed or the user explicitly overrides. On a clean run, it prints an `ALL CLEAR` with a brief celebration.
+5. **Report at PR creation.** Before Step 5 (Push & create PR), the orchestrator reads `TaskList` to verify ALL 8 prior tasks are complete (Steps 1-3 by implementer, Steps 4a-4e by critic), then prints a `PRE-PR GATE` message with a process compliance summary. If steps are missing, it blocks PR creation until they are addressed or the user explicitly overrides. On a clean run, it prints an `ALL CLEAR` with a brief celebration.
 
 ### Step 1: Plan (sub-steps)
 
@@ -198,7 +220,7 @@ Every plan must include a `### Knowledge Loaded` section listing:
 
 #### Step 1c: Adversarial Plan Review (automatic after plan is written)
 
-After writing the plan in Step 1b, spawn a separate agent (subagent_type: `Plan`) to adversarially review it. The reviewing agent receives the plan and checks:
+After writing the plan in Step 1b, spawn a separate agent (subagent_type: `Plan`) to adversarially review it. This is a fresh agent with no prior context — it sees only the plan and the relevant knowledge files. (During Steps 2-5, the critic teammate fills this role for code review, but at planning time the team isn't created yet, so this is a standalone subagent.) The reviewing agent receives the plan and checks:
 
 - **Knowledge consumption verification.** Check the plan's "Knowledge Loaded" section: (1) Is it present? (2) Were the correct topic files listed for this project's stack per INDEX.md's Stack Matching Guide? (3) Were relevant patterns cited and connected to plan decisions? Spot-check that cited patterns actually exist in the claimed files. Verdict: "revise" if the section is missing, lists wrong files for the stack, or cites no patterns.
 - **Missed entry points.** Are there user paths, edge cases, or state transitions the plan doesn't account for?
@@ -225,27 +247,43 @@ When the diff touches UI files (React components, CSS, HTML templates, frontend 
 **What qualifies as "touches UI":** Any change to files in `packages/web/`, frontend component files, CSS/styling files, or changes that affect rendered output (e.g., response text formatting changes visible in a web dashboard).
 
 **Procedure:**
-1. Start the dev server (or use the running one).
+1. **Start the dev server.** Run the project's dev command (`npm run dev`, `npx vite`, etc.) in the background. This is an explicit sub-step, not a prerequisite — "no dev server available" is NOT a valid skip reason. If the server needs environment variables, check `.env.example` and set them. If it needs a database, check if there's a seed/migration script. If it genuinely cannot start (missing external service with no mock), document the SPECIFIC blocker (not just "no server"), and use a static test harness (see below).
 2. Use Playwright to navigate to every page/view affected by the change.
 3. Verify: page loads without errors, changed elements render correctly, interactions work (clicks, form submissions, navigation).
-4. Check browser console for errors or warnings introduced by the change.
-5. If the project has Playwright test files, run them: `npx playwright test`.
+4. For components with conditional styling (feature flags, content variants), enumerate and test each visual state — not just the happy path.
+5. Check browser console for errors or warnings introduced by the change.
+6. If the project has Playwright test files, run them: `npx playwright test`.
+7. **Stop the dev server** when done.
 
-**Skip conditions:** Backend-only changes, CLI-only changes, test-only changes, or changes that don't affect any rendered UI. Record the skip reason in the PR body's Local Review section.
+**Static test harness fallback:** For CSS interaction bugs (line-clamp, reduced-motion, whitespace), you don't need the full app. Create a minimal HTML page with just the component's markup and styles, serve it with `npx serve` or Playwright's `page.setContent()`, and test the interactions directly.
+
+**Skip conditions:** Backend-only changes, CLI-only changes, test-only changes, or changes that don't affect any rendered UI. Record the skip reason in the PR body's Local Review section. "No dev server available" is NOT an acceptable skip reason — see step 1.
 
 ### Step 4: Code Review Loop (auto-run, mandatory for >= 50 LOC)
 
-After step 3 passes, automatically run the review loop. Do not ask for permission — just run it. For diffs under 50 LOC, the user may explicitly request skipping; for >= 50 LOC, always run. This is non-negotiable: PR #23 (command-center) skipped this step on a 1200 LOC PR and paid with 67% fix-up ratio and 2 extra review rounds.
+After step 3 passes, the orchestrator spawns the critic agent and assigns the review loop. The critic runs Steps 4a-4d in a fresh context window with ONLY the diff and checklists.
 
-Run these sub-steps sequentially. Do not ask for approval between sub-steps — run the full loop, then report results.
+**LOC threshold — computed by script, not by judgment:**
+The orchestrator computes the diff size mechanically before deciding whether to spawn the critic:
+```bash
+git diff main...HEAD --stat | tail -1 | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+'
+```
+If the result is >= 50: the review loop is mandatory, no exceptions. If < 50: the user may explicitly request skipping. The agent does NOT get to decide whether a diff is "under 50 LOC of logic" — the number is the number. No distinguishing "logic" from "tests." PR #259 (217 LOC) gamed this threshold by claiming "under 50 LOC of logic"; PR #41 (156 LOC) claimed "sub-50 LOC." Both had post-push findings that review would have caught.
+
+**The critic runs these sub-steps sequentially:**
 
 | Sub-step | Name | What happens |
 |----------|------|-------------|
 | 4a | **Code simplification** | Run `code-simplifier:code-simplifier` agent on changed files (vs main). |
-| 4b | **Internal review** | Read the full diff yourself and review for cross-file consistency, interface compliance, missed siblings, and patterns automated tools miss. See details below. |
+| 4b | **Internal review** | Read the full diff and review for cross-file consistency, interface compliance, missed siblings, and patterns automated tools miss. See details below. |
 | 4c | **CodeRabbit review** | Run `coderabbit review --plain -t all --base main -c .coderabbit.yaml CLAUDE.md` (falls back to `/coderabbit:review --base main` if no `.coderabbit.yaml` exists). Fix all critical/high findings. Re-run to confirm. Track the total findings count. |
-| 4d | **Adversarial review** | Run `/adversarial-review`. Fix any issues found. |
+| 4d | **Adversarial review** | Run the adversarial review checklist. The critic MAY spawn focused subagents per file category to parallelize. Fix any issues found. |
 | 4e | **CI checks** | Run build, lint, test. Fix failures. If any sub-step produced fixes, re-run from 4c (CodeRabbit) to validate the fixes didn't introduce new issues. Cap at 3 iterations to avoid infinite loops. |
+
+**Default to fix — no severity triage on local findings:**
+Every finding identified during Steps 4a-4d MUST be fixed immediately. Do not classify findings as "low," "acceptable," or "non-blocking." The economics are unambiguous: a 5-minute local fix costs 5 minutes. A deferred finding costs 30-60 minutes in review round-trips, context switching, and branch management. Post-mortem data: PR #206 deferred a trigger scope bug as "Finding #4 (LOW)" — CodeRabbit caught the same thing post-push, costing a full review round.
+
+The ONLY acceptable reason to not fix a finding is: "fixing this would change the PR's scope or intent" (i.e., it's genuinely an outside-diff issue that belongs in a separate PR). In that case, file a GitHub issue using the outside-diff triage protocol.
 
 #### Step 4b: Internal Review (details)
 
@@ -316,19 +354,23 @@ For features spanning **3+ systems** (e.g., external vendor → backend → DB �
 - **When NOT to create:** Single-component features, simple CRUD, UI-only changes.
 - **Required sections:** Step-by-step flow, technologies & vendors (with doc links), security notes (if applicable), failure mode table.
 
-## Adversarial Self-Review
+## Adversarial Review (run by the critic, not the implementer)
 
-Step 4d runs `/adversarial-review`. The review is **targeted, not exhaustive** — classify changed files by category (async, routes, DB, UI, LLM, shell, config, test-only) and run only the matching checklist sections. See `~/.claude/knowledge/adversarial-review.md` for the category-to-tier mapping. Don't block PRs on checklist items that don't apply to the files changed.
+Step 4d is run by the **critic** agent — a separate teammate with a fresh context window. The critic receives only the diff, the checklist, and the project CLAUDE.md. It does NOT see the implementation reasoning, the plan, or any prior conversation. This separation is mandatory: post-mortem data shows the implementer reviewing its own code has ~10% checklist execution rate (PR #272), while findings it "identifies" are deferred as "low" 40% of the time (PRs #198, #206, #213).
+
+The review is **targeted, not exhaustive** — classify changed files by category (async, routes, DB, UI, LLM, shell, config, test-only) and run only the matching checklist sections. See `~/.claude/knowledge/adversarial-review.md` for the category-to-tier mapping. Don't block PRs on checklist items that don't apply to the files changed.
+
+**Critic subagent parallelization:** For PRs touching 3+ file categories, the critic SHOULD spawn focused subagents — one per category — each running only the relevant checklist section. This keeps each subagent's context focused on 5-10 items instead of 30+, dramatically improving execution depth. Each subagent returns PASS/FAIL/SKIP evidence; the critic aggregates, deduplicates, and fixes.
 
 These universal checks always apply regardless of category:
 
-- **Pattern siblings.** When fixing a bug class, grep the ENTIRE codebase for other instances.
+- **Pattern siblings.** When fixing a bug class, grep the ENTIRE codebase for other instances. Same-file siblings: fix now. Cross-module siblings: file GitHub issues with `outside-diff` label.
 - **Walk full access chains.** Check every dereference for null/undefined/nil — not just the first level.
 - **Fire-and-forget contract.** Every async operation inside a fire-and-forget method must be error-handled.
 - **Error message specificity.** Add specific branches for edge cases — don't let them fall through to generic handlers.
 - **Architecture self-review.** For PRs with 100+ LOC or 3+ directories changed: right location? right abstraction? right boundary? right scope? See adversarial-review.md Tier 4 for full checklist.
 - **Structured evidence required.** For every applicable checklist item, record an explicit `PASS: [evidence]`, `FAIL: [finding]`, or `SKIP: [reason]`. Evidence must be verifiable: grep output, file:line references, caller lists — not "looks fine" or "verified." See adversarial-review.md Step 3.
-- **Default to fix.** Any finding identified by the adversarial review must be fixed immediately. Do not defer findings as "low", "acceptable", or "non-blocking." The 5-minute local fix is always cheaper than the 15-minute post-push round-trip. See adversarial-review.md Step 4.
+- **Default to fix — no severity triage.** Every finding MUST be fixed immediately. Do not defer findings as "low", "acceptable", or "non-blocking." The economics: 5-minute local fix vs. 30-60 minute post-push round-trip (review time + context switch + branch management + re-review). PR #206 deferred a trigger scope bug as "LOW" — it cost a full CodeRabbit review round post-push. The only valid deferral reason: "this is outside the diff's scope" — in which case, file a GitHub issue.
 
 ## CodeRabbit Local Review Notes
 
