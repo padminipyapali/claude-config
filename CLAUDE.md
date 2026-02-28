@@ -26,7 +26,7 @@ On EVERY session start — including continuations from previous sessions — ru
    ```
 2. **Check the task queue.** If `~/.claude/task-queue.md` has `[PENDING]` entries, re-run detection for each repo. If free, prompt the user: "There's a queued task for <repo>: <title>. The repo is now free. Want me to execute it?" Mark completed entries `[DONE]` with a date. Prune `[DONE]` entries older than 7 days.
 3. **Do NOT trust continuation summaries about repo state.** Verify it yourself — other agents may have started, files changed, branches moved.
-4. **Development cycle checkpoint.** Before creating a PR or merging, verify which dev cycle steps (1, 2, 3, 4a-4e, 5) were completed in the *current* session. Walk through the 9 trackable steps explicitly.
+4. **Development cycle checkpoint.** Before creating a PR or merging, verify which dev cycle steps (1, 2a, 2b, 3, 4a-4e, 5) were completed in the *current* session. Walk through the 10 trackable steps explicitly.
 5. **Never merge a PR without explicit user approval.** Creating the PR is step 5. The user decides when to merge.
 6. **Project infrastructure check.** If the project has no `CLAUDE.md`, run `/project-setup` before any code changes. A project with code but no CLAUDE.md is un-initialized.
 
@@ -50,6 +50,7 @@ When creating a new project or initializing a new codebase, always run `/project
 - For projects with releases, follow semantic versioning (MAJOR.MINOR.PATCH).
 - Issue lifecycle: include `Closes #N` in PR commit messages. For multi-PR issues, close manually after the last PR merges.
 - Post-merge: automatically run `/post-mortem [PR-number]` in the background.
+- **Post-mortem metric integrity.** The `/post-mortem` command must never write hardcoded or estimated values for `adversarialCatchRate`. It must compute the actual rate from evidence (pre-push findings vs. post-push findings) or explicitly mark the field as `"unmeasured"`. Over 130 PRs had fabricated `adversarialCatchRate: 0.5` baselines — this corrupts the self-improvement dashboard and makes it impossible to detect real improvements or regressions.
 
 ## Convention Complexity Budget
 
@@ -82,7 +83,8 @@ Every feature/fix follows these steps. The orchestrator announces step transitio
 | Step | Name | What happens |
 |------|------|-------------|
 | 1 | **Plan** | Three sub-steps: clarifying questions (1a), write plan (1b), adversarial plan review (1c). |
-| 2 | **Implement** | Write code on a feature branch. Follow project CLAUDE.md conventions. |
+| 2a | **Implement (functional)** | Write code on a feature branch for correctness. Focus on business logic, data flow, making tests pass. |
+| 2b | **Implement (hardening)** | Dedicated second pass: input validation, a11y, error handling, explicit else/default, dead code cleanup. Produces hardening checklist artifact. |
 | 3 | **Test locally** | Run test suite, linter, type-checker. If UI changes, run Playwright testing. Fix failures. |
 | 4 | **Code review loop** | Auto-run after step 3. Skip ONLY if user explicitly says to AND diff < 50 LOC. |
 | 5 | **Push & create PR** | Push branch, `gh pr create`. Include `## Local Review` section in PR body. |
@@ -95,12 +97,17 @@ Every feature/fix follows these steps. The orchestrator announces step transitio
 All dev flow work uses the three-role team pattern. No exceptions.
 
 - **Orchestrator (team lead):** The main conversation agent. Creates team (`dev-<feature-slug>`), manages task list, prints status, enforces process. Does NOT write or review code.
-- **Implementer:** `general-purpose` agent with `isolation: "worktree"`. Writes code, runs tests (Steps 2-3). Does NOT review its own code.
+- **Implementer:** `general-purpose` agent with `isolation: "worktree"`. Writes code, runs tests (Steps 2a-3). Does NOT review its own code.
 - **Critic:** `general-purpose` agent with fresh context. Runs ALL review steps (4a-4e). Receives ONLY the diff, checklist, and project CLAUDE.md — never implementation context.
 
 **Key non-negotiable:** The implementer never reviews its own code. Post-mortem data proved author-reviewer identity collapse causes ~10% checklist execution rate. The critic's fresh context and opposing optimization target (finding problems vs. shipping) is what makes review effective.
 
-**Full protocol** (sequencing, 9-task tracking table, communication flow, worktree interaction, error recovery, session teardown, "Stage Manager" personality, status message formatting, 5 orchestrator duties): see `~/.claude/knowledge/orchestrator-protocol.md`.
+**Critic's context boundary — what it receives and what it must NOT receive:**
+- **Receives:** `git diff main...HEAD`, the adversarial review checklist (`~/.claude/knowledge/adversarial-review.md`), the project's `CLAUDE.md`, and the Convention Complexity Budget section.
+- **Must NOT receive:** Implementation conversation history, the implementer's reasoning, plan discussion, debugging context, or any message thread from Steps 1-3. The critic must form its own understanding from the diff alone.
+- **Enforcement:** The orchestrator spawns the critic as a fresh `general-purpose` agent — not a subagent of the implementer's conversation. Passing implementation context to the critic (via message, task description, or shared state) is a process violation equivalent to skipping review.
+
+**Full protocol** (sequencing, 10-task tracking table, communication flow, worktree interaction, error recovery, session teardown, "Stage Manager" personality, status message formatting, 6 orchestrator duties): see `~/.claude/knowledge/orchestrator-protocol.md`.
 
 ### Step 1: Plan (sub-steps)
 
@@ -153,6 +160,40 @@ After Step 1b, spawn a separate `Plan` subagent to adversarially review. Fresh c
 
 Verdict: **approve**, **approve with notes**, or **revise**. If "revise", address feedback and re-run. No round cap. If the same finding oscillates for 3+ rounds, escalate to the user for a tiebreaker.
 
+### Step 2: Implement (sub-steps)
+
+#### Step 2a: Functional Implementation
+
+Write code on a feature branch for correctness. Focus on:
+- Business logic and data flow.
+- Making tests pass.
+- Following project CLAUDE.md conventions.
+
+This is the "make it work" pass. Do not optimize for hardening concerns yet — get the feature correct first.
+
+#### Step 2b: Hardening Pass
+
+Dedicated second pass over ALL code written in Step 2a. This is a separate, explicit sweep — not something folded into 2a. Focus exclusively on:
+
+1. **Input validation** — every `req.body`, `req.params`, `req.query` access, every user-provided argument. Trim, type-check, bounds-check.
+2. **Accessibility** — `aria-*` attributes on interactive elements, keyboard navigation, focus management, semantic HTML.
+3. **Error handling** — every async call has explicit error handling. No bare `await` without try/catch or `.catch()`. Fire-and-forget operations get per-await try/catch.
+4. **Explicit else/default** — every conditional has an else branch or default case. Every switch is exhaustive. No silent fallthrough.
+5. **Dead code and stale references** — remove unused imports, variables, functions, and stale comments left from iteration during 2a.
+
+**Hardening checklist artifact:** At the end of Step 2b, produce a summary checklist that Step 4 can verify:
+
+```
+### Hardening Pass Checklist
+- **Input validation:** [N] routes/endpoints checked, [N] guards added
+- **Accessibility:** [N] interactive components checked, [N] attributes added
+- **Error handling:** [N] async calls checked, [N] handlers added
+- **Explicit else/default:** [N] conditionals checked, [N] branches added
+- **Dead code cleanup:** [N] items removed
+```
+
+The critic (Step 4) verifies this checklist against the actual diff — claims without evidence are flagged.
+
 ### Step 3: Playwright Testing (mandatory for UI changes)
 
 When the diff touches UI files (React components, CSS, HTML templates, frontend routes), run Playwright local testing.
@@ -160,17 +201,23 @@ When the diff touches UI files (React components, CSS, HTML templates, frontend 
 **What qualifies:** Changes to `packages/web/`, frontend components, CSS/styling, or anything affecting rendered output.
 
 **Procedure:**
-1. **Start the dev server** in the background. "No dev server available" is NOT a valid skip reason. If it needs env vars, check `.env.example`. If it genuinely cannot start (missing external service with no mock), document the SPECIFIC blocker and use a static test harness.
+1. **Start the dev server** in the background (`npm run dev`, `npx next dev`, or the project's equivalent — check `package.json` scripts). Wait for the "ready" message before proceeding. "No dev server available" is NOT a valid skip reason — every web project has a dev server. If it needs env vars, check `.env.example` and create a `.env.local`. If it genuinely cannot start (missing external service with no mock), document the SPECIFIC blocker (service name, error message) and use a static test harness instead.
 2. Navigate to every page/view affected by the change.
 3. Verify: no errors, changed elements render correctly, interactions work.
 4. For conditional styling (feature flags, content variants), test each visual state.
 5. Check browser console for new errors or warnings.
 6. Run existing Playwright tests if present: `npx playwright test`.
-7. **Stop the dev server.**
+7. **Stop the dev server** — do not leave it running. Kill the background process explicitly.
 
-**Static test harness fallback:** For CSS interaction bugs, create a minimal HTML page with the component's markup/styles and test via `npx serve` or `page.setContent()`.
+**Static test harness fallback:** When the dev server genuinely cannot start (document the specific error, not a generic excuse), create a minimal HTML page with the component's markup/styles and test via `npx serve` or `page.setContent()`.
 
 **Skip conditions:** Backend-only, CLI-only, or test-only changes. Record skip reason in PR body.
+
+**Recording requirement:** The PR body must include one of:
+- `Playwright testing: passed` — with the dev server URL and pages tested.
+- `Playwright testing: N/A (backend-only)` — with file list confirming no UI files.
+- `Playwright testing: static harness used` — with the specific blocker that prevented the dev server.
+- Never: `Playwright testing: skipped (no dev server)` — this is a process violation.
 
 ### Step 4: Code Review Loop (auto-run, mandatory for >= 50 LOC)
 
@@ -217,12 +264,21 @@ Include in every PR body:
 ```
 ## Local Review
 - **Steps skipped:** none | list with reason (e.g., "3-Playwright: backend-only, 4a-4e: skipped")
+- **Hardening pass:** validation [N routes], a11y [N components], error handling [N services], else/default [N conditionals], cleanup [N items]
 - **Internal review findings:** N issues found, N fixed
 - **CodeRabbit findings:** N issues found, N fixed (N iterations)
-- **Adversarial review findings:** N issues found, N fixed
-- **Playwright testing:** passed | N/A (no UI changes) | issues found and fixed
+- **Adversarial review depth:** N/M checklist items with grep evidence (Tier 0: N/N executed, Tier 1-4: N/M with evidence)
+- **Playwright testing:** passed (URL, pages tested) | N/A (backend-only, file list) | static harness (blocker)
 - **CI status:** all passed / failures fixed
+- **Deferred items:** none | list of items deferred to CI (with justification)
+
+## Fix-Up Metrics
+- **Pre-merge catch rate by step:** 4a: N | 4b: N | 4c: N | 4d: N | post-push: N
+- **Pre-merge iteration count:** N (1=healthy, 2=normal, 3+=friction)
+- **Fix-up taxonomy:** { category: count, ... } (exclude infrastructure)
 ```
+
+**Depth over compliance.** The adversarial review line records the number of checklist items that produced verifiable grep evidence out of the total applicable items — not just "ran/skipped." This distinguishes genuine execution (grep output logged, callers traced by file:line) from performative compliance (checklist read but items assessed by judgment). Post-mortem data shows PR #272 had 87.5% binary compliance but only 10% actual execution depth.
 
 When the orchestrator team pattern is used, also include a **Step Timing** section:
 
@@ -231,7 +287,8 @@ When the orchestrator team pattern is used, also include a **Step Timing** secti
 | Step | Duration | Notes |
 |------|----------|-------|
 | 1a-1c Plan | ~X min | |
-| 2 Implement | ~X min | |
+| 2a Implement (functional) | ~X min | |
+| 2b Implement (hardening) | ~X min | |
 | 3 Test | ~X min | |
 | 4a-4e Review | ~X min | bottleneck if applicable |
 | 5 Push/PR | ~X min | |
@@ -283,6 +340,10 @@ For features spanning **3+ systems**, create `docs/features/<feature-name>/expla
 Step 4d is run by the **critic** agent — a separate teammate with a fresh context window. The critic receives a deliberately limited context (see `~/.claude/knowledge/orchestrator-protocol.md` "Critic's Fresh Context" for exact inputs/exclusions). This separation is mandatory — the implementer reviewing its own code has ~10% checklist execution rate.
 
 The review is **targeted, not exhaustive** — classify changed files by category (async, routes, DB, UI, LLM, shell, config, test-only) and run only the matching checklist sections. See `~/.claude/knowledge/adversarial-review.md` for the category-to-tier mapping.
+
+**Two-phase execution:**
+1. **Tier 0 (automated greps):** Run ALL Tier 0 grep checks mechanically and log exact output. These are pass/fail — no judgment required. See "Tier 0 Execution Protocol" in adversarial-review.md. The review marker cannot be written until Tier 0 execution is confirmed with logged output.
+2. **Tier 1-4 (judgment items):** Run only the category-matched items, capped at 15-20 per PR (see "Checklist Item Cap" in adversarial-review.md). Every item must produce structured evidence with grep output or file:line references — not "looks fine."
 
 **Critic subagent parallelization:** For PRs touching 3+ file categories, spawn focused subagents — one per category — each running only the relevant checklist section. Each subagent returns PASS/FAIL/SKIP evidence; the critic aggregates, deduplicates, and fixes.
 

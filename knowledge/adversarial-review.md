@@ -84,6 +84,23 @@ If no semantic tags are detected, skip this step and proceed to Step 4.
 
 If no categories match (e.g., docs-only change), skip directly to the Learning Capture Gate.
 
+### Checklist Item Cap: 15-20 per PR
+
+Even after category filtering, the active checklist subset can exceed 20 items. Attention quality degrades sharply beyond 15-20 items per review pass — post-mortem data shows items past position 20 get cursory treatment regardless of severity.
+
+**When the filtered subset exceeds 20 items:**
+1. Count the total items from Step 4's category mapping.
+2. If > 20, prioritize items in this order:
+   - **Always keep:** Tier 0 automated greps (non-negotiable — these are mechanical, not attention-consuming).
+   - **Priority 1:** Items triggered by semantic tags from Step 3 (pattern-triggered injection). These are the most contextually relevant.
+   - **Priority 2:** Tier 1-2 items (recurring blindspots and security). These have the highest historical catch rates.
+   - **Priority 3:** Tier 3 items matching the specific file categories detected.
+   - **Defer:** Tier 4 items beyond architecture self-review, and any Tier 3 items that exceed the cap.
+3. Deferred items must be recorded in the PR body: `Deferred to CI: [item names]`.
+4. If the project has CI-based review tooling (CodeRabbit, custom linters), deferred items are expected to be caught there. If not, add a `TODO: add CI check for [item]` comment in the PR body.
+
+**The cap applies to judgment items only.** Tier 0 greps do not count toward the cap because they require zero attention budget — they produce pass/fail output mechanically.
+
 ### Step 5: Structured evidence per checklist item
 
 For every checklist item in the matched sections, record an explicit verdict with **specific, verifiable evidence**. Do not skip items or assess by "glancing at the code."
@@ -125,6 +142,24 @@ When the review identifies ANY finding — regardless of severity — **fix it i
 ## Tier 0: Automated Grep Checks (Run FIRST on every review)
 
 Before manual review, run these grep patterns against changed files. Any match is a finding — fix before proceeding.
+
+### Tier 0 Execution Protocol
+
+Tier 0 checks are **literal bash commands**, not judgment calls. Execute each grep exactly as written and log the output. Do not assess results by "glancing" — the grep either produces matches or it does not.
+
+**Execution rules:**
+1. Run every Tier 0 grep command (0.1 through 0.17) sequentially against the current diff.
+2. For each check, record the **exact output** (including empty output for passing checks).
+3. Any non-empty output is a finding — fix it before proceeding to Tier 1+.
+4. After all checks complete, log a summary: `Tier 0: N/M checks executed, K findings, K fixed.`
+5. If any check was not executed (e.g., no matching file types), record it as `SKIP: [reason]` — not silently omitted.
+
+**The review marker file (Step: Post-Review) MUST NOT be written until:**
+- All applicable Tier 0 greps have been confirmed executed with logged output.
+- All findings have been fixed and re-verified (re-run the failing grep to confirm 0 matches).
+- The Tier 0 summary line is included in the review evidence.
+
+**Why this matters:** Post-mortem data shows Tier 0 checks were "covered" in 100% of reviews but actually executed in <40%. The grep commands are mechanical — there is zero judgment involved. If they are not producing logged output, they were not run.
 
 ### 0.1 UTC suffix on Date strings
 ```bash

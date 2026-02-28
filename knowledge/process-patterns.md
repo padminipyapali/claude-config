@@ -3,6 +3,19 @@
 Cross-project learnings about the development process: review efficiency,
 planning discipline, iteration velocity, and automation opportunities.
 
+## Metric Definitions
+
+The single "fix-up ratio" (fix commits / total commits) conflated pre-merge catches (good — the review loop working) with post-merge failures (bad — quality escaping all gates). As of 2026-02-28, the metric is split into 4 distinct metrics. See `~/.claude/commands/post-mortem.md` Step 6 for computation details.
+
+1. **Post-merge fix rate.** Commits after merge that fix the same feature. This is the true quality failure rate. 0% is ideal. Any value > 0% means quality escaped all review gates.
+2. **Pre-merge catch rate by step.** Which step (4a simplify, 4b internal, 4c CodeRabbit, 4d adversarial, post-push) caught each issue. Tells you where your review pipeline is strong vs. weak.
+3. **Pre-merge iteration count.** How many review-fix-review round trips before merge. 1 = healthy, 2 = normal for large PRs, 3+ = high friction or mental model mismatch.
+4. **Fix-up taxonomy.** Classify each fix by category (validation, a11y, defensive-coding, correctness, dead-code, test-quality, documentation, style, infrastructure). Recurring categories across PRs indicate systemic gaps.
+
+The legacy `fixupCommitRatio` field is retained in the metrics JSON for backward compatibility with existing dashboard charts. New analysis should use the 4-metric framework.
+
+**Why the old metric was misleading:** A 75% fix-up ratio on a PR where the local review loop caught 3 issues (good!) looked the same as a 75% ratio where all 3 fixes were post-push (bad). The old metric also didn't distinguish infrastructure commits (marker files, gitignore) from substantive code fixes, inflating the ratio on PRs with full step compliance. <!-- Source: command-center #52, 2026-02-28 -->
+
 ## Review Efficiency
 
 - **Bot-only review catches real bugs but inflates round count.** CodeRabbit found 4 correctness issues on first review of PR #131, producing 2 review rounds and 75% fix-up ratio. All fixes were mechanical (<20 min total), but the commit noise adds up. Expect 2+ rounds as baseline when only bot reviews. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->

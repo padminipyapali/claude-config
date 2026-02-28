@@ -53,11 +53,11 @@ If the section is missing (older PRs or PRs created before the local review flow
 
 Parse the PR body for the `Steps skipped:` line in the `## Local Review` section. Extract step compliance data:
 
-1. If the line says "none" → all 8 trackable steps ran (1, 2, 3, 4a, 4b, 4c, 4d, 5). Set `complianceRate = 1.0`.
-2. If the line lists specific steps → extract step numbers and reasons. Compute `complianceRate = stepsRun / 8`.
+1. If the line says "none" → all 9 trackable steps ran (1, 2a, 2b, 3, 4a, 4b, 4c, 4d, 5). Set `complianceRate = 1.0`.
+2. If the line lists specific steps → extract step numbers and reasons. Compute `complianceRate = stepsRun / 9`.
 3. If the `Steps skipped:` line is missing → set `stepCompliance` to `null` (older PR, not tracked).
 
-The 8 trackable steps are: 1 (plan), 2 (implement), 3 (test), 4a (simplification), 4b (CodeRabbit), 4c (adversarial), 4d (CI), 5 (push+PR). Steps 2 and 5 are always implicitly run if the PR exists.
+The 9 trackable steps are: 1 (plan), 2a (implement-functional), 2b (implement-hardening), 3 (test), 4a (simplification), 4b (CodeRabbit), 4c (adversarial), 4d (CI), 5 (push+PR). Steps 2a and 5 are always implicitly run if the PR exists.
 
 Store the extracted data for use in Step 9 (metrics append).
 
@@ -71,8 +71,9 @@ Expected format:
 | Step | Duration | Notes |
 |------|----------|-------|
 | 1a-1c Plan | ~15 min | 2 adversarial review rounds |
-| 2 Implement | ~5 min | |
-| 3 Test | ~2 min | Included in Step 2 |
+| 2a Implement (functional) | ~5 min | |
+| 2b Implement (hardening) | ~3 min | |
+| 3 Test | ~2 min | |
 | 4a-4e Review | ~43 min | CodeRabbit was bottleneck |
 | 5 Push/PR | ~2 min | |
 | **Total** | **~67 min** | |
@@ -131,12 +132,34 @@ Analyze:
 ## Step 6: Code Quality Signals
 
 - **Recurring comment categories**: Any category with 2+ comments is a recurring pattern.
-- **Fix-up ratio** (CRITICAL — compute accurately):
+- **Fix-up metrics** (CRITICAL — compute all 4 accurately):
+
+  **Metric 1: Post-merge fix rate** — the true quality failure rate.
+  1. After this PR merges, check for follow-up commits/PRs in the same feature area that fix issues introduced by this PR. Use: `gh pr list --state merged --search "fix" --json number,title,mergedAt` and filter for PRs merged within 48h that reference this PR or the same files.
+  2. Compute: `postMergeFixRate = post_merge_fix_commits / total_commits` (0.0–1.0). 0.0 is ideal.
+  3. If > 0.0, flag: "Post-merge fixes needed — quality escaped all review gates."
+
+  **Metric 2: Pre-merge catch rate by step** — which review step caught each issue.
   1. Get all commits: `gh pr view $PR --json commits --jq '.commits[].messageHeadline'`
-  2. Classify each: **fix** if message contains "fix", "address", "resolve", "review", "feedback", "nit" (case-insensitive); **feature** otherwise.
-  3. Compute: `fixupCommitRatio = fix_commits / total_commits` (0.0–1.0). If 1 commit, ratio is 0.0.
-  4. **Report the classification** so the user can verify.
-  5. If ratio >= 0.5, flag: "HIGH fix-up ratio — adversarial review may need improvement."
+  2. Classify each commit as **fix** if message contains "fix", "address", "resolve", "review", "feedback", "nit" (case-insensitive); **feature** otherwise.
+  3. For each fix commit, attribute to the step that caught it:
+     - `4a` (simplification) — if fix addresses code simplification
+     - `4b` (internal review) — if fix addresses cross-file consistency, interface compliance, caller safety
+     - `4c` (CodeRabbit) — if fix addresses CodeRabbit finding
+     - `4d` (adversarial) — if fix addresses adversarial review finding
+     - `post-push` — if fix was made after PR creation in response to GitHub review
+  4. Compute per-step: `stepCatchRate = fixes_caught_by_step / total_fix_commits`.
+  5. **Report the attribution** so the user can verify.
+
+  **Metric 3: Pre-merge iteration count** — review-fix-review round trips.
+  1. Count the number of review-fix-review cycles before the PR was merged. Each cycle = a CHANGES_REQUESTED event followed by fix commits.
+  2. Include both local review iterations (pre-push) and GitHub review iterations (post-push).
+  3. Interpret: 1 = healthy, 2 = normal for large PRs, 3+ = high friction or mental model mismatch.
+
+  **Metric 4: Fix-up taxonomy** — classify each fix by category.
+  1. For each fix commit (from Metric 2), classify the fix into one of: `validation`, `a11y`, `defensive-coding`, `correctness`, `dead-code`, `test-quality`, `documentation`, `style`, `infrastructure` (marker commits, gitignore, etc.).
+  2. Report the distribution. Recurring categories across PRs indicate systemic gaps.
+  3. Exclude `infrastructure` fixes from quality metrics — they inflate ratios without reflecting code quality.
 - **New patterns**: Cross-reference review comments against `~/.claude/knowledge/INDEX.md` topic files. Are there patterns not already captured?
 
 ## Step 7: Process Efficiency
@@ -181,6 +204,22 @@ Analyze:
      },
      "adversarialCatchRate": <0-1 float>,
      "fixupCommitRatio": <0-1 float>,
+     "fixupMetrics": {
+       "postMergeFixRate": <0-1 float>,
+       "preMergeCatchRateByStep": {
+         "4a": <n>,
+         "4b": <n>,
+         "4c": <n>,
+         "4d": <n>,
+         "postPush": <n>
+       },
+       "preMergeIterationCount": <n>,
+       "fixupTaxonomy": {
+         "validation": <n>, "a11y": <n>, "defensive-coding": <n>,
+         "correctness": <n>, "dead-code": <n>, "test-quality": <n>,
+         "documentation": <n>, "style": <n>, "infrastructure": <n>
+       }
+     },
      "timeToMergeHours": <number>,
      "planningQuality": "<complete|partial|missing>",
      "prSize": <additions + deletions>,
@@ -203,7 +242,7 @@ Analyze:
      }
    }
    ```
-   Note: `localReview` fields are `null` for PRs created before the local review flow was added. This distinguishes "not tracked" from "tracked, zero findings." The `stepCompliance` object is `null` for older PRs that predate step compliance tracking. The `stepTiming` object is `null` for older PRs that predate timing tracking.
+   Note: `localReview` fields are `null` for PRs created before the local review flow was added. This distinguishes "not tracked" from "tracked, zero findings." The `stepCompliance` object is `null` for older PRs that predate step compliance tracking. The `stepTiming` object is `null` for older PRs that predate timing tracking. The `fixupMetrics` object is `null` for older PRs that predate the 4-metric framework. The legacy `fixupCommitRatio` field is retained for backward compatibility with existing dashboard charts.
 3. Write back the JSON file.
 4. **Regenerate the dashboard**: Read `~/.claude/knowledge/metrics/dashboard.html`, find the `const METRICS_DATA = ` line, replace the entire JSON object with the updated metrics data. This embeds the fresh data into the HTML file so opening it shows all PRs.
 
@@ -260,7 +299,16 @@ ADVERSARIAL REVIEW EFFECTIVENESS
   Pre-push catch potential: X%
   Covered but missed: [list with tier references]
   Not covered (new categories): [list]
-  Fix commits: N of M total (X% fix-up ratio)
+
+FIX-UP METRICS
+  Post-merge fix rate: X% (N post-merge fix commits — 0% is ideal)
+  Pre-merge catch rate by step:
+    4a (simplify): N fixes | 4b (internal): N fixes | 4c (CodeRabbit): N fixes
+    4d (adversarial): N fixes | post-push: N fixes
+  Pre-merge iteration count: N (1=healthy, 2=normal, 3+=high friction)
+  Fix-up taxonomy: { validation: N, a11y: N, defensive-coding: N, correctness: N,
+    dead-code: N, test-quality: N, documentation: N, style: N, infrastructure: N }
+  Legacy fix-up ratio: X% (N fix / M total commits — retained for trend comparison)
 
 PLANNING QUALITY
   Description: [complete / partial / missing]
@@ -270,7 +318,6 @@ PLANNING QUALITY
 
 CODE QUALITY SIGNALS
   Recurring issues: [list]
-  Fix-up ratio: X%
   New unrecorded patterns: [list or "none"]
 
 PROCESS EFFICIENCY
