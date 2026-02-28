@@ -8,28 +8,10 @@
   },
   "permissions": {
     "allow": [
-      "Bash(cd:*)",
-      "Bash(git:*)",
-
-      "Bash(ps:*)",
-      "Bash(ls:*)",
-      "Bash(mkdir:*)",
-      "Bash(wc:*)",
-      "Bash(tail:*)",
-      "Bash(head:*)",
-      "Bash(cat:*)",
-      "Bash(lsof:*)",
-      "Bash(curl:*)",
-      "Bash(md5:*)",
-      "Bash(echo:*)",
-      "Bash(node:*)",
-      "Bash(kill:*)",
-
+      "Bash(*)",
+      "Read",
       "Edit",
       "Write",
-      "Bash(npm:*)",
-      "Bash(npx:*)",
-      "Bash(coderabbit:*)",
       "Agent",
       "SendMessage",
       "TeamCreate",
@@ -57,17 +39,7 @@
       "mcp__plugin_playwright_playwright__browser_run_code",
       "mcp__plugin_playwright_playwright__browser_handle_dialog",
       "mcp__plugin_playwright_playwright__browser_file_upload",
-      "mcp__plugin_playwright_playwright__browser_install",
-
-      "Bash(gh pr create:*)",
-      "Bash(gh pr view:*)",
-      "Bash(gh pr list:*)",
-      "Bash(gh pr checks:*)",
-      "Bash(gh issue view:*)",
-      "Bash(gh issue list:*)",
-      "Bash(gh run view:*)",
-      "Bash(gh run list:*)",
-      "Bash(gh api:*)"
+      "mcp__plugin_playwright_playwright__browser_install"
     ]
   },
   "enabledPlugins": {
