@@ -51,6 +51,30 @@ When creating a new project or initializing a new codebase, always run `/project
 - Issue lifecycle: include `Closes #N` in PR commit messages. For multi-PR issues, close manually after the last PR merges.
 - Post-merge: automatically run `/post-mortem [PR-number]` in the background.
 
+## Convention Complexity Budget
+
+Hard cap: **10 universal manual conventions** maximum. These are conventions requiring manual judgment that apply to EVERY PR regardless of file type. Category-gated checks (Tier 1-4 in adversarial-review.md, which only fire when matching file categories are detected) are outside this budget.
+
+**Current universal manual conventions (10/10):**
+1. Sibling sweep — when fixing a bug or pattern, grep the codebase for the same pattern in siblings.
+2. Enumerate ALL entry points in plans (new vs resume, create vs update, empty vs populated).
+3. Walk full access chains — check every dereference for null/undefined, not just the first level.
+4. Caller safety — when error behavior changes (adding throw), trace all callers for the new error path.
+5. Default to fix — every local finding must be fixed immediately. No severity triage or deferrals.
+6. Tests required — cover every type/feature combination, not just the happy path.
+7. Fire-and-forget try/catch granularity — each await inside fire-and-forget methods needs its own try/catch.
+8. New union member completeness — grep all switches/maps/conditionals when adding a value to a type union.
+9. Error message specificity — edge cases get specific messages, not generic fallthrough.
+10. Structured evidence required — PASS/FAIL/SKIP with verifiable evidence per checklist item (no "looks fine").
+
+**Process for changes:**
+- To add a new universal convention, you must retire or automate an existing one.
+- Category-gated checks (in adversarial-review.md) can be added freely since they only fire when relevant file types are touched.
+- Conventions expressible as grep patterns should be promoted to Tier 0 automated checks.
+- Low-frequency conventions (score <= 6) should be demoted to reference material in knowledge files.
+
+**Initial audit:** See [command-center#56 comment](https://github.com/padminipyapali/command-center/issues/56) for the full ranked list of 123 conventions with Impact x Frequency scoring.
+
 ## Development Flow (Numbered Steps)
 
 Every feature/fix follows these steps. The orchestrator announces step transitions to the user. If the team isn't running, the main agent prints step numbers directly.
