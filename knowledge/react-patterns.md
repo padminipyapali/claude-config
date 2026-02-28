@@ -81,6 +81,7 @@ Cross-project learnings for React and React Native development.
 ## Testing React Components
 
 - **Case-insensitive dedup for display lists.** When building UI lists from AI-generated data, use `Set<string>` with `.toLowerCase()`.
+- **Deduplicate array props before using as React keys.** When a component receives `urls: string[]` (or any array) as a prop and uses elements as `key={item}`, add `const unique = Array.from(new Set(items))` before `.map()`. Even if the current caller deduplicates, the component can't assume all future callers will. Duplicate keys cause React reconciliation bugs and, with interactive state (checkboxes, toggles), duplicate keys make state operations ambiguous. Place the dedup after the early-return guard, before the map. <!-- Source: PR review, second-brain #294, 2026-02-28 -->
 
 ---
 *Sources: lexica, nanny-management, second-brain*
