@@ -63,6 +63,12 @@ Cross-project learnings for React and React Native development.
 
 - **Plan notification/indicator dismissal paths upfront.** When adding a notification, progress indicator, or dismissible UI element to a feature, always plan how it gets cleared: explicit user action (close button), timeout, state transition, or server update. Don't add it as a TODO for later — incomplete dismissal paths lead to stale indicators and confusing UX. If you must defer, add a clear TODO and track it. Mechanical check: for every new notification/indicator in the PR, ask "How does this go away?" <!-- Source: CodeRabbit review, second-brain #213, 2026-02-23 -->
 
+## General Web UI
+
+- **Don't rely on Unicode characters for icons — use SVG.** Unicode rendering varies across platforms and fonts. SVG icons have consistent sizing and styling across all browsers and devices.
+- **Don't impose arbitrary UI truncation — make content expandable.** When content length varies (user input, AI output, lists), don't hard-truncate to a fixed size. Use expandable containers ("Show more") so users can access full content.
+- **Use placeholder hints instead of default values for user-configurable settings.** Pre-filling a setting with a default value makes it unclear whether the user intentionally chose that value or never configured it. Use `placeholder="e.g., 9:00 AM"` instead of `value="9:00 AM"`.
+
 ## Data Flow & Derived State
 
 - **Aggregate counts must use unfiltered data when the count represents the total.** When a UI shows filtered items (e.g., hiding routine events in a calendar) but also displays a summary count (e.g., "3 events today" in a footer), the count must derive from the unfiltered source data, not the filtered display list. Otherwise, filtering out items makes the count show 0 even when events exist. Mechanical check: for every derived count in a component, trace it back to its data source and verify it's the correct scope (filtered vs. unfiltered). <!-- Source: PR review, second-brain #187, 2026-02-20 -->
