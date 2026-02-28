@@ -272,6 +272,38 @@ Universal checks (always apply):
 - **Structured evidence required.** For every checklist item, record `PASS: [evidence]`, `FAIL: [finding]`, or `SKIP: [reason]`. Evidence must be verifiable (grep output, file:line refs, caller lists) — not "looks fine."
 - **Default to fix.** Same rule as Step 4 intro: fix every finding immediately. The only valid deferral: "outside the diff's scope" — file a GitHub issue.
 
+## Outside-Diff Triage Protocol
+
+When the adversarial review (Step 4d) or pattern sibling checks (see "Pattern siblings" in Universal checks above) discover issues **outside the current diff**, follow this protocol instead of fixing them inline.
+
+### Per-PR Budget
+
+Each PR may include at most **50 LOC / 2 findings** of outside-diff fixes. Beyond that threshold, file GitHub issues — do not expand the PR's scope.
+
+### Pattern Sibling Split
+
+- **Same-file siblings:** Fix now (counts toward the per-PR budget).
+- **Cross-module siblings:** File a GitHub issue with the `outside-diff` label. Do not fix in the current PR.
+
+This refines the "Pattern siblings" universal check in the adversarial review section above. The universal check defines *what* to look for; this section defines *how much* to fix in-PR vs. defer.
+
+### Severity Classification
+
+| Severity | Criteria | Required Action |
+|----------|----------|-----------------|
+| **P0 — Critical** | Security vulnerability, data loss, or production crash reachable from the current change. | Fix immediately in this PR regardless of budget. Notify the user. |
+| **P1 — High** | Bug that affects correctness for common user paths. Not gated by the current change but discovered during review. | Fix if within per-PR budget. Otherwise, file issue with `outside-diff` label and link in the PR body. |
+| **P2 — Medium** | Code smell, missing edge-case handling, or inconsistency that doesn't affect current functionality. | File issue with `outside-diff` label. Do not fix in this PR. |
+| **P3 — Low** | Style, naming, minor refactoring opportunities. | File issue with `outside-diff` label only if the pattern is systemic (3+ occurrences). Otherwise, skip. |
+
+**P0 overrides the per-PR budget.** All other severities respect it.
+
+### Integration with Review Steps
+
+- **Step 4b (Internal review):** When cross-file consistency checks find siblings outside the diff, classify per this table before acting.
+- **Step 4d (Adversarial review):** The critic records outside-diff findings with severity and disposition (`fixed-in-PR` or `issue-filed: #N`) in structured evidence.
+- **PR body:** List all outside-diff issues in the Local Review section: severity, file, and disposition.
+
 ## CodeRabbit Local Review Notes
 
 Step 4c uses the CLI directly:
