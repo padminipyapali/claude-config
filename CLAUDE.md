@@ -389,6 +389,52 @@ This refines the "Pattern siblings" universal check in the adversarial review se
 - **Step 4d (Adversarial review):** The critic records outside-diff findings with severity and disposition (`fixed-in-PR` or `issue-filed: #N`) in structured evidence.
 - **PR body:** List all outside-diff issues in the Local Review section: severity, file, and disposition.
 
+## Cleanup Sweep Cadence
+
+Over time, `outside-diff` issues accumulate. This section establishes a scheduled cadence to resolve them systematically, preventing backlog growth.
+
+### Trigger and Frequency
+
+**Create a cleanup sweep PR when:**
+- 3 feature/fix PRs have been merged since the last sweep (whichever comes first), OR
+- 7 days have elapsed since the last sweep.
+
+**Tracking:** Record the timestamp and PR count in a sweep log (e.g., `~/.claude/SWEEP_LOG.md`) to avoid manual date arithmetic.
+
+### Scope and Prioritization
+
+Cleanup sweeps target issues filed with the `outside-diff` label. Query the issue tracker sorted by severity.
+
+**In each sweep, address:**
+- **All P1 issues** (high-severity bugs affecting correctness for common user paths).
+- **All P2 issues that fit within 400 LOC** (code smells, missing edge-case handling, inconsistencies). If a P2 issue requires >400 LOC, defer to the next sweep or break into smaller issues.
+
+Do not attempt P3 (low-priority style/naming) issues in cleanup sweeps unless they are quick wins (<20 LOC).
+
+### Branch Naming and Process
+
+- **Branch name:** `chore/sweep-<YYYY-MM-DD>` (e.g., `chore/sweep-2026-03-07`).
+- **Process:** Sweep PRs follow the standard development flow (Steps 1-5) but with one exception:
+  - **Step 1c (Adversarial plan review) is skipped.** Cleanup sweeps are deterministic and low-risk — the plan is simply "resolve these N specific issues from the issue tracker." A separate plan reviewer is unnecessary.
+  - Steps 2-5 proceed normally. Sweeps still require Step 3 (local testing), Step 4 (code review), and go through the full critic review pipeline (4a-4e).
+
+- **PR body:** Include the same Local Review section and Step Timing section as standard PRs. Additionally, document:
+  ```
+  ## Sweep Summary
+  - **P1 issues resolved:** [count] (issue numbers)
+  - **P2 issues resolved:** [count] (issue numbers)
+  - **Issues deferred:** [count] (reason or next sweep date)
+  ```
+
+### Metrics and Monitoring
+
+Track and report the following monthly:
+1. **Filed vs. resolved:** Issues filed with `outside-diff` vs. issues closed via cleanup sweeps.
+2. **Average age:** Mean age of open `outside-diff` issues (from creation to current date).
+3. **P1 latency:** Average time from filing to resolution for P1 issues. Target: under 3 days.
+
+Review these metrics in post-mortems and quarterly retrospectives to detect backlog saturation or reviewer bottlenecks.
+
 ## CodeRabbit Local Review Notes
 
 Step 4c uses the CLI directly:
