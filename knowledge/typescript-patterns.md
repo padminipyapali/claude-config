@@ -8,6 +8,7 @@ Cross-project learnings for TypeScript and Node.js development.
 - **Async initialization ordering.** Map the dependency graph of `start()` calls. If service B can trigger work depending on service A, await A before starting B. Anti-pattern: `telegram.start(); reminderScheduler.start();` (not awaited).
 - **Async state: merge, don't replace.** When loading data asynchronously, never use `prev.length === 0 ? loaded : prev` — this drops loaded data if the user acts fast. Dedup-merge instead: `[...loaded, ...prev.filter(m => !seen.has(m.id))]`.
 - **Batch concurrent external API calls with a cap.** When fetching details for N items from an external API, use `Promise.allSettled` with `.slice(0, MAX)` rather than a sequential loop. Sequential loops are slow; unbounded `Promise.all` risks rate limits. Pattern: filter new items, `.slice(0, 10)`, `Promise.allSettled(items.map(...))`, then collect fulfilled results and log rejected ones. <!-- Source: PR review, command-center #12, 2026-02-15 -->
+- **`promise.finally()` does NOT handle rejections.** `p.finally(cleanup)` propagates the rejection to the returned promise. If you discard that returned promise (fire-and-forget cleanup), Node.js reports an unhandled rejection. Use `.then(onSuccess, onReject)` instead when cleanup differs per outcome — e.g., cache eviction: evict after TTL on success, evict immediately on rejection (don't cache failures). Always `void` the chain to signal intentional discard: `void promise.then(() => setTimeout(evict, 5000), () => evict())`. <!-- Source: PR review, second-brain #278, 2026-02-27 -->
 - **Fire-and-forget fallback returns can silently trigger caller side effects.** When an async function returns a fallback value on failure (e.g., returning the existing summary when LLM generation fails), callers that unconditionally act on the return value will trigger side effects even though nothing changed. Always compare the returned value against the input before acting — e.g., `if (newSummary.trim() !== oldSummary.trim()) await updateSummary(...)`. Without this guard, a failed generation that returns the existing value still resets counters, overwrites timestamps, or fires downstream updates. <!-- Source: PR review, second-brain #275, 2026-02-26 -->
 
 ## Type Safety
@@ -35,8 +36,9 @@ Cross-project learnings for TypeScript and Node.js development.
 
 - **Use `fileURLToPath(import.meta.url)` for path resolution in ESM, not `new URL(import.meta.url).pathname`.** The `.pathname` property preserves percent-encoding (e.g., `%20` for spaces) and on Windows returns a leading `/C:/...` which is invalid. `fileURLToPath()` from `node:url` correctly decodes and normalizes the path on all platforms. When fixing this in one file, grep the repo for `new URL(import.meta.url).pathname` to catch all sibling instances. <!-- Source: PR review, command-center #33, 2026-02-20 -->
 
-## Environment Variables
+## Numeric Parsing
 
+- **Never use `parseInt(...) || default` for numeric query/env params.** The `||` operator treats `0` as falsy, silently converting a valid `0` to the default. Use `Number.isNaN()` explicitly: `const parsed = Number.parseInt(s, 10); const value = Number.isNaN(parsed) ? defaultVal : parsed;`. <!-- Source: PR review, second-brain #284, 2026-02-28 -->
 - **Numeric env vars need NaN check + range validation + fallback logging.** `parseInt` can return NaN; bounded values (hours 0-23, ports 1-65535) need range checks.
 - **Fail-fast timezone validation.** Validate timezone strings immediately with `Intl.DateTimeFormat("en-US", { timeZone: tz })` in a try/catch. Invalid timezones throw `RangeError`.
 
