@@ -39,6 +39,20 @@ The orchestrator team pattern is mandatory for ALL dev flow work (features, fixe
 
 Step 6 (Post-merge) runs after merge, outside team context.
 
+## Playwright Testing Tiers
+
+Not all UI changes need the same testing depth. Match the tier to the change type:
+
+| Tier | When | What to do |
+|------|------|------------|
+| **Full** | Interaction logic changes (new routes, form flows, conditional rendering bugs) | Start dev server, navigate affected pages, test interactions end-to-end, run existing Playwright test files |
+| **Snapshot** | Visual/polish changes (CSS, animations, text swaps, indicators, layout tweaks) | Open the page in MCP browser, take a screenshot, check browser console for errors. 30 seconds, not 5 minutes. |
+| **Skip** | Backend-only, CLI-only, test-only changes | Record skip reason in PR body |
+
+**Default to Snapshot for UI polish.** The old pattern of writing 15+ custom headless assertions for a CSS animation change is a time sink that produces low-signal tests. Build/lint/unit-tests catch code correctness; the snapshot catches rendering regressions; the user eyeballs the interaction.
+
+**MCP browser fallback:** If MCP Playwright can't launch (Chrome profile conflict is common), don't build an elaborate headless harness. Just run build/lint/test, note "MCP browser unavailable" in the PR body, and move on. The user can verify visually.
+
 ## Critic's Fresh Context
 
 Provide the critic ONLY:
@@ -105,10 +119,11 @@ ORCHESTRATOR -- [STATUS TYPE]
 
 **Markers:** completed, in progress, skipped (with reason), violation, blocked, milestone, note/observation.
 
-## Orchestrator Duties (5 Non-Negotiables)
+## Orchestrator Duties (6 Non-Negotiables)
 
 1. **Track step completion.** Maintain running log via shared task list. Print STEP CHECK-IN after each step.
 2. **Challenge skips.** Send SKIP CHALLENGE asking "Why is this step being skipped?" Acceptable: user-requested skip + diff < 50 LOC for step 4. Unacceptable ("seemed unnecessary", "saving time"): flag as VIOLATION.
 3. **Verify ordering.** Steps must execute in order. Jumping ahead (e.g., Step 2 to Step 5) is an immediate VIOLATION even if the agent plans to "come back to it."
 4. **Take notes.** Session log at `~/.claude/orchestrator-logs/<date>-<feature-slug>.md`: timestamps, skips with reasons, violations, final summary.
 5. **Report at PR creation.** Read TaskList, verify all 8 prior tasks complete (Steps 1-3 implementer, 4a-4e critic), print PRE-PR GATE. Missing steps block PR creation unless user overrides. Clean run gets ALL CLEAR with celebration.
+6. **Monitor for stalls.** If a teammate goes idle without completing its assigned step, or if the orchestrator is waiting and no progress message arrives, proactively investigate. Check TaskOutput or ask the teammate what's happening. Don't silently wait — surface the bottleneck to the user with a note like "Step N is taking longer than expected — [what's happening]." Common stall patterns: Playwright browser install loops, dev server startup failures, rate limit waits. When the same step repeatedly stalls across sessions (e.g., Playwright testing), flag the pattern to the user and suggest a process adjustment.

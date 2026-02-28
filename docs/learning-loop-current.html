@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learning Loop — Current State</title>
+  <title>Learning Loop — Knowledge Lifecycle</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,700&display=swap" rel="stylesheet">
   <style>
@@ -52,7 +52,7 @@
     }
 
     .container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 3rem 2rem 5rem;
       position: relative;
@@ -249,6 +249,361 @@
       text-transform: uppercase;
     }
 
+    /* ---- KNOWLEDGE TIMELINE ---- */
+    .timeline-intro {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 700px;
+      margin-bottom: 2rem;
+    }
+
+    .timeline-legend {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .legend-dot.read { background: var(--accent-cyan); }
+    .legend-dot.write { background: var(--accent-rose); }
+    .legend-dot.gap { background: var(--accent-amber); }
+    .legend-dot.auto { background: var(--accent-green); }
+    .legend-dot.none {
+      background: transparent;
+      border: 1px dashed var(--text-dim);
+    }
+
+    /* The timeline track */
+    .timeline {
+      position: relative;
+      padding: 0 0 2rem;
+    }
+
+    /* Central spine */
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 260px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(
+        to bottom,
+        var(--accent-green),
+        var(--accent-blue) 15%,
+        var(--accent-blue) 35%,
+        var(--accent-cyan) 50%,
+        var(--accent-amber) 65%,
+        var(--accent-rose) 80%,
+        var(--accent-violet) 95%,
+        var(--accent-green)
+      );
+      opacity: 0.3;
+    }
+
+    /* Timeline phase block */
+    .tl-phase {
+      position: relative;
+      display: grid;
+      grid-template-columns: 240px 40px 1fr;
+      gap: 0;
+      margin-bottom: 0;
+      min-height: 0;
+    }
+
+    /* Left column: step label */
+    .tl-step {
+      text-align: right;
+      padding: 1rem 0;
+      padding-right: 1.5rem;
+    }
+
+    .tl-step-label {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .tl-step-name {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 500;
+      color: #eef0f6;
+    }
+
+    .tl-step-desc {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+      line-height: 1.5;
+    }
+
+    /* Center column: the node on the spine */
+    .tl-node {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 1.2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .tl-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 2px solid;
+      background: var(--bg);
+      position: relative;
+    }
+
+    .tl-dot::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      border-radius: 2px;
+    }
+
+    .tl-dot.phase-start {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+    }
+
+    .tl-dot.phase-start::after {
+      border-radius: 50%;
+      inset: 3px;
+    }
+
+    /* Right column: knowledge interactions */
+    .tl-knowledge {
+      padding: 0.75rem 0 0.75rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    /* Individual knowledge interaction card */
+    .k-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+
+    .k-card:hover {
+      border-color: var(--border-glow);
+    }
+
+    .k-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .k-badge {
+      font-size: 0.55rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .k-badge-read {
+      background: rgb(78 205 196 / 0.12);
+      color: var(--accent-cyan);
+      border: 1px solid rgb(78 205 196 / 0.25);
+    }
+
+    .k-badge-write {
+      background: rgb(232 107 138 / 0.12);
+      color: var(--accent-rose);
+      border: 1px solid rgb(232 107 138 / 0.25);
+    }
+
+    .k-badge-auto {
+      background: rgb(74 222 128 / 0.12);
+      color: var(--accent-green);
+      border: 1px solid rgb(74 222 128 / 0.25);
+    }
+
+    .k-badge-manual {
+      background: rgb(155 123 247 / 0.12);
+      color: var(--accent-violet);
+      border: 1px solid rgb(155 123 247 / 0.25);
+    }
+
+    .k-file {
+      font-size: 0.65rem;
+      color: var(--accent-blue);
+      font-weight: 400;
+    }
+
+    .k-card p {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .k-card code {
+      font-size: 0.63rem;
+      color: var(--accent-violet);
+      background: rgb(155 123 247 / 0.08);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+    }
+
+    /* Gap card — warning style */
+    .k-gap {
+      background: rgb(240 180 41 / 0.04);
+      border: 1px solid rgb(240 180 41 / 0.15);
+      border-left: 3px solid var(--accent-amber);
+    }
+
+    .k-gap:hover {
+      border-color: rgb(240 180 41 / 0.3);
+      box-shadow: 0 0 20px rgb(240 180 41 / 0.06);
+    }
+
+    .k-gap .k-gap-label {
+      font-size: 0.58rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-amber);
+      margin-bottom: 0.25rem;
+    }
+
+    .k-gap p {
+      color: rgb(240 180 41 / 0.7);
+    }
+
+    /* No knowledge interaction */
+    .k-silent {
+      background: transparent;
+      border: 1px dashed var(--border);
+      opacity: 0.5;
+    }
+
+    .k-silent p {
+      font-style: italic;
+      color: var(--text-dim);
+    }
+
+    /* Phase separator */
+    .tl-separator {
+      grid-column: 1 / -1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 10%, var(--border-glow) 30%, var(--border-glow) 70%, transparent 90%);
+      margin: 0.5rem 0;
+    }
+
+    /* Phase group header */
+    .tl-group {
+      grid-column: 1 / -1;
+      padding: 1rem 0 0.5rem;
+    }
+
+    .tl-group-label {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding-left: 0;
+    }
+
+    /* Color coding for step labels */
+    .color-green .tl-step-label { color: var(--accent-green); }
+    .color-green .tl-dot { border-color: var(--accent-green); }
+    .color-green .tl-dot::after { background: var(--accent-green); }
+
+    .color-blue .tl-step-label { color: var(--accent-blue); }
+    .color-blue .tl-dot { border-color: var(--accent-blue); }
+    .color-blue .tl-dot::after { background: var(--accent-blue); }
+
+    .color-cyan .tl-step-label { color: var(--accent-cyan); }
+    .color-cyan .tl-dot { border-color: var(--accent-cyan); }
+    .color-cyan .tl-dot::after { background: var(--accent-cyan); }
+
+    .color-amber .tl-step-label { color: var(--accent-amber); }
+    .color-amber .tl-dot { border-color: var(--accent-amber); }
+    .color-amber .tl-dot::after { background: var(--accent-amber); }
+
+    .color-rose .tl-step-label { color: var(--accent-rose); }
+    .color-rose .tl-dot { border-color: var(--accent-rose); }
+    .color-rose .tl-dot::after { background: var(--accent-rose); }
+
+    .color-violet .tl-step-label { color: var(--accent-violet); }
+    .color-violet .tl-dot { border-color: var(--accent-violet); }
+    .color-violet .tl-dot::after { background: var(--accent-violet); }
+
+    /* ---- SUMMARY SCORECARD ---- */
+    .scorecard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .score {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .score .value {
+      font-family: var(--serif);
+      font-size: 2rem;
+      font-weight: 700;
+      color: #eef0f6;
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+
+    .score .label {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .score .sublabel {
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      margin-top: 0.15rem;
+    }
+
+    .score-cyan .value { color: var(--accent-cyan); }
+    .score-rose .value { color: var(--accent-rose); }
+    .score-amber .value { color: var(--accent-amber); }
+    .score-green .value { color: var(--accent-green); }
+
     /* ---- SIDE CHANNELS ---- */
     .channels {
       display: grid;
@@ -354,47 +709,6 @@
 
     .prec-highest .label { color: var(--accent-amber); }
     .prec-lowest .label { color: var(--text-muted); }
-
-    /* ---- PROJECTS ---- */
-    .projects {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.75rem;
-    }
-
-    .project {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1rem;
-    }
-
-    .project h3 {
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: #dde0ea;
-      margin-bottom: 0.35rem;
-    }
-
-    .project .stack {
-      font-size: 0.6rem;
-      color: var(--text-dim);
-      line-height: 1.5;
-    }
-
-    .project .status {
-      font-size: 0.58rem;
-      margin-top: 0.5rem;
-      padding: 0.15rem 0.5rem;
-      border-radius: 3px;
-      display: inline-block;
-    }
-
-    .status-full {
-      color: var(--accent-green);
-      background: rgb(74 222 128 / 0.08);
-      border: 1px solid rgb(74 222 128 / 0.15);
-    }
 
     /* ---- STATS ---- */
     .stats {
@@ -518,14 +832,125 @@
       line-height: 1.6;
     }
 
-    .gap .deferred {
-      font-size: 0.6rem;
-      color: var(--text-dim);
-      font-style: italic;
+    .gap .severity {
+      font-size: 0.58rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      display: inline-block;
       margin-top: 0.5rem;
     }
 
+    .severity-high {
+      color: var(--accent-rose);
+      background: rgb(232 107 138 / 0.1);
+      border: 1px solid rgb(232 107 138 / 0.2);
+    }
+
+    .severity-medium {
+      color: var(--accent-amber);
+      background: rgb(240 180 41 / 0.1);
+      border: 1px solid rgb(240 180 41 / 0.2);
+    }
+
+    .severity-low {
+      color: var(--text-dim);
+      background: rgb(69 77 107 / 0.2);
+      border: 1px solid var(--border);
+    }
+
+    /* ---- PROJECTS ---- */
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.75rem;
+    }
+
+    .project {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    .project h3 {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #dde0ea;
+      margin-bottom: 0.35rem;
+    }
+
+    .project .stack {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .project .status {
+      font-size: 0.58rem;
+      margin-top: 0.5rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .status-full {
+      color: var(--accent-green);
+      background: rgb(74 222 128 / 0.08);
+      border: 1px solid rgb(74 222 128 / 0.15);
+    }
+
+    /* ---- INTERACTIVE TOGGLES ---- */
+    .filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--border-glow);
+      color: var(--text);
+    }
+
+    .filter-btn.active {
+      color: #eef0f6;
+      border-color: var(--accent-blue);
+      background: rgb(91 138 245 / 0.1);
+    }
+
+    .filter-btn.active-read { border-color: var(--accent-cyan); background: rgb(78 205 196 / 0.1); color: var(--accent-cyan); }
+    .filter-btn.active-write { border-color: var(--accent-rose); background: rgb(232 107 138 / 0.1); color: var(--accent-rose); }
+    .filter-btn.active-gap { border-color: var(--accent-amber); background: rgb(240 180 41 / 0.1); color: var(--accent-amber); }
+
     /* ---- RESPONSIVE ---- */
+    @media (max-width: 900px) {
+      .timeline::before { left: 20px; }
+      .tl-phase {
+        grid-template-columns: 36px 1fr;
+      }
+      .tl-step { display: none; }
+      .tl-knowledge { padding-left: 1rem; }
+      .tl-node { padding-top: 1rem; }
+    }
+
     @media (max-width: 768px) {
       .loop-ring { grid-template-columns: 1fr; }
       .loop-ring::before { display: none; }
@@ -534,10 +959,51 @@
       .channels { grid-template-columns: 1fr; }
       .projects { grid-template-columns: 1fr 1fr; }
       .stats { grid-template-columns: 1fr 1fr; }
+      .scorecard { grid-template-columns: 1fr 1fr; }
       .gaps { grid-template-columns: 1fr; }
       .precedence { flex-direction: column; align-items: stretch; }
       .prec-arrow { text-align: center; transform: rotate(90deg); padding: 0.3rem 0; }
+      .filter-bar { gap: 0.35rem; }
     }
+
+    /* Fade-in animation */
+    .tl-phase {
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.4s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tl-phase:nth-child(1) { animation-delay: 0.05s; }
+    .tl-phase:nth-child(2) { animation-delay: 0.1s; }
+    .tl-phase:nth-child(3) { animation-delay: 0.15s; }
+    .tl-phase:nth-child(4) { animation-delay: 0.2s; }
+    .tl-phase:nth-child(5) { animation-delay: 0.25s; }
+    .tl-phase:nth-child(6) { animation-delay: 0.3s; }
+    .tl-phase:nth-child(7) { animation-delay: 0.35s; }
+    .tl-phase:nth-child(8) { animation-delay: 0.4s; }
+    .tl-phase:nth-child(9) { animation-delay: 0.45s; }
+    .tl-phase:nth-child(10) { animation-delay: 0.5s; }
+    .tl-phase:nth-child(11) { animation-delay: 0.55s; }
+    .tl-phase:nth-child(12) { animation-delay: 0.6s; }
+    .tl-phase:nth-child(13) { animation-delay: 0.65s; }
+    .tl-phase:nth-child(14) { animation-delay: 0.7s; }
+    .tl-phase:nth-child(15) { animation-delay: 0.75s; }
+    .tl-phase:nth-child(16) { animation-delay: 0.8s; }
+
+    /* Highlight on filter */
+    .tl-phase.dim {
+      opacity: 0.15 !important;
+      transition: opacity 0.3s;
+    }
+    .tl-phase.highlight {
+      opacity: 1 !important;
+      transition: opacity 0.3s;
+    }
+    .tl-separator.dim { opacity: 0.08; }
   </style>
 </head>
 <body>
@@ -545,28 +1011,28 @@
 
     <header>
       <h1>The Learning Loop</h1>
-      <div class="subtitle">How Claude agents compound intelligence across projects</div>
-      <div class="date">Snapshot &mdash; February 16, 2026 &mdash; Post-cleanup state</div>
+      <div class="subtitle">How Claude agents compound intelligence across projects &mdash; and where the gaps are</div>
+      <div class="date">Updated &mdash; February 26, 2026</div>
     </header>
 
     <!-- Stats -->
     <section>
       <div class="stats">
         <div class="stat">
-          <div class="value">4</div>
+          <div class="value">7</div>
           <div class="label">Projects connected</div>
         </div>
         <div class="stat">
-          <div class="value">9</div>
+          <div class="value">11</div>
           <div class="label">Topic files</div>
         </div>
         <div class="stat">
-          <div class="value">~120</div>
+          <div class="value">~150</div>
           <div class="label">Bug-derived patterns</div>
         </div>
         <div class="stat">
-          <div class="value">459</div>
-          <div class="label">Lines of knowledge</div>
+          <div class="value">6</div>
+          <div class="label">Dev flow steps</div>
         </div>
       </div>
 
@@ -600,7 +1066,7 @@
             <span class="arrow arrow-left">&larr;</span>
             <div class="phase-num">Phase 4</div>
             <h3>Capture</h3>
-            <p>Learning capture gate: new patterns written to <code>knowledge/*.md</code>. Project docs updated (BUGS, DECISIONS). Knowledge synced to git.</p>
+            <p>Learning capture gate: new patterns written to <code>knowledge/*.md</code>. Project docs updated (bugs, decisions). Knowledge synced to git.</p>
             <span class="trigger-badge badge-auto">automatic &mdash; review step 7</span>
           </div>
 
@@ -619,9 +1085,407 @@
       </div>
     </section>
 
+    <!-- ==================== -->
+    <!-- KNOWLEDGE TIMELINE   -->
+    <!-- ==================== -->
+    <section id="timeline">
+      <h2><span class="num">02</span>Knowledge Touchpoint Timeline</h2>
+
+      <p class="timeline-intro">
+        This traces a single development cycle from session start to session end. Every point where knowledge files are <strong style="color: var(--accent-cyan);">read</strong>, <strong style="color: var(--accent-rose);">written</strong>, or <strong style="color: var(--accent-amber);">missed</strong> is marked. The gaps show where the system relies on agent compliance rather than mechanical enforcement.
+      </p>
+
+      <!-- Scorecard -->
+      <div class="scorecard">
+        <div class="score score-cyan">
+          <div class="value">8</div>
+          <div class="label">Read touchpoints</div>
+          <div class="sublabel">knowledge consumed</div>
+        </div>
+        <div class="score score-rose">
+          <div class="value">5</div>
+          <div class="label">Write touchpoints</div>
+          <div class="sublabel">knowledge produced</div>
+        </div>
+        <div class="score score-amber">
+          <div class="value">7</div>
+          <div class="label">Identified gaps</div>
+          <div class="sublabel">no enforcement</div>
+        </div>
+        <div class="score score-green">
+          <div class="value">4</div>
+          <div class="label">Mechanically enforced</div>
+          <div class="sublabel">hooks or auto-load</div>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="timeline-legend">
+        <div class="legend-item"><div class="legend-dot read"></div> Knowledge read</div>
+        <div class="legend-item"><div class="legend-dot write"></div> Knowledge written</div>
+        <div class="legend-item"><div class="legend-dot gap"></div> Identified gap</div>
+        <div class="legend-item"><div class="legend-dot auto"></div> Mechanically enforced</div>
+        <div class="legend-item"><div class="legend-dot none"></div> No knowledge interaction</div>
+      </div>
+
+      <!-- Filter buttons -->
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all" onclick="filterTimeline('all', this)">Show all</button>
+        <button class="filter-btn" data-filter="read" onclick="filterTimeline('read', this)">Reads only</button>
+        <button class="filter-btn" data-filter="write" onclick="filterTimeline('write', this)">Writes only</button>
+        <button class="filter-btn" data-filter="gap" onclick="filterTimeline('gap', this)">Gaps only</button>
+      </div>
+
+      <!-- The Timeline -->
+      <div class="timeline">
+
+        <!-- ═══ SESSION START ═══ -->
+        <div class="tl-phase color-green" data-tags="read auto">
+          <div class="tl-step">
+            <div class="tl-step-label">Session Start</div>
+            <div class="tl-step-name">Context Loading</div>
+            <div class="tl-step-desc">Before any code runs</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot phase-start"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-read">Read</span>
+                <span class="k-badge k-badge-auto">Auto</span>
+                <span class="k-file">~/.claude/CLAUDE.md</span>
+              </div>
+              <p>Global rules loaded into every session. Includes all development flow rules, defensive coding patterns, and knowledge system directives. This is the primary enforcement mechanism.</p>
+            </div>
+            <div class="k-card">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-read">Read</span>
+                <span class="k-badge k-badge-auto">Auto</span>
+                <span class="k-file">&lt;project&gt;/CLAUDE.md</span>
+              </div>
+              <p>Project-specific rules loaded automatically. Stack conventions, pre-PR commands, project structure.</p>
+            </div>
+            <div class="k-card">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-read">Read</span>
+                <span class="k-badge k-badge-auto">Auto</span>
+                <span class="k-file">~/.claude/projects/*/memory/MEMORY.md</span>
+              </div>
+              <p>Per-project session memory loaded into context. Contains project summaries, hard lessons, and workflow state.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-phase color-green" data-tags="none">
+          <div class="tl-step">
+            <div class="tl-step-label">Session Start</div>
+            <div class="tl-step-name">Conflict Detection</div>
+            <div class="tl-step-desc">git status, lock files, agents</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card k-silent">
+              <p>No knowledge files involved. Checks git status, running processes, and lock files. Pure operational safety.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-separator"></div>
+
+        <!-- ═══ STEP 1: PLAN ═══ -->
+        <div class="tl-phase color-blue" data-tags="read">
+          <div class="tl-step">
+            <div class="tl-step-label">Step 1a</div>
+            <div class="tl-step-name">Clarifying Questions</div>
+            <div class="tl-step-desc">Probe deeper before planning</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot phase-start"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-read">Read</span>
+                <span class="k-file">~/.claude/knowledge/strategic-decisions.md</span>
+              </div>
+              <p>CLAUDE.md directive: "Read strategic-decisions.md before questioning." Prior product decisions provide context for whether a new idea aligns or diverges.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-phase color-blue" data-tags="read">
+          <div class="tl-step">
+            <div class="tl-step-label">Step 1b</div>
+            <div class="tl-step-name">Write the Plan</div>
+            <div class="tl-step-desc">Enumerate paths, trace end-to-end</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-read">Read</span>
+                <span class="k-file">~/.claude/knowledge/INDEX.md</span>
+              </div>
+              <p>Stack matching guide consulted to determine which topic files to load. Maps project technologies to relevant knowledge files.</p>
+            </div>
+            <div class="k-card">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-read">Read</span>
+                <span class="k-file">~/.claude/knowledge/*.md (stack-matched)</span>
+              </div>
+              <p>Topic files loaded based on stack match. E.g., a React Native + Supabase project loads <code>react-patterns.md</code>, <code>database-patterns.md</code>, <code>typescript-patterns.md</code>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-phase color-blue" data-tags="read gap">
+          <div class="tl-step">
+            <div class="tl-step-label">Step 1c</div>
+            <div class="tl-step-name">Adversarial Plan Review</div>
+            <div class="tl-step-desc">Separate agent reviews the plan</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-read">Read</span>
+                <span class="k-file">~/.claude/knowledge/*.md</span>
+              </div>
+              <p>Reviewing agent checks plan against knowledge files for "knowledge file gaps" &mdash; does the plan contradict or ignore patterns?</p>
+            </div>
+            <div class="k-card k-gap">
+              <div class="k-gap-label">Gap: Reviewer has no context proof</div>
+              <p>The plan reviewer checks for gaps but cannot verify the planning agent actually loaded the right files. If the planner skipped INDEX.md, the reviewer won't know.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-separator"></div>
+
+        <!-- ═══ STEP 2: IMPLEMENT ═══ -->
+        <div class="tl-phase color-cyan" data-tags="gap">
+          <div class="tl-step">
+            <div class="tl-step-label">Step 2</div>
+            <div class="tl-step-name">Implement</div>
+            <div class="tl-step-desc">Write code on feature branch</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot phase-start"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card k-silent">
+              <p>Patterns from Step 1 are in context. No explicit re-read of knowledge files. Agent applies loaded patterns during implementation.</p>
+            </div>
+            <div class="k-card k-gap">
+              <div class="k-gap-label">Gap: Context compression can lose patterns</div>
+              <p>For large implementations, context may be compressed. Knowledge loaded at planning time can be silently dropped from the working context, causing the agent to fall back to generic behavior.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-separator"></div>
+
+        <!-- ═══ STEP 3: TEST ═══ -->
+        <div class="tl-phase color-amber" data-tags="gap">
+          <div class="tl-step">
+            <div class="tl-step-label">Step 3</div>
+            <div class="tl-step-name">Test Locally</div>
+            <div class="tl-step-desc">Tests, linter, type-checker, Playwright</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot phase-start"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card k-silent">
+              <p>No knowledge files read or written. Runs the project's test suite, linter, and type-checker mechanically.</p>
+            </div>
+            <div class="k-card k-gap">
+              <div class="k-gap-label">Gap: Test failures don't auto-capture</div>
+              <p>When tests fail due to a novel pattern (e.g., "Date without Z suffix is timezone-dependent"), the fix is applied but the pattern is not automatically captured to knowledge files. It relies on the review step to catch it later.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-separator"></div>
+
+        <!-- ═══ STEP 4: REVIEW LOOP ═══ -->
+        <div class="tl-phase color-rose" data-tags="none">
+          <div class="tl-step">
+            <div class="tl-step-label">Step 4a</div>
+            <div class="tl-step-name">Code Simplification</div>
+            <div class="tl-step-desc">Simplifier agent on changed files</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot phase-start"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card k-silent">
+              <p>Code simplifier agent runs on changed files vs main. No knowledge files read &mdash; works purely from the diff and general coding principles.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-phase color-rose" data-tags="gap">
+          <div class="tl-step">
+            <div class="tl-step-label">Step 4b</div>
+            <div class="tl-step-name">Internal Review</div>
+            <div class="tl-step-desc">Manual line-by-line diff review</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card k-silent">
+              <p>Agent reads full <code>git diff main...HEAD</code>. Checks cross-file consistency, interface compliance, caller safety. No explicit knowledge file read.</p>
+            </div>
+            <div class="k-card k-gap">
+              <div class="k-gap-label">Gap: Review doesn't reference knowledge</div>
+              <p>The internal review checklist is hardcoded in CLAUDE.md, not loaded from knowledge files. Patterns discovered in one project's review can't improve another project's review unless manually added to CLAUDE.md.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-phase color-rose" data-tags="none">
+          <div class="tl-step">
+            <div class="tl-step-label">Step 4c</div>
+            <div class="tl-step-name">CodeRabbit Review</div>
+            <div class="tl-step-desc">External review tool</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card k-silent">
+              <p>CodeRabbit runs with <code>-c .coderabbit.yaml CLAUDE.md</code>. The CLAUDE.md is fed as context, so CodeRabbit indirectly receives knowledge-derived rules, but not the topic files themselves.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-phase color-rose" data-tags="read write auto">
+          <div class="tl-step">
+            <div class="tl-step-label">Step 4d</div>
+            <div class="tl-step-name">Adversarial Review</div>
+            <div class="tl-step-desc">Category-based checklist + capture</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-read">Read</span>
+                <span class="k-badge k-badge-auto">Enforced</span>
+                <span class="k-file">~/.claude/knowledge/adversarial-review.md</span>
+              </div>
+              <p>Mechanical checklist loaded. Files classified by category (async, routes, DB, UI, LLM, shell, config, test-only), then only matching tiers run. Pre-push hook blocks without the review marker.</p>
+            </div>
+            <div class="k-card" style="border-left: 3px solid var(--accent-rose);">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-write">Write</span>
+                <span class="k-badge k-badge-auto">Enforced</span>
+                <span class="k-file">~/.claude/knowledge/*.md</span>
+              </div>
+              <p><strong>The primary knowledge capture point.</strong> Adversarial review step 7: "Are there new cross-project patterns that should be captured?" Agent writes findings to matching topic files. Hook blocks push without the review marker.</p>
+            </div>
+            <div class="k-card" style="border-left: 3px solid var(--accent-rose);">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-write">Write</span>
+                <span class="k-file">&lt;project&gt;/docs/features/*/bugs.md, decisions.md</span>
+              </div>
+              <p>Project docs updated with feature-scoped bugs, decisions, and QA entries found during review.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-phase color-rose" data-tags="none">
+          <div class="tl-step">
+            <div class="tl-step-label">Step 4e</div>
+            <div class="tl-step-name">CI Checks</div>
+            <div class="tl-step-desc">Build, lint, test</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card k-silent">
+              <p>Build, lint, test run. If fixes produce new changes, loop back to 4c. No knowledge interaction.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-separator"></div>
+
+        <!-- ═══ STEP 5: PUSH & PR ═══ -->
+        <div class="tl-phase color-violet" data-tags="write">
+          <div class="tl-step">
+            <div class="tl-step-label">Step 5</div>
+            <div class="tl-step-name">Push &amp; Create PR</div>
+            <div class="tl-step-desc">gh pr create with review section</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot phase-start"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card" style="border-left: 3px solid var(--accent-rose);">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-write">Write</span>
+                <span class="k-file">PR body: Local Review section</span>
+              </div>
+              <p>PR body includes structured data for the post-mortem: steps skipped, internal review findings, CodeRabbit findings, adversarial review findings, Playwright status, CI status. This is the data that feeds the self-improvement dashboard.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-separator"></div>
+
+        <!-- ═══ STEP 6: POST-MERGE ═══ -->
+        <div class="tl-phase color-green" data-tags="write gap">
+          <div class="tl-step">
+            <div class="tl-step-label">Step 6</div>
+            <div class="tl-step-name">Post-Merge</div>
+            <div class="tl-step-desc">/post-mortem auto-runs</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot phase-start"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card" style="border-left: 3px solid var(--accent-rose);">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-write">Write</span>
+                <span class="k-badge k-badge-auto">Auto</span>
+                <span class="k-file">~/.claude/knowledge/process-patterns.md</span>
+              </div>
+              <p>Post-mortem appends metrics: shift-left rate, review findings vs GitHub comments, iteration count. Regenerates the self-improvement dashboard at <code>~/.claude/knowledge/metrics/dashboard.html</code>.</p>
+            </div>
+            <div class="k-card k-gap">
+              <div class="k-gap-label">Gap: Post-mortem doesn't update CLAUDE.md</div>
+              <p>Process patterns accumulate in process-patterns.md but never automatically flow back into CLAUDE.md rules. A pattern like "PRs over 600 LOC degrade shift-left rate" was manually added to CLAUDE.md &mdash; there's no automation closing this loop.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-separator"></div>
+
+        <!-- ═══ SESSION END ═══ -->
+        <div class="tl-phase color-green" data-tags="write auto">
+          <div class="tl-step">
+            <div class="tl-step-label">Session End</div>
+            <div class="tl-step-name">Config Auto-Sync</div>
+            <div class="tl-step-desc">Push ~/.claude/ changes to git</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot phase-start"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card" style="border-left: 3px solid var(--accent-rose);">
+              <div class="k-card-header">
+                <span class="k-badge k-badge-write">Write</span>
+                <span class="k-badge k-badge-auto">Auto</span>
+                <span class="k-file">~/.claude/ &rarr; git push origin main</span>
+              </div>
+              <p>All knowledge, memory, and config changes committed and pushed to the claude-config repo. Makes knowledge available to the next session on any machine.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-phase color-green" data-tags="gap">
+          <div class="tl-step">
+            <div class="tl-step-label">Session End</div>
+            <div class="tl-step-name">Proactive Capture</div>
+            <div class="tl-step-desc">CLAUDE.md directive</div>
+          </div>
+          <div class="tl-node"><div class="tl-dot"></div></div>
+          <div class="tl-knowledge">
+            <div class="k-card k-gap">
+              <div class="k-gap-label">Gap: Proactive capture is purely directive</div>
+              <p>CLAUDE.md says "when you encounter a bug pattern that could recur, add it to knowledge." This has no mechanical enforcement. The agent may or may not do it. The adversarial review is the only enforced capture point, and it only runs for PRs, not for quick-fix sessions or exploration.</p>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end timeline -->
+    </section>
+
     <!-- Side Channels -->
     <section>
-      <h2><span class="num">02</span>Side Channels Into the Loop</h2>
+      <h2><span class="num">03</span>Side Channels Into the Loop</h2>
 
       <div class="channels">
         <div class="channel channel-pr">
@@ -646,7 +1510,7 @@
 
     <!-- Precedence -->
     <section>
-      <h2><span class="num">03</span>Rule Precedence</h2>
+      <h2><span class="num">04</span>Rule Precedence</h2>
 
       <div class="precedence">
         <div class="prec-item prec-highest">
@@ -673,7 +1537,7 @@
 
     <!-- Automation Table -->
     <section>
-      <h2><span class="num">04</span>What's Automated vs. Manual</h2>
+      <h2><span class="num">05</span>What's Automated vs. Manual</h2>
 
       <table class="auto-table">
         <thead>
@@ -684,6 +1548,11 @@
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td>Load CLAUDE.md + MEMORY.md</td>
+            <td><span class="tag-auto">Automatic</span></td>
+            <td>Claude Code runtime &rarr; always in context</td>
+          </tr>
           <tr>
             <td>Load knowledge at plan time</td>
             <td><span class="tag-auto">Automatic</span></td>
@@ -703,6 +1572,11 @@
             <td>Inject knowledge into new project</td>
             <td><span class="tag-auto">Automatic</span></td>
             <td><code>/project-setup</code> reads topics matching declared stack</td>
+          </tr>
+          <tr>
+            <td>Run post-mortem after merge</td>
+            <td><span class="tag-auto">Automatic</span></td>
+            <td>CLAUDE.md directive &rarr; <code>/post-mortem</code> in background</td>
           </tr>
           <tr>
             <td>Sync ~/.claude to git</td>
@@ -730,7 +1604,7 @@
 
     <!-- File Architecture -->
     <section>
-      <h2><span class="num">05</span>File Architecture</h2>
+      <h2><span class="num">06</span>File Architecture</h2>
 
       <div class="file-tree">
         <span class="section-label">Global (all projects)</span>
@@ -738,32 +1612,34 @@
         &nbsp;&nbsp;<span class="hl">CLAUDE.md</span> <span class="note">&larr; universal rules, loaded every session</span><br>
         &nbsp;&nbsp;<span class="dir">knowledge/</span> <span class="note">&larr; shared knowledge, organized by topic</span><br>
         &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">INDEX.md</span> <span class="note">&larr; topic list + stack matching guide</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">typescript-patterns.md</span> <span class="note">51 lines</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">react-patterns.md</span> <span class="note">44 lines</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">architecture-patterns.md</span> <span class="note">61 lines</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">database-patterns.md</span> <span class="note">24 lines</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">llm-integration.md</span> <span class="note">33 lines</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">testing-patterns.md</span> <span class="note">15 lines</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">telegram-bot-patterns.md</span> <span class="note">32 lines</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">firebase-patterns.md</span> <span class="note">20 lines</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">adversarial-review.md</span> <span class="note">179 lines &mdash; mechanical checklist</span><br>
-        &nbsp;&nbsp;<span class="dir">commands/</span> <span class="note">&larr; /consolidate-learnings, /capture-learning, /project-setup</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">typescript-patterns.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">react-patterns.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">architecture-patterns.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">database-patterns.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">llm-integration.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">testing-patterns.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">telegram-bot-patterns.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">firebase-patterns.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">strategic-decisions.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">process-patterns.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="file">adversarial-review.md</span> <span class="note">&larr; mechanical checklist</span><br>
+        &nbsp;&nbsp;<span class="dir">commands/</span> <span class="note">&larr; /consolidate-learnings, /capture-learning, /project-setup, /post-mortem</span><br>
         &nbsp;&nbsp;<span class="dir">docs/</span> <span class="note">&larr; plans, visualizations (this file)</span><br>
         &nbsp;&nbsp;<span class="dir">projects/*/memory/</span> <span class="note">&larr; per-project session context</span><br>
 
         <span class="section-label">Per project</span>
         <span class="dir">&lt;project&gt;/</span><br>
-        &nbsp;&nbsp;<span class="hl">CLAUDE.md</span> <span class="note">&larr; project-specific rules only (structure, stack, pre-PR commands)</span><br>
+        &nbsp;&nbsp;<span class="hl">CLAUDE.md</span> <span class="note">&larr; project-specific rules only</span><br>
         &nbsp;&nbsp;<span class="dir">.claude/skills/adversarial-review/</span> <span class="note">&larr; references shared checklist</span><br>
         &nbsp;&nbsp;<span class="dir">.claude/skills/review-fix/</span> <span class="note">&larr; PR comment &rarr; learning pipeline</span><br>
         &nbsp;&nbsp;<span class="dir">.claude/hooks/</span> <span class="note">&larr; require-adversarial-review.sh (blocks push)</span><br>
-        &nbsp;&nbsp;<span class="dir">docs/</span> <span class="note">&larr; BUGS.md, DECISIONS.md, PRODUCT_SPEC.md, QA.md</span><br>
+        &nbsp;&nbsp;<span class="dir">docs/features/</span> <span class="note">&larr; feature-centric docs (specs, bugs, decisions, mockups)</span><br>
       </div>
     </section>
 
     <!-- Connected Projects -->
     <section>
-      <h2><span class="num">06</span>Connected Projects</h2>
+      <h2><span class="num">07</span>Connected Projects</h2>
 
       <div class="projects">
         <div class="project">
@@ -786,37 +1662,111 @@
           <div class="stack">React, TS, Firebase, Firestore, Vite, Vitest</div>
           <span class="status status-full">full loop</span>
         </div>
+        <div class="project">
+          <h3>lullaby</h3>
+          <div class="stack">TS, React Native, Expo, Supabase</div>
+          <span class="status status-full">full loop</span>
+        </div>
+        <div class="project">
+          <h3>baby-name-picker</h3>
+          <div class="stack">TS, React Native, Expo, SQLite, Claude API</div>
+          <span class="status status-full">full loop</span>
+        </div>
+        <div class="project">
+          <h3>folio</h3>
+          <div class="stack">TS, React Native, Expo, Supabase, Zustand</div>
+          <span class="status status-full">full loop</span>
+        </div>
       </div>
     </section>
 
     <!-- Identified Gaps -->
     <section>
-      <h2><span class="num">07</span>Known Gaps &amp; Future Opportunities</h2>
+      <h2><span class="num">08</span>Known Gaps &amp; Severity</h2>
 
       <div class="gaps">
         <div class="gap">
-          <h3>No effectiveness measurement</h3>
-          <p>No A/B test has compared agent performance with vs. without the knowledge base. "Compounding intelligence" is a narrative, not a measured outcome.</p>
-          <div class="deferred">Deferred &mdash; run minimal test when 5th project starts</div>
+          <h3>No verification of knowledge consumption</h3>
+          <p>CLAUDE.md says "read INDEX.md and topic files" but there's no mechanical check that the agent actually did it. The only enforcement is the directive itself &mdash; an LLM instruction, not a gate.</p>
+          <span class="severity severity-high">High &mdash; systemic</span>
         </div>
         <div class="gap">
-          <h3>No decision/strategic memory</h3>
-          <p>Knowledge captures technical patterns but not product judgment ("Padmini prefers X approach") or strategic memory ("we tried Z and it failed because...").</p>
-          <div class="deferred">Deferred &mdash; add once system value is proven</div>
+          <h3>Context compression drops patterns</h3>
+          <p>Knowledge loaded at Step 1b can be silently lost during long implementations. The agent won't know patterns were compressed away &mdash; it just stops applying them.</p>
+          <span class="severity severity-high">High &mdash; silent failure</span>
         </div>
         <div class="gap">
-          <h3>Consumption is unverified</h3>
-          <p>No way to confirm agents actually read and applied knowledge files. The CLAUDE.md directive says "read them" but there's no mechanical enforcement.</p>
-          <div class="deferred">Deferred &mdash; no good enforcement mechanism exists yet</div>
+          <h3>Test failures don't auto-capture</h3>
+          <p>A novel test failure pattern (timezone bugs, async race conditions) gets fixed but not captured to knowledge. It relies on the adversarial review to catch it 3 steps later.</p>
+          <span class="severity severity-medium">Medium &mdash; delayed capture</span>
+        </div>
+        <div class="gap">
+          <h3>Internal review can't reference knowledge</h3>
+          <p>Step 4b's checklist is hardcoded in CLAUDE.md. Patterns from knowledge/*.md don't feed into the internal review. Each project's review is limited to what's in CLAUDE.md.</p>
+          <span class="severity severity-medium">Medium &mdash; coverage gap</span>
+        </div>
+        <div class="gap">
+          <h3>Post-mortem doesn't close the loop</h3>
+          <p>Process-patterns.md accumulates metrics but never auto-updates CLAUDE.md rules. The "600 LOC threshold" rule was manually extracted. Most metrics sit unread.</p>
+          <span class="severity severity-medium">Medium &mdash; stale metrics</span>
+        </div>
+        <div class="gap">
+          <h3>Proactive capture is unenforceable</h3>
+          <p>CLAUDE.md has a "Proactive Learning Capture" directive for ad-hoc patterns, but no hook or gate checks for it. Works when it works; invisible when it doesn't.</p>
+          <span class="severity severity-low">Low &mdash; safety net exists (4d)</span>
         </div>
         <div class="gap">
           <h3>PR rejection feedback is manual</h3>
-          <p>When you reject a PR or say "wrong approach," that judgment doesn't automatically flow into knowledge. The /review-fix skill helps, but requires manual invocation.</p>
-          <div class="deferred">Deferred &mdash; add PR outcome logging (5 lines) when ready</div>
+          <p>When a PR is rejected or "wrong approach" feedback is given, that judgment doesn't flow into knowledge automatically. Requires manual /review-fix invocation.</p>
+          <span class="severity severity-low">Low &mdash; infrequent event</span>
         </div>
       </div>
     </section>
 
   </div>
+
+  <script>
+    function filterTimeline(filter, clickedBtn) {
+      const phases = document.querySelectorAll('.tl-phase');
+      const separators = document.querySelectorAll('.tl-separator');
+      const buttons = document.querySelectorAll('.filter-btn');
+
+      // Update button states
+      buttons.forEach(btn => {
+        btn.classList.remove('active', 'active-read', 'active-write', 'active-gap');
+      });
+
+      if (filter === 'all') {
+        clickedBtn.classList.add('active');
+      } else if (filter === 'read') {
+        clickedBtn.classList.add('active-read');
+      } else if (filter === 'write') {
+        clickedBtn.classList.add('active-write');
+      } else if (filter === 'gap') {
+        clickedBtn.classList.add('active-gap');
+      }
+
+      if (filter === 'all') {
+        phases.forEach(p => {
+          p.classList.remove('dim', 'highlight');
+        });
+        separators.forEach(s => s.classList.remove('dim'));
+        return;
+      }
+
+      phases.forEach(p => {
+        const tags = (p.getAttribute('data-tags') || '').split(' ');
+        if (tags.includes(filter)) {
+          p.classList.remove('dim');
+          p.classList.add('highlight');
+        } else {
+          p.classList.add('dim');
+          p.classList.remove('highlight');
+        }
+      });
+
+      separators.forEach(s => s.classList.add('dim'));
+    }
+  </script>
 </body>
 </html>
