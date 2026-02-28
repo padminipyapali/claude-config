@@ -15,6 +15,9 @@ Cross-project product thinking patterns. These are decision frameworks and produ
 - When a feature adds configuration surface area without validated user demand, cut it. Personality modes, theme pickers, and optional toggles are complexity debt until proven otherwise.
 <!-- Source: vocab_app removed personalities; second-brain deferred email threading options -->
 
+- Actively remove shipped features that prove unused. The bar for keeping a shipped feature is the same as building one: validated user demand. Sunk cost shouldn't keep dead code alive — 3,500 LOC of agent delegation and an AI thread summary were both removed post-ship because they added maintenance burden and cost without actual usage.
+<!-- Source: command-center D10 (agent delegation removal, #40); second-brain thread summary removal (#282), 2026-02-28 -->
+
 - Nudge over mandate. Guide user behavior through suggestions and defaults, not restrictions. Topic suggestions > forced categories.
 <!-- Source: vocab_app topic suggestion decision -->
 
