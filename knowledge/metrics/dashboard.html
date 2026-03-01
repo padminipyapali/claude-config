@@ -7783,6 +7783,76 @@ const METRICS_DATA = {
         "skipAssessment": null
       },
       "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 313,
+      "title": "Add WONT_FIX status for TODOs",
+      "dateMerged": "2026-03-01T23:22:48Z",
+      "reviewRounds": 1,
+      "totalComments": 5,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 3,
+        "performance": 0,
+        "testing": 1,
+        "documentation": 0,
+        "other": 0
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.5,
+      "timeToMergeHours": 0.8,
+      "planningQuality": "complete",
+      "prSize": 145,
+      "additions": 101,
+      "deletions": 44,
+      "changedFiles": 10,
+      "commits": 2,
+      "featureCommits": 1,
+      "fixupCommits": 1,
+      "stepsCompleted": [
+        "1",
+        "2a",
+        "2b",
+        "3",
+        "4a",
+        "4b",
+        "4d",
+        "5"
+      ],
+      "stepsSkipped": [
+        "4c"
+      ],
+      "complianceRate": 0.89,
+      "postMergeFixes": 0,
+      "fixupTaxonomy": {
+        "correctness": 1,
+        "style-DRY": 2
+      },
+      "fixAttribution": {
+        "4a": 0,
+        "4b": 0,
+        "4c": 0,
+        "4d": 0,
+        "post-push": 3
+      },
+      "codeRabbitLocalSkipped": true,
+      "codeRabbitRemoteFindings": 5,
+      "codeRabbitRemoteAddressed": 3,
+      "hardeningPass": {
+        "validation": 2,
+        "a11y": 2,
+        "errorHandling": 6,
+        "elseDefault": 5,
+        "cleanup": 0
+      },
+      "adversarialDepth": "11/11",
+      "playwrightTesting": "static-verification",
+      "postPushIssuesCoveredByChecklist": 1,
+      "postPushIssuesTotal": 1,
+      "executionGap": "Snooze clearing on DONE<->WONT_FIX transitions missed despite derived-field-consistency checklist item"
     }
   ]
 };
