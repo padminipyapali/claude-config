@@ -6802,6 +6802,149 @@
         "skipAssessment": null
       },
       "stepTiming": null
+    },
+    {
+      "project": "my_mind_evolved",
+      "prNumber": 298,
+      "title": "Replace /todos inline buttons with dashboard link",
+      "dateMerged": "2026-03-01T06:09:30Z",
+      "reviewRounds": 2,
+      "totalComments": 4,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 3,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 1,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 1,
+        "coderabbitFixed": 1,
+        "coderabbitIterations": 1,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.75,
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 3,
+          "4c": 1,
+          "4d": 0,
+          "postPush": 3
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 1,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.94,
+      "planningQuality": "partial",
+      "prSize": 102,
+      "stepCompliance": {
+        "stepsRun": [
+          "2a",
+          "2b",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "1",
+          "3"
+        ],
+        "skipReasons": "1a-1c (plan) - small, clear scope. 3-Playwright: N/A (deep-link tested via unit test; no visual changes).",
+        "complianceRate": 0.78,
+        "skipAssessment": "neutral"
+      },
+      "stepTiming": null
+    },
+    {
+      "project": "my_mind_evolved",
+      "prNumber": 297,
+      "title": "Remove research feature code",
+      "dateMerged": "2026-03-01T06:09:24Z",
+      "reviewRounds": 2,
+      "totalComments": 2,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 2,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 0,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.67,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 1,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 2
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 1,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 1.23,
+      "planningQuality": "complete",
+      "prSize": 6039,
+      "stepCompliance": {
+        "stepsRun": [
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "1a-1c",
+          "4c",
+          "3-Playwright"
+        ],
+        "skipReasons": "1a-1c: plan pre-approved in prior session. 4c (CodeRabbit): skipped locally (deletion-only, no new logic). 3-Playwright: N/A (no new UI, all deletions).",
+        "complianceRate": 0.778,
+        "skipAssessment": "bad"
+      },
+      "stepTiming": null
     }
   ]
 }
