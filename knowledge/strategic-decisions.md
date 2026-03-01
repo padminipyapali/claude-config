@@ -54,6 +54,17 @@ Cross-project product thinking patterns. These are decision frameworks and produ
 - Sequential task queues for agent delegation. Predictable ordering beats throughput for personal tools — you want to understand what happened, not process things fast.
 <!-- Source: command-center sequential queue decision -->
 
+## Product Lifecycle & Process
+
+- Deliverables are the unit of progress, not phase labels. A phase without its deliverable is still the previous phase. This principle drives both UI design (thread detail = deliverable timeline) and cross-session continuity (deliverables ARE the context — no separate orchestrator state needed).
+<!-- Source: command-center thread lifecycle RFC discussion, 2026-02-28 -->
+
+- The orchestrator's role should expand from managing engineering execution (Plan → PR) to managing the full product lifecycle (Spark → Bug Bash), acting as COO to the user's CEO. Every phase has: expected deliverables, a definition of done, and a gate where the user approves.
+<!-- Source: command-center thread lifecycle RFC discussion, 2026-02-28 -->
+
+- Go/no-go gates at Discover and Ideate/Design are the most important product filters. They prevent wasted engineering effort. Archived threads (no-go decisions) are preserved as product decision history — "we considered X and decided against it because Y."
+<!-- Source: command-center thread lifecycle RFC discussion, 2026-02-28 -->
+
 ## Product Discovery
 
 - When a user reports a bug, the fix is tactical but the pattern is strategic. Ask: "What were you trying to accomplish when you hit this?" — the answer reveals workflow assumptions.
