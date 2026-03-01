@@ -42,6 +42,7 @@ Cross-project learnings for Telegram bots (grammY, Bot API).
 ## Inline Keyboard Lifecycle
 
 - **Clear inline keyboards after terminal actions.** When `editMessageText` is called without `reply_markup`, Telegram preserves the original inline keyboard buttons. After any terminal action (confirm, cancel, error), always pass `reply_markup: { inline_keyboard: [] }` to remove the buttons and prevent users from re-triggering callbacks. Only omit this when re-rendering the keyboard with updated state (e.g., refreshing a TODO list with new button states). <!-- Source: PR review, second-brain #209, 2026-02-22 -->
+- **Don't remove buttons BEFORE async operations — keep them until success.** When a button triggers an async operation (LLM call, API request), don't eagerly remove the inline keyboard before the operation completes. If the operation fails, the user has no retry path — the button is gone. Pattern: show a toast ("Processing...") immediately, but only remove/replace the keyboard inside the success branch. For double-tap prevention, use a server-side idempotency guard or debounce, not premature UI removal. <!-- Source: PR review, second-brain #305, 2026-03-01 -->
 
 ## Feature Removal with Persistent UI
 

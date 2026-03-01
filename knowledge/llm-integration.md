@@ -20,6 +20,7 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 ## Input Handling
 
 - **Input truncation is a prompt concern, not a data concern — fallback must return the original.** When truncating user content before sending to an LLM (e.g., `content.slice(0, 1000)` as a safety net), the error/fallback path must return the original `content`, not the truncated version. The truncation protects the LLM from oversized input; the fallback returns data to the user/database. Returning truncated content silently loses data on LLM failure. Pattern: save the original, truncate a copy for the prompt, return the original on any failure path. <!-- Source: PR review, second-brain #262, 2026-02-25 -->
+- **Gate LLM calls with max-length AND min-length guards at every entry point.** When an API route or callback invokes an LLM method, enforce input bounds before the call: min-length to avoid wasting tokens on trivially short input, max-length to prevent cost/latency blowup and model-limit failures. Don't rely solely on the service method's internal guards — each entry point (API route, Telegram callback, web hook) must independently validate. When multiple entry points exist, define shared constants (`MIN_REFORMAT_LENGTH`, `MAX_REFORMAT_LENGTH`) or add deterministic fast paths in the service method itself as defense-in-depth. <!-- Source: PR review, second-brain #305, 2026-03-01 -->
 
 ## Safety & Prompt Injection
 
