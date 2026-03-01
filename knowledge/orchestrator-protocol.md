@@ -60,11 +60,12 @@ Provide the critic ONLY:
 - Worktree path
 - `git diff main...HEAD` output
 - Pointer to `~/.claude/knowledge/adversarial-review.md`
+- **Stack-matched knowledge files from the plan's "Knowledge Loaded" section.** The critic must receive the same `~/.claude/knowledge/*.md` topic files that were loaded during Step 1b. These contain mechanical checks (grep patterns, verification steps) that the adversarial review checklist alone does not cover. Example: `react-patterns.md` has "grep for `useState` in components whose props include a context ID and verify each transient state resets on context change" — if the critic never sees this file, it can't execute the check.
 - Project CLAUDE.md path
 - File category classification from Step 2a
 - Step 2b hardening checklist artifact (for verification against the diff)
 
-Do NOT provide: plan, implementation reasoning, Step 3 test output, or implementer chat context. Fresh context executes checklists more thoroughly.
+Do NOT provide: plan reasoning, implementation conversation, Step 3 test output, or implementer chat context. Fresh context executes checklists more thoroughly. The knowledge files are reference material (patterns + mechanical checks), not implementation context — they don't compromise the critic's independence.
 
 ## Communication Flow
 

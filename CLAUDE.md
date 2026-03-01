@@ -103,8 +103,8 @@ All dev flow work uses the three-role team pattern. No exceptions.
 **Key non-negotiable:** The implementer never reviews its own code. Post-mortem data proved author-reviewer identity collapse causes ~10% checklist execution rate. The critic's fresh context and opposing optimization target (finding problems vs. shipping) is what makes review effective.
 
 **Critic's context boundary — what it receives and what it must NOT receive:**
-- **Receives:** `git diff main...HEAD`, the adversarial review checklist (`~/.claude/knowledge/adversarial-review.md`), the project's `CLAUDE.md`, and the Convention Complexity Budget section.
-- **Must NOT receive:** Implementation conversation history, the implementer's reasoning, plan discussion, debugging context, or any message thread from Steps 1-3. The critic must form its own understanding from the diff alone.
+- **Receives:** `git diff main...HEAD`, the adversarial review checklist (`~/.claude/knowledge/adversarial-review.md`), stack-matched knowledge files from the plan's "Knowledge Loaded" section (e.g., `react-patterns.md`, `typescript-patterns.md` — these contain mechanical checks the adversarial checklist doesn't cover), the project's `CLAUDE.md`, and the Convention Complexity Budget section.
+- **Must NOT receive:** Implementation conversation history, the implementer's reasoning, plan discussion, debugging context, or any message thread from Steps 1-3. The critic must form its own understanding from the diff alone. Knowledge files are reference material (patterns + mechanical checks), not implementation context.
 - **Enforcement:** The orchestrator spawns the critic as a fresh `general-purpose` agent — not a subagent of the implementer's conversation. Passing implementation context to the critic (via message, task description, or shared state) is a process violation equivalent to skipping review.
 
 **Full protocol** (sequencing, 10-task tracking table, communication flow, worktree interaction, error recovery, session teardown, "Stage Manager" personality, status message formatting, 6 orchestrator duties): see `~/.claude/knowledge/orchestrator-protocol.md`.
