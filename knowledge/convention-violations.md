@@ -39,6 +39,7 @@ Tracks conventions that are violated across PRs. When a convention reaches 2+ vi
 | **JSDoc-on-exports** — exported functions/components need JSDoc | 3+ | nanny-app #35 (4 of 7 post-push findings), second-brain #185 (JSDoc audit scope miss), #142 (api.ts) | 2026-02-20 | **None** — needs Tier 0 grep for exported functions without preceding JSDoc in changed `.tsx`/`.ts` files |
 | **LOC-threshold-miscounting** — agents estimate LOC instead of computing via `git diff --stat` | 3+ | second-brain #250 (81 LOC claimed "under 50"), #259 (217 LOC claimed "under 50 of logic"), command-center #41 (156 LOC claimed "sub-50") | 2026-02-27 | **None** — needs mechanical `git diff --stat` enforcement in the review-skip decision path |
 | **CSS-var-undefined** — `var(--name)` referencing undefined custom properties | 2 | second-brain #164 (var(--border), var(--surface-hover) undefined) | 2026-02-20 | **None** — needs Tier 0 grep cross-referencing `var(--` against `--` definitions |
+| **worktree-write-failure** — implementer writes to main repo instead of worktree | 1 | second-brain #324 (12 file edits to main, worktree auto-cleaned with zero changes, critic reviewed empty diff) | 2026-03-02 | **Orchestrator gate** — startup checklist + post-implementation diff verification added to orchestrator-protocol.md |
 
 ---
 

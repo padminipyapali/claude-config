@@ -83,9 +83,33 @@ Do NOT provide: plan reasoning, implementation conversation, Step 3 test output,
 - Orchestrator stays in main checkout for monitoring and narration.
 - On teardown: worktree cleaned up if no changes; persists if changes were pushed.
 
+### Implementer Startup Checklist (first thing the implementer does)
+
+1. Run `pwd` — confirm cwd is under `.claude/worktrees/`, not the main repo.
+2. Run `git rev-parse --show-toplevel` — confirm it returns the worktree path, not the main repo root.
+3. If either check fails: **stop immediately**. Report to orchestrator via `SendMessage` with the actual paths. Do not proceed with file edits.
+
+### Orchestrator Post-Implementation Verification (before spawning critic)
+
+1. After implementer reports done, run `git -C <worktree-path> diff --stat` using the worktree path from the agent result.
+2. If zero diff: **do not spawn critic**. Flag the failure to the user immediately — "Implementer reported complete but worktree has zero changes."
+3. This is a hard gate — no diff means no review means no PR.
+
+### Path Resolution Guidance
+
+- Plans should use **relative paths** (`packages/server/src/...`), not absolute paths.
+- The implementer prompt must include: "Your working directory is the worktree. Use relative paths for all file operations. Do NOT use absolute paths from the plan or conversation context."
+- The orchestrator must never pass main-repo absolute paths in task descriptions.
+
 ## Error Recovery
 
-Stale team from previous crash? Clean up via `TeamDelete` before creating a new one.
+**Stale team from previous crash?** Clean up via `TeamDelete` before creating a new one.
+
+**Worktree write failure** (PR #324 incident):
+- **Symptom:** Implementer reports tasks complete but worktree has zero diff.
+- **Cause:** File operations targeted the main repo instead of the worktree (e.g., absolute paths from plan context, or agent cwd never switched to worktree).
+- **Recovery:** Check main repo for uncommitted changes (`git status` in main). If changes are present there, create a branch, stage, and commit manually. Then re-run critic against the actual diff.
+- **Prevention:** Implementer startup checklist (see Worktree Interaction section above). Orchestrator post-implementation diff check catches this before the critic wastes a review cycle on an empty diff.
 
 ## Session End / Team Teardown
 
