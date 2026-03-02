@@ -10,6 +10,8 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 - **AI summarization is lossy — preserve originals.** Never make AI-transformed content the only path to original data. Email summarization, content extraction, and paraphrasing all discard information (URLs, formatting, exact wording). Always store and expose the original alongside any AI-processed version. <!-- Source: BUG-W006, second-brain, 2026-02-14 -->
 - **Embedding content must match stored content.** When a pipeline cleans/transforms text before storage, generate embeddings from the CLEANED text, not the raw input. If stored content says "buy milk" but the embedding vector represents "todo: buy milk please", semantic search returns results whose text doesn't match the query context. Any transform-then-store pipeline must use the same text for both storage and embedding. <!-- Source: PR review, second-brain #109, 2026-02-15 -->
 
+- **Multi-stage sanitization: run filters AFTER stripping, not before.** When cleaning LLM output in stages (strip bullets, strip bold markers, filter headings), ordering matters. A heading check like `/^#+\s/` won't catch `- # Themes` if it runs before bullet stripping. Pattern: first remove all wrapper syntax (bullets, bold, code fences), then apply semantic filters (heading detection, empty-line filtering) on the cleaned result. The general rule: filters that depend on the cleaned form must run after all cleaning stages, not interleaved with them. <!-- Source: PR review, second-brain #322, 2026-03-02 -->
+
 ## Prompt Design
 
 - **Prompt rules can over-generalize.** A rule like `"buy milk and eggs" → single item` may cause the LLM to merge ALL grocery items. Test with diverse real inputs, not just prompt examples.
