@@ -7380,6 +7380,76 @@
       "postPushIssuesCoveredByChecklist": 0,
       "postPushIssuesTotal": 0,
       "executionGap": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 317,
+      "title": "Replace dark theme with light glassy editorial theme",
+      "dateMerged": "2026-03-02T11:29:17Z",
+      "reviewRounds": 2,
+      "totalComments": 3,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 0,
+        "performance": 1,
+        "testing": 0,
+        "documentation": 0,
+        "other": 1
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.8,
+      "timeToMergeHours": 6.02,
+      "planningQuality": "complete",
+      "prSize": 611,
+      "additions": 332,
+      "deletions": 279,
+      "changedFiles": 5,
+      "commits": 5,
+      "featureCommits": 1,
+      "fixupCommits": 4,
+      "stepsCompleted": [
+        "1",
+        "2a",
+        "2b",
+        "3",
+        "4a",
+        "4b",
+        "4c",
+        "4d",
+        "4e",
+        "5"
+      ],
+      "stepsSkipped": [],
+      "complianceRate": 1.0,
+      "postMergeFixes": 0,
+      "fixupTaxonomy": {
+        "dead-code": 1,
+        "a11y": 2
+      },
+      "fixAttribution": {
+        "4a": 1,
+        "4b": 0,
+        "4c": 0,
+        "4d": 0,
+        "post-push": 2
+      },
+      "codeRabbitLocalSkipped": false,
+      "codeRabbitRemoteFindings": 5,
+      "codeRabbitRemoteAddressed": 2,
+      "hardeningPass": {
+        "validation": "N/A",
+        "a11y": "2 WCAG + 13 webkit prefixes",
+        "errorHandling": "N/A",
+        "elseDefault": "N/A",
+        "cleanup": 1
+      },
+      "adversarialDepth": "10/10 Tier 0, UI category Tier 1-4 all PASS",
+      "playwrightTesting": "passed (localhost:5174, login page screenshot, 0 console errors, 0 dark color leaks)",
+      "postPushIssuesCoveredByChecklist": 0,
+      "postPushIssuesTotal": 2,
+      "executionGap": "WCAG contrast claimed verified but 2 failures found by CodeRabbit; adversarial a11y items all PASS but missed contrast issues"
     }
   ]
 }
