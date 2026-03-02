@@ -329,6 +329,8 @@ done
 ```
 Catches: `var(--font-sans)` when `--font-sans` is not defined in the same CSS file's `:root`. CSS silently falls back to the property's initial value, which is invisible during development if the default happens to look acceptable. Fix: use the correct variable name (check `:root` definitions). Known false positives: variables set via JavaScript (`style.setProperty`) — verify each flag against JS sources before fixing. Tested at ~6% false-positive rate on a 4000-line CSS file. <!-- Source: PR review, second-brain #164, 2026-02-19; second-brain #320, 2026-03-02 -->
 
+> **CI-enforced in second-brain (my_mind_evolved):** This check is now automated via `stylelint-value-no-unknown-custom-properties` in `.stylelintrc.json`. The manual grep above is redundant for that project but remains necessary for projects without the stylelint plugin.
+
 ### Adding new patterns
 When a bug class is caught 2+ times across PRs, add a grep pattern here.
 Requirements: expressible as regex on changed lines, low false-positive rate (<20%).
