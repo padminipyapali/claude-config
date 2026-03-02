@@ -1,3 +1,14 @@
+# ORCHESTRATOR TEAM PATTERN — REQUIRED FOR ALL CODE CHANGES
+
+**ALL code changes use the 3-role team pattern. NO EXCEPTIONS.**
+- This agent is the **orchestrator**. It does NOT write or review code directly.
+- Spawn an **implementer** (`general-purpose`, `isolation: "worktree"`) to write code.
+- Spawn a **critic** (`general-purpose`, fresh context) to review code.
+- If you catch yourself editing files or running tests directly, STOP — delegate to the team.
+- Full protocol: `~/.claude/knowledge/orchestrator-protocol.md`
+
+---
+
 # Global Claude Code Rules
 
 These rules apply to every project. Project-specific CLAUDE.md files supplement and can override these.
@@ -12,6 +23,7 @@ Stack-specific sections (marked "When Applicable") apply only when the project u
 
 On EVERY session start — including continuations from previous sessions — run these checks before any code changes:
 
+0. **Orchestrator mode.** All code changes go through the 3-role team pattern (orchestrator/implementer/critic). Spawn `dev-<slug>` team before ANY implementation. See top of this file and `~/.claude/knowledge/orchestrator-protocol.md`.
 1. **Repo conflict detection.** For each repo you plan to modify, run:
    - `git -C <path> status --porcelain` — check for uncommitted changes.
    - `ps aux | grep -E 'claude|claude-code' | grep -v grep | grep '<path>'` — check for active agents.
@@ -94,20 +106,14 @@ Every feature/fix follows these steps. The orchestrator announces step transitio
 
 ### Orchestrator via Team Pattern (MANDATORY)
 
-All dev flow work uses the three-role team pattern. No exceptions.
+See top of this file for the rule. Full protocol: `~/.claude/knowledge/orchestrator-protocol.md`.
 
-- **Orchestrator (team lead):** The main conversation agent. Creates team (`dev-<feature-slug>`), manages task list, prints status, enforces process. Does NOT write or review code.
-- **Implementer:** `general-purpose` agent with `isolation: "worktree"`. Writes code, runs tests (Steps 2a-3). Does NOT review its own code.
-- **Critic:** `general-purpose` agent with fresh context. Runs ALL review steps (4a-4e). Receives ONLY the diff, checklist, and project CLAUDE.md — never implementation context.
+**Quick reference (details in knowledge file):**
+- **Orchestrator** = this agent. Creates team (`dev-<feature-slug>`), manages tasks, enforces process. Does NOT write or review code.
+- **Implementer** = `general-purpose` agent, `isolation: "worktree"`. Steps 2a-3. Never reviews its own code.
+- **Critic** = `general-purpose` agent, fresh context. Steps 4a-4e. Receives ONLY diff + checklist + CLAUDE.md — never implementation context.
 
-**Key non-negotiable:** The implementer never reviews its own code. Post-mortem data proved author-reviewer identity collapse causes ~10% checklist execution rate. The critic's fresh context and opposing optimization target (finding problems vs. shipping) is what makes review effective.
-
-**Critic's context boundary — what it receives and what it must NOT receive:**
-- **Receives:** `git diff main...HEAD`, the adversarial review checklist (`~/.claude/knowledge/adversarial-review.md`), stack-matched knowledge files from the plan's "Knowledge Loaded" section (e.g., `react-patterns.md`, `typescript-patterns.md` — these contain mechanical checks the adversarial checklist doesn't cover), the project's `CLAUDE.md`, and the Convention Complexity Budget section.
-- **Must NOT receive:** Implementation conversation history, the implementer's reasoning, plan discussion, debugging context, or any message thread from Steps 1-3. The critic must form its own understanding from the diff alone. Knowledge files are reference material (patterns + mechanical checks), not implementation context.
-- **Enforcement:** The orchestrator spawns the critic as a fresh `general-purpose` agent — not a subagent of the implementer's conversation. Passing implementation context to the critic (via message, task description, or shared state) is a process violation equivalent to skipping review.
-
-**Full protocol** (sequencing, 10-task tracking table, communication flow, worktree interaction, error recovery, session teardown, "Stage Manager" personality, status message formatting, 6 orchestrator duties): see `~/.claude/knowledge/orchestrator-protocol.md`.
+The implementer never reviews its own code. Author-reviewer identity collapse causes ~10% checklist execution rate.
 
 ### Step 1: Plan (sub-steps)
 
