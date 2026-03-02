@@ -72,7 +72,7 @@ If no semantic tags are detected, skip this step and proceed to Step 4.
 | **async-ts** | Tier 1: all (1.1–1.3). Tier 3: null guards, error message specificity |
 | **routes-api** | Tier 2: all. Tier 4: business logic in service not routes |
 | **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create→reload, trigger event scope (INSERT vs UPDATE vs both), transaction client affinity |
-| **ui-react** | Tier 0: 0.4 (semantic elements), 0.4b (form input labels), 0.5 (escape handler), 0.13 (focus-visible parity), 0.14 (iOS auto-zoom), 0.15 (render-phase setState), 0.16 (stale async guards), 0.17 (conditional branch tests). Tier 1: 1.4 (grammar), 1.5 (optimistic UI), 1.6 (portal/popover positioning), 1.7 (interactive mode state cleanup). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh, render-phase setState, instance-unique IDs, React key uniqueness, click propagation on interactive→non-interactive refactors, key-based state reset for context-dependent children, isMountedRef strict-mode safety |
+| **ui-react** | Tier 0: 0.4 (semantic elements), 0.4b (form input labels), 0.5 (escape handler), 0.13 (focus-visible parity), 0.14 (iOS auto-zoom), 0.15 (render-phase setState), 0.16 (stale async guards), 0.17 (conditional branch tests), 0.18 (undefined CSS vars). Tier 1: 1.4 (grammar), 1.5 (optimistic UI), 1.6 (portal/popover positioning), 1.7 (interactive mode state cleanup). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh, render-phase setState, instance-unique IDs, React key uniqueness, click propagation on interactive→non-interactive refactors, key-based state reset for context-dependent children, isMountedRef strict-mode safety |
 | **shell** | Tier 2: shell command validation |
 | **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
@@ -148,7 +148,7 @@ Before manual review, run these grep patterns against changed files. Any match i
 Tier 0 checks are **literal bash commands**, not judgment calls. Execute each grep exactly as written and log the output. Do not assess results by "glancing" — the grep either produces matches or it does not.
 
 **Execution rules:**
-1. Run every Tier 0 grep command (0.1 through 0.17) sequentially against the current diff.
+1. Run every Tier 0 grep command (0.1 through 0.18) sequentially against the current diff.
 2. For each check, record the **exact output** (including empty output for passing checks).
 3. Any non-empty output is a finding — fix it before proceeding to Tier 1+.
 4. After all checks complete, log a summary: `Tier 0: N/M checks executed, K findings, K fixed.`
@@ -316,6 +316,18 @@ Catches: `useCallback` functions that call `setState` after an `await` without a
 git diff main...HEAD --name-only -- '*.tsx' | xargs grep -nE 'if\s*\(\s*(is|has|show|hide|can)[A-Z]' 2>/dev/null
 ```
 Catches: boolean-gated UI branches like `if (isNightNurse)`, `if (hasPermission)`, `if (showBanner)`. For each match in a JSX-rendering component, verify the corresponding test file has test cases for BOTH the `true` and `false` branches. Missing a branch means half the UI is untested — the default path works but the conditional path may be broken. Fix: add `describe('when isX is true/false', ...)` test blocks covering each branch. Heuristic — not all boolean conditions gate UI; verify the match is in a render path, not pure logic. <!-- Source: command-center #46, 2026-02-28 -->
+
+### 0.18 Undefined CSS custom properties
+```bash
+for f in $(git diff main...HEAD --name-only -- '*.css'); do
+  used=$(git diff main...HEAD -- "$f" | grep '^+' | grep -v '^+++' | grep -oE 'var\(--[a-zA-Z0-9_-]+' | sed 's/var(//g' | sort -u)
+  defined=$(grep -oE -- '--[a-zA-Z0-9_-]+:' "$f" | sed 's/:$//' | sort -u)
+  for var in $used; do
+    echo "$defined" | grep -Fxq -- "$var" || echo "UNDEFINED CSS VAR: $f uses $var"
+  done
+done
+```
+Catches: `var(--font-sans)` when `--font-sans` is not defined in the same CSS file's `:root`. CSS silently falls back to the property's initial value, which is invisible during development if the default happens to look acceptable. Fix: use the correct variable name (check `:root` definitions). Known false positives: variables set via JavaScript (`style.setProperty`) — verify each flag against JS sources before fixing. Tested at ~6% false-positive rate on a 4000-line CSS file. <!-- Source: PR review, second-brain #164, 2026-02-19; second-brain #320, 2026-03-02 -->
 
 ### Adding new patterns
 When a bug class is caught 2+ times across PRs, add a grep pattern here.
