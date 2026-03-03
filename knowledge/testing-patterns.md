@@ -34,6 +34,8 @@ Cross-project learnings for testing strategy, mocking, and assertions.
 
 ## Mocking Pitfalls
 
+- **Remove copy-pasted `vi.mock()` blocks that the test file doesn't use.** When creating a new test file by copying an existing one, dead mock blocks for unused modules (Firebase, auth providers, etc.) survive because they don't cause test failures. They add false coupling — if the mocked module's API changes, the dead mock breaks the unrelated test. Mechanical check: for each `vi.mock()` in a test file, grep the file for actual usage of the mocked module's exports. If none, remove the mock block. <!-- Source: CodeRabbit review, sleep-tracker #14, 2026-03-03 -->
+
 - **`vi.doMock` does not affect already-resolved static imports.** `vi.doMock()` only applies to subsequent dynamic `import()` calls, not modules already loaded via static `import` at the top of the file. If you import `Foo` statically and then `vi.doMock("foo-module", ...)`, the imported `Foo` still points to the real module. Either use `vi.mock()` (hoisted to file top) or manually override the dependency on the instance (e.g., `(obj as any).client = mockClient`). Dead `vi.doMock` blocks are common — they appear to work only because a manual override elsewhere does the real mocking. <!-- Source: PR review, command-center #40, 2026-02-27 -->
 
 ## Test Cleanup
