@@ -8278,9 +8278,171 @@ const METRICS_DATA = {
         "skipAssessment": "good"
       },
       "stepTiming": null
+    },
+    {
+      "project": "command-center",
+      "prNumber": 75,
+      "title": "feat: Paper Light theme redesign",
+      "dateMerged": "2026-03-02T22:53:23Z",
+      "reviewRounds": 2,
+      "totalComments": 4,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 2,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 1
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 7,
+        "adversarialFixed": 7
+      },
+      "adversarialCatchRate": 0.57,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 7,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 4,
+          "defensive-coding": 0,
+          "correctness": 1,
+          "dead-code": 2,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "fixupCommitRatio": 0.75,
+      "timeToMergeHours": 0.18,
+      "planningQuality": "complete",
+      "prSize": 259,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4c"
+        ],
+        "skipReasons": "4c (CodeRabbit) \u2014 CLI unavailable in environment",
+        "complianceRate": 0.889,
+        "skipAssessment": "bad"
+      },
+      "stepTiming": {
+        "planMinutes": 15,
+        "implementMinutes": 8,
+        "testMinutes": 3,
+        "reviewMinutes": 7,
+        "pushMinutes": 2,
+        "totalMinutes": 35,
+        "bottleneck": null,
+        "notes": "Plan was in prior session; current session 35 min total"
+      }
+    },
+    {
+      "project": "command-center",
+      "prNumber": 77,
+      "title": "feat: Broadsheet editorial newspaper design for dashboard",
+      "dateMerged": "2026-03-03T01:02:52Z",
+      "reviewRounds": 1,
+      "totalComments": 7,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 2,
+        "architecture": 0,
+        "style": 2,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 3
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 0.5,
+      "fixupCommitRatio": 0.67,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 1,
+          "postPush": 6
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 3,
+          "defensive-coding": 1,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 1,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.3,
+      "planningQuality": "complete",
+      "prSize": 3432,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "4e",
+          "5"
+        ],
+        "stepsSkipped": [
+          "2b"
+        ],
+        "skipReasons": "2b folded into 2a \u2014 single pass for CSS-heavy change",
+        "complianceRate": 0.89,
+        "skipAssessment": "neutral"
+      },
+      "stepTiming": {
+        "planMinutes": 20,
+        "implementMinutes": 15,
+        "testMinutes": 2,
+        "reviewMinutes": 4,
+        "pushMinutes": 2,
+        "totalMinutes": 43,
+        "bottleneck": "implementation (worktree bug)",
+        "notes": "~10 min lost to worktree isolation bug \u2014 fixed in orchestrator protocol"
+      }
     }
   ]
-};
+}
+
 const prs = METRICS_DATA.prs;
 const ABBREV = {
   'second-brain': 'SB',
