@@ -20,6 +20,10 @@ Cross-project learnings for TypeScript and Node.js development.
 
 - **Type runtime validation sets as `Set<UnionType>` not `Set<string>`.** When a `Set` is used to validate input against a TypeScript union (e.g., `SessionNoteSource = "telegram" | "web" | "cli"`), declare it as `Set<SessionNoteSource>` not `Set<string>`. The compiler catches drift if a value is added/removed from the union but not the Set. Pair with `satisfies` for arrays: `["a", "b"] as const satisfies readonly MyUnion[]`. <!-- Source: PR review, command-center #30, 2026-02-20 -->
 
+## Conditional Logic
+
+- **Don't check a property's value inside a branch that guards on it being falsy.** `if (!result.entryType) { ... result.entryType === "THOUGHT" ... }` is always false — the enclosing guard guarantees `entryType` is undefined. When you need type-based logic in a fallback branch, use a different source of truth (e.g., a reloaded entity from DB: `reloaded.type === "THOUGHT"`). This pattern is easy to introduce when adding conditional logic to multiple code paths mechanically. <!-- Source: PR review, second-brain #335, 2026-03-02 -->
+
 ## API Boundaries
 
 - **Input type validation.** `(content ?? "").trim()` silently coerces `null` but crashes on `42` or `{obj: true}`. Use `typeof content !== "string"` guard before `.trim()`.
