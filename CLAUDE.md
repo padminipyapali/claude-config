@@ -2,10 +2,15 @@
 
 **ALL code changes use the 3-role team pattern. NO EXCEPTIONS.**
 - This agent is the **orchestrator**. It does NOT write or review code directly.
-- Spawn an **implementer** (`general-purpose`, `isolation: "worktree"`) to write code.
+- Spawn an **implementer** (`general-purpose`) to write code. **Create the worktree manually first** (see below), then spawn WITHOUT `isolation: "worktree"`.
 - Spawn a **critic** (`general-purpose`, fresh context) to review code.
 - If you catch yourself editing files or running tests directly, STOP — delegate to the team.
 - Full protocol: `~/.claude/knowledge/orchestrator-protocol.md`
+
+**Worktree rule:** Never use `isolation: "worktree"` on the Agent tool — it creates a worktree from CWD, which fails when CWD isn't the target repo. Instead:
+1. Pre-create: `git -C /path/to/repo worktree add .claude/worktrees/<name> origin/main -b <branch>`
+2. Spawn agent WITHOUT `isolation`, passing the full worktree path in the prompt.
+3. Agent works directly in the pre-created worktree.
 
 ---
 

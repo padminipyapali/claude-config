@@ -6,7 +6,7 @@ The orchestrator team pattern is mandatory for ALL dev flow work (features, fixe
 
 - **Team name:** `dev-<feature-slug>`
 - **Orchestrator (team lead):** The main conversation agent. Creates team, manages task list, prints status, enforces process. Does NOT write or review code.
-- **Implementer:** `general-purpose` agent spawned with `team_name` and `isolation: "worktree"`. Writes code, hardens, runs tests (Steps 2a-3). Does NOT review its own code.
+- **Implementer:** `general-purpose` agent spawned with `team_name` (NO `isolation: "worktree"` — see Worktree Interaction below). Writes code, hardens, runs tests (Steps 2a-3). Does NOT review its own code.
 - **Critic:** `general-purpose` agent spawned with `team_name`. Runs ALL review steps (4a-4d). Receives ONLY diff + checklist + project CLAUDE.md — never implementation context.
 
 **Why three roles:** The implementer optimizes for shipping; the critic optimizes for finding problems. These goals conflict in one agent. Evidence: PR #143 (adversarial review "fixed 3 issues" — all shipped incomplete), PR #211 (caught 0 of 3 findings). Separating author from reviewer broke the identity collapse causing 6+ consecutive review failures.
@@ -79,14 +79,19 @@ Do NOT provide: plan reasoning, implementation conversation, Step 3 test output,
 
 ## Worktree Interaction
 
-- Implementer spawned with `isolation: "worktree"` for an isolated repo copy.
-- Orchestrator stays in main checkout for monitoring and narration.
-- On teardown: worktree cleaned up if no changes; persists if changes were pushed.
+**NEVER use `isolation: "worktree"` on the Agent tool.** It creates a worktree from the agent's CWD, which fails or produces a useless worktree when CWD isn't the target repo (e.g., `~/dev` is not a git repo). This caused PR #324 and the broadsheet-dashboard incident (~15 min wasted, zero bytes written).
+
+**Correct pattern — orchestrator pre-creates the worktree:**
+1. `git -C /path/to/repo fetch origin`
+2. `git -C /path/to/repo worktree add .claude/worktrees/<name> origin/main -b feat/<branch>`
+3. Spawn implementer WITHOUT `isolation`, with full worktree path in the prompt.
+4. Orchestrator stays in main checkout for monitoring and narration.
+5. On teardown: worktree cleaned up if no changes; persists if changes were pushed.
 
 ### Implementer Startup Checklist (first thing the implementer does)
 
-1. Run `pwd` — confirm cwd is under `.claude/worktrees/`, not the main repo.
-2. Run `git rev-parse --show-toplevel` — confirm it returns the worktree path, not the main repo root.
+1. Verify the worktree path exists: `ls <worktree-path>/package.json` (or equivalent).
+2. Run `git -C <worktree-path> rev-parse --show-toplevel` — confirm it returns the worktree path.
 3. If either check fails: **stop immediately**. Report to orchestrator via `SendMessage` with the actual paths. Do not proceed with file edits.
 
 ### Orchestrator Post-Implementation Verification (before spawning critic)
