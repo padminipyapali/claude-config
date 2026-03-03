@@ -20,5 +20,8 @@
 - **`new Date("2026-02-14T10:00:00")` without `Z` parses as local timezone.** Use `getLocalToday()` helper for user-facing date computations. `USER_TIMEZONE` env var controls timezone.
 - **PostgreSQL `AT TIME ZONE` behaves differently for `timestamp` vs `timestamptz`.** Always cast to `::timestamp` (not `::date`) before `AT TIME ZONE` when you want local-to-UTC conversion.
 
+## Design Preferences
+- Padmini's preferred HTML theme: "Light Editorial" — warm off-white, sans-serif (Inter), terracotta accent, magazine-like feel. Reference: `docs/features/_cross-cutting/explainers/performance-optimizations.html`. Full spec saved to `~/.claude/knowledge/design-preferences.md`.
+
 ## Cross-Project Knowledge
 Consolidated into ~/.claude/knowledge/. Load relevant topic files via INDEX.md.

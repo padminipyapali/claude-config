@@ -24,6 +24,7 @@ Cross-project learnings organized by topic. These files contain detailed pattern
 | [orchestrator-protocol.md](orchestrator-protocol.md) | All | Team pattern: 3-role structure, sequencing, status messages, duties |
 | [process-patterns.md](process-patterns.md) | All | Development process: review efficiency, planning, iteration velocity |
 | [convention-violations.md](convention-violations.md) | All | Convention violation tracker: recurrence counts, enforcement status, escalation |
+| [design-preferences.md](design-preferences.md) | All (HTML/CSS) | Padmini's preferred visual theme, palette, typography, layout patterns |
 
 ## Stack Matching Guide
 
