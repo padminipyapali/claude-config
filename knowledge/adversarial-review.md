@@ -72,7 +72,7 @@ If no semantic tags are detected, skip this step and proceed to Step 4.
 | **async-ts** | Tier 1: all (1.1–1.3). Tier 3: null guards, error message specificity |
 | **routes-api** | Tier 2: all. Tier 4: business logic in service not routes |
 | **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create→reload, trigger event scope (INSERT vs UPDATE vs both), transaction client affinity |
-| **ui-react** | Tier 0: 0.4 (semantic elements), 0.4b (form input labels), 0.5 (escape handler), 0.13 (focus-visible parity), 0.14 (iOS auto-zoom), 0.15 (render-phase setState), 0.16 (stale async guards), 0.17 (conditional branch tests), 0.18 (undefined CSS vars). Tier 1: 1.4 (grammar), 1.5 (optimistic UI), 1.6 (portal/popover positioning), 1.7 (interactive mode state cleanup). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh, render-phase setState, instance-unique IDs, React key uniqueness, click propagation on interactive→non-interactive refactors, key-based state reset for context-dependent children, isMountedRef strict-mode safety, CSS token consistency (hardcoded colors vs CSS variables) |
+| **ui-react** | Tier 0: 0.4 (semantic elements), 0.4b (form input labels), 0.5 (escape handler), 0.13 (focus-visible parity), 0.14 (iOS auto-zoom), 0.15 (render-phase setState), 0.16 (stale async guards), 0.17 (conditional branch tests), 0.18 (undefined CSS vars), 0.19 (pre-wrap + line-clamp), 0.20 (animation reduced-motion). Tier 1: 1.4 (grammar), 1.5 (optimistic UI), 1.6 (portal/popover positioning), 1.7 (interactive mode state cleanup). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh, render-phase setState, instance-unique IDs, React key uniqueness, click propagation on interactive→non-interactive refactors, key-based state reset for context-dependent children, isMountedRef strict-mode safety, CSS token consistency (hardcoded colors vs CSS variables), CSS property interaction audit |
 | **shell** | Tier 2: shell command validation |
 | **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
@@ -148,7 +148,7 @@ Before manual review, run these grep patterns against changed files. Any match i
 Tier 0 checks are **literal bash commands**, not judgment calls. Execute each grep exactly as written and log the output. Do not assess results by "glancing" — the grep either produces matches or it does not.
 
 **Execution rules:**
-1. Run every Tier 0 grep command (0.1 through 0.18) sequentially against the current diff.
+1. Run every Tier 0 grep command (0.1 through 0.20) sequentially against the current diff.
 2. For each check, record the **exact output** (including empty output for passing checks).
 3. Any non-empty output is a finding — fix it before proceeding to Tier 1+.
 4. After all checks complete, log a summary: `Tier 0: N/M checks executed, K findings, K fixed.`
@@ -335,6 +335,32 @@ Catches: `var(--font-sans)` when `--font-sans` is not defined in the same CSS fi
 When a bug class is caught 2+ times across PRs, add a grep pattern here.
 Requirements: expressible as regex on changed lines, low false-positive rate (<20%).
 
+### 0.19 white-space pre-wrap + line-clamp co-occurrence
+```bash
+for f in $(git diff main...HEAD --name-only -- '*.css' '*.tsx' '*.jsx'); do
+  has_prewrap=$(grep -lE 'white-space:\s*(pre-wrap|pre-line)' "$f" 2>/dev/null)
+  has_clamp=$(grep -lE '(-webkit-)?line-clamp' "$f" 2>/dev/null)
+  if [ -n "$has_prewrap" ] && [ -n "$has_clamp" ]; then
+    echo "CONFLICT: $f has both white-space:pre-wrap/pre-line AND line-clamp"
+    grep -nE 'white-space:\s*(pre-wrap|pre-line)|(-webkit-)?line-clamp' "$f"
+  fi
+done
+```
+Catches: `white-space: pre-wrap` silently disables `-webkit-line-clamp` truncation. Hard newlines in content expand to full height, defeating the clamp. Fix: use `white-space: normal` or `overflow-wrap: break-word` on clamped containers, and sanitize content newlines before display. <!-- Source: PRs #231, #236 -->
+
+### 0.20 Animation without prefers-reduced-motion
+```bash
+for f in $(git diff main...HEAD --name-only -- '*.css' '*.tsx' '*.jsx'); do
+  has_animation=$(grep -lE '^\s*animation\s*:' "$f" 2>/dev/null)
+  has_reduced_motion=$(grep -lE 'prefers-reduced-motion' "$f" 2>/dev/null)
+  if [ -n "$has_animation" ] && [ -z "$has_reduced_motion" ]; then
+    echo "MISSING reduced-motion: $f has animation: but no prefers-reduced-motion query"
+    grep -nE '^\s*animation\s*:' "$f"
+  fi
+done
+```
+Catches: `animation:` declarations without a corresponding `prefers-reduced-motion` media query in the same file. Complements 0.7 (which catches `infinite` animations specifically for `!important` guidance); 0.20 catches all animations missing reduced-motion entirely. Both may flag the same file with different actionable guidance — that's intentional. Fix: add `@media (prefers-reduced-motion: reduce) { .selector { animation: none; } }`. <!-- Source: PR #213 -->
+
 ---
 
 ## Tier 1: Recurring Blindspots (ALWAYS verify mechanically)
@@ -428,6 +454,12 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Semantic elements.** Grep changed `.tsx` files for `role="button"` — every match on a non-`<button>` element (`<span>`, `<div>`, `<a>`) must be replaced with `<button type="button">`. Also: every `<svg>` needs a `<title>` child.
 - [ ] **Button type audit.** When modifying a `.tsx` file, grep it for `<button` without `type=`. Every `<button>` must have explicit `type="button"` (interactive) or `type="submit"` (form). Missing types default to `submit` and cause accidental form submissions. Audit the *entire file*, not just the diff — pre-existing violations in touched files should be fixed. <!-- Source: CodeRabbit review, nanny-app #26, 2026-02-19 -->
 - [ ] **CSS token consistency.** When converting colors to CSS custom properties (design tokens), grep the modified CSS files for hardcoded hex/rgb values (e.g., `#8A6340`, `rgb(125,80,20)`). Check if any hardcoded values should use an established token instead. Also check for **duplicated color constants** — if a hex value appears 2+ times in the same file, extract it to a shared constant (`const DEFAULT_COLOR = "#706858"`). For components that compose colors with opacity (e.g., `color + "66"` for alpha), verify the approach is compatible with CSS variables: naive hex appending breaks when color is `var(--metric-purple)`. Use `color-mix(in srgb, var(--color) 40%, transparent)` or apply opacity via a wrapper element. <!-- Source: post-mortem, command-center #75, 2026-03-02 -->
+- [ ] **CSS property interaction: white-space + truncation audit.** When `white-space: pre-wrap` or `pre-line` co-occurs with `line-clamp`, `text-overflow: ellipsis`, or `max-height` truncation in the same element's styles, verify: (1) content source — does it contain hard newlines (`\n`)? (2) If yes, `pre-wrap` defeats clamping because each newline forces a line break, exhausting the clamp faster than expected. Fix: use `white-space: normal` on clamped containers, or sanitize newlines before display. **Mechanical check:** grep changed CSS/TSX for `pre-wrap` or `pre-line`, then check if the same selector/component also uses `line-clamp` or `text-overflow`. <!-- Source: PRs #231, #236 -->
+- [ ] **CSS property interaction: prefers-reduced-motion completeness.** When a `prefers-reduced-motion` media query exists, verify: (a) **specificity** — the override selector must match or exceed the base animation selector's specificity; use `!important` if the base uses it or if specificity matching is impractical; (b) **coverage** — the query must disable BOTH `animation` AND `transition` properties, not just one. A reduced-motion query that only sets `animation: none` leaves `transition` effects running. **Mechanical check:** find all `prefers-reduced-motion` blocks, list every property they override, cross-reference with the base animation/transition declarations. <!-- Source: PR #213 -->
+- [ ] **CSS property interaction: conditional class visual permutation audit.** When CSS classes are applied conditionally (feature flags, user roles, state toggles), verify: (1) all permutations of conditional classes render correctly (not just the "on" state); (2) the base element without any conditional class has acceptable default styling (not broken layout); (3) no specificity conflicts between conditional classes and contextual/parent selectors. **Mechanical check:** grep changed TSX for `className.*&&` or `className.*?` patterns, list each conditional class, verify CSS exists for both the present and absent states. <!-- Source: PR #26 -->
+- [ ] **CSS property interaction: sticky/fixed positioning ancestor audit.** When `position: sticky` or `position: fixed` is used, trace the ancestor chain for: (1) `overflow: hidden/auto/scroll` on any ancestor (breaks sticky); (2) `transform`, `perspective`, or `filter` on any ancestor (creates a new containing block, breaking fixed positioning); (3) `z-index` context in flex/grid ancestors (can trap the positioned element behind siblings). **Mechanical check:** find sticky/fixed elements in changed files, read the component tree upward to the nearest scroll container. <!-- Source: cross-project pattern -->
+- [ ] **CSS property interaction: overflow hidden child clipping audit.** When `overflow: hidden` is used, check if children have: (1) `box-shadow` that extends beyond the boundary (clipped invisibly); (2) `outline` or `:focus-visible` ring (accessibility violation — focus indicator invisible); (3) `transform: scale()` or `translate()` that moves content outside bounds. Fix: use `overflow: clip` (doesn't create scroll container) or add padding equal to the shadow/outline spread. **Mechanical check:** find `overflow: hidden` in changed CSS, check child elements for shadow/outline/transform properties. <!-- Source: cross-project pattern -->
+- [ ] **CSS property interaction: transition/animation reduced-motion coverage.** Any `transition` or `animation` property in changed CSS needs a `prefers-reduced-motion` media query. This is the judgment complement to Tier 0 check 0.20 (which catches `animation:` only via grep) — covers `transition` declarations and cases where the grep can't reach (inline styles, CSS-in-JS). **Mechanical check:** list all `transition:` and `animation:` declarations in changed files, verify each has a corresponding reduced-motion override. <!-- Source: PR #213 -->
 - [ ] **New union member completeness.** When adding a value to a TypeScript union type (e.g., `'unpaid_off'` to `SpecialDay['type']`), grep the entire codebase for every switch/conditional that maps that type to a style class, label, color, or behavior. Each one needs explicit handling for the new value — fallthrough to a default case often produces wrong results (e.g., unpaid days getting sick-day styling). Also check **validation Sets** used for gating: a single `VALID_TYPES` Set reused for multiple code paths (filtering vs action-triggering) may over-include the new type in paths that shouldn't handle it. Split shared validation constants per purpose when semantics diverge (e.g., `VALID_ENTRY_TYPES` for filtering vs `VALID_PROMOTABLE_ENTRY_TYPES` for creation). <!-- Strengthened: PR review, second-brain #262, 2026-02-26; original: nanny-app #26, 2026-02-19 -->
 - [ ] **Conditional UI branch test coverage.** When a component renders different UI based on a boolean flag (e.g., `isNightNurse`), verify test cases exist for each branch — not just the default path. At minimum: one test asserting the alternate UI renders, one asserting the default UI elements are hidden. <!-- Source: CodeRabbit review, nanny-app #26, 2026-02-19 -->
 - [ ] **Escape in edit-within-panel.** If an inline edit mode lives inside a dismissible panel/modal, verify Escape is caught via `onKeyDownCapture` on the edit container — not just `onKeyDown` on the textarea. Focus can move to Save/Cancel buttons where textarea handlers don't fire. Also: guard `if (saving) return` so Escape during an in-flight save doesn't discard the error state.
