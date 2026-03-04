@@ -52,7 +52,7 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 
 ## PostgreSQL-Specific
 
-- **`AT TIME ZONE`: always cast to `::timestamp` before applying.** `date` implicitly casts to `timestamptz` which reverses the timezone conversion. Use `my_date::timestamp AT TIME ZONE 'America/New_York'` to get correct results.
+- **`AT TIME ZONE`: always cast to `::timestamp` before applying.** `date` implicitly casts to `timestamptz` which reverses the timezone conversion. Use `my_date::timestamp AT TIME ZONE 'America/New_York'` to get correct results. **Corollary: never use `col::date` for user-facing date comparisons** — `created_at::date` evaluates in the DB server's timezone, not the user's. Near midnight, TODOs/entries silently appear under the wrong day. Use `col >= $date::timestamp AT TIME ZONE $tz AND col < ($date::timestamp + interval '1 day') AT TIME ZONE $tz` instead. Similarly, **format dates in SQL with `to_char(col AT TIME ZONE $tz, 'YYYY-MM-DD')`** rather than returning raw timestamps and calling `.toISOString().slice(0, 10)` in application code — the latter normalizes to UTC, shifting dates for non-UTC users. <!-- Strengthened: PR review, second-brain #359, 2026-03-04 -->
 - **(node-postgres) pg driver return types differ from expectations.** `DATE` columns return JS `Date`, `TIMESTAMPTZ` returns `Date`, `JSONB` returns parsed object. Mock-based tests can't catch these type mismatches — verify pg's actual return type when adding new columns.
 
 ## SQLite-Specific
