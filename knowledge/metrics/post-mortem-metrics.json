@@ -8602,6 +8602,78 @@
         "bottleneck": "post-push review fix cycle",
         "notes": "No step timing in PR body. Total from PR created to merged: 38 min."
       }
+    },
+    {
+      "project": "my_mind_evolved",
+      "prNumber": 353,
+      "title": "Enable infinite scroll on dashboard EntryFeed",
+      "dateMerged": "2026-03-04T08:11:36Z",
+      "reviewRounds": 3,
+      "totalComments": 5,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 4,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0,
+        "a11y": 1
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.75,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 2
+        },
+        "preMergeIterationCount": 3,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 1,
+          "defensive-coding": 0,
+          "correctness": 4,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 2.7,
+      "planningQuality": "complete",
+      "prSize": 109,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "4e",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": null
+      },
+      "stepTiming": null
     }
   ]
 }
