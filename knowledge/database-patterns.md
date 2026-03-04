@@ -31,6 +31,7 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 - **Use partial unique indexes for nullable columns.** `CREATE UNIQUE INDEX ... ON table(col) WHERE col IS NOT NULL` enforces uniqueness only when the column has a value, allowing multiple NULLs.
 - **FTS indexes must cover ALL searchable text columns.** When adding full-text search, include every column users might search — title, body, tags, metadata. A missing column means silently incomplete results.
 - **Index leading columns must match WHERE clause order.** A composite index `(A, B)` or composite PK only accelerates queries filtering on `A` or `(A, B)` — not `B` alone.
+- **UNIQUE(A, B) already indexes A-only lookups — don't add a redundant single-column index.** A UNIQUE constraint on `(source_id, related_id)` creates a composite index with `source_id` as the leading column, which PostgreSQL can use for `WHERE source_id = $1` queries (including EXISTS subqueries). An additional `CREATE INDEX ON table(source_id)` adds write overhead with no read benefit. Only add a separate index if you need to query by the non-leading column alone (`related_id`). <!-- Source: PR review (CodeRabbit), second-brain #351, 2026-03-04 -->
 - **Never use OR in WHERE clauses that defeat index usage.** `WHERE a = 1 OR b = 2` cannot use an index on `(a)` or `(b)` efficiently. Split into two queries and UNION, or use separate indexed lookups.
 
 ## Timestamp Management
