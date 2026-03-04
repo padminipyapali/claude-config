@@ -8436,6 +8436,90 @@
         "bottleneck": null,
         "notes": "Step timing not recorded in PR body. Total estimated from wall time (created to merged: 11 min)."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 349,
+      "title": "Add dedicated caption field for MEDIA entries",
+      "dateMerged": "2026-03-04T05:08:40Z",
+      "reviewRounds": 3,
+      "totalComments": 14,
+      "commentCategories": {
+        "security": 1,
+        "correctness": 5,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 3,
+        "documentation": 1,
+        "other": 4
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 0.091,
+      "fixupCommitRatio": 0.8,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 3,
+          "4c": 0,
+          "4d": 1,
+          "postPush": 14
+        },
+        "preMergeIterationCount": 3,
+        "fixupTaxonomy": {
+          "validation": 2,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 4,
+          "dead-code": 2,
+          "test-quality": 2,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0,
+          "security": 1,
+          "type-mismatch": 1,
+          "test-data-gap": 1
+        }
+      },
+      "timeToMergeHours": 0.59,
+      "planningQuality": "complete",
+      "prSize": 589,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b-partial",
+          "3",
+          "4a",
+          "4b",
+          "4d",
+          "4e",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4c"
+        ],
+        "skipReasons": "4c: CodeRabbit CLI unavailable; 2b: folded into 2a (not separate pass)",
+        "complianceRate": 0.9,
+        "skipAssessment": "4c skip was costly -- 14 post-push findings, 8 Major severity. 2b folding reduced hardening effectiveness."
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": 144,
+        "bottleneck": "post-push review cycles (25+ minutes for 2 rounds)",
+        "notes": "No step timing in PR body. Total estimated from first commit (02:44) to merge (05:08)."
+      }
     }
   ]
 }
