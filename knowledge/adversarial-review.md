@@ -69,7 +69,7 @@ If no semantic tags are detected, skip this step and proceed to Step 4.
 
 | Category | Checklist sections to run |
 |---|---|
-| **async-ts** | Tier 1: all (1.1–1.3). Tier 3: null guards, error message specificity |
+| **async-ts** | Tier 0: 0.21 (hour12 false). Tier 1: all (1.1–1.3). Tier 3: null guards, error message specificity |
 | **routes-api** | Tier 2: all. Tier 4: business logic in service not routes |
 | **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create→reload, trigger event scope (INSERT vs UPDATE vs both), transaction client affinity |
 | **ui-react** | Tier 0: 0.4 (semantic elements), 0.4b (form input labels), 0.5 (escape handler), 0.13 (focus-visible parity), 0.14 (iOS auto-zoom), 0.15 (render-phase setState), 0.16 (stale async guards), 0.17 (conditional branch tests), 0.18 (undefined CSS vars), 0.19 (pre-wrap + line-clamp), 0.20 (animation reduced-motion). Tier 1: 1.4 (grammar), 1.5 (optimistic UI), 1.6 (portal/popover positioning), 1.7 (interactive mode state cleanup). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh, render-phase setState, instance-unique IDs, React key uniqueness, click propagation on interactive→non-interactive refactors, key-based state reset for context-dependent children, isMountedRef strict-mode safety, CSS token consistency (hardcoded colors vs CSS variables), CSS property interaction audit |
@@ -148,7 +148,7 @@ Before manual review, run these grep patterns against changed files. Any match i
 Tier 0 checks are **literal bash commands**, not judgment calls. Execute each grep exactly as written and log the output. Do not assess results by "glancing" — the grep either produces matches or it does not.
 
 **Execution rules:**
-1. Run every Tier 0 grep command (0.1 through 0.20) sequentially against the current diff.
+1. Run every Tier 0 grep command (0.1 through 0.21) sequentially against the current diff.
 2. For each check, record the **exact output** (including empty output for passing checks).
 3. Any non-empty output is a finding — fix it before proceeding to Tier 1+.
 4. After all checks complete, log a summary: `Tier 0: N/M checks executed, K findings, K fixed.`
@@ -360,6 +360,12 @@ for f in $(git diff main...HEAD --name-only -- '*.css' '*.tsx' '*.jsx'); do
 done
 ```
 Catches: `animation:` declarations without a corresponding `prefers-reduced-motion` media query in the same file. Complements 0.7 (which catches `infinite` animations specifically for `!important` guidance); 0.20 catches all animations missing reduced-motion entirely. Both may flag the same file with different actionable guidance — that's intentional. Fix: add `@media (prefers-reduced-motion: reduce) { .selector { animation: none; } }`. <!-- Source: PR #213 -->
+
+### 0.21 `hour12: false` in Intl.DateTimeFormat (midnight returns "24")
+```bash
+git diff main...HEAD -- '*.ts' '*.tsx' '*.js' '*.jsx' | grep -n 'hour12:\s*false' || echo "PASS: no hour12: false"
+```
+Catches: `Intl.DateTimeFormat` with `hour12: false` can return `"24"` at midnight depending on ICU locale data (per ECMA-402 spec — `h24` cycle runs 1-24). Parsing `parseInt("24")` breaks hour-gating logic expecting 0-23. Fix: replace `hour12: false` with `hourCycle: "h23"` (guarantees 0-23). Do NOT set both `hour12` and `hourCycle` — `hour12` overrides `hourCycle`. <!-- Source: post-mortem, second-brain #351, 2026-03-04 -->
 
 ---
 

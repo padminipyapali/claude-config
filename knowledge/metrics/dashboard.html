@@ -9057,6 +9057,88 @@ const METRICS_DATA = {
         "bottleneck": "post-push review cycles (25+ minutes for 2 rounds)",
         "notes": "No step timing in PR body. Total estimated from first commit (02:44) to merge (05:08)."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 351,
+      "title": "Add proactive connections evening reflection scheduler",
+      "dateMerged": "2026-03-04T05:21:46Z",
+      "reviewRounds": 2,
+      "totalComments": 7,
+      "commentCategories": {
+        "security": 1,
+        "correctness": 3,
+        "architecture": 1,
+        "style": 0,
+        "performance": 1,
+        "testing": 0,
+        "documentation": 0,
+        "other": 1
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 0,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.67,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 2,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 6
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 3,
+          "a11y": 1,
+          "defensive-coding": 0,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 1,
+          "architecture": 1,
+          "performance": 1
+        }
+      },
+      "timeToMergeHours": 0.63,
+      "planningQuality": "complete",
+      "prSize": 984,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "4e",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": null
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": 38,
+        "bottleneck": "post-push review fix cycle",
+        "notes": "No step timing in PR body. Total from PR created to merged: 38 min."
+      }
     }
   ]
 };
