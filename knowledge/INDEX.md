@@ -25,13 +25,16 @@ Cross-project learnings organized by topic. These files contain detailed pattern
 | [process-patterns.md](process-patterns.md) | All | Development process: review efficiency, planning, iteration velocity |
 | [convention-violations.md](convention-violations.md) | All | Convention violation tracker: recurrence counts, enforcement status, escalation |
 | [design-preferences.md](design-preferences.md) | All (HTML/CSS) | Padmini's preferred visual theme, palette, typography, layout patterns |
+| [color-palettes.md](color-palettes.md) | All (HTML/CSS) | OKLCH color palettes (4 themes) for frontend projects, generated via kigen.design |
+| [second-brain-testing.md](second-brain-testing.md) | Second Brain | Local dev setup, bypassing login, running frontend/full stack |
+| [annotation-workflow.md](annotation-workflow.md) | All (tooling) | Mockup annotation system: inbox server, bookmarklet, feedback pickup |
 
 ## Stack Matching Guide
 
 When starting work on a project, load files matching these stacks:
 
 - **TypeScript backend** → typescript-patterns, architecture-patterns, testing-patterns
-- **React web app** → typescript-patterns, react-patterns, testing-patterns
+- **React web app** → typescript-patterns, react-patterns, testing-patterns, color-palettes
 - **React Native app** → typescript-patterns, react-patterns (includes RN section), testing-patterns
 - **PostgreSQL** → database-patterns
 - **Firebase** → firebase-patterns
