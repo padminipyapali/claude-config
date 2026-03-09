@@ -47,6 +47,9 @@ PING_AGENT_NAME="${REPO_NAME}"
 # Project slug — CC uses repo name as slug.
 PROJECT_SLUG="$REPO_NAME"
 
+# Current branch name for live activity display.
+BRANCH_NAME=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "")
+
 # Temp file paths (per-session to avoid cross-session interference).
 HEARTBEAT_FILE="/tmp/cc-ping-heartbeat-${PING_AGENT_ID}"
 PR_CACHE_FILE="/tmp/cc-ping-pr-${PING_AGENT_ID}"
@@ -94,12 +97,14 @@ build_payload() {
     --arg projectSlug "$PROJECT_SLUG" \
     --arg activity "$activity" \
     --arg prNumber "${pr_number:-}" \
+    --arg branchName "${BRANCH_NAME:-}" \
     '{
       agentId: $agentId,
       agentName: $agentName,
       projectSlug: $projectSlug,
       activity: $activity
-    } + (if $prNumber != "" then { prNumber: ($prNumber | tonumber) } else {} end)'
+    } + (if $prNumber != "" then { prNumber: ($prNumber | tonumber) } else {} end)
+      + (if $branchName != "" then { branchName: $branchName } else {} end)'
   )
   echo "$payload"
 }
