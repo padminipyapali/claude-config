@@ -29,6 +29,10 @@ Cross-project learnings for TypeScript and Node.js development.
 
 - **Aggregation loops: use min/max, not last-write-wins.** When accumulating summary fields (e.g., earliest bed time, latest wake time) across multiple events in a reduce/forEach loop, always compare against the existing value before assigning. `summary.nightBed = event.startTime` overwrites previous events — use `if (!summary.nightBed || event.startTime < summary.nightBed)` instead. This is especially easy to miss when the common case is one event per group, but split-night or multi-event scenarios silently lose data. <!-- Source: PR review, sleep-tracker #62, 2026-03-08 -->
 
+## ID Generation
+
+- **`Date.now().toString()` is not collision-safe for IDs.** Two operations in the same millisecond produce identical keys, silently overwriting data via upsert. Use `crypto.randomUUID()` with a collision-safe fallback: `` `${Date.now()}-${Math.random().toString(36).slice(2)}` ``. The fallback appends random entropy to the timestamp. Never use bare `Date.now()` as a unique identifier — even "one at a time" operations can overlap in tests, batch imports, or fast UI interactions. <!-- Source: PR review, leaflet #17, 2026-03-09 -->
+
 ## API Boundaries
 
 - **Route handlers must call the persistence layer.** When adding a new PATCH/PUT/POST endpoint, verify the handler actually calls the service method that writes to the DB — not just validates inputs and returns 200. A route that validates but never persists is a silent no-op. After writing any route handler, trace the code path from request to DB write to confirm the mutation happens. <!-- Source: PR review (CodeRabbit), second-brain #407, 2026-03-08 -->
