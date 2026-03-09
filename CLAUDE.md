@@ -104,7 +104,7 @@ Every feature/fix follows these steps. The orchestrator announces step transitio
 | 2b | **Implement (hardening)** | Dedicated second pass: input validation, a11y, error handling, explicit else/default, dead code cleanup. Produces hardening checklist artifact. |
 | 3 | **Test locally** | Run test suite, linter, type-checker. If UI changes, run Playwright testing. Fix failures. |
 | 4 | **Code review loop** | Auto-run after step 3. Skip ONLY if user explicitly says to AND diff < 50 LOC. |
-| 5 | **Push & create PR** | Push branch, `gh pr create`. Include `## Local Review` section in PR body. |
+| 5 | **Push & create PR** | Push branch, `gh pr create`. Include `## Local Review` section in PR body. Auto-start `/review-fix-loop <PR-number>` after push. |
 | 6 | **Post-merge** | Auto-run `/post-mortem [PR-number]` in background. |
 
 > **Recording requirement:** When any step is skipped, record it in the PR body's Local Review section with the reason. Skipping without recording is a process violation.
