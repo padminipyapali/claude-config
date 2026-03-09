@@ -9,6 +9,11 @@ Cross-project learnings for service design, error handling, and system architect
 - **Build hooks must not default to reading from user home directories.** Scripts triggered by `prebuild`/`predev` should never silently copy files from `$HOME` paths. If someone forks the repo and runs `npm run build`, it should not touch their personal files. Gate home-directory access behind an explicit env var (e.g., `INCLUDE_HOME_DOCS=true`). <!-- Source: PR review, command-center #41, 2026-02-27 -->
 - **Build hooks should only depend on project-stack runtimes.** A Node.js project's `prebuild`/`predev` scripts should not require `python3`, `ruby`, or other runtimes not in the project's dependency tree. Use `node -e` for URL encoding, JSON manipulation, etc. instead of `python3 -c`. This avoids CI failures in Node-only environments. <!-- Source: post-mortem, command-center #41, 2026-02-27 -->
 
+## Express / HTTP Server
+
+- **Cap `express.json()` body size on public APIs.** The default limit is 100kb. If your endpoint only accepts a short string (e.g., 200-char topic), set `express.json({ limit: '8kb' })` to prevent request-amplification attacks that waste memory/CPU parsing large bodies before validation rejects them. <!-- Source: PR review (CodeRabbit), leaflet #8, 2026-03-09 -->
+- **Don't leak upstream error.message to clients — apply to ALL routes.** When sanitizing error responses, apply the same pattern to every catch block, not just the primary route. It's common to fix the main endpoint but miss secondary routes (e.g., image proxy, webhook). Generic client message + detailed server-side log. Mechanical check: grep for `error.message` in res.json() calls across all route handlers. <!-- Source: PR review (CodeRabbit), leaflet #8, 2026-03-09 -->
+
 ## Async Initialization
 
 - **Bind HTTP listener before slow async init on container platforms.** Railway, Kubernetes, and ECS health check probes expect the port to accept connections within seconds. Call `app.listen()` right after creating the app (with health/readiness routes already registered), then initialize services (bot connections, external APIs) afterward. Express/Fastify/Koa all support adding routes dynamically after the server is listening. <!-- Source: command-center fix/railway-host-bind, 2026-02-15 -->

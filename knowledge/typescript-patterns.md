@@ -13,6 +13,8 @@ Cross-project learnings for TypeScript and Node.js development.
 
 ## Type Safety
 
+- **`@types/*` major version must match library major version.** `@types/express@5.x` is for Express 5; Express 4 projects must use `@types/express@4.x`. DefinitelyTyped tracks major/minor of the underlying library. Mismatched types cause subtle compile errors that disappear on downgrade. Mechanical check: for each `@types/*` in devDependencies, verify the major matches the corresponding runtime dependency. <!-- Source: PR review (CodeRabbit), leaflet #8, 2026-03-09 -->
+- **Zod schemas: use `z.string().trim().min(1)` for required text fields.** Plain `z.string()` accepts whitespace-only strings, which pass validation but render as blank UI. Define `const nonEmptyString = z.string().trim().min(1)` and use it for all required text fields, `nonEmptyString.optional()` for optional ones. This complements the "whitespace-only strings are truthy" JS pattern — Zod needs explicit configuration to reject them. <!-- Source: PR review (CodeRabbit), leaflet #8, 2026-03-09 -->
 - **Prefer `as UnionType` over `as any`.** When the type is known (e.g., DB string field with a CHECK constraint matching a TS union), cast precisely.
 - **Shared type changes require test mock updates.** After adding a field to a shared interface, grep for all `createMock*` factories.
 - **Use `as const` on lookup objects when using `keyof typeof`.** `Record<string, V>` erases literal key types, so `keyof typeof OBJ` resolves to `string` — defeating the purpose of type narrowing. Declare with `as const` to preserve a concrete union of keys. <!-- Source: PR review, command-center #3, 2026-02-14 -->
