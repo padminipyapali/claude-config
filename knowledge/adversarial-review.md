@@ -367,6 +367,18 @@ git diff main...HEAD -- '*.ts' '*.tsx' '*.js' '*.jsx' | grep -n 'hour12:\s*false
 ```
 Catches: `Intl.DateTimeFormat` with `hour12: false` can return `"24"` at midnight depending on ICU locale data (per ECMA-402 spec — `h24` cycle runs 1-24). Parsing `parseInt("24")` breaks hour-gating logic expecting 0-23. Fix: replace `hour12: false` with `hourCycle: "h23"` (guarantees 0-23). Do NOT set both `hour12` and `hourCycle` — `hour12` overrides `hourCycle`. <!-- Source: post-mortem, second-brain #351, 2026-03-04 -->
 
+### 0.22 autoFocus attribute (a11y)
+```bash
+git diff main...HEAD -- '*.tsx' '*.jsx' '*.html' | grep -n 'autoFocus\|autofocus' || echo "PASS: no autoFocus"
+```
+Catches: `autoFocus` on inputs disrupts screen reader flow and forces a scroll position. WCAG 2.4.3 (Focus Order) violation. Fix: remove autoFocus and manage focus programmatically only when a user action triggers the input to appear. <!-- Source: CodeRabbit review, leaflet #8, 2026-03-09 -->
+
+### 0.23 Express JSON body parser without size limit
+```bash
+git diff main...HEAD -- '*.ts' '*.js' | grep -n 'express\.json()' | grep -v 'limit' || echo "PASS: all express.json() have limit"
+```
+Catches: `express.json()` without `{ limit: 'Nkb' }` allows arbitrarily large payloads on public APIs. Fix: set `limit` to the minimum needed (e.g., `'8kb'` for small JSON payloads). <!-- Source: CodeRabbit review, leaflet #8, 2026-03-09 -->
+
 ---
 
 ## Tier 1: Recurring Blindspots (ALWAYS verify mechanically)
@@ -456,6 +468,7 @@ These patterns have been missed on multiple PRs despite being in the checklist.
 - [ ] **Null/undefined guards.** Walk every `!`, `[]`, `.` chain. Check if any intermediate value could be null.
 - [ ] **LLM output parsing.** `JSON.parse()` on LLM output must strip code fences. Handle empty/malformed.
 - [ ] **Error message specificity.** Edge cases get specific messages, not generic fallthrough.
+- [ ] **Cross-field relational validation.** When multiple fields form a sequence (e.g., start/end times, date ranges, ordered steps), validate the relationship between fields — not just each field's format independently. A write path that validates `napStart` and `napEnd` as valid `HH:mm` but doesn't check `napEnd >= napStart` will persist inverted/overlapping data. **Mechanical check:** grep changed write paths for multiple validated fields of the same type; verify a relational assertion exists. <!-- Source: PR review, sleep-tracker #61, 2026-03-07 -->
 - [ ] **CSS grid column count sync.** When CSS defines `grid-template-columns` with `repeat(N, ...)`, verify N matches the actual data column count (array length, loop iterations) in the component that renders into the grid. Grep changed CSS for `repeat(` and cross-reference with the data source. <!-- Source: PR review, summer-camps #3, 2026-02-28 -->
 - [ ] **Semantic elements.** Grep changed `.tsx` files for `role="button"` — every match on a non-`<button>` element (`<span>`, `<div>`, `<a>`) must be replaced with `<button type="button">`. Also: every `<svg>` needs a `<title>` child.
 - [ ] **Button type audit.** When modifying a `.tsx` file, grep it for `<button` without `type=`. Every `<button>` must have explicit `type="button"` (interactive) or `type="submit"` (form). Missing types default to `submit` and cause accidental form submissions. Audit the *entire file*, not just the diff — pre-existing violations in touched files should be fixed. <!-- Source: CodeRabbit review, nanny-app #26, 2026-02-19 -->

@@ -8964,6 +8964,148 @@
         "skipAssessment": "good"
       },
       "stepTiming": null
+    },
+    {
+      "project": "command-center",
+      "prNumber": 95,
+      "title": "Sync active tab with URL hash for deep-linking",
+      "dateMerged": "2026-03-09T05:08:39Z",
+      "reviewRounds": 2,
+      "totalComments": 2,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 2,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.67,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 2
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 2,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 5.01,
+      "planningQuality": "partial",
+      "prSize": 64,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "5"
+        ],
+        "stepsSkipped": [
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "3-Playwright (N/A \u2014 no visual changes), 4a-4e (< 50 LOC, critic review done inline)",
+        "complianceRate": 0.44,
+        "skipAssessment": "bad"
+      },
+      "stepTiming": null
+    },
+    {
+      "project": "leaflet",
+      "prNumber": 8,
+      "title": "feat: end-to-end vertical slice \u2014 topic input, Claude generation, booklet display",
+      "dateMerged": "2026-03-09T17:28:31Z",
+      "reviewRounds": 5,
+      "totalComments": 19,
+      "commentCategories": {
+        "security": 3,
+        "correctness": 14,
+        "architecture": 1,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 1,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.64,
+      "fixupCommitRatio": 0.75,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 1,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 5
+        },
+        "preMergeIterationCount": 5,
+        "fixupTaxonomy": {
+          "validation": 3,
+          "a11y": 3,
+          "defensive-coding": 4,
+          "correctness": 4,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 1
+        }
+      },
+      "timeToMergeHours": 5.2,
+      "planningQuality": "partial",
+      "prSize": 6755,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4b",
+          "5"
+        ],
+        "stepsSkipped": [
+          "2b",
+          "4a",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "2b: not tracked. 4a: first PR, no existing code. 4c: no .coderabbit.yaml. 4d: abbreviated.",
+        "complianceRate": 0.556,
+        "skipAssessment": "bad"
+      },
+      "stepTiming": null
     }
   ]
 }
