@@ -30,6 +30,8 @@ Cross-project learnings for TypeScript and Node.js development.
 
 - **Aggregation loops: use min/max, not last-write-wins.** When accumulating summary fields (e.g., earliest bed time, latest wake time) across multiple events in a reduce/forEach loop, always compare against the existing value before assigning. `summary.nightBed = event.startTime` overwrites previous events — use `if (!summary.nightBed || event.startTime < summary.nightBed)` instead. This is especially easy to miss when the common case is one event per group, but split-night or multi-event scenarios silently lose data. <!-- Source: PR review, sleep-tracker #62, 2026-03-08 -->
 
+- **Guard `'prop' in obj` with `typeof obj === 'object' && obj !== null`.** The `in` operator throws `TypeError` when the right-hand side is `null`, `undefined`, or a primitive. TypeScript's `as object` type assertion provides no runtime protection. Always guard: `if (typeof err === 'object' && err !== null && 'type' in err)`. This is common in Express error-handling middleware where `err` can be anything. Mechanical check: grep for `'.*' in ` without a preceding `typeof` guard. <!-- Source: PR review (CodeRabbit), leaflet #22, 2026-03-10 -->
+
 ## ID Generation
 
 - **`Date.now().toString()` is not collision-safe for IDs.** Two operations in the same millisecond produce identical keys, silently overwriting data via upsert. Use `crypto.randomUUID()` with a collision-safe fallback: `` `${Date.now()}-${Math.random().toString(36).slice(2)}` ``. The fallback appends random entropy to the timestamp. Never use bare `Date.now()` as a unique identifier — even "one at a time" operations can overlap in tests, batch imports, or fast UI interactions. <!-- Source: PR review, leaflet #17, 2026-03-09 -->
