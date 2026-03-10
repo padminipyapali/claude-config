@@ -39,13 +39,18 @@ if [ -z "$REPO_ROOT" ]; then
   exit 0  # Not in a git repo — nothing to report.
 fi
 
-REPO_NAME=$(basename "$REPO_ROOT")
+# Resolve the real repo root (worktrees report their own path, not the main repo).
+MAIN_REPO=$(git -C "$REPO_ROOT" rev-parse --show-superproject-working-tree 2>/dev/null || echo "")
+REPO_NAME=$(basename "${MAIN_REPO:-$REPO_ROOT}")
 SHORT_SESSION="${SESSION_ID:0:8}"
 PING_AGENT_ID="${REPO_NAME}-${SHORT_SESSION}"
 PING_AGENT_NAME="${REPO_NAME}"
 
 # Project slug — CC uses repo name as slug.
 PROJECT_SLUG="$REPO_NAME"
+
+# Description file — agents write a one-sentence description here.
+DESC_FILE="/tmp/cc-ping-desc-${SHORT_SESSION}"
 
 # Current branch name for live activity display.
 BRANCH_NAME=$(git -C "$REPO_ROOT" branch --show-current 2>/dev/null || echo "")
@@ -90,6 +95,12 @@ build_payload() {
   local pr_number
   pr_number=$(detect_pr)
 
+  # Read description from temp file if it exists.
+  local description=""
+  if [ -f "$DESC_FILE" ]; then
+    description=$(head -1 "$DESC_FILE" 2>/dev/null || echo "")
+  fi
+
   local payload
   payload=$(jq -n \
     --arg agentId "$PING_AGENT_ID" \
@@ -98,13 +109,15 @@ build_payload() {
     --arg activity "$activity" \
     --arg prNumber "${pr_number:-}" \
     --arg branchName "${BRANCH_NAME:-}" \
+    --arg description "$description" \
     '{
       agentId: $agentId,
       agentName: $agentName,
       projectSlug: $projectSlug,
       activity: $activity
     } + (if $prNumber != "" then { prNumber: ($prNumber | tonumber) } else {} end)
-      + (if $branchName != "" then { branchName: $branchName } else {} end)'
+      + (if $branchName != "" then { branchName: $branchName } else {} end)
+      + (if $description != "" then { description: $description } else {} end)'
   )
   echo "$payload"
 }
@@ -159,7 +172,7 @@ case "$EVENT" in
   SessionEnd)
     delete_ping
     # Clean up temp files.
-    rm -f "$HEARTBEAT_FILE" "$PR_CACHE_FILE"
+    rm -f "$HEARTBEAT_FILE" "$PR_CACHE_FILE" "$DESC_FILE"
     ;;
 esac
 
