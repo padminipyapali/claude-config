@@ -38,6 +38,10 @@ Cross-project learnings for SQL schema design, indexing, and the node-postgres d
 
 - **Timestamp propagation: child changes should touch parent updated_at.** For recency-sorted feeds, when a child record changes (comment added, subtask completed), update the parent's `updated_at` via trigger or application code. Without this, the parent appears stale in lists sorted by last activity.
 
+## Concurrency & Locking
+
+- **Use advisory locks for rate-limit invariants, not bare COUNT+INSERT.** `INSERT ... WHERE (SELECT COUNT(*) ...) < N` is racy at READ COMMITTED isolation — concurrent transactions each see the same count and all insert. Wrap in a transaction with `SELECT pg_advisory_xact_lock(hashtext(user_id))` to serialize per-user. The lock is automatically released at COMMIT/ROLLBACK. This applies to any "insert if under limit" pattern: rate limiting, quota enforcement, max-children checks. <!-- Source: PR review, leaflet #21, 2026-03-10 -->
+
 ## Connection Management
 
 - **Set `connectionTimeoutMillis` on every pg.Pool.** The default of `0` means connection attempts wait indefinitely. A single slow connection (transient network issue, cold start after idle) makes the entire service appear dead with no error logged. Use `connectionTimeoutMillis: 5_000` (5s) — normal connections establish in 50-200ms, so 5s has no impact on healthy operations but ensures hung attempts fail fast. <!-- Source: BUG-023, second-brain, 2026-02-15 -->
