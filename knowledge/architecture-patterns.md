@@ -13,6 +13,7 @@ Cross-project learnings for service design, error handling, and system architect
 
 - **Cap `express.json()` body size on public APIs.** The default limit is 100kb. If your endpoint only accepts a short string (e.g., 200-char topic), set `express.json({ limit: '8kb' })` to prevent request-amplification attacks that waste memory/CPU parsing large bodies before validation rejects them. <!-- Source: PR review (CodeRabbit), leaflet #8, 2026-03-09 -->
 - **Don't leak upstream error.message to clients — apply to ALL routes.** When sanitizing error responses, apply the same pattern to every catch block, not just the primary route. It's common to fix the main endpoint but miss secondary routes (e.g., image proxy, webhook). Generic client message + detailed server-side log. Mechanical check: grep for `error.message` in res.json() calls across all route handlers. <!-- Source: PR review (CodeRabbit), leaflet #8, 2026-03-09 -->
+- **SSE disconnect: listen on `res.on('close')`, not `req.on('close')`.** In SSE endpoints, `req.close` fires when the request body is fully consumed (immediately for GET/small POST), NOT when the client disconnects. `res.close` fires when the response connection terminates — the correct signal for SSE cleanup (aborting in-flight API calls, freeing resources). Using `req.close` leaves background work running after the client navigates away. <!-- Source: PR review, leaflet #30, 2026-03-11 -->
 
 ## Async Initialization
 
