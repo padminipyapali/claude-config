@@ -145,21 +145,24 @@ Before manual review, run these grep patterns against changed files. Any match i
 
 ### Tier 0 Execution Protocol
 
-Tier 0 checks are **literal bash commands**, not judgment calls. Execute each grep exactly as written and log the output. Do not assess results by "glancing" — the grep either produces matches or it does not.
+**Use the automated script.** Do NOT run Tier 0 greps manually — use `~/.claude/tools/tier0-audit.sh`:
+
+```bash
+~/.claude/tools/tier0-audit.sh --repo /path/to/repo --base main
+```
+
+The script runs ALL Tier 0 checks (0.1–0.23 + bonus checks), auto-classifies changed files, skips irrelevant checks, and produces structured PASS/FAIL/SKIP output with exact grep evidence. Exit code 1 = findings exist. Exit code 0 = all passed.
+
+**Why the script exists:** Post-mortem data across 25+ PRs shows Tier 0 checks were "covered" in 100% of reviews but actually executed in <40%. Even with a fresh critic agent, LLMs satisfice — producing the expected output format without running the greps. The script makes this impossible: the grep either matches or it doesn't, and the output is logged verbatim.
 
 **Execution rules:**
-1. Run every Tier 0 grep command (0.1 through 0.21) sequentially against the current diff.
-2. For each check, record the **exact output** (including empty output for passing checks).
-3. Any non-empty output is a finding — fix it before proceeding to Tier 1+.
-4. After all checks complete, log a summary: `Tier 0: N/M checks executed, K findings, K fixed.`
-5. If any check was not executed (e.g., no matching file types), record it as `SKIP: [reason]` — not silently omitted.
+1. Run the script as the FIRST step of any adversarial review.
+2. All findings (exit code 1) must be fixed before proceeding to Tier 1+.
+3. After fixing, re-run the script to confirm 0 findings.
+4. Paste the script's summary line into the review evidence.
+5. **The review marker file MUST NOT be written until the script exits 0.**
 
-**The review marker file (Step: Post-Review) MUST NOT be written until:**
-- All applicable Tier 0 greps have been confirmed executed with logged output.
-- All findings have been fixed and re-verified (re-run the failing grep to confirm 0 matches).
-- The Tier 0 summary line is included in the review evidence.
-
-**Why this matters:** Post-mortem data shows Tier 0 checks were "covered" in 100% of reviews but actually executed in <40%. The grep commands are mechanical — there is zero judgment involved. If they are not producing logged output, they were not run.
+The individual grep commands are preserved below for reference and for adding new patterns, but the script is the canonical execution method.
 
 ### 0.1 UTC suffix on Date strings
 ```bash
