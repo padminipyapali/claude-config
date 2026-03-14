@@ -114,6 +114,7 @@ Cross-project learnings for React and React Native development.
 ## Data Flow & Derived State
 
 - **Aggregate counts must use unfiltered data when the count represents the total.** When a UI shows filtered items (e.g., hiding routine events in a calendar) but also displays a summary count (e.g., "3 events today" in a footer), the count must derive from the unfiltered source data, not the filtered display list. Otherwise, filtering out items makes the count show 0 even when events exist. Mechanical check: for every derived count in a component, trace it back to its data source and verify it's the correct scope (filtered vs. unfiltered). <!-- Source: PR review, second-brain #187, 2026-02-20 -->
+- **Event status > schedule status for UI state and interactions.** When a real-time event (with its own lifecycle: in_progress/completed/cancelled) is displayed within a time-based schedule (with derived slot states: upcoming/current/past), the event's status is the source of truth. Do not let time-derived status override event status for visual state (highlighting, dimming) or interaction gating (edit, complete, cancel). The schedule predicts; the event observes. Corollary: never disable editing on in-progress events — that is exactly when users need to edit (e.g., recording "woke up" time on an active nap). Mechanical check: for every `tappable`/`disabled`/`editable` flag, verify it derives from event status, not schedule-slot status. <!-- Source: post-mortem, sleep-tracker #93, 2026-03-13 -->
 
 ## Component Design
 
