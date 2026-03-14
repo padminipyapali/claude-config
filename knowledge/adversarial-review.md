@@ -1,193 +1,120 @@
 # Adversarial Review Checklist
 
-Shared mechanical review checklist for all projects. Run this before every PR.
+Run by a DIFFERENT agent than the code author. Execute each step mechanically — do not glance and move on.
 
-**IMPORTANT: This review should be run by a DIFFERENT agent than the one that wrote the code.** The authoring agent has blind spots to its own mistakes — it wrote `catch { return [] }` and won't question it. A separate reviewer agent, whose sole job is this checklist, catches what the author misses. This was learned from multiple PRs where the same agent did both fix + review and missed the same issues across all rounds.
-
-**IMPORTANT: Execute each step mechanically. The most common failure mode is reading a checklist item, glancing at the code, and moving on. Follow the verification steps literally.**
+Full rationale and incident history: `adversarial-review-evidence.md`.
 
 ---
 
 ## Targeted Review — Classify First, Then Run Only What Applies
 
-Do NOT run the full 30+ item checklist on every PR. Classify the changed files first, then run only the sections relevant to those categories. Running database checks on a CSS-only change is waste that blocks the PR with no value.
-
 ### Step 1: Classify changed files
 
-Run `git diff main...HEAD --name-only` and classify each file:
+Run `git diff main...HEAD --name-only` and classify:
 
 | Category | File patterns |
 |---|---|
-| **async-ts** | `.ts`/`.js` files containing `async`, `await`, `.catch`, `.then`, `Promise` |
-| **routes-api** | Files in `routes/`, `commands/`, `controllers/`, or HTTP/bot request handlers |
-| **db-sql** | Files with SQL queries, schema files, migration files, pg/Knex/Prisma usage |
-| **ui-react** | `.tsx`/`.jsx` files, React components, CSS/styled-components |
-| **shell** | `.sh` files, or `.ts`/`.js` that spawn child processes / run shell commands |
-| **llm** | Files that call LLM APIs, build prompts, or parse LLM output |
-| **config-env** | `.env*` files, config modules that read `process.env` |
-| **test-only** | Files only in `__tests__/`, `*.test.*`, `*.spec.*` |
-
-A file can belong to multiple categories.
+| **async-ts** | `.ts`/`.js` with `async`, `await`, `.catch`, `.then`, `Promise` |
+| **routes-api** | `routes/`, `commands/`, `controllers/`, HTTP/bot handlers |
+| **db-sql** | SQL queries, schema, migrations, pg/Knex/Prisma |
+| **ui-react** | `.tsx`/`.jsx`, React components, CSS/styled-components |
+| **shell** | `.sh` files, or `.ts`/`.js` spawning child processes |
+| **llm** | LLM API calls, prompt building, LLM output parsing |
+| **config-env** | `.env*`, config modules reading `process.env` |
+| **test-only** | `__tests__/`, `*.test.*`, `*.spec.*` only |
 
 ### Step 2: Semantic change classification
 
-After file-type classification, run a second pass on the diff **content** to tag semantic change signals. These tags drive automatic checklist injection in Step 3.
+Grep `git diff main...HEAD` for these signals:
 
-```bash
-# Run these greps against `git diff main...HEAD` and tag any that match
-```
-
-| Signal | Detection (grep the diff for) | Tag |
+| Signal | Detection pattern | Tag |
 |---|---|---|
-| **Introduces restriction** | `includes(`, `has(`, `new Set(`, `VALID_`, `ALLOWED_`, `PALETTE`, `if (!.*includes` | `restriction-introduced` |
-| **Adds validation** | `return res.status(400)`, `throw.*[Ii]nvalid`, `throw.*Error`, `!.*\.includes(` | `validation-added` |
-| **Changes enum/union** | New literal in `type.*=.*\|`, `enum {`, string added to validation Set | `enum-changed` |
-| **Removes a value** | Deleted lines containing enum/union members, removed items from Sets/arrays | `value-removed` |
-| **Changes error behavior** | `throw` added where `return null`/`return []` existed; catch block modified | `error-behavior-changed` |
-| **Migration-gated change** | Schema change + runtime filter, references to manual migration step | `migration-gated` |
+| Introduces restriction | `includes(`, `has(`, `new Set(`, `VALID_`, `ALLOWED_` | `restriction-introduced` |
+| Adds validation | `return res.status(400)`, `throw.*[Ii]nvalid` | `validation-added` |
+| Changes enum/union | New literal in `type.*=.*\|`, `enum {` | `enum-changed` |
+| Removes a value | Deleted enum/union members, removed Set/array items | `value-removed` |
+| Changes error behavior | `throw` added where `return null`/`return []` existed | `error-behavior-changed` |
+| Migration-gated change | Schema change + runtime filter, manual migration ref | `migration-gated` |
 
-A diff can have multiple tags. Record all detected tags before proceeding.
+### Step 3: Pattern-triggered checklist injection
 
-### Step 3: Pattern-triggered checklist injection + forced questions
-
-Based on semantic tags from Step 2, **auto-inject** specific checklist items AND mandatory questions. These are added to the matching sections from Step 4 — the critic MUST answer them with specific, verifiable evidence. "N/A" requires justification with grep output proving non-applicability.
-
-| Tag | Auto-injected checklist items | Forced question(s) |
+| Tag | Auto-injected items | Forced question |
 |---|---|---|
-| `restriction-introduced` | Tier 4: Migration-gated defensive filtering, Fallback path semantic parity | **"What happens to existing data that doesn't match the new restriction?"** List every query that returns affected rows and verify each filters or handles legacy values. |
-| `validation-added` | Tier 3: Newly-throwing functions caller audit | **"Which callers now receive errors they didn't before?"** Trace each caller by file:line. |
-| `enum-changed` | Tier 3: New union member completeness | **"List every switch/map/conditional that handles this type."** Paste grep output + disposition of each match. |
-| `value-removed` | Tier 4: Documentation sync, Type sync between SQL and TS | **"Where in the codebase is the removed value still referenced?"** Grep for the literal value; list every match. |
-| `error-behavior-changed` | Tier 3: Newly-throwing functions caller audit | **"Trace every caller — do they handle the new error path?"** List each caller by file:line with HANDLES/UNHANDLED verdict. |
-| `migration-gated` | Tier 4: Migration-gated defensive filtering | **"What query results include legacy data until migration runs?"** List each query and its defensive filter (or lack thereof). |
+| `restriction-introduced` | Tier 4: Migration-gated defensive filtering, Fallback path semantic parity | "What happens to existing data that doesn't match the new restriction?" |
+| `validation-added` | Tier 3: Newly-throwing functions caller audit | "Which callers now receive errors they didn't before?" |
+| `enum-changed` | Tier 3: New union member completeness | "List every switch/map/conditional that handles this type." |
+| `value-removed` | Tier 4: Documentation sync, Type sync | "Where is the removed value still referenced?" |
+| `error-behavior-changed` | Tier 3: Newly-throwing functions caller audit | "Trace every caller — do they handle the new error path?" |
+| `migration-gated` | Tier 4: Migration-gated defensive filtering | "What query results include legacy data until migration runs?" |
 
-**Forced questions are non-negotiable.** The "covered but not executed" pattern (8 occurrences across post-mortems) happens because the checklist item exists but the critic mentally skips it without confronting the specific question. Forced questions make the relevant item impossible to skip — you must produce an answer with evidence, or explicitly justify "N/A" with a grep showing the condition doesn't apply.
-
-If no semantic tags are detected, skip this step and proceed to Step 4.
+Forced questions require specific evidence or justified N/A with grep output.
 
 ### Step 4: Run only matching sections
 
-| Category | Checklist sections to run |
+| Category | Sections |
 |---|---|
-| **async-ts** | Tier 0: 0.21 (hour12 false). Tier 1: all (1.1–1.3). Tier 3: null guards, error message specificity |
+| **async-ts** | Tier 0: 0.21. Tier 1: all (1.1-1.3). Tier 3: null guards, error message specificity |
 | **routes-api** | Tier 2: all. Tier 4: business logic in service not routes |
-| **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create→reload, trigger event scope (INSERT vs UPDATE vs both), transaction client affinity |
-| **ui-react** | Tier 0: 0.4 (semantic elements), 0.4b (form input labels), 0.5 (escape handler), 0.13 (focus-visible parity), 0.14 (iOS auto-zoom), 0.15 (render-phase setState), 0.16 (stale async guards), 0.17 (conditional branch tests), 0.18 (undefined CSS vars), 0.19 (pre-wrap + line-clamp), 0.20 (animation reduced-motion). Tier 1: 1.4 (grammar), 1.5 (optimistic UI), 1.6 (portal/popover positioning), 1.7 (interactive mode state cleanup). Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure in background refresh, render-phase setState, instance-unique IDs, React key uniqueness, click propagation on interactive→non-interactive refactors, key-based state reset for context-dependent children, isMountedRef strict-mode safety, CSS token consistency (hardcoded colors vs CSS variables), CSS property interaction audit, HTML semantic element content model compliance, error guard requires recovery path |
+| **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create->reload, trigger event scope, transaction client affinity |
+| **ui-react** | Tier 0: 0.4, 0.4b, 0.5, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.22. Tier 1: 1.4, 1.5, 1.6, 1.7. Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure, render-phase setState, instance-unique IDs, React key uniqueness, click propagation, key-based state reset, isMountedRef strict-mode safety, CSS token consistency, CSS property interaction audit, HTML semantic element content model, error guard requires recovery path |
 | **shell** | Tier 2: shell command validation |
 | **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
-| **test-only** | Tier 3: UTC suffix in test Date strings, test env isolation, error branch coverage, test mock target verification, full object shape assertions. No other tiers needed. |
+| **test-only** | Tier 3: UTC suffix in test Date strings, test env isolation, error branch coverage, test mock target verification, full object shape assertions |
 
-**Always run:** Tier 0 automated grep checks (every review). Tier 4: pattern siblings, documentation sync, architecture self-review (100+ LOC). Learning Capture Gate.
+**Always run:** Tier 0 automated greps, Tier 4: pattern siblings + documentation sync + architecture self-review (100+ LOC). Learning Capture Gate.
 
 **Always skip for code review:** Tier 5 (plans only).
 
-If no categories match (e.g., docs-only change), skip directly to the Learning Capture Gate.
-
 ### Checklist Item Cap: 15-20 per PR
 
-Even after category filtering, the active checklist subset can exceed 20 items. Attention quality degrades sharply beyond 15-20 items per review pass — post-mortem data shows items past position 20 get cursory treatment regardless of severity.
+Priority when >20 items: Tier 0 (always, uncapped) > semantic-triggered items > Tier 1-2 > Tier 3 > Tier 4. Record deferred items in PR body.
 
-**When the filtered subset exceeds 20 items:**
-1. Count the total items from Step 4's category mapping.
-2. If > 20, prioritize items in this order:
-   - **Always keep:** Tier 0 automated greps (non-negotiable — these are mechanical, not attention-consuming).
-   - **Priority 1:** Items triggered by semantic tags from Step 3 (pattern-triggered injection). These are the most contextually relevant.
-   - **Priority 2:** Tier 1-2 items (recurring blindspots and security). These have the highest historical catch rates.
-   - **Priority 3:** Tier 3 items matching the specific file categories detected.
-   - **Defer:** Tier 4 items beyond architecture self-review, and any Tier 3 items that exceed the cap.
-3. Deferred items must be recorded in the PR body: `Deferred to CI: [item names]`.
-4. If the project has CI-based review tooling (CodeRabbit, custom linters), deferred items are expected to be caught there. If not, add a `TODO: add CI check for [item]` comment in the PR body.
+### Step 5: Structured evidence per item
 
-**The cap applies to judgment items only.** Tier 0 greps do not count toward the cap because they require zero attention budget — they produce pass/fail output mechanically.
+Format: `PASS/FAIL/SKIP: [item name] — [verifiable evidence]`
 
-### Step 5: Structured evidence per checklist item
+Evidence requirements:
+- Grep items: paste command AND output
+- Caller tracing: list each caller by file:line
+- Pattern siblings: grep command + files matched + disposition
+- Test coverage: list test case names + what they cover
 
-For every checklist item in the matched sections, record an explicit verdict with **specific, verifiable evidence**. Do not skip items or assess by "glancing at the code."
+Banned: "looks fine", "appears correct", "no issues found", "checked and OK"
 
-Format per item:
-- **PASS: [item name]** — [verifiable evidence: grep command + output, specific file:line references visited, list of callers/implementations checked]
-- **FAIL: [item name]** — [description of finding + file:line]
-- **SKIP: [item name]** — [reason, e.g. "no SQL in diff"]
+### Step 6: Default to fix
 
-**Evidence requirements by item type:**
-- **Items with grep patterns (Tier 0):** Paste the grep command AND its output (even if "0 matches"). Do not summarize.
-- **Items requiring caller/implementation tracing:** List EACH caller or implementation by file:line. "All callers handle it" without listing them is not evidence.
-- **Items checking for pattern siblings:** Show the grep command, the files matched, and the disposition of each match.
-- **Items checking test coverage:** List each test case by name and what branch/path it covers.
-
-**Banned evidence phrases** (these indicate judgment, not mechanical verification):
-- "looks fine", "appears correct", "no issues found", "code looks clean"
-- "checked and OK", "verified", "confirmed" (without specifics)
-- Any single-word verdict without a file:line reference or grep output
-
-This is non-negotiable. Four consecutive PRs (#206, #208, #209, #211) had post-push findings that mapped to existing checklist items but were missed because the reviewer assessed them judgmentally instead of mechanically. Requiring verifiable evidence per item is the structural fix.
-
-Also state which categories were detected and which checklist sections were skipped, so the author can verify coverage.
-
-### Step 6: Default to fix — no deferrals
-
-When the review identifies ANY finding — regardless of severity — **fix it immediately**. Do not classify findings as "low", "acceptable", "non-blocking", or "deferred."
-
-**Why:** PRs #198, #206, and #213 all show the same anti-pattern: the adversarial review identified an issue, labeled it low-severity, and chose not to fix it. CodeRabbit then flagged the exact same issue post-push, costing 15+ minutes of round-trip (re-review + fix commit + wait for re-review). The 5-minute local fix is always cheaper than the post-push cycle.
-
-**The only valid skip reasons:**
-- The finding requires changes to files NOT in the current diff (create a follow-up issue instead).
-- The finding is a false positive (explain why with specific evidence).
-
-"Low priority", "non-blocking", "acceptable for now", and "will address in follow-up" are NOT valid skip reasons. If you can identify it, you can fix it.
+Fix every finding immediately. Only valid skip: requires changes outside the current diff (file an issue).
 
 ---
 
-## Tier 0: Automated Grep Checks (Run FIRST on every review)
+## Tier 0: Automated Grep Checks (Run FIRST)
 
-Before manual review, run these grep patterns against changed files. Any match is a finding — fix before proceeding.
+**Use the script:** `~/.claude/tools/tier0-audit.sh --repo /path/to/repo --base main`
 
-### Tier 0 Execution Protocol
-
-**Use the automated script.** Do NOT run Tier 0 greps manually — use `~/.claude/tools/tier0-audit.sh`:
-
-```bash
-~/.claude/tools/tier0-audit.sh --repo /path/to/repo --base main
-```
-
-The script runs ALL Tier 0 checks (0.1–0.23 + bonus checks), auto-classifies changed files, skips irrelevant checks, and produces structured PASS/FAIL/SKIP output with exact grep evidence. Exit code 1 = findings exist. Exit code 0 = all passed.
-
-**Why the script exists:** Post-mortem data across 25+ PRs shows Tier 0 checks were "covered" in 100% of reviews but actually executed in <40%. Even with a fresh critic agent, LLMs satisfice — producing the expected output format without running the greps. The script makes this impossible: the grep either matches or it doesn't, and the output is logged verbatim.
-
-**Execution rules:**
-1. Run the script as the FIRST step of any adversarial review.
-2. All findings (exit code 1) must be fixed before proceeding to Tier 1+.
-3. After fixing, re-run the script to confirm 0 findings.
-4. Paste the script's summary line into the review evidence.
-5. **The review marker file MUST NOT be written until the script exits 0.**
-
-The individual grep commands are preserved below for reference and for adding new patterns, but the script is the canonical execution method.
+Exits 1 = findings. Review marker cannot be written until exit 0. Individual patterns below for reference.
 
 ### 0.1 UTC suffix on Date strings
 ```bash
 git diff main...HEAD --name-only -- '*.ts' '*.tsx' | xargs grep -nE 'new Date\("[^"]*T[0-9]{2}:[0-9]{2}:[0-9]{2}"\)' 2>/dev/null
 ```
-Catches: `new Date("2026-02-14T10:00:00")` without `Z`. Fix: append `Z`.
+Fix: append `Z`.
 
 ### 0.2 Fire-and-forget without .catch()
 ```bash
 git diff main...HEAD -U0 -- '*.ts' '*.tsx' | grep -E '^\+.*\b(then|finally)\(' | grep -vE '\.catch\(' 2>/dev/null
 ```
-Heuristic — `.catch()` may be on another line. Flag for manual review.
 
 ### 0.3 Generic error swallowing
 ```bash
 git diff main...HEAD -U3 -- '*.ts' '*.tsx' | grep -B3 -A1 'catch' | grep -E 'return \[\]|return null|return undefined' 2>/dev/null
 ```
-Heuristic — some defaults are legitimate. Flag for review.
 
 ### 0.4 Non-semantic interactive elements (a11y)
 ```bash
 git diff main...HEAD --name-only -- '*.tsx' | xargs grep -nE 'role=\{?.*"button"' 2>/dev/null
 ```
-Catches: `<span role="button">`, `<div role="button">`. Fix: replace with `<button type="button">`.
-Exception: elements containing `<a>` children (HTML content model violation).
+Fix: replace `<span/div role="button">` with `<button type="button">`. Exception: elements containing `<a>` children.
 
 ### 0.4b Form inputs without accessible labels
 ```bash
@@ -196,7 +123,7 @@ git diff main...HEAD --name-only -- '*.tsx' | xargs grep -nE 'placeholder=' 2>/d
   grep -A2 "$(sed -n "${lineno}p" "$file")" "$file" | grep -qE 'aria-label|htmlFor|aria-labelledby' || echo "MISSING LABEL: $line"
 done
 ```
-Catches: `<input placeholder="...">` or `<textarea placeholder="...">` without `aria-label`, `<label htmlFor>`, or `aria-labelledby`. Also check icon-only `<button>` elements (text is only a symbol like "+", "×") — they need `aria-label` too. <!-- Source: post-mortem, command-center #33, 2026-02-20 -->
+Also check icon-only buttons (text is only a symbol like "+", "x") for `aria-label`.
 
 ### 0.5 Escape handler only on textarea (not container)
 ```bash
@@ -204,13 +131,12 @@ git diff main...HEAD --name-only -- '*.tsx' | xargs grep -lE 'onKeyDown.*Escape|
   grep -L 'onKeyDownCapture' "$f" 2>/dev/null
 done
 ```
-Heuristic — if a file handles Escape on a textarea/input but has no `onKeyDownCapture`, the Escape handler may not fire when focus is on sibling buttons. Flag for review.
 
 ### 0.6 Date comparison without validity check
 ```bash
 git diff main...HEAD -U5 -- '*.ts' '*.tsx' | grep -B5 -E 'new Date\(' | grep -E '(>|<|>=|<=)\s*new Date' 2>/dev/null
 ```
-Heuristic — flags date comparisons near `new Date()` construction. `new Date("bad") > new Date()` is always `false` (NaN comparison), silently taking the wrong branch. Verify each match has a `Number.isFinite()` or `isNaN()` guard. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
+Verify each has `Number.isFinite()` or `isNaN()` guard.
 
 ### 0.7 Infinite CSS animations without prefers-reduced-motion
 ```bash
@@ -218,17 +144,14 @@ git diff main...HEAD --name-only -- '*.css' '*.tsx' | xargs grep -l 'animation:.
   if grep -A10 'animation:.*infinite' "$f" | grep -q '@media (prefers-reduced-motion: reduce)'; then true; else echo "MISSING REDUCE: $f"; fi
 done
 ```
-Catches: `animation: name ... infinite;` without a `@media (prefers-reduced-motion: reduce)` override. WCAG 2.1 Level AA requirement. Fix: add `@media (prefers-reduced-motion: reduce) { animation: none !important; }` for each infinite animation (use `!important` to prevent cascade shadowing). <!-- Source: CodeRabbit review, second-brain #213, 2026-02-23 -->
+Fix: add `@media (prefers-reduced-motion: reduce) { animation: none !important; }`.
 
 ### 0.8 SVG `<title>` inside labeled buttons
 ```bash
 git diff main...HEAD --name-only -- '*.tsx' | while read f; do
-  # Find lines with <svg><title> inside buttons with aria-label
   grep -n '<svg' "$f" | while read svgline; do
     svglineno=$(echo "$svgline" | cut -d: -f1)
-    # Check if <title> exists in next 3 lines
     if sed -n "${svglineno},$((svglineno+3))p" "$f" | grep -q '<title>'; then
-      # Check if parent is a button or link with aria-label
       parentlines=$(sed -n "1,${svglineno}p" "$f" | tail -20)
       if echo "$parentlines" | grep -qE '<(button|a).*aria-label'; then
         echo "DUPLICATE A11Y: $f:$svglineno (SVG <title> with labeled parent)"
@@ -237,19 +160,19 @@ git diff main...HEAD --name-only -- '*.tsx' | while read f; do
   done
 done
 ```
-Catches: SVGs with `<title>` elements inside buttons/links that have `aria-label`. Screen readers announce both, creating duplicate labels. Fix: remove `<title>` and add `aria-hidden="true" focusable="false"` to the `<svg>`. <!-- Source: CodeRabbit review, second-brain #213, 2026-02-23 -->
+Fix: remove `<title>`, add `aria-hidden="true" focusable="false"` to `<svg>`.
 
 ### 0.9 Truthiness guard on string input (missing .trim())
 ```bash
 git diff main...HEAD -U0 -- '*.ts' '*.tsx' | grep -E '^\+' | grep -E 'if\s*\(\s*!(\w+)\s*\)' | grep -vE '\.trim\(\)' 2>/dev/null
 ```
-Heuristic — flags `if (!variable)` guards on string inputs that don't call `.trim()`. Whitespace-only strings like `"   "` are truthy in JS and bypass these guards. Verify each match: if the variable holds user/command input, it needs `!variable?.trim()` or the variable should be trimmed at assignment. Not all matches are bugs — boolean/number guards are fine. <!-- Source: post-mortem, second-brain #237, 2026-02-25 -->
+Whitespace-only strings are truthy in JS. Fix: use `!variable?.trim()`.
 
 ### 0.10 Raw interpolation in XML/HTML template strings
 ```bash
 git diff main...HEAD -U3 -- '*.ts' '*.tsx' | grep -E '^\+.*`<\w+[^>]*\$\{' 2>/dev/null
 ```
-Catches: template literals building XML/HTML tags with `${variable}` interpolation. Any match needs verification that the interpolated values are escaped (attribute values with `escapeXml`/`escapeHtml`, element content if user-sourced). Common miss: escaping attributes but not body content, or escaping `<`/`>` but missing `&`/`"`/`'`. Also applies to shell scripts generating HTML via `echo`/`cat` — variables interpolated into `<h2>`, `<a>`, etc. need the same escaping discipline. Use `sed` for HTML entity replacement and `python3 urllib.parse.quote` or `node encodeURIComponent` for URL encoding in bash. <!-- Strengthened: PR review, command-center #41, 2026-02-27 -->
+Verify interpolated values are escaped (attributes AND body content).
 
 ### 0.11 DELETE + INSERT loop without transaction
 ```bash
@@ -259,13 +182,12 @@ git diff main...HEAD --name-only -- '*.ts' | xargs grep -lE 'delete|DELETE FROM'
   fi
 done
 ```
-Catches: files that do both DELETE and INSERT on the same table without a transaction. A failure between delete and insert leaves data partially removed. Fix: wrap in `BEGIN`/`COMMIT`/`ROLLBACK` using `pool.connect()` + explicit transaction. Heuristic — some patterns are safe (e.g., delete and insert on different tables). Flag for review. <!-- Source: post-mortem, second-brain #237, 2026-02-25 -->
 
 ### 0.12 Brittle error type detection via string matching
 ```bash
 git diff main...HEAD --name-only -- '*.ts' '*.tsx' | xargs grep -nE '\.message\.(includes|startsWith|match)\(' 2>/dev/null
 ```
-Catches: `err.message.includes("not found")` or similar string matching on error messages. Fix: use `instanceof` against typed error classes (e.g., `NotFoundError`). If no typed error class exists, create one. String matching is brittle — messages change, and unrelated errors can contain the substring. <!-- Source: PR review, second-brain #248, 2026-02-25 -->
+Fix: use `instanceof` with typed error classes.
 
 ### 0.13 Focus-visible parity for new interactive elements
 ```bash
@@ -277,26 +199,25 @@ git diff main...HEAD --name-only -- '*.css' | while read f; do
       for sel in $new_selectors; do
         clean=$(echo "$sel" | sed 's/[.#]//g' | tr -d '[:space:]')
         if [ -n "$clean" ] && ! grep -q "${clean}.*:focus-visible" "$f" 2>/dev/null; then
-          echo "MISSING FOCUS-VISIBLE: $f selector '$sel' (file has $existing_focus existing :focus-visible rules)"
+          echo "MISSING FOCUS-VISIBLE: $f selector '$sel'"
         fi
       done
     fi
   fi
 done
 ```
-Heuristic -- flags new CSS selectors in files that already have `:focus-visible` rules on sibling selectors. When a file has an established focus-visible pattern and a new interactive element is added, the new element should have matching focus-visible treatment. <!-- Source: post-mortem, second-brain #256, 2026-02-26 -->
 
 ### 0.14 iOS auto-zoom on small font-size inputs
 ```bash
 git diff main...HEAD --name-only -- '*.css' | xargs grep -nE '(input|textarea|\.chat-input|\.text-input).*font-size:\s*(0\.\d+rem|1[0-5]px|0\.[0-8]\d*em)' 2>/dev/null
 ```
-Catches: `<input>` or `<textarea>` elements styled with `font-size` below 16px (1rem). iOS Safari auto-zooms the viewport on focus when input font-size is under 16px, disrupting mobile UX. Fix: use `font-size: 1rem` (16px) or larger on all form inputs. Heuristic -- not all matches are actual inputs; verify the selector targets a form element. <!-- Source: CodeRabbit review, second-brain #272, 2026-02-26 -->
+Fix: use `font-size: 1rem` (16px) or larger on form inputs.
 
 ### 0.15 Render-phase setState
 ```bash
 git diff main...HEAD --name-only -- '*.tsx' | xargs grep -nE 'if\s*\(.*\)\s*\{?\s*set[A-Z]' 2>/dev/null
 ```
-Catches: `if (condition) setState(...)` patterns that may be in the render body. For each match, verify it is inside a `useEffect`, `useCallback`, or event handler — not the component function's render phase. Calling `setState` during render violates React's "render must be pure" rule, causes re-render loops, and triggers lint errors. Fix: move the conditional setState into `useEffect(() => { ... }, [trigger])`. <!-- Source: command-center #46, 2026-02-28 -->
+Verify each is inside `useEffect`/`useCallback`/event handler, not render body.
 
 ### 0.16 Stale async response guards
 ```bash
@@ -312,13 +233,12 @@ git diff main...HEAD --name-only -- '*.tsx' | xargs grep -lE 'useCallback' 2>/de
   done
 done
 ```
-Catches: `useCallback` functions that call `setState` after an `await` without an `isMountedRef`, `currentKeyRef`, or `AbortController` guard. Without a guard, a slow async response can update state after the component unmounts or after the user navigates to a different context, causing "Can't perform a React state update on an unmounted component" warnings or stale data overwrites. Fix: add `const isMountedRef = useRef(false)` with a `useEffect` lifecycle, and check `if (isMountedRef.current)` before each post-await `setState`. Heuristic — the guard may be in a parent component or custom hook; verify the full call chain. <!-- Source: command-center #46, 2026-02-28 -->
 
 ### 0.17 Conditional UI branch completeness
 ```bash
 git diff main...HEAD --name-only -- '*.tsx' | xargs grep -nE 'if\s*\(\s*(is|has|show|hide|can)[A-Z]' 2>/dev/null
 ```
-Catches: boolean-gated UI branches like `if (isNightNurse)`, `if (hasPermission)`, `if (showBanner)`. For each match in a JSX-rendering component, verify the corresponding test file has test cases for BOTH the `true` and `false` branches. Missing a branch means half the UI is untested — the default path works but the conditional path may be broken. Fix: add `describe('when isX is true/false', ...)` test blocks covering each branch. Heuristic — not all boolean conditions gate UI; verify the match is in a render path, not pure logic. <!-- Source: command-center #46, 2026-02-28 -->
+Verify test file has cases for BOTH true and false branches.
 
 ### 0.18 Undefined CSS custom properties
 ```bash
@@ -330,13 +250,7 @@ for f in $(git diff main...HEAD --name-only -- '*.css'); do
   done
 done
 ```
-Catches: `var(--font-sans)` when `--font-sans` is not defined in the same CSS file's `:root`. CSS silently falls back to the property's initial value, which is invisible during development if the default happens to look acceptable. Fix: use the correct variable name (check `:root` definitions). Known false positives: variables set via JavaScript (`style.setProperty`) — verify each flag against JS sources before fixing. Tested at ~6% false-positive rate on a 4000-line CSS file. <!-- Source: PR review, second-brain #164, 2026-02-19; second-brain #320, 2026-03-02 -->
-
-> **CI-enforced in second-brain (my_mind_evolved):** This check is now automated via `stylelint-value-no-unknown-custom-properties` in `.stylelintrc.json`. The manual grep above is redundant for that project but remains necessary for projects without the stylelint plugin.
-
-### Adding new patterns
-When a bug class is caught 2+ times across PRs, add a grep pattern here.
-Requirements: expressible as regex on changed lines, low false-positive rate (<20%).
+False positives: variables set via JS `style.setProperty`. CI-enforced in projects with `stylelint-value-no-unknown-custom-properties`.
 
 ### 0.19 white-space pre-wrap + line-clamp co-occurrence
 ```bash
@@ -349,7 +263,6 @@ for f in $(git diff main...HEAD --name-only -- '*.css' '*.tsx' '*.jsx'); do
   fi
 done
 ```
-Catches: `white-space: pre-wrap` silently disables `-webkit-line-clamp` truncation. Hard newlines in content expand to full height, defeating the clamp. Fix: use `white-space: normal` or `overflow-wrap: break-word` on clamped containers, and sanitize content newlines before display. <!-- Source: PRs #231, #236 -->
 
 ### 0.20 Animation without prefers-reduced-motion
 ```bash
@@ -362,218 +275,178 @@ for f in $(git diff main...HEAD --name-only -- '*.css' '*.tsx' '*.jsx'); do
   fi
 done
 ```
-Catches: `animation:` declarations without a corresponding `prefers-reduced-motion` media query in the same file. Complements 0.7 (which catches `infinite` animations specifically for `!important` guidance); 0.20 catches all animations missing reduced-motion entirely. Both may flag the same file with different actionable guidance — that's intentional. Fix: add `@media (prefers-reduced-motion: reduce) { .selector { animation: none; } }`. <!-- Source: PR #213 -->
 
-### 0.21 `hour12: false` in Intl.DateTimeFormat (midnight returns "24")
+### 0.21 `hour12: false` in Intl.DateTimeFormat
 ```bash
 git diff main...HEAD -- '*.ts' '*.tsx' '*.js' '*.jsx' | grep -n 'hour12:\s*false' || echo "PASS: no hour12: false"
 ```
-Catches: `Intl.DateTimeFormat` with `hour12: false` can return `"24"` at midnight depending on ICU locale data (per ECMA-402 spec — `h24` cycle runs 1-24). Parsing `parseInt("24")` breaks hour-gating logic expecting 0-23. Fix: replace `hour12: false` with `hourCycle: "h23"` (guarantees 0-23). Do NOT set both `hour12` and `hourCycle` — `hour12` overrides `hourCycle`. <!-- Source: post-mortem, second-brain #351, 2026-03-04 -->
+Fix: replace with `hourCycle: "h23"`. Do NOT set both.
 
 ### 0.22 autoFocus attribute (a11y)
 ```bash
 git diff main...HEAD -- '*.tsx' '*.jsx' '*.html' | grep -n 'autoFocus\|autofocus' || echo "PASS: no autoFocus"
 ```
-Catches: `autoFocus` on inputs disrupts screen reader flow and forces a scroll position. WCAG 2.4.3 (Focus Order) violation. Fix: remove autoFocus and manage focus programmatically only when a user action triggers the input to appear. <!-- Source: CodeRabbit review, leaflet #8, 2026-03-09 -->
+Fix: remove autoFocus, manage focus programmatically on user action.
 
 ### 0.23 Express JSON body parser without size limit
 ```bash
 git diff main...HEAD -- '*.ts' '*.js' | grep -n 'express\.json()' | grep -v 'limit' || echo "PASS: all express.json() have limit"
 ```
-Catches: `express.json()` without `{ limit: 'Nkb' }` allows arbitrarily large payloads on public APIs. Fix: set `limit` to the minimum needed (e.g., `'8kb'` for small JSON payloads). <!-- Source: CodeRabbit review, leaflet #8, 2026-03-09 -->
+Fix: set `limit` to minimum needed (e.g., `'8kb'`).
+
+### Adding new patterns
+Add when a bug class is caught 2+ times. Requirements: regex on changed lines, <20% false-positive rate.
 
 ---
 
-## Tier 1: Recurring Blindspots (ALWAYS verify mechanically)
-
-These patterns have been missed on multiple PRs despite being in the checklist.
+## Tier 1: Recurring Blindspots
 
 ### 1.1 Fire-and-Forget Try/Catch Granularity
-
-**Why we miss it:** We see `.catch()` at the call site and assume the method is safe.
-
-**Mechanical verification:**
 1. Find all `.catch()` call sites in changed files.
-2. For each, identify the method being called.
-3. Read that method's implementation.
-4. Count every `await` inside.
-5. Verify EACH await has its own try/catch.
+2. Read the called method's implementation.
+3. Verify EACH `await` inside has its own try/catch.
 
 ### 1.2 Error Swallowing in Catch Blocks
-
-**Why we miss it:** "Add error handling" → instinctively add `catch { return [] }`.
-
-**Mechanical verification:**
 1. Find all catch blocks in changed files.
-2. For each, ask: (a) What error is EXPECTED? (b) What errors are UNEXPECTED?
-3. Expected errors → safe default. Unexpected errors → rethrow or propagate.
+2. For each: what error is EXPECTED (safe default) vs UNEXPECTED (must rethrow)?
 
 ### 1.3 Broad vs. Narrow Try/Catch Scope
-
-**Mechanical verification:**
-1. Find all try blocks in changed files.
-2. Count `await` calls inside each.
-3. If > 1 await: do they fail for the SAME reason? If no → split them.
+1. Find all try blocks. Count `await` calls inside each.
+2. If >1 await with different failure reasons, split them.
 
 ### 1.4 Grammar in User-Facing Text
-
-**Why we miss it:** Fix the noun but forget dependent words.
-
-**Mechanical verification:**
 1. Find template literals with count-dependent text.
-2. Verify ALL dependent words: noun (entry/entries), pronoun (it/them), verb (is/are), determiner (this/these).
+2. Verify ALL dependent words: noun, pronoun, verb, determiner.
 
 ### 1.5 Optimistic UI Revert Safety
-
-**Mechanical verification:**
 1. Find optimistic update patterns.
-2. In catch/error path, verify revert uses a CAPTURED snapshot, not an inverted value.
-3. **Staleness guard on revert:** In the catch block, verify the revert only applies if the item's current value still matches the optimistic value set by THIS call (`e.status === newStatus`). Without this guard, a slow-failing request reverts over a later successful update when the user rapidly triggers the same action. <!-- Source: post-mortem, second-brain #269, 2026-02-26 -->
-4. After revert, verify there is **user-visible error feedback** (toast, inline error, temporary message). Silent revert without feedback confuses users — they see a change, then it disappears with no explanation. <!-- Source: post-mortem, second-brain #186, 2026-02-20 -->
-5. **Await async completion instead of setTimeout heuristics.** When optimistic state is cleared after an async operation (refetch, save, etc.), verify the code `await`s the actual Promise rather than using `setTimeout(fn, N)` as a timing heuristic. Timeouts race with network latency — slow responses clear optimistic state before real data arrives (brief empty state), fast responses waste the remaining timeout. Fix: make the async function return a Promise, `await` it, then clear state. <!-- Source: post-mortem, second-brain #287, 2026-02-28 -->
-6. **Reset ALL local state on identity prop changes.** When a component stays mounted but its identity prop changes (e.g., `entryId`, `threadId`, `userId`), verify ALL local state — error messages, loading/retry flags, form inputs — is explicitly reset via `useEffect` with the identity prop as a dependency. Error/retry state leaking across context changes is a common source of stale UI. Fix: add `useEffect(() => { setError(null); setRetrying(false); }, [identityProp])`. <!-- Source: post-mortem, second-brain #288, 2026-02-28 -->
+2. Catch/error path uses CAPTURED snapshot, not inverted value.
+3. Staleness guard: revert only if current value matches optimistic value from THIS call.
+4. User-visible error feedback after revert (toast, inline error).
+5. Await async completion, not setTimeout heuristics.
+6. Reset ALL local state (errors, loading, form inputs) on identity prop changes via `useEffect`.
 
 ### 1.6 Portal/Popover Positioning
-
-**Mechanical verification:**
-1. Find portal-rendered or absolutely-positioned popovers/dropdowns.
-2. Verify position is **recalculated** on scroll and window resize (via event listeners), or that the popover **closes** on scroll/resize. Static one-time positioning disconnects the popover from its trigger on user interaction.
-3. Verify `left` and `top` values are clamped to avoid off-screen positioning on narrow viewports (e.g., `Math.max(8, Math.min(rect.left, maxLeft))`).
-<!-- Source: post-mortem, second-brain #186, 2026-02-20 -->
+1. Position recalculated on scroll/resize (or popover closes on scroll/resize).
+2. Left/top clamped to avoid off-screen positioning.
 
 ### 1.7 Interactive Mode State Cleanup
-
-**Mechanical verification:**
-1. Find components with multiple interactive states (e.g., editing, date-picker-open, dropdown-open).
-2. When entering one interactive mode, verify all competing mode states are reset. Example: entering edit mode should set `showDatePicker = false`.
-3. Check: "If mode A is active and user triggers mode B, does mode A's state get cleaned up?"
-<!-- Source: post-mortem, second-brain #186, 2026-02-20 -->
+1. When entering one interactive mode, all competing modes are reset.
+2. Check: "If mode A is active and user triggers mode B, does A get cleaned up?"
 
 ---
 
 ## Tier 2: Security & Data Isolation
 
-- [ ] **User scoping on ALL DB queries.** Every SELECT/UPDATE/DELETE on user data includes `WHERE user_id = $X`. Also check correlated subqueries.
-- [ ] **No raw user content in logs.** Log timing, counts, IDs, types — never message content. Use `error.name` not `error.message`.
-- [ ] **Input validation at boundaries.** `typeof` guard before `.trim()` or string methods on request body fields. For numeric query params, use `Number.isNaN()` explicitly — never `parseInt(...) || default` which treats `0` as falsy. <!-- Strengthened: second-brain #284, 2026-02-28 -->
-- [ ] **Shell command validation.** Regex: no prefix injection bypass (`\b` not `^`); no suffix injection bypass (`(\s|$)` not `\b`); extracted variables validated non-empty. Guard ordering: verify early-exit blocks don't make later exception paths unreachable or create bypass holes for non-matching branches. <!-- Strengthened: nanny-app #31, 2026-02-19 -->
-- [ ] **Escape user content in AI prompts.** Escape `<`/`>` with `&lt;`/`&gt;` in XML-tagged prompts. This includes DB-stored values. When injecting external data (e.g., GitHub PR titles, user emails, RSS feeds) into LLM context blocks, verify BOTH: (1) XML-structural escape (`<`, `>`, `&`, `"`, `'`) and (2) the system prompt treats the data as read-only reference, not as instructions to follow. XML escaping prevents structural corruption; prompt-level framing prevents adversarial content from influencing LLM behavior. <!-- Strengthened: post-mortem, second-brain #256, 2026-02-26 -->
-- [ ] **RLS UPDATE policies have WITH CHECK.** For every RLS UPDATE policy in migration files, verify both `USING` and `WITH CHECK` clauses are present. `USING` alone gates which rows can be read for update, but allows writing unauthorized values (e.g., changing `household_id` to another tenant). `WITH CHECK` should mirror the tenant-scoping predicate. <!-- Source: PR review, folio #1, 2026-02-23 -->
-- [ ] **No token-like placeholders in UI.** Avoid `ghp_`, `sk-`, `Bearer ey...`, `xoxb-` prefixes in placeholder/mock/demo data — secret scanners (CI, GitHub) will flag them. Use generic bullets `"••••••••"` or `"(hidden)"`. <!-- Source: PR review, command-center #3, 2026-02-14 -->
-- [ ] **Auth fallbacks scoped to specific routes.** When adding alternative auth (query param token, cookie), verify it only applies to the exact route that needs it — not globally in shared middleware. Check: does the middleware gate the fallback on `req.method` + `req.path`? <!-- Source: PR review, second-brain #152, 2026-02-17 -->
-- [ ] **Content-Type enforcement on mutation endpoints.** POST/PUT handlers that parse `req.body` as JSON should verify `Content-Type: application/json` (or return 415). Express `json()` middleware parses valid JSON regardless of content-type header, but missing/wrong content-type often means the client sent an empty or malformed body. Guard before validation logic. <!-- Source: post-mortem, command-center #39, 2026-02-26 -->
-- [ ] **Cross-platform path traversal validation.** When validating relative paths, reject not only `/`-prefixed paths but also Windows absolute paths (`C:\`, `D:\`), UNC paths (`\\server\share`), and any `path.isAbsolute()` match. Unix-only guards leave Windows-style absolute paths unblocked. <!-- Source: post-mortem, command-center #39, 2026-02-26 -->
+- [ ] **User scoping on ALL DB queries.** Every SELECT/UPDATE/DELETE includes `WHERE user_id = $X`. Check correlated subqueries.
+- [ ] **No raw user content in logs.** Log timing, counts, IDs — never message content.
+- [ ] **Input validation at boundaries.** `typeof` guard before `.trim()`. For numeric params: `Number.isNaN()` explicitly, not `parseInt(...) || default` (treats `0` as falsy).
+- [ ] **Shell command validation.** Regex: `\b` not `^` (no prefix bypass), `(\s|$)` not `\b` (no suffix bypass). Guard ordering: early-exit blocks don't make later paths unreachable.
+- [ ] **Escape user content in AI prompts.** Escape `<`/`>` with `&lt;`/`&gt;` in XML prompts. Verify both XML-structural escape AND prompt-level framing treating data as read-only.
+- [ ] **RLS UPDATE policies have WITH CHECK.** `USING` alone allows writing unauthorized values. `WITH CHECK` must mirror tenant-scoping.
+- [ ] **No token-like placeholders in UI.** No `ghp_`, `sk-`, `Bearer ey...`, `xoxb-` in placeholder/mock data. Use `"........"` or `"(hidden)"`.
+- [ ] **Auth fallbacks scoped to specific routes.** Query param/cookie auth gated on `req.method` + `req.path`, not global middleware.
+- [ ] **Content-Type enforcement on mutation endpoints.** POST/PUT handlers verify `Content-Type: application/json` (or return 415).
+- [ ] **Cross-platform path traversal validation.** Reject `/`-prefixed, `C:\`, `\\server\share`, and `path.isAbsolute()`.
 
 ---
 
 ## Tier 3: Robustness & Graceful Degradation
 
-- [ ] **Null/undefined guards.** Walk every `!`, `[]`, `.` chain. Check if any intermediate value could be null.
-- [ ] **LLM output parsing.** `JSON.parse()` on LLM output must strip code fences. Handle empty/malformed.
+- [ ] **Null/undefined guards.** Walk every `!`, `[]`, `.` chain for null intermediates.
+- [ ] **LLM output parsing.** `JSON.parse()` strips code fences. Handle empty/malformed.
 - [ ] **Error message specificity.** Edge cases get specific messages, not generic fallthrough.
-- [ ] **Cross-field relational validation.** When multiple fields form a sequence (e.g., start/end times, date ranges, ordered steps), validate the relationship between fields — not just each field's format independently. A write path that validates `napStart` and `napEnd` as valid `HH:mm` but doesn't check `napEnd >= napStart` will persist inverted/overlapping data. **Mechanical check:** grep changed write paths for multiple validated fields of the same type; verify a relational assertion exists. <!-- Source: PR review, sleep-tracker #61, 2026-03-07 -->
-- [ ] **CSS grid column count sync.** When CSS defines `grid-template-columns` with `repeat(N, ...)`, verify N matches the actual data column count (array length, loop iterations) in the component that renders into the grid. Grep changed CSS for `repeat(` and cross-reference with the data source. <!-- Source: PR review, summer-camps #3, 2026-02-28 -->
-- [ ] **Semantic elements.** Grep changed `.tsx` files for `role="button"` — every match on a non-`<button>` element (`<span>`, `<div>`, `<a>`) must be replaced with `<button type="button">`. Also: every `<svg>` needs a `<title>` child.
-- [ ] **Button type audit.** When modifying a `.tsx` file, grep it for `<button` without `type=`. Every `<button>` must have explicit `type="button"` (interactive) or `type="submit"` (form). Missing types default to `submit` and cause accidental form submissions. Audit the *entire file*, not just the diff — pre-existing violations in touched files should be fixed. <!-- Source: CodeRabbit review, nanny-app #26, 2026-02-19 -->
-- [ ] **CSS token consistency.** When converting colors to CSS custom properties (design tokens), grep the modified CSS files for hardcoded hex/rgb values (e.g., `#8A6340`, `rgb(125,80,20)`). Check if any hardcoded values should use an established token instead. Also check for **duplicated color constants** — if a hex value appears 2+ times in the same file, extract it to a shared constant (`const DEFAULT_COLOR = "#706858"`). For components that compose colors with opacity (e.g., `color + "66"` for alpha), verify the approach is compatible with CSS variables: naive hex appending breaks when color is `var(--metric-purple)`. Use `color-mix(in srgb, var(--color) 40%, transparent)` or apply opacity via a wrapper element. **Semantic role mismatch:** verify `--*-text` tokens are only used for `color`/`fill` (not `background`/`border`) and `--*-soft`/`--*` base tokens are only used for `background`/`border` (not text). Grep pattern: `background.*var(--.*-text)` catches text tokens misused as backgrounds. <!-- Source: post-mortem, command-center #75, 2026-03-02; strengthened: CodeRabbit review, sleep-tracker #15, 2026-03-03 -->
-- [ ] **CSS property interaction: white-space + truncation audit.** When `white-space: pre-wrap` or `pre-line` co-occurs with `line-clamp`, `text-overflow: ellipsis`, or `max-height` truncation in the same element's styles, verify: (1) content source — does it contain hard newlines (`\n`)? (2) If yes, `pre-wrap` defeats clamping because each newline forces a line break, exhausting the clamp faster than expected. Fix: use `white-space: normal` on clamped containers, or sanitize newlines before display. **Mechanical check:** grep changed CSS/TSX for `pre-wrap` or `pre-line`, then check if the same selector/component also uses `line-clamp` or `text-overflow`. <!-- Source: PRs #231, #236 -->
-- [ ] **CSS property interaction: prefers-reduced-motion completeness.** When a `prefers-reduced-motion` media query exists, verify: (a) **specificity** — the override selector must match or exceed the base animation selector's specificity; use `!important` if the base uses it or if specificity matching is impractical; (b) **coverage** — the query must disable BOTH `animation` AND `transition` properties, not just one. A reduced-motion query that only sets `animation: none` leaves `transition` effects running. **Mechanical check:** find all `prefers-reduced-motion` blocks, list every property they override, cross-reference with the base animation/transition declarations. <!-- Source: PR #213 -->
-- [ ] **CSS property interaction: conditional class visual permutation audit.** When CSS classes are applied conditionally (feature flags, user roles, state toggles), verify: (1) all permutations of conditional classes render correctly (not just the "on" state); (2) the base element without any conditional class has acceptable default styling (not broken layout); (3) no specificity conflicts between conditional classes and contextual/parent selectors. **Mechanical check:** grep changed TSX for `className.*&&` or `className.*?` patterns, list each conditional class, verify CSS exists for both the present and absent states. <!-- Source: PR #26 -->
-- [ ] **CSS property interaction: sticky/fixed positioning ancestor audit.** When `position: sticky` or `position: fixed` is used, trace the ancestor chain for: (1) `overflow: hidden/auto/scroll` on any ancestor (breaks sticky); (2) `transform`, `perspective`, or `filter` on any ancestor (creates a new containing block, breaking fixed positioning); (3) `z-index` context in flex/grid ancestors (can trap the positioned element behind siblings). **Mechanical check:** find sticky/fixed elements in changed files, read the component tree upward to the nearest scroll container. <!-- Source: cross-project pattern -->
-- [ ] **CSS property interaction: overflow hidden child clipping audit.** When `overflow: hidden` is used, check if children have: (1) `box-shadow` that extends beyond the boundary (clipped invisibly); (2) `outline` or `:focus-visible` ring (accessibility violation — focus indicator invisible); (3) `transform: scale()` or `translate()` that moves content outside bounds. Fix: use `overflow: clip` (doesn't create scroll container) or add padding equal to the shadow/outline spread. **Mechanical check:** find `overflow: hidden` in changed CSS, check child elements for shadow/outline/transform properties. <!-- Source: cross-project pattern -->
-- [ ] **CSS property interaction: transition/animation reduced-motion coverage.** Any `transition` or `animation` property in changed CSS needs a `prefers-reduced-motion` media query. This is the judgment complement to Tier 0 check 0.20 (which catches `animation:` only via grep) — covers `transition` declarations and cases where the grep can't reach (inline styles, CSS-in-JS). **Mechanical check:** list all `transition:` and `animation:` declarations in changed files, verify each has a corresponding reduced-motion override. <!-- Source: PR #213 -->
-- [ ] **New union member completeness.** When adding a value to a TypeScript union type (e.g., `'unpaid_off'` to `SpecialDay['type']`), grep the entire codebase for every switch/conditional that maps that type to a style class, label, color, or behavior. Each one needs explicit handling for the new value — fallthrough to a default case often produces wrong results (e.g., unpaid days getting sick-day styling). Also check **validation Sets** used for gating: a single `VALID_TYPES` Set reused for multiple code paths (filtering vs action-triggering) may over-include the new type in paths that shouldn't handle it. Split shared validation constants per purpose when semantics diverge (e.g., `VALID_ENTRY_TYPES` for filtering vs `VALID_PROMOTABLE_ENTRY_TYPES` for creation). <!-- Strengthened: PR review, second-brain #262, 2026-02-26; original: nanny-app #26, 2026-02-19 -->
-- [ ] **Conditional UI branch test coverage.** When a component renders different UI based on a boolean flag (e.g., `isNightNurse`), verify test cases exist for each branch — not just the default path. At minimum: one test asserting the alternate UI renders, one asserting the default UI elements are hidden. <!-- Source: CodeRabbit review, nanny-app #26, 2026-02-19 -->
-- [ ] **Escape in edit-within-panel.** If an inline edit mode lives inside a dismissible panel/modal, verify Escape is caught via `onKeyDownCapture` on the edit container — not just `onKeyDown` on the textarea. Focus can move to Save/Cancel buttons where textarea handlers don't fire. Also: guard `if (saving) return` so Escape during an in-flight save doesn't discard the error state.
-- [ ] **Hook error states surfaced in UI.** `{ data, loading, error }` — error MUST be rendered. Also check the hook's internal implementation: `load()` catch blocks must call `setError(err)` (not silently swallow), and the success path must call `setError(null)` to clear stale errors. <!-- Strengthened: PR review, second-brain #248, 2026-02-25 -->
-- [ ] **Env var validation.** NaN check, valid range, fallback logging for numeric vars. Timezone vars validated via `Intl.DateTimeFormat`.
-- [ ] **Guard after create → reload.** Check for null after DB insert + reload.
-- [ ] **JSON.parse on external config.** `JSON.parse()` on env vars or external config must be in try/catch with a descriptive error (e.g., "Invalid JSON in GOOGLE_SERVICE_ACCOUNT_KEY").
-- [ ] **Off-by-one in time boundaries.** When querying events/records for a date range, use start-of-next-day as exclusive upper bound (`< nextDay T00:00:00`), not `<= T23:59:59` which misses the final second.
-- [ ] **Off-by-one in threshold comparisons.** When code splits, groups, or gates on a threshold (time gaps, count limits, window sizes), verify the comparison operator matches the spec: `>` means "split only when strictly greater," `>=` means "split at the threshold itself." The distinction matters: a 30-minute session gap threshold should use `>= 30` not `> 30`, or a gap of exactly 30 minutes is silently placed in the wrong session. Mechanical check: find all comparisons against threshold/limit/max constants in changed files and ask "should equality trigger the branch or not?" <!-- Source: PR review, command-center #23, 2026-02-19 -->
-- [ ] **Newly-throwing functions: caller audit.** When a function gains `throw` validation that it didn't have before (e.g., converting a silent `return null` to `throw new Error("invalid")`), grep ALL callers and verify each has error handling. Especially dangerous when inputs come from LLM extraction or user input — bad data is the common case. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
-- [ ] **Filter external API data before mapping.** External APIs can return malformed entries (missing fields, null values). Use `.filter()` to skip invalid entries before `.map()`, rather than producing `NaN`/`Invalid Date` downstream.
-- [ ] **UTC suffix in test Date strings.** `new Date("2026-02-14T10:00:00")` parses in server-local timezone, making tests flaky on CI. Always append `Z` for UTC: `new Date("2026-02-14T10:00:00Z")`. **Enforcement:** Covered by Tier 0 check 0.1.
-- [ ] **Test env variable isolation.** When tests mutate `process.env.*` (set in `beforeEach`, deleted in a test), verify cleanup in `afterEach` that captures and restores the original value. Without restore, env mutations leak across test files. Also: `vi.restoreAllMocks()` / `vi.resetAllMocks()` should be in `afterEach`, not inline — inline cleanup is skipped if the test fails before reaching it. <!-- Source: post-mortem, second-brain #148, 2026-02-17 -->
-- [ ] **Error branch test coverage.** When a route has distinct error paths (e.g., timeout -> 504, upstream error -> 502, not found -> 404), verify each branch has a dedicated test case. List all `catch` blocks and conditional error responses in new handlers, then check for corresponding test assertions. <!-- Source: post-mortem, second-brain #148, 2026-02-17 -->
-- [ ] **String truncation arithmetic.** When slicing a string to fit a max length and appending a suffix, verify `slice_length + suffix_length <= limit`. Pattern: `str.slice(0, limit - suffix.length) + suffix`. For HTML-formatted strings, truncate at line boundaries (`lastIndexOf("\n")`) to avoid splitting paired tags (`<a>...</a>`, `<b>...</b>`), then strip partial tags/entities as fallback. <!-- Source: post-mortem, second-brain #131, 2026-02-16; strengthened PR review #155, 2026-02-17 -->
-- [ ] **Compound text decoration.** When a format helper returns decorated text (e.g., parentheses, brackets), check all call sites — callers adding their own decoration can compound: `((all day))`. <!-- Source: post-mortem, second-brain #131, 2026-02-16 -->
-- [ ] **Stale closure in background refresh.** When a React hook fires a background fetch (cache-then-refresh pattern), the `.then()` closure captures the filter/key at call time. If the user switches tabs before the fetch resolves, `setEntries`/`setCursor` updates shared state with stale data. Guard with a `currentKeyRef` that tracks the active filter, and skip state updates when `currentKeyRef.current !== capturedKey`. Cache updates are safe; only setState calls need the guard. Also: when multiple in-flight background refreshes can race (e.g., stale-while-revalidate), use a monotonic token (incrementing counter ref) captured in the closure -- only the latest token's teardown should clear shared guards like `setEnhancing(false)`. <!-- Strengthened: post-mortem, my_mind_evolved #353, 2026-03-04; original: second-brain #136, 2026-02-17 -->
-- [ ] **HTML semantic element content model compliance.** When switching to or using semantic elements (`<output>`, `<details>`, `<dialog>`, `<address>`, `<aside>`, `<figure>`), verify the element's permitted content model against what will actually be rendered inside it. `<output>` only permits phrasing content (no `<div>`, `<Masonry>`, or block-level components). `<details>` requires `<summary>` as first child. Lint tools may suggest semantic elements without checking that existing children are compatible. **Mechanical check:** for each semantic element in the diff, look up its content model and verify all children are permitted. <!-- Source: post-mortem, my_mind_evolved #353, 2026-03-04 -->
-- [ ] **Error guard requires recovery path.** When a useEffect guard includes an error condition to prevent retry loops (e.g., `if (error) return` before IntersectionObserver setup), verify there's an alternative user-facing recovery mechanism (retry button, dismiss-to-retry, error boundary with reset). A guard that prevents automatic retry without offering manual retry creates a permanent stuck state with no escape. <!-- Source: post-mortem, my_mind_evolved #353, 2026-03-04 -->
-- [ ] **Test mock target verification.** For each `vi.spyOn()` or `vi.fn()` mock in new/changed test files, trace the mock target to the production code path under test. Verify the mocked method is the one actually called in the code path being tested, not a similar-sounding sibling method. Common failure: mocking `findForDate` when the code uses `findAllOpen`. <!-- Source: post-mortem, second-brain #159, 2026-02-19 -->
-- [ ] **Full object shape assertions on structured output.** When tests assert inline buttons, API response objects, or structured UI data, verify assertions cover the full object shape (text, labels, IDs) — not just callback data or IDs. Partial assertions miss label regressions. <!-- Source: post-mortem, second-brain #159, 2026-02-19 -->
-- [ ] **Boundary value test coverage for threshold logic.** When any function compares against a threshold constant (gap duration, item count, rate limit), verify tests cover: (1) exactly at the threshold, (2) one unit below, (3) clearly above. Tests covering only "above" and "below" leave the boundary operator (`>` vs `>=`) untested — the most common off-by-one site. <!-- Source: PR review, command-center #23, 2026-02-19 -->
-- [ ] **Side-effect ordering around fallible operations.** When a fire-and-forget side effect (e.g., `markResearchInitiated`, `flagAsProcessed`) sits near a fallible `await`, verify: does the side effect assume success? If yes, move it AFTER the await's success path. State flags set before a fallible operation leave the system in an inconsistent state on failure (entry flagged as researched but no research task exists). Distinct from Tier 4 "dedup markers BEFORE action" (which is about idempotency). **Also check fallback-value-as-noop:** when a function returns a fallback value on failure (e.g., returning the existing summary when LLM generation fails), callers must compare the returned value against the previous value before triggering side effects (counter resets, DB writes). Treating a fallback as a successful result causes phantom state resets. <!-- Strengthened: post-mortem, second-brain #275, 2026-02-26; original: #211, 2026-02-23 -->
-- [ ] **HTML entity completeness in custom escape helpers.** When a file defines a custom HTML escape function (e.g., `escHtml`, `escapeHtml`, `sanitizeHtml`), verify it covers all 5 standard entities: `&` -> `&amp;`, `<` -> `&lt;`, `>` -> `&gt;`, `"` -> `&quot;`, `'` -> `&#39;`. Missing quote escaping causes confusing output when escaped text appears inside HTML attributes or quoted contexts. <!-- Source: post-mortem, second-brain #211, 2026-02-23 -->
-- [ ] **Enum/union validation on request body fields.** When a route handler validates a string field that should be one of a closed set (feedback type, status, reason), validate against the shared enum/constant — not just `typeof === "string" && value.trim()`. Accepting any non-empty string bypasses the type system and persists unexpected values. <!-- Source: post-mortem, second-brain #211, 2026-02-23 -->
-- [ ] **Render-phase setState detection.** Grep changed `.tsx` files for `if (...) set[A-Z]` patterns in the component function body (outside `useEffect`, `useCallback`, or event handlers). Calling `setState` during render violates React's "render must be pure" rule — it works in some cases but triggers lint errors (`useExhaustiveDependencies`) and is harder to reason about. Fix: move to `useEffect(() => { ... }, [trigger])`. Mechanical check: `grep -nE 'if\s*\(.*\)\s*\{?\s*set[A-Z]' *.tsx` then verify each match is inside an effect/handler, not the render body. <!-- Source: post-mortem, second-brain #215, 2026-02-24 -->
-- [ ] **Instance-unique element IDs in reusable components.** Grep changed `.tsx` files for hardcoded `id="..."` and `name="..."` attributes. If the component can render multiple times on a page, static IDs collide — breaking `<label htmlFor>` associations, radio button grouping, and accessibility. Fix: suffix with a unique prop (e.g., `id={\`refine-textarea-${item.id}\`}`) or use React's `useId()`. Mechanical check: `grep -nE '(id|name|htmlFor)="[^"]*"' *.tsx` in changed files, verify each is unique per instance. <!-- Source: post-mortem, second-brain #215, 2026-02-24 -->
-- [ ] **React key uniqueness for data-derived values.** When `key={value}` in `.map()` uses a data-derived value (not an ID), verify the value is unique within the list. Duplicate keys cause React to skip re-renders or mount/unmount incorrectly. Common trap: `key={item.name}` when names repeat. Fix: use a unique ID, or a composite key like `key={\`${index}-${item.name}\`}` when no stable ID exists. Mechanical check: find `key={` in changed `.tsx` files, trace the value source, ask "can two items in this array have the same value?" <!-- Source: post-mortem, second-brain #215, 2026-02-24 -->
-- [ ] **isMountedRef strict-mode safety.** When a component uses `useRef` to track mount state (for guarding async state updates after unmount), verify the ref is initialized to `false` and set to `true` inside a `useEffect` body — NOT initialized to `true` at declaration. Under React strict-mode, the double-invoke sequence is: mount → cleanup → mount. A ref initialized to `true` becomes `false` after the first cleanup and stays `false` on the second mount. Correct pattern: `const ref = useRef(false); useEffect(() => { ref.current = true; return () => { ref.current = false; }; }, []);`. Mechanical check: `grep -nE 'useRef\s*\(\s*true\s*\)' *.tsx` — each match needs a corresponding `useEffect` that sets it to `true`. <!-- Source: post-mortem, second-brain #288, 2026-02-28 -->
+- [ ] **Cross-field relational validation.** Multiple fields forming a sequence (start/end, date ranges) validated for relationship, not just format.
+- [ ] **CSS grid column count sync.** `repeat(N, ...)` N matches actual data column count in the rendering component.
+- [ ] **Semantic elements.** `role="button"` on non-button elements -> replace with `<button type="button">`. SVGs need `<title>`.
+- [ ] **Button type audit.** Every `<button` needs explicit `type="button"` or `type="submit"`. Audit entire file, not just diff.
+- [ ] **CSS token consistency.** Hardcoded hex/rgb that should use tokens. Duplicated color constants (2+ occurrences -> extract). Hex appending for opacity incompatible with CSS variables (use `color-mix`). Semantic role mismatch: `--*-text` only for `color`/`fill`, not `background`/`border`.
+- [ ] **CSS property interaction: white-space + truncation.** `pre-wrap`/`pre-line` with `line-clamp`/`text-overflow` on same element. Content with `\n` defeats clamping.
+- [ ] **CSS property interaction: prefers-reduced-motion completeness.** Override specificity matches base. Covers BOTH `animation` AND `transition`.
+- [ ] **CSS property interaction: conditional class visual permutations.** All permutations of conditional classes render correctly. Base without conditional classes has acceptable styling.
+- [ ] **CSS property interaction: sticky/fixed positioning ancestors.** Check for `overflow: hidden/auto/scroll` (breaks sticky), `transform`/`perspective`/`filter` (breaks fixed), `z-index` context.
+- [ ] **CSS property interaction: overflow hidden child clipping.** Children with `box-shadow`, `:focus-visible` ring, or `transform: scale/translate` clipped by `overflow: hidden`. Fix: `overflow: clip` or padding.
+- [ ] **CSS property interaction: transition/animation reduced-motion coverage.** All `transition:` and `animation:` in changed CSS have reduced-motion overrides.
+- [ ] **New union member completeness.** Grep entire codebase for every switch/map/conditional on that type. Check validation Sets — split shared constants per purpose when semantics diverge.
+- [ ] **Conditional UI branch test coverage.** Boolean-gated UI: tests for both true and false branches.
+- [ ] **Escape in edit-within-panel.** Escape via `onKeyDownCapture` on edit container. Guard `if (saving) return`.
+- [ ] **Hook error states surfaced in UI.** `{ data, loading, error }` — error rendered. Internal `load()` catch calls `setError(err)`. Success path calls `setError(null)`.
+- [ ] **Env var validation.** NaN check, valid range, fallback logging. Timezone vars via `Intl.DateTimeFormat`.
+- [ ] **Guard after create -> reload.** Check for null after DB insert + reload.
+- [ ] **JSON.parse on external config.** Must be in try/catch with descriptive error.
+- [ ] **Off-by-one in time boundaries.** Use `< nextDay T00:00:00` not `<= T23:59:59`.
+- [ ] **Off-by-one in threshold comparisons.** `>` vs `>=` — does equality trigger the branch? Verify against spec.
+- [ ] **Newly-throwing functions: caller audit.** When function gains `throw`, grep ALL callers and verify error handling.
+- [ ] **Filter external API data before mapping.** `.filter()` before `.map()` for potentially malformed entries.
+- [ ] **UTC suffix in test Date strings.** Append `Z`. Enforced by Tier 0 check 0.1.
+- [ ] **Test env variable isolation.** `afterEach` captures/restores original `process.env` values. `vi.restoreAllMocks()` in `afterEach`, not inline.
+- [ ] **Error branch test coverage.** Each distinct error path (timeout->504, upstream->502, not found->404) has a dedicated test.
+- [ ] **String truncation arithmetic.** `slice_length + suffix_length <= limit`. HTML: truncate at line boundaries, strip partial tags.
+- [ ] **Compound text decoration.** Format helpers returning decorated text — callers adding own decoration cause compounding: `((all day))`.
+- [ ] **Stale closure in background refresh.** Cache-then-refresh `.then()` captures filter/key at call time. Guard with `currentKeyRef`. For racing refreshes, use monotonic token ref.
+- [ ] **HTML semantic element content model.** `<output>` only permits phrasing content. `<details>` requires `<summary>` first child. Verify children are permitted.
+- [ ] **Error guard requires recovery path.** `if (error) return` before retry logic needs manual recovery mechanism (retry button). Otherwise: permanent stuck state.
+- [ ] **Test mock target verification.** Trace `vi.spyOn`/`vi.fn` to the actual production code path. Common failure: mocking wrong sibling method.
+- [ ] **Full object shape assertions.** Assertions cover full shape (text, labels, IDs), not just callback data.
+- [ ] **Boundary value test coverage.** Threshold logic: test at threshold, one below, clearly above.
+- [ ] **Side-effect ordering around fallible operations.** Side effects assuming success must go AFTER the await. Fallback-value-as-noop: compare returned value against previous before triggering side effects.
+- [ ] **HTML entity completeness in custom escape helpers.** Must cover: `&`->`&amp;`, `<`->`&lt;`, `>`->`&gt;`, `"`->`&quot;`, `'`->`&#39;`.
+- [ ] **Enum/union validation on request body fields.** Validate against shared enum/constant, not just `typeof === "string"`.
+- [ ] **Render-phase setState detection.** `if (...) set[A-Z]` in component body outside effects/handlers -> move to `useEffect`.
+- [ ] **Instance-unique element IDs.** Hardcoded `id`/`name` in reusable components -> suffix with unique prop or use `useId()`.
+- [ ] **React key uniqueness.** `key={value}` in `.map()` — can two items have the same value? Use unique ID or composite key.
+- [ ] **isMountedRef strict-mode safety.** Init to `false`, set `true` inside `useEffect` body. Never `useRef(true)`.
 
 ---
 
 ## Tier 4: Data Integrity & Architecture
 
-- [ ] **Type sync between SQL and TypeScript.** CHECK constraints and unions match. Verify "source of truth" comments agree on directionality — if both files claim to be canonical, they'll diverge. Pick one (usually the TypeScript type) and have the other reference it. <!-- Strengthened: PR review, second-brain #191, 2026-02-20 -->
-- [ ] **Migration-gated defensive filtering.** When removing a value from a type union/CHECK constraint AND gating the DB cleanup on a manual migration, all queries that return rows of the affected type must defensively filter by supported types (`type IN ('A','B','C')` or `type <> 'REMOVED'`) until the migration is confirmed run. Without this guard, legacy rows surface at runtime and crash downstream code that no longer handles them. <!-- Source: post-mortem, second-brain #191, 2026-02-20 -->
-- [ ] **Trigger event scope.** For triggers that auto-manage derived timestamps (e.g., `completed_at`), verify they fire on `INSERT OR UPDATE`, not just `UPDATE`. UPDATE-only triggers silently skip direct INSERTs with terminal status (test data, manual migrations). Compare with sibling state-machine triggers in the same schema for consistency. **Inter-terminal transitions:** When adding a new terminal state, enumerate ALL transitions between terminal states (e.g., DONE<->WONT_FIX) and verify derived fields (snooze, timestamps) are handled on EACH path. Focus naturally falls on non-terminal->terminal transitions; terminal-to-terminal transitions are the blind spot. <!-- Source: PR review, second-brain #206, 2026-02-22; strengthened: post-mortem, second-brain #313, 2026-03-01 -->
-- [ ] **Partial unique index + ON CONFLICT compatibility.** When the schema uses a partial unique index (`CREATE UNIQUE INDEX ... WHERE condition`), verify that any client-side upsert's `onConflict` target can actually match it. PostgREST / Supabase `onConflict: 'col1,col2'` maps to `ON CONFLICT (col1, col2)` without a WHERE clause, which Postgres cannot resolve against a partial index. Fix: use a full (non-partial) unique index and include the discriminator column in `onConflict`. <!-- Source: PR review, folio #1, 2026-02-23 -->
-- [ ] **Realtime subscription coverage.** When tables are published to Supabase Realtime (`ALTER PUBLICATION ... ADD TABLE`), verify the client subscribes to ALL published tables. Derived tables recomputed via RPC are easy to miss. <!-- Source: PR review, folio #1, 2026-02-23 -->
+- [ ] **Type sync between SQL and TypeScript.** CHECK constraints and unions match. Single source of truth documented.
+- [ ] **Migration-gated defensive filtering.** Removed type values: all queries filter by supported types until migration confirmed.
+- [ ] **Trigger event scope.** Auto-managed timestamps fire on `INSERT OR UPDATE`, not just `UPDATE`. Inter-terminal transitions: enumerate ALL terminal-to-terminal paths.
+- [ ] **Partial unique index + ON CONFLICT compatibility.** `onConflict` without WHERE can't resolve partial indexes. Use full unique index.
+- [ ] **Realtime subscription coverage.** All tables in `ALTER PUBLICATION` have client subscriptions. Check derived tables via RPC.
 - [ ] **Index coverage for new queries.** New WHERE patterns covered by existing indexes.
-- [ ] **FTS coverage.** New searchable text columns in the GIN index.
-- [ ] **Pattern siblings.** Grep entire codebase for other instances of same pattern.
-- [ ] **Fallback path semantic parity.** When a new primary code path coexists with a legacy fallback (e.g., `if (newService) { ... } else { /* old path */ }`), verify the fallback matches the new path's semantics for every parameter -- especially `null` vs `undefined` vs empty-string distinctions. All 3 post-push findings on PR #197 were fallback divergence issues that the local review missed. <!-- Source: post-mortem, second-brain #197, 2026-02-20 -->
-- [ ] **Business logic in service, not routes.** Route does more than extract → call → return? Refactor.
+- [ ] **FTS coverage.** New searchable text columns in GIN index.
+- [ ] **Pattern siblings.** Grep entire codebase for same pattern. Same-file: fix now. Cross-module: file issue with `outside-diff` label.
+- [ ] **Fallback path semantic parity.** Legacy fallback matches new path's semantics for every parameter (null vs undefined vs empty-string).
+- [ ] **Business logic in service, not routes.** Route does more than extract -> call -> return? Refactor.
 - [ ] **At-most-once dedup markers BEFORE the action.**
-- [ ] **Async initialization ordering.** New services depend on others being ready? Await them.
-- [ ] **Timezone consistency: resolve once, pass through.** When a codepath needs both a timezone and a today-string, derive them from a SINGLE source. If `getLocalToday()` uses one default and `this.deps.userTimezone` uses another, they can silently diverge. Resolve timezone first, then derive the date from it.
-- [ ] **Reuse existing DB pools.** Don't create ad-hoc `pg.Pool` for a single query when a service already has a pool. Add the method to the service interface instead. Ad-hoc pools leak connections and bypass service abstractions.
-- [ ] **Transaction client affinity.** When a method acquires a `pool.connect()` client and runs `BEGIN` + `SELECT ... FOR UPDATE`, ALL subsequent queries on locked rows MUST use the same client — not `pool.query()`. `pool.query()` checks out a different connection, which blocks on the row lock held by the first connection, causing deadlock. Mechanical check: for each `pool.connect()` / `BEGIN` block, trace every `await` inside the transaction and verify none call `this.pool.query()` or any method that does. Accept methods that take a `txClient` parameter are safe; methods that use their own `this.pool` reference are not. <!-- Source: PR review, second-brain #250, 2026-02-25 -->
-- [ ] **In-memory state survives restarts?** If a scheduler or service uses in-memory state for dedup (e.g., `lastSentDate`), verify it handles server restarts. On deploy-on-push platforms, every deploy clears memory. Either persist to DB or initialize defensively (e.g., pre-set the marker if the scheduled time has passed).
-- [ ] **Documentation sync.** JSDoc matches code. Step counts updated. Module headers mention new capabilities. **On removal PRs:** grep docs for numeric counts and universal claims (e.g., "seven intents", "all entry types", "every channel") that reference the removed entity — these silently go stale. **On docs-only PRs with cross-references:** verify every section reference in the diff (e.g., "Section 3.3.1", "see Section 7") points to an existing section in the target document; verify removal annotations (strikethrough, UPDATE notes) are applied consistently to ALL instances of the removed entity across the spec, not just the first occurrence. <!-- Strengthened: post-mortem, second-brain #191, 2026-02-20; second-brain #232, 2026-02-25 -->
-- [ ] **Cross-channel output regression.** If changed code touches shared data consumed by multiple output channels (web, Telegram, email, API), verify all channels still render correctly. Same data, different display constraints (HTML vs 4096-char text vs JSON). <!-- Source: BUG-022, second-brain #101, 2026-02-15 -->
-- [ ] **Architecture self-review (100+ LOC or 3+ directories changed).**
-  1. **Right location?** Would a new contributor find each new file/function by grepping for the feature name?
-  2. **Right abstraction?** Would you still extract this helper if the feature were never extended?
-  3. **Right boundary?** Does any layer reach into non-adjacent layers? (UI→DB, service→Telegram format)
-  4. **Right scope?** Could this PR be split into independent concerns?
-  5. **Understand in 30 days?** Read the diff cold — is intent clear from code + comments?
+- [ ] **Async initialization ordering.** New services await dependencies before use.
+- [ ] **Timezone consistency.** Resolve timezone once, derive date from it. No dual-source divergence.
+- [ ] **Reuse existing DB pools.** No ad-hoc `pg.Pool` when service already has one.
+- [ ] **Transaction client affinity.** After `pool.connect()` + `BEGIN`, ALL queries use same client. `pool.query()` inside transaction = deadlock.
+- [ ] **In-memory state survives restarts?** Dedup state in memory lost on deploy. Persist to DB or initialize defensively.
+- [ ] **Documentation sync.** JSDoc matches code. On removal PRs: grep docs for numeric counts and universal claims referencing removed entity. On docs PRs: verify section cross-references exist.
+- [ ] **Cross-channel output regression.** Shared data consumed by multiple channels (web, Telegram, email, API) — all still render correctly.
+- [ ] **Architecture self-review (100+ LOC or 3+ directories).** Right location? Right abstraction? Right boundary? Right scope? Understandable in 30 days?
 
 ---
 
 ## Tier 5: Product Adversarial Review (Plans Only)
 
-Run this on every non-trivial feature plan before implementation. Code-level adversarial review catches bugs; product adversarial review catches wasted effort.
-
-- [ ] **Regex/pattern coverage.** List 10 realistic user phrasings. Do ALL match? List 5 non-promotion phrasings. Do NONE match? Flag false positives and false negatives.
-- [ ] **Content quality after the action.** What does the user see? Is the resulting content (TODO text, converted entry, promoted item) useful as-is, or does it need user editing? Would the user be confused by what was created?
-- [ ] **Missing entry points.** Does the feature work from ALL surfaces (Telegram, web dashboard, future channels)? If not, is the gap intentional and documented?
-- [ ] **Missing modifiers.** Can the user customize the action? (custom title, due date, tags) If not, will they expect to?
-- [ ] **Undo path.** Can the user reverse the action? If not, is the action low-risk enough that undo isn't needed?
-- [ ] **Edge case phrasings.** Test the exact failing phrase from the bug report against the detection logic. Then test 5 more realistic variations.
-- [ ] **Downstream effects.** After the action, do related features still work? (daily summary, search, /todos list, thread panel)
-
-<!-- Source: second-brain planning review, 2026-02-14 -->
+- [ ] **Regex/pattern coverage.** 10 realistic user phrasings all match. 5 non-target phrasings none match.
+- [ ] **Content quality after action.** Is resulting content useful as-is or needs editing?
+- [ ] **Missing entry points.** Works from ALL surfaces (Telegram, web, future channels)?
+- [ ] **Missing modifiers.** Can user customize (title, date, tags)? Will they expect to?
+- [ ] **Undo path.** Can user reverse? If not, is action low-risk enough?
+- [ ] **Edge case phrasings.** Exact failing phrase from bug report + 5 variations.
+- [ ] **Downstream effects.** Related features still work after action?
 
 ---
 
 ## Post-Review: Learning Capture Gate
 
-After the review passes, before writing the marker file:
+Before writing the marker file:
 
-1. **Were any bugs fixed in this PR?** If yes, update `docs/features/_cross-cutting/bugs.md` (or the relevant feature's `bugs.md`) AND the relevant `~/.claude/knowledge/*.md` topic file.
-2. **Were any architectural decisions made?** If yes, update `docs/features/_cross-cutting/decisions.md` (or the relevant feature's `decisions.md`) AND `~/.claude/knowledge/architecture-patterns.md` if the pattern is generalizable.
-3. **Were any new defensive patterns discovered?** If yes, update the relevant knowledge topic file.
-4. **Is there a pattern in this PR that would have prevented a bug in a sibling project?** If yes, capture it in the appropriate knowledge file.
+1. Bugs fixed? Update `docs/features/.../bugs.md` AND `~/.claude/knowledge/*.md`.
+2. Architectural decisions? Update `decisions.md` AND `architecture-patterns.md`.
+3. New defensive patterns? Update relevant knowledge topic file.
+4. Pattern applicable to sibling project? Capture in knowledge file.
 
-Only after confirming learning capture, write the marker **outside the repo** to avoid git tracking conflicts:
+Write marker:
 ```bash
 PROJECT_HASH=$(echo -n "$PWD" | md5 -q 2>/dev/null || echo -n "$PWD" | md5sum 2>/dev/null | cut -d' ' -f1)
 mkdir -p "$HOME/.claude/review-markers"
 git rev-parse HEAD > "$HOME/.claude/review-markers/$PROJECT_HASH"
 ```
-
----
-*Sources: second-brain (26 mechanical checks from PR #23-#59), lexica, command-center*
