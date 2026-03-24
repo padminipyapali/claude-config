@@ -75,3 +75,8 @@ Use consistent accent colors to identify domains:
 - Warm color palette (not cold/corporate blues)
 - Editorial feel — like a well-designed technical article
 - Restrained use of color — mostly white/cream with accent pops
+
+## UX Principles
+
+- **Empty states must be delightful and actionable.** Never leave a blank area or terse "No data" message. Include: (1) a clear message explaining what will appear, (2) a call-to-action guiding the next step (e.g., "Add your first vendor"), (3) optionally an illustration or icon to make it feel intentional. Empty states are the first thing new users see — they set the tone. <!-- Source: command-center dispatch dashboard, 2026-03 -->
+- **Truncated text must have full-text access.** Any text clipped with `truncate`, `text-ellipsis`, or `overflow-hidden` needs a `title` attribute (tooltip), expandable click, or other mechanism to view the full content. <!-- Source: remodel-app room sidebar, also in react-patterns.md -->
