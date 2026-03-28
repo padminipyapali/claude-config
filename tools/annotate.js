@@ -464,6 +464,8 @@
     <div class="ca-sep"></div>
     <button id="caListBtn" type="button">List</button>
     <button class="ca-send-btn" id="caSendBtn" type="button">Send to Claude</button>
+    <div class="ca-sep"></div>
+    <button id="caDismissBtn" type="button" title="Dismiss annotator">&times;</button>
   `;
   document.body.appendChild(toolbar);
 
@@ -488,6 +490,19 @@
   const panelBody = document.getElementById("caPanelBody");
   const panelSend = document.getElementById("caPanelSend");
   const generalNotes = document.getElementById("caGeneralNotes");
+
+  const dismissBtn = document.getElementById("caDismissBtn");
+
+  dismissBtn.addEventListener("click", () => {
+    clearAnnotations();
+    toolbar.remove();
+    panel.remove();
+    popover.remove();
+    highlight.remove();
+    toast.remove();
+    style.remove();
+    window.__claudeAnnotator = false;
+  });
 
   function updateBadge() {
     badge.textContent = state.annotations.length;

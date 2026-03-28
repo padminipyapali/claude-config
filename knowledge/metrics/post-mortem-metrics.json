@@ -9302,6 +9302,75 @@
       "prSize": 50,
       "stepCompliance": null,
       "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 492,
+      "title": "Add reminders UI: upcoming view, bell indicator, add-to-TODO",
+      "dateMerged": "2026-03-28T15:02:00Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 1,
+        "correctness": 2,
+        "architecture": 0,
+        "style": 3,
+        "performance": 1,
+        "testing": 2,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 4,
+        "coderabbitFixed": 3,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 3,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 6,
+          "4b": 3,
+          "4c": 2,
+          "4d": 2,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 1,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 2,
+          "dead-code": 1,
+          "test-quality": 2,
+          "documentation": 0,
+          "style": 3,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 19.1,
+      "planningQuality": "complete",
+      "prSize": 968,
+      "stepCompliance": {
+        "stepsRun": ["1", "2", "3", "4a", "4b", "4c", "4d", "5"],
+        "stepsSkipped": [],
+        "skipReasons": "none",
+        "complianceRate": 1.0,
+        "skipAssessment": null
+      },
+      "stepTiming": {
+        "planMinutes": 15,
+        "implementMinutes": 18,
+        "testMinutes": 2,
+        "reviewMinutes": 45,
+        "pushMinutes": 10,
+        "totalMinutes": 90,
+        "bottleneck": "review (CodeRabbit CLI slow)",
+        "notes": "4 review rounds: critic, simplify (3 parallel agents), CodeRabbit CLI, adversarial. 13 total issues caught pre-push."
+      }
     }
   ]
 }

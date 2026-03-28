@@ -1,0 +1,10 @@
+{
+  "projects": [
+    { "name": "sleep-tracker", "aliases": ["sleep", "mira", "sleep tracker"], "repo": "padminipyapali/sleep-tracker", "active": true },
+    { "name": "leaflet", "aliases": ["leaflet", "booklet"], "repo": "padminipyapali/leaflet", "active": true },
+    { "name": "second-brain", "aliases": ["sb", "inner shelf", "innershelf", "dashboard", "second brain"], "repo": "padminipyapali/second-brain", "active": true },
+    { "name": "command-center", "aliases": ["cc", "command center"], "repo": "padminipyapali/command-center", "active": true },
+    { "name": "baby-name-picker", "aliases": ["baby names", "names", "baby"], "repo": "padminipyapali/baby-name-picker", "active": true },
+    { "name": "remodel-hq", "aliases": ["remodel", "renovation", "remodel hq"], "repo": "padminipyapali/remodel-hq", "active": true }
+  ]
+}

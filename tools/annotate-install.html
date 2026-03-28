@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Claude Annotator — Install</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✏️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', system-ui, sans-serif; background: #f8f6f1; color: #1a1a1f; display: flex; justify-content: center; padding: 60px 24px; min-height: 100vh; margin: 0; }
+  .card { max-width: 520px; width: 100%; background: rgb(255 255 255 / 80%); backdrop-filter: blur(20px); border: 1px solid rgb(0 0 0 / 6%); border-radius: 14px; padding: 40px; box-shadow: 0 4px 16px rgb(0 0 0 / 6%); }
+  h1 { font-size: 22px; font-weight: 600; margin: 0 0 8px; }
+  p { color: #4a4a52; font-size: 14px; line-height: 1.6; margin: 0 0 24px; }
+  .bookmarklet-link { display: inline-block; padding: 12px 28px; background: #b35244; color: #fff; font-size: 15px; font-weight: 600; border-radius: 10px; text-decoration: none; box-shadow: 0 2px 8px rgb(179 82 68 / 25%); transition: transform 0.15s, box-shadow 0.15s; cursor: grab; }
+  .bookmarklet-link:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgb(179 82 68 / 30%); }
+  .note { margin-top: 16px; font-size: 13px; color: #707078; background: rgb(0 0 0 / 3%); padding: 10px 14px; border-radius: 8px; line-height: 1.5; }
+  .note code { background: rgb(0 0 0 / 6%); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  .instructions { margin-top: 32px; padding-top: 24px; border-top: 1px solid rgb(0 0 0 / 6%); }
+  .instructions h2 { font-size: 14px; font-weight: 600; margin: 0 0 12px; color: #4a4a52; }
+  .step { display: flex; gap: 12px; margin-bottom: 12px; }
+  .step-num { width: 24px; height: 24px; border-radius: 50%; background: rgb(0 0 0 / 5%); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #707078; flex-shrink: 0; }
+  .step-text { font-size: 13px; color: #4a4a52; line-height: 1.5; }
+  .step-text strong { color: #1a1a1f; }
+  .use-cases { margin-top: 24px; padding-top: 24px; border-top: 1px solid rgb(0 0 0 / 6%); }
+  .use-cases h2 { font-size: 14px; font-weight: 600; margin: 0 0 12px; color: #4a4a52; }
+  .use-case { font-size: 13px; color: #707078; padding: 6px 0; display: flex; gap: 8px; }
+  .use-case::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #b35244; flex-shrink: 0; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Claude Annotator</h1>
+  <p>Drag the button below to your bookmarks bar. Click it on any page to add annotations and send feedback to Claude.</p>
+  <a class="bookmarklet-link" href="javascript:void((function()%7Bif(window.__claudeAnnotator)return%3Bvar%20s%3Ddocument.createElement('script')%3Bs.src%3D'http%3A%2F%2Flocalhost%3A9876%2Fannotate.js'%3Bdocument.head.appendChild(s)%3B%7D)())">✏ Annotate</a>
+  <div class="note">Requires the annotation server running on <code>localhost:9876</code>. Claude starts this automatically when needed.</div>
+  <div class="instructions">
+    <h2>Setup</h2>
+    <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Drag</strong> the button above to your bookmarks bar</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Navigate to any page you want to annotate</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Click <strong>✏ Annotate</strong> in your bookmarks bar</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text">Click elements, add comments, then click <strong>Send to Claude</strong></div></div>
+  </div>
+  <div class="use-cases">
+    <h2>Works on</h2>
+    <div class="use-case">HTML mockups created by Claude</div>
+    <div class="use-case">Dev server pages (localhost)</div>
+    <div class="use-case">Live production pages</div>
+    <div class="use-case">Any web page you want to give feedback on</div>
+  </div>
+</div>
+</body>
+</html>

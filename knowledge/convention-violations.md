@@ -25,7 +25,6 @@ Tracks conventions that are violated across PRs. When a convention reaches 2+ vi
 
 | Convention | Violations | PRs | Last Violated | Enforcement Status |
 |---|---|---|---|---|
-| **button-has-type** — explicit `type` on every `<button>` | 2+ (pre-enforcement) | Identified across second-brain, nanny-app components | 2026-02-28 (enforcement PRs) | **ESLint rule** — `react/button-has-type` enabled via command-center #59, cultural-coordinator-curriculum #1 |
 | **module-doc-header** — module-level doc headers on all top-level files | 3+ | second-brain #142 (api.ts header), #273 (module header fix) | 2026-02-26 | **None** — checklist item only. Needs Tier 0 grep for files without leading `/** ... */` or `// ...` block |
 | **error-msg-specificity** — specific error messages, no generic fallthrough | 4+ | second-brain #205 (JWT logging), #209 (BadRequestError raw exposure), command-center #39 (non-JSON error responses, fire-and-forget without catch) | 2026-02-27 | **None** — adversarial review Tier 3 item exists but repeatedly missed. Needs mechanical grep |
 | **fire-and-forget-catch** — every fire-and-forget async operation must have `.catch()` or try/catch | 4+ | second-brain #273, #275 (fallback-value-as-noop), command-center #39 (refresh without catch), second-brain #288 (unmount guard) | 2026-02-28 | **None** — adversarial review Tier 1 item exists. Grep for unhandled promises in fire-and-forget paths needed |
@@ -39,15 +38,15 @@ Tracks conventions that are violated across PRs. When a convention reaches 2+ vi
 | **JSDoc-on-exports** — exported functions/components need JSDoc | 3+ | nanny-app #35 (4 of 7 post-push findings), second-brain #185 (JSDoc audit scope miss), #142 (api.ts) | 2026-02-20 | **None** — needs Tier 0 grep for exported functions without preceding JSDoc in changed `.tsx`/`.ts` files |
 | **LOC-threshold-miscounting** — agents estimate LOC instead of computing via `git diff --stat` | 3+ | second-brain #250 (81 LOC claimed "under 50"), #259 (217 LOC claimed "under 50 of logic"), command-center #41 (156 LOC claimed "sub-50") | 2026-02-27 | **None** — needs mechanical `git diff --stat` enforcement in the review-skip decision path |
 | **CSS-var-undefined** — `var(--name)` referencing undefined custom properties | 2 | second-brain #164 (var(--border), var(--surface-hover) undefined) | 2026-02-20 | **None** — needs Tier 0 grep cross-referencing `var(--` against `--` definitions |
-| **worktree-write-failure** — implementer writes to main repo instead of worktree | 1 | second-brain #324 (12 file edits to main, worktree auto-cleaned with zero changes, critic reviewed empty diff) | 2026-03-02 | **Orchestrator gate** — startup checklist + post-implementation diff verification added to orchestrator-protocol.md |
 
 ---
 
-## Enforcement Actions Taken
+## Graduated (Mechanically Enforced — No Longer Tracked)
 
-| Date | Convention | Action | PR |
-|---|---|---|---|
-| 2026-02-28 | button-has-type | ESLint rule `react/button-has-type` enabled | command-center #59, cultural-coordinator-curriculum #1 |
+| Convention | Enforcement | Date |
+|---|---|---|
+| **button-has-type** — explicit `type` on every `<button>` | ESLint rule `react/button-has-type` | 2026-02-28 |
+| **worktree-write-failure** — implementer writes to main repo instead of worktree | Orchestrator gate (startup checklist + post-impl diff check) | 2026-03-02 |
 
 ---
 

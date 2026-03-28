@@ -23,20 +23,17 @@ The orchestrator team pattern is mandatory for ALL dev flow work (features, fixe
 6. Critic runs review loop, fixes issues in implementer's worktree, reports findings.
 7. Step 5 (Push & PR) assigned back to implementer after critic completes.
 
-## Step Tracking (10 Tasks)
+## Step Tracking (7 Tasks)
 
 | Task | Step | Owner |
 |------|------|-------|
-| 1 | Step 1: Plan | orchestrator (pre-team) |
-| 2 | Step 2a: Implement (functional) | implementer |
-| 3 | Step 2b: Implement (hardening) | implementer |
-| 4 | Step 3: Test locally (incl. Playwright) | implementer |
-| 5 | Step 4a: Code simplification (`/simplify`) | critic |
-| 6 | Step 4b: Internal review | critic |
-| 7 | Step 4c: CodeRabbit review | critic |
-| 8 | Step 4d: Adversarial review | critic |
-| 9 | Step 4e: Fix verification | critic |
-| 10 | Step 5: Push & create PR | implementer (after PRE-PR GATE) |
+| 1 | Step 1: Plan (1a-1c) | orchestrator (pre-team) |
+| 2 | Step 2: Implement | implementer |
+| 3 | Step 3: Test locally (incl. Playwright) | implementer |
+| 4 | Step 4a: Code simplification (`/simplify`) | critic |
+| 5 | Step 4b: CodeRabbit CLI review | critic |
+| 6 | Step 4c: Adversarial review | critic |
+| 7 | Step 5: Push & create PR | implementer (after PRE-PR GATE) |
 
 Step 6 (Post-merge) runs after merge, outside team context.
 

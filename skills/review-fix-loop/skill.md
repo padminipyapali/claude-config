@@ -16,7 +16,7 @@ Parse `$ARGUMENTS` into `<pr-number>` and optional `[interval]`:
 1. The first token must be a number (the PR number). If missing, show usage: `/review-fix-loop <pr-number> [interval] [expire:<duration>]` and stop.
 2. The second token (if present) is the interval. Accept formats: `5m`, `10m`, `1h`, `5 mins`, `5 minutes`, `10 min`. Extract the numeric value and unit.
 3. If no interval is provided, default to `5m`.
-4. Look for an expiration duration anywhere in the arguments. Accept formats: `expire:1h`, `expire:30m`, `expire:2h`, or natural language like `expire in 1 hour`, `expire after 30m`, `expire this at 1 hour`. Extract the duration. If not provided, no expiration is scheduled (the job still auto-expires after 3 days per CronCreate default).
+4. Look for an expiration duration anywhere in the arguments. Accept formats: `expire:1h`, `expire:30m`, `expire:2h`, or natural language like `expire in 1 hour`, `expire after 30m`, `expire this at 1 hour`. Extract the duration. If not provided, **default to `expire:30m`** — review-fix loops rarely need to run longer than 30 minutes unattended.
 
 ## Interval to Cron
 
