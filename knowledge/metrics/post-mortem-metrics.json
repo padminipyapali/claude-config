@@ -9355,7 +9355,16 @@
       "planningQuality": "complete",
       "prSize": 968,
       "stepCompliance": {
-        "stepsRun": ["1", "2", "3", "4a", "4b", "4c", "4d", "5"],
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
         "stepsSkipped": [],
         "skipReasons": "none",
         "complianceRate": 1.0,
@@ -9370,6 +9379,84 @@
         "totalMinutes": 90,
         "bottleneck": "review (CodeRabbit CLI slow)",
         "notes": "4 review rounds: critic, simplify (3 parallel agents), CodeRabbit CLI, adversarial. 13 total issues caught pre-push."
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 499,
+      "title": "Add star buttons to search results and related entries",
+      "dateMerged": "2026-03-28T21:11:58Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 1,
+        "architecture": 0,
+        "style": 2,
+        "performance": 0,
+        "testing": 2,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 0,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 3,
+          "4b": 0,
+          "4c": 2,
+          "4d": 2,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 1,
+          "defensive-coding": 0,
+          "correctness": 1,
+          "dead-code": 1,
+          "test-quality": 2,
+          "documentation": 0,
+          "style": 2,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 5.75,
+      "planningQuality": "complete",
+      "prSize": 203,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "CodeRabbit CLI skipped for small PR",
+        "complianceRate": 0.75,
+        "skipAssessment": "acceptable for 190-line PR"
+      },
+      "stepTiming": {
+        "planMinutes": 10,
+        "implementMinutes": 15,
+        "testMinutes": 3,
+        "reviewMinutes": 20,
+        "pushMinutes": 5,
+        "totalMinutes": 53,
+        "bottleneck": "none (efficient cycle)",
+        "notes": "3 review rounds: critic, simplify, adversarial. 7 total issues caught pre-push. CodeRabbit skipped."
       }
     }
   ]
