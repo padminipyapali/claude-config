@@ -91,6 +91,14 @@ Do NOT provide: plan reasoning, implementation conversation, Step 3 test output,
 2. Run `git -C <worktree-path> rev-parse --show-toplevel` — confirm it returns the worktree path.
 3. If either check fails: **stop immediately**. Report to orchestrator via `SendMessage` with the actual paths. Do not proceed with file edits.
 
+### Implementer Pre-Completion Checklist (before reporting done)
+
+1. **DRY sweep.** For each new function, component, or constant: grep the codebase for similar implementations. If a near-duplicate exists, use it or extract a shared version. Common offenders: utility functions duplicated across components, inline SVG icons, CSS color values, SQL fragments.
+2. **Shared extraction.** If you created the same helper/component/constant in 2+ files, extract it to a shared location before finishing. Don't leave deduplication for the review step.
+3. **Convention scan.** Skim adjacent files for naming conventions, import patterns, and code organization. Match them — don't introduce a new pattern when the codebase already has one.
+
+<!-- Source: post-mortem, second-brain #492, 2026-03-28. Simplify step caught 3 duplication issues (formatReminderTime, BellIcon SVG, CSS color) that should have been avoided at implementation time. -->
+
 ### Orchestrator Post-Implementation Verification (before spawning critic)
 
 1. After implementer reports done, run `git -C <worktree-path> diff --stat` using the worktree path from the agent result.
