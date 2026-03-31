@@ -56,7 +56,7 @@ Forced questions require specific evidence or justified N/A with grep output.
 | **async-ts** | Tier 0: 0.21. Tier 1: all (1.1-1.3). Tier 3: null guards, error message specificity |
 | **routes-api** | Tier 2: all. Tier 4: business logic in service not routes |
 | **db-sql** | Tier 2: user scoping. Tier 4: type sync, index coverage, FTS, reuse DB pools, guard after create->reload, trigger event scope, transaction client affinity |
-| **ui-react** | Tier 0: 0.4, 0.4b, 0.5, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.22. Tier 1: 1.4, 1.5, 1.6, 1.7. Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure, render-phase setState, instance-unique IDs, React key uniqueness, click propagation, key-based state reset, isMountedRef strict-mode safety, CSS token consistency, CSS property interaction audit, HTML semantic element content model, error guard requires recovery path |
+| **ui-react** | Tier 0: 0.4, 0.4b, 0.5, 0.13, 0.14, 0.15, 0.16, 0.17, 0.18, 0.19, 0.20, 0.22, 0.24. Tier 1: 1.4, 1.5, 1.6, 1.7. Tier 3: SVG/a11y, button type audit, new union member completeness, conditional UI branch tests, hook error states, escape in edit-within-panel, stale closure, render-phase setState, instance-unique IDs, React key uniqueness, click propagation, key-based state reset, isMountedRef strict-mode safety, CSS token consistency, CSS property interaction audit, HTML semantic element content model, error guard requires recovery path |
 | **shell** | Tier 2: shell command validation |
 | **llm** | Tier 2: escape user content in AI prompts. Tier 3: LLM output parsing |
 | **config-env** | Tier 3: env var validation, JSON.parse on external config |
@@ -293,6 +293,14 @@ Fix: remove autoFocus, manage focus programmatically on user action.
 git diff main...HEAD -- '*.ts' '*.js' | grep -n 'express\.json()' | grep -v 'limit' || echo "PASS: all express.json() have limit"
 ```
 Fix: set `limit` to minimum needed (e.g., `'8kb'`).
+
+### 0.24 Nested interactive elements (a11y)
+```bash
+git diff main...HEAD --name-only -- '*.tsx' '*.jsx' | while read f; do
+  awk '/<button|role=.*"button"/{if(depth>0){print "NESTED INTERACTIVE: "FILENAME":"NR" — <button> inside interactive parent (line "parent_line")"; found=1} depth++; parent_line=NR} /<\/button>|<\/div>/{if(depth>0) depth--} END{if(!found) exit 1}' "$f" 2>/dev/null
+done
+```
+Browsers silently strip nested `<button>` elements — the inner button won't render or be clickable. Fix: change the outer element to `<div role="button" tabIndex={0}>` with `onKeyDown` for Enter/Space. <!-- Source: post-mortem, second-brain #499, 2026-03-28 -->
 
 ### Adding new patterns
 Add when a bug class is caught 2+ times. Requirements: regex on changed lines, <20% false-positive rate.

@@ -631,6 +631,53 @@ else
 fi
 
 # ============================================================
+# 0.24 — Nested interactive elements (a11y)
+# ============================================================
+check_start "0.24" "nested interactive elements"
+if [[ -z "$CHANGED_TSX" ]]; then
+  check_skip "no TSX/JSX files changed"
+else
+  result=""
+  while IFS= read -r f; do
+    [[ -z "$f" ]] && continue
+    # Find files with role="button" that also contain <button — potential nesting
+    if grep -qE 'role=.*"button"' "$f" 2>/dev/null && grep -q '<button' "$f" 2>/dev/null; then
+      # Use awk to detect <button inside role="button" containers (within 30-line window)
+      matches=$(awk '
+        /role=.*"button"/ { container_start=NR; container_line=NR }
+        /<button/ && container_start > 0 && NR > container_start && NR <= container_start+30 {
+          print FILENAME ":" NR ": <button> nested inside role=\"button\" parent (line " container_line ")"
+        }
+        # Also detect <button inside <button
+        /<button/ { if (btn_depth > 0) print FILENAME ":" NR ": <button> nested inside <button> (line " btn_start ")"; btn_depth++; btn_start=NR }
+        /<\/button>/ { if (btn_depth > 0) btn_depth-- }
+      ' "$f" 2>/dev/null || true)
+      if [[ -n "$matches" ]]; then
+        result="${result}${matches}"$'\n'
+      fi
+    fi
+    # Also check for nested <button> elements (without role="button")
+    btn_count=$(grep -c '<button' "$f" 2>/dev/null || true)
+    if [[ "$btn_count" -gt 1 ]]; then
+      nested=$(awk '
+        /<button/ { if (depth > 0) print FILENAME ":" NR ": <button> nested inside <button> (line " start ")"; depth++; start=NR }
+        /<\/button>/ { if (depth > 0) depth-- }
+      ' "$f" 2>/dev/null || true)
+      if [[ -n "$nested" ]]; then
+        result="${result}${nested}"$'\n'
+      fi
+    fi
+  done <<< "$CHANGED_TSX"
+  result=$(echo "$result" | sed '/^$/d' | sort -u)
+  if [[ -z "$result" ]]; then
+    check_pass
+  else
+    check_fail "nested <button> or <button> inside role=\"button\" — browsers strip inner button silently"
+    print_output "$result"
+  fi
+fi
+
+# ============================================================
 # BONUS: Button type audit (from Tier 3, but grepable)
 # ============================================================
 check_start "B.1" "Buttons without explicit type attribute"
