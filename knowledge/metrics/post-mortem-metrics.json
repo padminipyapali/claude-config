@@ -9536,6 +9536,54 @@
         "bottleneck": "none (efficient cycle)",
         "notes": "1 review round: critic caught 3 issues (test mock, a11y, dead CSS). All fixed before push."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 523,
+      "title": "Allow setting initial status when creating a TODO",
+      "dateMerged": "2026-04-13T21:30:32Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": null,
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 2,
+          "4b": 0,
+          "4c": 0,
+          "4d": 1,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 1,
+          "defensive-coding": 1,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 1,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 6.5,
+      "planningQuality": "complete",
+      "prSize": 75,
+      "stepCompliance": null,
+      "stepTiming": null
     }
   ]
 }
