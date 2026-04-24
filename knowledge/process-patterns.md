@@ -110,9 +110,17 @@ Distilled rules from post-mortem analysis. For full incident history and evidenc
 - For PRs >= 50 LOC, the review loop must auto-run without asking; agents must not silently skip it.
 - "LOC of logic" vs. total LOC is a subjective loophole; always measure total diff size.
 - "Stacked PR" is not a valid reason to skip the review loop; each PR in a stack must be independently reviewable.
+- **Scaffolding PRs that exceed 600 LOC must declare the exception in the PR body** (e.g. "scaffolding exception — 5 tightly-coupled modules + fixtures land together because tests require full surface"). Silent exceptions erode the size cap. <!-- Source: post-mortem, family-digest #1, 2026-04-24 -->
+- **Solo-developer self-merge must still run CodeRabbit CLI locally before push.** Zero-peer-review + zero-CodeRabbit on a 5.4k-LOC PR leaves no independent second opinion even when adversarial review shift-left is 100%. <!-- Source: post-mortem, family-digest #1, 2026-04-24 -->
+- **Squash adversarial fix commits into the commits they amend (or prefix with `review-fix:`).** Landing each adversarial-cycle fix as its own commit inflates the legacy fix-up ratio (41.7% with a healthy 1-iteration cycle) and breaks heuristic classifiers. <!-- Source: post-mortem, family-digest #1, 2026-04-24 -->
+- **Configure CI before the first implementation PR.** A project with `statusCheckRollup: []` has no merge gate beyond the author's local machine. <!-- Source: post-mortem, family-digest #1, 2026-04-24 -->
+- **PR body templates should include `## Local Review` and `## Step Timing` sections from PR #1.** Adding them later leaves early PRs with null compliance/timing data and no baseline for trend analysis. <!-- Source: post-mortem, family-digest #1, 2026-04-24 -->
+
 
 ## Automation Opportunities
 
+- **Guard fetch(variable) in server routes.** When server-side code fetches a DB- or user-provided path, the value may be relative (e.g. seeded /inspo/foo.png) and fetch() has no base URL — all requests silently 404. Either resolve against request.nextUrl.origin for public/ assets, or validate the path is absolute before fetch. Add a review/lint check that flags bare fetch(<variable>) in server routes. <!-- Source: post-mortem, remodel-hq #19, 2026-04-21 -->
+- **Integration test with seeded data shape, not just uploaded data shape.** PR #18 shipped a zip-download feature that worked for absolute Supabase URLs (uploaded photos) but broke for 354 seeded photos with relative paths. The data shape that dominates the table was never tested. Gate: any feature reading from a table with both seeded and user-created rows must be tested against at least one of each. <!-- Source: post-mortem, remodel-hq #19, 2026-04-21 -->
 - UTC suffix enforcement: use Tier 0 grep checks in the adversarial review (deferred CI-level lint).
 - Run Biome lint before push to catch a11y issues like `noStaticElementInteractions`.
 - Add Stylelint to local pre-PR checks for web projects; compose into the main `npm run lint` script.
