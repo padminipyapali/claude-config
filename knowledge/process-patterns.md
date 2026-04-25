@@ -28,6 +28,8 @@ Distilled rules from post-mortem analysis. For full incident history and evidenc
 - Post-push findings should become their own focused follow-up PR rather than being deferred to a tracker or bundled into the next feature.
 - Multi-finding follow-up PRs work just as well as single-finding ones; fix all post-mortem findings atomically.
 - Infrastructure gaps identified in post-mortems should be addressed in dedicated, same-day tooling PRs.
+- **Recommendation drift across consecutive PRs is the dominant post-mortem failure mode.** When a post-mortem recommendation does not land before the next PR ships in the same project, escalate it from prose recommendation to a project artifact (PR template file at `.github/PULL_REQUEST_TEMPLATE.md`, CI workflow file, lint rule, hook). Two consecutive PRs that ignore the same recommendation indicate the recommendation lives in the wrong place — move it from a markdown file to a file the toolchain enforces. <!-- Source: post-mortem, family-digest #3, 2026-04-22 -->
+- **PRs that introduce or modify paid external API calls require a "Performance & Cost Impact" section** in the PR body, even when planning quality is otherwise complete. Cover: $/invocation, expected invocations per period, rate-limit posture, and failure mode (throw vs partial content vs cached fallback). The first PR adding a paid API is the one most likely to skip this, because the cost envelope feels small at single-user scale — capture it anyway as the baseline for future cost-regression detection. <!-- Source: post-mortem, family-digest #3, 2026-04-22 -->
 
 ## Scope Decisions
 
