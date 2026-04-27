@@ -64,6 +64,13 @@ Provide the critic ONLY:
 
 Do NOT provide: plan reasoning, implementation conversation, Step 3 test output, or implementer chat context. Fresh context executes checklists more thoroughly. The knowledge files are reference material (patterns + mechanical checks), not implementation context — they don't compromise the critic's independence.
 
+**Test-discovery requirement (mandatory before claiming any test gap).** Before reporting "no tests exist," "tests are missing," or "test coverage is absent," the critic MUST:
+1. Read the project's test runner config — `vitest.config.*`, `jest.config.*`, `pyproject.toml [tool.pytest]`, `cargo.toml`, `go test` conventions, etc. — for `testMatch` / `include` / `testPathPatterns`.
+2. Run `find . -type d \( -name __tests__ -o -name tests -o -name test -o -name spec \) -not -path '*/node_modules/*' -not -path '*/.git/*'`.
+3. Report the discovered test layout in the findings (e.g. "tests live in `src/__tests__/<area>/*.test.ts` mirror tree, 11 files found"), even if "found and adequate."
+
+Source: post-mortem, family-digest #4, 2026-04-22 — v2 critic claimed "no test files exist" when 11 test files lived in `src/__tests__/`; the orchestrator overruled, but the gate relied on orchestrator ground-truth knowledge of the project layout.
+
 ## Communication Flow
 
 1. Implementer finishes Steps 2a-2b/3 -> `SendMessage` to orchestrator with summary (include hardening checklist artifact).
