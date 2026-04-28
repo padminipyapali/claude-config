@@ -17,6 +17,7 @@ Cross-project learnings for Telegram bots (grammY, Bot API).
 - **Webhook latency: decouple processing from response.** Respond 200 to the webhook immediately, then process the message asynchronously. Long processing blocks subsequent updates.
 - **Keepalive self-ping prevents cold starts.** On PaaS platforms, periodic self-pings keep the service warm.
 - **`bot.start()` is fire-and-forget — add `.catch()`.** grammY's `bot.start()` returns a Promise but is typically called without `await` (polling runs indefinitely). While polling loop errors route to `bot.catch()`, an immediate rejection from `bot.start()` itself (e.g., network failure before polling begins) would be unhandled. Always append `.catch()`. <!-- Source: PR review, command-center #40, 2026-02-27 -->
+- **Single-consumer constraint on `getUpdates`: only one process per bot token can poll.** When two services (e.g., a "second-brain" bot and a separate notification sender) need to use the same Telegram bot, only one may call `getUpdates` — the other must be send-only (`sendMessage` / `editMessageText` only). Document the ownership boundary explicitly in the send-only service ("Path A — send-only via shared bot token; second-brain owns getUpdates"). Otherwise updates are silently distributed across both pollers and message handlers see only ~half their traffic. Generalizable to any bot ecosystem with single-consumer update streams. <!-- Source: post-mortem, family-digest #12, 2026-04-22 -->
 
 ## HTML-Mode Safety
 

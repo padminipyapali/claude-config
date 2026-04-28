@@ -9944,7 +9944,61 @@
       "prSize": 316,
       "stepCompliance": null,
       "stepTiming": null
+    },
+    {
+      "project": "family-digest",
+      "prNumber": 12,
+      "title": "PR 2c: Telegram draft + CLI approve/edit/cancel",
+      "dateMerged": "2026-04-28T21:00:15Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.2222222222222222,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 2,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 2,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.3,
+      "planningQuality": "complete",
+      "prSize": 2748,
+      "stepCompliance": null,
+      "stepTiming": null
     }
   ],
-  "generated": "2026-04-22T00:00:00Z"
+  "generated": "2026-04-28T21:03:27.642448Z"
 }
