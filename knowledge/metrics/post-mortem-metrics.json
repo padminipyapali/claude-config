@@ -9890,6 +9890,60 @@
       "prSize": 1891,
       "stepCompliance": null,
       "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 544,
+      "title": "Restructure TodayCard into 3-row layout",
+      "dateMerged": "2026-04-28T20:32:28Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 3,
+          "4b": 0,
+          "4c": 1,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 3,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.45,
+      "planningQuality": "complete",
+      "prSize": 316,
+      "stepCompliance": null,
+      "stepTiming": null
     }
   ],
   "generated": "2026-04-22T00:00:00Z"
