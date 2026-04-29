@@ -50,7 +50,7 @@
     {
       "project": "second-brain",
       "prNumber": 3,
-      "title": "Phase 1: Core pipeline \u2014 classify, embed, store, respond",
+      "title": "Phase 1: Core pipeline — classify, embed, store, respond",
       "dateMerged": "2026-02-08T06:36:18Z",
       "reviewRounds": 2,
       "totalComments": 0,
@@ -3089,7 +3089,7 @@
           "4c",
           "4d"
         ],
-        "skipReasons": "minimal change \u2014 all quality gates skipped",
+        "skipReasons": "minimal change — all quality gates skipped",
         "complianceRate": 0.25,
         "skipAssessment": "neutral"
       }
@@ -4006,7 +4006,7 @@
     {
       "project": "second-brain",
       "prNumber": 191,
-      "title": "Deprecate ACTION intent \u2014 full removal (#168)",
+      "title": "Deprecate ACTION intent — full removal (#168)",
       "dateMerged": "2026-02-20T20:03:12Z",
       "reviewRounds": 2,
       "totalComments": 9,
@@ -4717,7 +4717,7 @@
           "4d",
           "4e"
         ],
-        "skipReasons": "4a-4e (code review loop) \u2014 skipped per user request",
+        "skipReasons": "4a-4e (code review loop) — skipped per user request",
         "complianceRate": 0.5,
         "skipAssessment": "bad"
       },
@@ -5604,7 +5604,7 @@
           "4c",
           "4d"
         ],
-        "skipReasons": "3: backend-only (valid); 4a-4e: claimed under 50 LOC logic threshold (invalid \u2014 217 LOC total diff exceeds 50 LOC mandatory threshold)",
+        "skipReasons": "3: backend-only (valid); 4a-4e: claimed under 50 LOC logic threshold (invalid — 217 LOC total diff exceeds 50 LOC mandatory threshold)",
         "complianceRate": 0.375,
         "skipAssessment": "bad"
       }
@@ -5659,7 +5659,7 @@
     {
       "project": "second-brain",
       "prNumber": 260,
-      "title": "feat: weekly review core \u2014 data queries, AI analysis, and email template",
+      "title": "feat: weekly review core — data queries, AI analysis, and email template",
       "dateMerged": "2026-02-26T05:54:15Z",
       "reviewRounds": 1,
       "totalComments": 6,
@@ -5698,7 +5698,7 @@
           "4c",
           "4d"
         ],
-        "skipReasons": "1: stacked PR, 3-Playwright: backend-only, 4a-4e: stacked PR (will review on final PR) \u2014 but PR was merged independently",
+        "skipReasons": "1: stacked PR, 3-Playwright: backend-only, 4a-4e: stacked PR (will review on final PR) — but PR was merged independently",
         "complianceRate": 0.25,
         "skipAssessment": "bad"
       }
@@ -6278,7 +6278,7 @@
     {
       "project": "second-brain",
       "prNumber": 280,
-      "title": "Fix chat idea capture 404 \u2014 align route path with frontend",
+      "title": "Fix chat idea capture 404 — align route path with frontend",
       "dateMerged": "2026-02-27T23:47:10Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -7736,7 +7736,7 @@
           "2b",
           "3"
         ],
-        "skipReasons": "2b (hardening) \u2014 config-only, no business logic. 3 (Playwright) \u2014 CSS change is dev menu only, visually verified via lint.",
+        "skipReasons": "2b (hardening) — config-only, no business logic. 3 (Playwright) — CSS change is dev menu only, visually verified via lint.",
         "complianceRate": 0.78,
         "skipAssessment": "good"
       },
@@ -7807,7 +7807,7 @@
         "stepsSkipped": [
           "4c"
         ],
-        "skipReasons": "4c (CodeRabbit) \u2014 CLI unavailable in environment",
+        "skipReasons": "4c (CodeRabbit) — CLI unavailable in environment",
         "complianceRate": 0.889,
         "skipAssessment": "bad"
       },
@@ -7888,7 +7888,7 @@
         "stepsSkipped": [
           "2b"
         ],
-        "skipReasons": "2b folded into 2a \u2014 single pass for CSS-heavy change",
+        "skipReasons": "2b folded into 2a — single pass for CSS-heavy change",
         "complianceRate": 0.89,
         "skipAssessment": "neutral"
       },
@@ -7900,7 +7900,7 @@
         "pushMinutes": 2,
         "totalMinutes": 43,
         "bottleneck": "implementation (worktree bug)",
-        "notes": "~10 min lost to worktree isolation bug \u2014 fixed in orchestrator protocol"
+        "notes": "~10 min lost to worktree isolation bug — fixed in orchestrator protocol"
       }
     },
     {
@@ -7986,7 +7986,7 @@
     {
       "project": "sleep-tracker",
       "prNumber": 15,
-      "title": "feat: V3 visual polish \u2014 unified design tokens and mockup alignment",
+      "title": "feat: V3 visual polish — unified design tokens and mockup alignment",
       "dateMerged": "2026-03-03T20:52:44Z",
       "reviewRounds": 2,
       "totalComments": 3,
@@ -8817,7 +8817,7 @@
         ],
         "skipReasons": "3-Playwright: backend-only (search.ts, search.test.ts). 4c-CodeRabbit: skipped (sub-100 LOC logic change).",
         "complianceRate": 0.8,
-        "skipAssessment": "Playwright skip justified (backend-only). CodeRabbit skip debatable \u2014 100 LOC is borderline and CodeRabbit post-push found 2 issues."
+        "skipAssessment": "Playwright skip justified (backend-only). CodeRabbit skip debatable — 100 LOC is borderline and CodeRabbit post-push found 2 issues."
       },
       "stepTiming": null
     },
@@ -9030,7 +9030,7 @@
           "4c",
           "4d"
         ],
-        "skipReasons": "3-Playwright (N/A \u2014 no visual changes), 4a-4e (< 50 LOC, critic review done inline)",
+        "skipReasons": "3-Playwright (N/A — no visual changes), 4a-4e (< 50 LOC, critic review done inline)",
         "complianceRate": 0.44,
         "skipAssessment": "bad"
       },
@@ -9039,7 +9039,7 @@
     {
       "project": "leaflet",
       "prNumber": 8,
-      "title": "feat: end-to-end vertical slice \u2014 topic input, Claude generation, booklet display",
+      "title": "feat: end-to-end vertical slice — topic input, Claude generation, booklet display",
       "dateMerged": "2026-03-09T17:28:31Z",
       "reviewRounds": 5,
       "totalComments": 19,
@@ -9110,7 +9110,7 @@
     {
       "project": "second-brain",
       "prNumber": 425,
-      "title": "Skip AI response for /todo command \u2014 return static confirmation",
+      "title": "Skip AI response for /todo command — return static confirmation",
       "dateMerged": "2026-03-15T03:11:27Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -9998,7 +9998,61 @@
       "prSize": 2748,
       "stepCompliance": null,
       "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 546,
+      "title": "Drop Starred Highlight from morning brief; switch to 2-col layout",
+      "dateMerged": "2026-04-28T21:27:19Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 1,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 2,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 1,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.16,
+      "planningQuality": "complete",
+      "prSize": 278,
+      "stepCompliance": null,
+      "stepTiming": null
     }
   ],
-  "generated": "2026-04-28T21:03:27.642448Z"
+  "generated": "2026-04-28T21:27:19Z"
 }
