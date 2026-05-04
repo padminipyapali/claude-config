@@ -10262,7 +10262,256 @@
       "prSize": 512,
       "stepCompliance": null,
       "stepTiming": null
+    },
+    {
+      "project": "remodel-hq",
+      "prNumber": 23,
+      "title": "Fix migration 018 collision (vote/favorite unique constraint)",
+      "dateMerged": "2026-05-04T19:15:37Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 1.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.009,
+      "planningQuality": "complete",
+      "prSize": 215,
+      "stepCompliance": null,
+      "stepTiming": null
+    },
+    {
+      "project": "remodel-hq",
+      "prNumber": 24,
+      "title": "Fix Activity Log drawer layering and right-edge clipping",
+      "dateMerged": "2026-05-04T19:54:52Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": 0.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.2,
+      "planningQuality": "complete",
+      "prSize": 49,
+      "stepCompliance": null,
+      "stepTiming": null
+    },
+    {
+      "project": "remodel-hq",
+      "prNumber": 26,
+      "title": "Editorial share page; remove mutual-zip; comment delete always visible",
+      "dateMerged": "2026-05-04T20:42:10Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": null,
+      "fixupCommitRatio": 0,
+      "fixupMetrics": null,
+      "timeToMergeHours": 0.006,
+      "planningQuality": "complete",
+      "prSize": 1246,
+      "stepCompliance": null,
+      "stepTiming": null
+    },
+    {
+      "project": "remodel-hq",
+      "prNumber": 27,
+      "title": "Add delete button to inline card-view comments",
+      "dateMerged": "2026-05-04T20:46:47Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.0053,
+      "planningQuality": "complete",
+      "prSize": 10,
+      "stepCompliance": null,
+      "stepTiming": null
+    },
+    {
+      "project": "remodel-hq",
+      "prNumber": 28,
+      "title": "Fluid grid + image lightbox with download",
+      "dateMerged": "2026-05-04T21:13:23Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.151,
+      "planningQuality": "complete",
+      "prSize": 1120,
+      "stepCompliance": null,
+      "stepTiming": null
     }
   ],
-  "generated": "2026-05-04T18:39:35.758650Z"
+  "generated": "2026-05-04T19:30:00Z"
 }
