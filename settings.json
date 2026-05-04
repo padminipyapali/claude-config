@@ -103,5 +103,7 @@
     "feature-dev@claude-plugins-official": true,
     "coderabbit@claude-plugins-official": true
   },
-  "effortLevel": "medium"
+  "effortLevel": "medium",
+  "theme": "light",
+  "remoteControlAtStartup": false
 }
