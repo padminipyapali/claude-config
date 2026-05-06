@@ -162,6 +162,14 @@ Distilled rules from post-mortem analysis. For full incident history and evidenc
 
 - Run markdownlint locally before push to eliminate mechanical findings.
 
+## Process Rule Enforcement
+
+- **Promote prose recommendations to enforceable artifacts after 3 consecutive violations.** When the same prose process rule is violated in 3+ PRs in a row (e.g., missing Local Review / Steps skipped / Perf & Cost annotations across #603, #606, #609), escalate from prose to artifact (PR template, lint rule, hook). Prose alone is insufficient at violation rate >2/window. <!-- Source: post-mortem, second-brain #614, 2026-05-06 -->
+
+## Stale-Base Detection
+
+- **Detect stale base before push, not at critic-time.** When `main` advances during the implementation window, the resulting spurious diff is currently caught only by the critic agent's review pass. Two occurrences in one session (#614 and prior) indicate the manual catch path is leaky. Add a Tier 0 pre-push check: `git fetch && [ "$(git merge-base HEAD origin/main)" = "$(git rev-parse origin/main)" ]`. <!-- Source: post-mortem, second-brain #614, 2026-05-06 -->
+
 ## Review Discipline
 
 - Never merge immediately after CHANGES_REQUESTED; acknowledge findings before merging.
