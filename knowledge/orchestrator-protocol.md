@@ -112,6 +112,15 @@ Source: post-mortem, family-digest #4, 2026-04-22 — v2 critic claimed "no test
 2. If zero diff: **do not spawn critic**. Flag the failure to the user immediately — "Implementer reported complete but worktree has zero changes."
 3. This is a hard gate — no diff means no review means no PR.
 
+### Orchestrator Stale-Base Check (before push, after critic PASS)
+
+1. `git -C <worktree-path> fetch origin main --quiet`
+2. `git -C <worktree-path> rev-list --count HEAD..origin/main` — if non-zero, `origin/main` advanced during work.
+3. Rebase: `git -C <worktree-path> rebase origin/main`. Re-verify diff with `git -C <worktree-path> diff origin/main..HEAD --stat` — files outside the implementer's scope mean the branch was stale and the rebase fixed phantom-deletion noise.
+4. If conflicts surface during rebase, stop and surface to the user — your branch genuinely conflicts with newly-merged work.
+
+<!-- Source: post-mortem, second-brain #602 and #614, 2026-05-06. Both critics flagged spurious diffs (App.css line-height removal, EntryFeed.test.tsx deletion) caused by branches that fell behind `origin/main` while the implementer worked. Rebasing before push prevents the noise from reaching PR review. -->
+
 ### Path Resolution Guidance
 
 - Plans should use **relative paths** (`packages/server/src/...`), not absolute paths.

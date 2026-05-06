@@ -150,6 +150,27 @@ Fix all issues found, then proceed to 4c.
 
 After the loop completes, report summary and proceed to Step 5. Step 4d writes the review marker to `~/.claude/review-markers/` — the pre-push hook checks this automatically.
 
+## Step 5: Push & Open PR
+
+Before `git push`, run:
+
+```
+git -C <worktree> fetch origin main --quiet
+git -C <worktree> rev-list --count HEAD..origin/main
+```
+
+If the count is non-zero, `origin/main` advanced while you were working — **rebase before pushing**:
+
+```
+git -C <worktree> rebase origin/main
+```
+
+**Why this matters.** When the branch's base falls behind, `git diff origin/main..HEAD` reports phantom deletions for files modified in PRs that merged during your work, even though your branch never touched them. The PR diff on GitHub shows the same phantom changes, and the critic will flag them as scope creep. Real-world signal from second-brain (2026-05-06): two of three PRs in a single session — #602 (#603 had merged during work, removing `.brand { line-height: 1 }` from the diff) and #614 (#610 had merged during work, removing `EntryFeed.test.tsx` from the diff) — required rebase-after-the-fact when the critic caught the spurious diff. Catch it before push instead.
+
+If rebase produces conflicts that aren't trivial (one-line whitespace, import ordering), stop and review — your branch may genuinely conflict with newly-merged work.
+
+After rebase, push with `-u` and open the PR. The body must use the project's `PULL_REQUEST_TEMPLATE.md` if present, including the `Steps skipped:` line and `## Performance & Cost Impact` section.
+
 ## PR Body Templates
 
 ### Local Review Section
