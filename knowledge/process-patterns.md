@@ -38,6 +38,7 @@ Distilled rules from post-mortem analysis. For full incident history and evidenc
 - Never bundle tooling setup (lint configs, auto-fixes) with feature PRs; create a separate tooling PR.
 - When identical logic exists in 2+ files and is under ~30 lines, extract to a shared utility instead of adding "keep-in-sync" comments.
 - When a tangential automation idea surfaces during a focused PR, defer it to a separate PR.
+- **Annotate `Steps skipped:` even on trivial fixes.** Single-line CSS or copy fixes (<=3 LOC, 1 file) often skip Local Review and adversarial review legitimately. Without an explicit `Steps skipped: <list> -- reason: <rationale>` line in the PR body, post-mortems can't distinguish intentional skips from process drift. Always include the line, even if the reason is 'trivial CSS leading fix, no logic paths.' <!-- Source: post-mortem, second-brain #603, 2026-05-06 -->
 
 ## Adversarial Review Gaps
 

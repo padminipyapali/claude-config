@@ -97,6 +97,8 @@ Distilled rules from code reviews and post-mortems. For full incident history an
 - `placeholder` is not an accessible label -- add `aria-label` or `<label htmlFor>`; `aria-controls` must accompany `aria-expanded`.
 - Infinite CSS animations need `@media (prefers-reduced-motion: reduce) { animation: none !important }`.
 - Plan notification/indicator dismissal paths upfront -- define how every new indicator gets cleared.
+- **All-caps text in flex rows needs `line-height: 1`.** When a flex container uses `align-items: center` to align an all-caps label next to a small indicator (status dot, badge), the inherited line-height (~1.5) leaves half-leading above the caps. The flex centers by line-box, so the indicator visually drifts above the caps' optical center. Set `line-height: 1` on the caps element to collapse leading and align optically. <!-- Source: post-mortem, second-brain #603, 2026-05-06 -->
+- **Don't stack child horizontal padding on top of a layout-padding wrapper.** When a section sits inside a layout container that already provides horizontal gutter (e.g., `.app { padding: 0 40px }`), adding `padding: 0 16px` on the section itself stacks - the section's content edge ends up 56px from the viewport while sibling sections stay at 40px, producing a subtle horizontal misalignment. Audit every direct child of a gutter wrapper: the child should either inherit the wrapper's gutter (no horizontal padding) or push internal padding to a deeper element (e.g., a scroll-container) where it doesn't compete with the layout gutter. Consider tokenizing the wrapper gutter (`--app-gutter`) so the convention is enforceable by grep. <!-- Source: post-mortem, second-brain #608, 2026-05-06 -->
 
 ## General Web UI
 
