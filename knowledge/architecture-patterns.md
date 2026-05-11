@@ -108,5 +108,10 @@ Cross-project learnings for service design, error handling, and system architect
 
 - **For race conditions: list observable states.** Write out the state tuple at each step and check which intermediate states trigger effects.
 
+## Deployment & Vendor Config
+
+- **Prefer committed dispatchers over vendor dashboard `startCommand` overrides.** When multiple services share a Docker image and run different entry points (e.g., a long-running webhook vs. a cron-fired send job), put role selection in a committed wrapper script that reads an env var, not in a per-service dashboard textbox. Dashboard overrides can silently drop on redeploy and the failure mode is invisible until the cron fires and runs the wrong program. The committed wrapper is diff-reviewable and version-controlled. <!-- Source: post-mortem, family-digest #33, 2026-05-11 -->
+- **One-way cron failures need an external success monitor.** A cron that quietly runs the wrong binary (or hits a recoverable error and exits clean) won't alert anyone. For weekly/non-critical crons, add a separate "did the expected log line appear / email arrive" check on a different schedule. Otherwise outages can run for multiple cycles before anyone notices. <!-- Source: post-mortem, family-digest #33, 2026-05-11 -->
+
 ---
-*Sources: second-brain, lexica, command-center*
+*Sources: second-brain, lexica, command-center, family-digest*
