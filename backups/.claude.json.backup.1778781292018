@@ -6,7 +6,7 @@
   "hasSeenTasksHint": true,
   "tipsHistory": {
     "new-user-warmup": 9,
-    "plan-mode-for-complex-tasks": 426,
+    "plan-mode-for-complex-tasks": 431,
     "memory-command": 426,
     "theme-command": 422,
     "colorterm-truecolor": 1,
@@ -49,7 +49,7 @@
     "subagent-fanout-nudge": 414,
     "console-api-key": 427
   },
-  "promptQueueUseCount": 276941,
+  "promptQueueUseCount": 276946,
   "btwUseCount": 2,
   "cachedGrowthBookFeatures": {
     "tengu_slim_subagent_claudemd": true,
@@ -631,9 +631,9 @@
       },
       "hasCompletedProjectOnboarding": true,
       "lastGracefulShutdown": false,
-      "lastHintSessionId": "d93be2b8-e55c-450e-9365-baf11feb8c82",
-      "lastSessionFirstPrompt": "[Image #1] second brain. this dot that shows the pr statuses of second brain seems misaligned, no?",
-      "lastSessionModified": 1778047463050,
+      "lastHintSessionId": "40cc8e53-bc35-4f51-94b8-be8595409f96",
+      "lastSessionFirstPrompt": "alright going to fire off some suggestions for second brain. Please file them and fix them in parallel. 1. daily brief. We have today's events, but it'd be helpful for it to also post locations of the",
+      "lastSessionModified": 1778779682486,
       "lastVersionBase": "2.1.141"
     },
     "/Users/padminipyapali/dev/claude_test/nanny_management": {
@@ -2014,8 +2014,8 @@
       "lastUsedAt": 1771563394325
     },
     "mockup": {
-      "usageCount": 44,
-      "lastUsedAt": 1778711917003
+      "usageCount": 45,
+      "lastUsedAt": 1778780884424
     },
     "capture-learning": {
       "usageCount": 1,
