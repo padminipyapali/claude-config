@@ -38,6 +38,8 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 
 - **System prompt must not reference optional context that may be absent.** When the system prompt says "The <X> section lists..." but the context injection is wrapped in a try/catch with graceful degradation, the section may not exist. The LLM then hallucinates about nonexistent data or confuses the user. Fix: check `context?.includes("<X>")` before including the instruction sentence. This applies to any optional data source (changelog, calendar, external API) injected into an LLM prompt — the prompt description must match the actual content provided. <!-- Source: PR review, second-brain #256, 2026-02-25 -->
 
+- **Render-side XSS test is mandatory when LLM output flows into HTML.** Even with a well-framed system prompt and JSON-fenced user data, a future prompt change or a creative model could echo a user-controlled event title verbatim. The HTML renderer is the last line of defense. Require at least one test that feeds the renderer adversarial LLM output (`<script>`, `<img onerror=`, malformed markdown bold) and asserts escape. Cheap to write, prevents a silent regression. <!-- Source: post-mortem, family-digest #34, 2026-05-14 -->
+
 ## Technique Selection
 
 - **For open-ended natural language parsing, use LLM extraction not regex/stopword lists.** Regex and keyword lists are brittle for natural language — they miss synonyms, paraphrases, and context. LLM extraction handles variation gracefully. Reserve regex for structured formats (dates, URLs, IDs).
