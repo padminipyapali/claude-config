@@ -363,6 +363,8 @@ Add when a bug class is caught 2+ times. Requirements: regex on changed lines, <
 
 - [ ] **Null/undefined guards.** Walk every `!`, `[]`, `.` chain for null intermediates.
 - [ ] **LLM output parsing.** `JSON.parse()` strips code fences. Handle empty/malformed.
+- [ ] **LLM output rendered into HTML requires adversarial-input test.** If the PR adds a code path that renders LLM-generated text into HTML (e.g., a new section in an email or web view sourced from a model response), require at least one test that feeds the renderer adversarial output — `<script>`, `<img onerror=`, malformed markdown bold/italic, partial tags — and asserts escape. System-prompt framing and code-fence stripping are NOT sufficient; the renderer is the last line of defense and must be proven independently. <!-- Source: post-mortem, family-digest #34, 2026-05-14 -->
+
 - [ ] **Error message specificity.** Edge cases get specific messages, not generic fallthrough.
 - [ ] **Cross-field relational validation.** Multiple fields forming a sequence (start/end, date ranges) validated for relationship, not just format.
 - [ ] **CSS grid column count sync.** `repeat(N, ...)` N matches actual data column count in the rendering component.
