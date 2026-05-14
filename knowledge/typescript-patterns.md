@@ -134,3 +134,5 @@ Cross-project learnings for TypeScript and Node.js development.
 
 ---
 *Sources: second-brain, lexica, command-center, nanny-management*
+
+- **`Promise.all` needs `.catch` for fire-and-forget.** One rejection aborts the rest and silently swallows all results. Always pair `Promise.all([...]).catch(handler)` or use `Promise.allSettled` if you want partial results. <!-- Source: post-mortem, remodel-hq #47, 2026-05-13 -->

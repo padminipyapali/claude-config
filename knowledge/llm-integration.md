@@ -62,5 +62,11 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 - **Server-timezone parsing is broken.** `new Date(someDate.toLocaleString("en-US", { timeZone: tz }))` — the `new Date()` constructor uses the server's timezone. Use `Intl.DateTimeFormat.formatToParts()` instead.
 - **Strip URLs before date extraction.** When content has URLs appended (e.g., email-promoted TODOs), date-like URL paths (`/2024/01/article`, `?session=spring2026`) can produce incorrect due dates. Always pass the clean title text to date/time extraction, not the full content with URLs. <!-- Source: PR review, second-brain #97, 2026-02-15 -->
 
+## Image Editing Models
+
+- **Prompt-based dimension control is unreliable.** Image edit models (Gemini 2.5/3) will inherit a reference image's aspect ratio in some cases regardless of how many times the prompt says "MUST match base image dimensions". The robust fix is server-side post-processing: decode the model output, crop/letterbox/resize to the base image's exact pixel dimensions before returning. Treat the prompt instruction as best-effort and the deterministic resize as the contract. <!-- Source: post-mortem, remodel-hq #44, 2026-05-13 -->
+- **For mask-based localized edits, send the currently-viewed image as the base, not the source-of-truth original.** Mask coordinates only align if the user is editing what they painted on. Re-sending the original with prior edits as text history makes the model regenerate and breaks mask alignment. Successive edit artifacts are a strictly lesser harm than wrong-content output. <!-- Source: post-mortem, remodel-hq #44, 2026-05-13 -->
+- **Normalize multi-image inputs to the desired output shape before the model call.** When passing multiple images to an edit model (e.g., base + reference), pre-process every input to the same aspect ratio/dimensions as the desired output. The model is more likely to produce output matching its inputs than output matching a prompt instruction. Center-crop the reference image if framing is irrelevant (style/color swatches); letterbox if framing matters. This is strictly better than post-processing the model output, because post-processing is always visible to the user as a treatment. <!-- Source: post-mortem, remodel-hq #46, 2026-05-13 -->
+
 ---
-*Sources: second-brain, lexica*
+*Sources: second-brain, lexica, remodel-hq*

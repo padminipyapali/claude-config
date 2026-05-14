@@ -125,3 +125,5 @@ Distilled rules from code reviews and post-mortems. For full incident history an
 - Case-insensitive dedup for display lists from AI-generated data: `Set<string>` with `.toLowerCase()`.
 - Use scoped index keys for static lists with potential duplicate content: `` key={`${parentId}-pro-${index}`} ``.
 - Deduplicate array data at every consumption point -- rendering AND logic paths independently.
+
+- **Do not `.limit()` a list that is filtered client-side downstream.** A global cap on an over-fetched list silently hides data when the filter narrows to a subset that did not make the cap. Either fetch per-filter-key, or paginate with explicit UI affordance. <!-- Source: post-mortem, remodel-hq #47, 2026-05-13 -->
