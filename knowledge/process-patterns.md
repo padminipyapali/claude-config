@@ -123,6 +123,8 @@ Distilled rules from post-mortem analysis. For full incident history and evidenc
 - **Squash adversarial fix commits into the commits they amend (or prefix with `review-fix:`).** Landing each adversarial-cycle fix as its own commit inflates the legacy fix-up ratio (41.7% with a healthy 1-iteration cycle) and breaks heuristic classifiers. <!-- Source: post-mortem, family-digest #1, 2026-04-24 -->
 - **Configure CI before the first implementation PR.** A project with `statusCheckRollup: []` has no merge gate beyond the author's local machine. <!-- Source: post-mortem, family-digest #1, 2026-04-24 -->
 - **PR body templates should include `## Local Review` and `## Step Timing` sections from PR #1.** Adding them later leaves early PRs with null compliance/timing data and no baseline for trend analysis. <!-- Source: post-mortem, family-digest #1, 2026-04-24 -->
+- **Project PR-body template must enforce the project's own CLAUDE.md required sections.** baby-name-picker #33 shipped without the required `Performance & Cost Impact` section and without `Closes #N`, despite both being mandated in the project CLAUDE.md, because there is no template scaffold to default them in. Self-merge in 30 s gives the template no second chance. <!-- Source: post-mortem, baby-name-picker #33, 2026-05-14 -->
+- **Unchecked manual test items must not survive merge.** When a PR fixes a user-visible bug, the manual verification of that exact scenario is the test plan -- merging with the boxes unchecked turns the test plan into a TODO list nobody returns to. <!-- Source: post-mortem, baby-name-picker #33, 2026-05-14 -->
 
 
 ## Automation Opportunities

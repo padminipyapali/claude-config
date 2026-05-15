@@ -18,6 +18,7 @@ Distilled rules from code reviews and post-mortems. For full incident history an
 ## State Management
 
 - Sync `useState` from async props with `useEffect` -- `useState(prop?.value ?? default)` only uses the initial value on mount.
+- **Hydration-seeded local state needs a one-shot ref guard.** When a screen-local filter/toggle should initialize from a persisted store value but stay user-controlled afterwards, seed it inside an effect that fires when the store's `isInitializing` flips false and gate the seed with a `useRef(false)` flipped to true on first run -- otherwise rehydrations or store updates silently clobber user changes. <!-- Source: post-mortem, baby-name-picker #33, 2026-05-14 -->
 - Inline editing "clear" guard: compare against previous value, not empty string, or clearing is blocked.
 - New editing modes must join ALL existing edit-mode guards (click suppression, classes, role, tabIndex, onKeyDown).
 - Optimistic UI revert: capture previous state before update (never invert), guard revert with staleness check, capture only single deleted items (not full list), and snapshot ALL cascade states with functional updaters.
