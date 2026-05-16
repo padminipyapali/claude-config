@@ -12384,7 +12384,131 @@
       "prSize": 891,
       "stepCompliance": null,
       "stepTiming": null
+    },
+    {
+      "project": "family-digest",
+      "prNumber": 37,
+      "title": "Remove frozen SIMULATED_NOW default from digest CLI.",
+      "dateMerged": "2026-05-16T03:37:36Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 2.76,
+      "planningQuality": "complete",
+      "prSize": 96,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "4a /simplify: no surface (1-line default swap + regression test). 4b CodeRabbit CLI: skipped for single-line behavior change + regression test.",
+        "complianceRate": 0.6666666666666666,
+        "skipAssessment": "good"
+      },
+      "stepTiming": null
+    },
+    {
+      "project": "remodel-hq",
+      "prNumber": 83,
+      "title": "feat(atelier): collapse inspo filters + redesign lightbox with comments",
+      "dateMerged": "2026-05-16T04:16:57Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.8333333333333334,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 1,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 4,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 2,
+          "defensive-coding": 0,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 1,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.517,
+      "planningQuality": "partial",
+      "prSize": 1586,
+      "stepCompliance": null,
+      "stepTiming": null
     }
   ],
-  "generated": "2026-05-15T02:00:00.000000Z"
+  "generated": "2026-05-15T00:00:00Z"
 }

@@ -302,6 +302,12 @@ done
 ```
 Browsers silently strip nested `<button>` elements — the inner button won't render or be clickable. Fix: change the outer element to `<div role="button" tabIndex={0}>` with `onKeyDown` for Enter/Space. <!-- Source: post-mortem, second-brain #499, 2026-03-28 -->
 
+### 0.25 Unicode glyph icons in buttons (a11y + cross-platform)
+```bash
+git diff main...HEAD --name-only -- '*.tsx' '*.jsx' | xargs grep -nE '>[★♥✕↑↓●♡♠♣◆▲▼◀▶✓✗✕×]<' 2>/dev/null
+```
+Ad-hoc Unicode glyphs inside buttons/spans render inconsistently across fonts/OSes and produce uneven baselines next to text labels. Fix: replace with inline `<svg aria-hidden="true" focusable="false">` icons; ensure parent has `aria-label`/`<title>`. When fixing, sibling-sweep the entire feature area in the same PR. <!-- Source: post-mortem, remodel-hq #83, 2026-05-15 -->
+
 ### Adding new patterns
 Add when a bug class is caught 2+ times. Requirements: regex on changed lines, <20% false-positive rate.
 

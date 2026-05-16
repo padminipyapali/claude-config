@@ -22,6 +22,7 @@ Distilled rules from code reviews and post-mortems. For full incident history an
 - Inline editing "clear" guard: compare against previous value, not empty string, or clearing is blocked.
 - New editing modes must join ALL existing edit-mode guards (click suppression, classes, role, tabIndex, onKeyDown).
 - Optimistic UI revert: capture previous state before update (never invert), guard revert with staleness check, capture only single deleted items (not full list), and snapshot ALL cascade states with functional updaters.
+- **Default custom data hooks (`useFoo`/`useFooData`) to optimistic writes; require an explicit `pessimistic: true` opt-out.** When a hook exposes `update`/`toggle`/`vote`/`favorite`/`postNote` style mutations for sub-100ms-perceived UI, the absence of optimistic update is a latent bug -- the user will eventually report "feels slow." PR #83 caught this only via user feedback for vote/favorite pills. Building optimistic-by-default into the hook factory means each new write path inherits the right behavior rather than awaiting per-call retrofitting. <!-- Source: post-mortem, remodel-hq #83, 2026-05-15 -->
 - Don't optimistically clear auth state on failed network calls -- only clear `user` when `res.ok`.
 - `setState` updaters must be pure -- no async calls, logging, or side effects inside the callback.
 - All viewer state variants in multi-tab apps must carry navigation context (e.g., `returnTo`).
@@ -103,7 +104,7 @@ Distilled rules from code reviews and post-mortems. For full incident history an
 
 ## General Web UI
 
-- Use SVG icons, not Unicode characters -- rendering varies across platforms.
+- Use SVG icons, not Unicode characters -- rendering varies across platforms. **Recurring antipattern: ad-hoc Unicode glyphs (★ ♥ ✕ ↑ ↓ ●) inserted as buttons' visible content render inconsistently across fonts/OSes and produce uneven baselines next to text labels. PR #83 hit this in 3+ Atelier files (lightbox toolbar, grid vote pills, action row). The fix is always two-part: (1) swap to a project-wide inline `<svg>` icon set with `aria-hidden="true"` plus `focusable="false"` and a sibling `aria-label`/`<title>` on the parent button; (2) sibling-sweep every file in the same feature area on the SAME PR -- don't fix only the surface the user pointed at. Add a Tier 0 grep for `>[★♥✕↑↓●♡♠♣◆▲▼◀▶]<` in `.tsx` files to catch new occurrences pre-merge.** <!-- Source: post-mortem, remodel-hq #83, 2026-05-15 -->
 - Don't hard-truncate variable content -- make it expandable with "Show more".
 - Use placeholder hints instead of default values for user-configurable settings.
 
