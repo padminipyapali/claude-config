@@ -51,6 +51,18 @@ Not all UI changes need the same testing depth. Match the tier to the change typ
 
 **MCP browser fallback:** If MCP Playwright can't launch (Chrome profile conflict is common), don't build an elaborate headless harness. Just run build/lint/test, note "MCP browser unavailable" in the PR body, and move on. The user can verify visually.
 
+## Critic Round Tiers
+
+Mirror the Playwright tiers — match critic-round depth to change risk.
+
+| Tier | When | What to do |
+|------|------|------------|
+| **Full critic agent** | Logic changes (services, routes, hooks, state, validation, security-sensitive code) | Spawn a fresh `general-purpose` critic with full adversarial-review checklist + stack-matched knowledge files |
+| **Orchestrator self-eyeball** | Purely additive CSS, docs-only edits, generated files, dependency bumps with no API change | Read the appended block, grep for layout-defining declarations / dead links, verify lint+build. Note "self-reviewed (low-risk diff)" in the post-mortem |
+| **Skip** | Marker/infrastructure commits, comment-only edits | Note skip reason |
+
+**Default to Full.** Only skip the critic agent when the diff has no logic surface area and the orchestrator can structurally verify it in <2 minutes. If unsure, spawn the critic. <!-- Source: post-mortem, second-brain #650, 2026-05-19. CSS-only follow-up where critic round would have cost more than it caught. -->
+
 ## Critic's Fresh Context
 
 Provide the critic ONLY:
