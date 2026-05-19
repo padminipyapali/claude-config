@@ -339,6 +339,9 @@ Add when a bug class is caught 2+ times. Requirements: regex on changed lines, <
 4. User-visible error feedback after revert (toast, inline error).
 5. Await async completion, not setTimeout heuristics.
 6. Reset ALL local state (errors, loading, form inputs) on identity prop changes via `useEffect`.
+7. **Optimistic-by-default is the default expectation for new write-path hooks.** Any new `use*` hook that exposes `add`/`update`/`delete`/`toggle`/`vote`/`favorite`/`pin`/`postNote`-style mutations for sub-100ms-perceived UI MUST be optimistic-by-default. Pessimistic implementations require a one-line justification in the PR body. Repeated adoption across vote, favorite, note-add, note-delete, image-delete, pin, updateImageCategory (PRs #83/#85/#86) confirms this is house style, not aspiration. <!-- Source: post-mortems, remodel-hq #83/#85/#86, 2026-05-15/16 -->
+8. **Cross-surface cache notifier coverage.** When a derived cache (e.g., `noteCounts` Map) is mutated on Surface A, every other surface that can mutate the same underlying entity MUST wire the same notifier. Sibling-sweep across all UI surfaces that list the item before approving. <!-- Source: post-mortem, remodel-hq #86, 2026-05-16 -->
+9. **Callback identity churn from mutating list in deps.** `useCallback((...) => { /* reads images */ }, [..., images])` re-creates the callback on every list mutation, defeating downstream memo. Use a fresh `ref` or functional setter to snapshot inside the body and drop the list from deps. Three repeat occurrences across PRs #83/#85/#86 — Tier 0 grep candidate: `useCallback\([^,]*, \[[^\]]*\b(images|items|list|notes)\b[^\]]*\])`. <!-- Source: post-mortems, remodel-hq #83/#85/#86 -->
 
 ### 1.6 Portal/Popover Positioning
 1. Position recalculated on scroll/resize (or popover closes on scroll/resize).
@@ -437,6 +440,7 @@ Add when a bug class is caught 2+ times. Requirements: regex on changed lines, <
 - [ ] **In-memory state survives restarts?** Dedup state in memory lost on deploy. Persist to DB or initialize defensively.
 - [ ] **Documentation sync.** JSDoc matches code. On removal PRs: grep docs for numeric counts and universal claims referencing removed entity. On docs PRs: verify section cross-references exist.
 - [ ] **Cross-channel output regression.** Shared data consumed by multiple channels (web, Telegram, email, API) — all still render correctly.
+- [ ] **Rendering-context font fallback.** Assets that render BEFORE the page's Google Fonts load (favicons, OG images, email templates) must include system-safe font fallbacks. `next/font` only loads in-page; the OS-level favicon preview will fall back to whatever the browser picks (often Times New Roman) and look meaningfully different from the in-page render. Either outline text to SVG paths in the favicon, or use a system serif like Georgia. <!-- Source: post-mortem, baby-name-picker #36, 2026-05-18 -->
 - [ ] **Architecture self-review (100+ LOC or 3+ directories).** Right location? Right abstraction? Right boundary? Right scope? Understandable in 30 days?
 
 ---

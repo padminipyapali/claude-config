@@ -12562,7 +12562,372 @@
       "prSize": 307,
       "stepCompliance": null,
       "stepTiming": null
+    },
+    {
+      "project": "remodel-hq",
+      "prNumber": 85,
+      "title": "feat(atelier): delete inspiration images and notes",
+      "dateMerged": "2026-05-16T05:01:33Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 5,
+        "adversarialFixed": 5
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.3333333333333333,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 5,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 2,
+          "defensive-coding": 0,
+          "correctness": 2,
+          "dead-code": 1,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.2,
+      "planningQuality": "complete",
+      "prSize": 1209,
+      "stepCompliance": null,
+      "stepTiming": null
+    },
+    {
+      "project": "remodel-hq",
+      "prNumber": 86,
+      "title": "feat(atelier): pin photos + /atelier/review page + with-notes filter",
+      "dateMerged": "2026-05-16T05:36:24Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 5,
+        "adversarialFixed": 5
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.3333333333333333,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 5,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 1,
+          "documentation": 0,
+          "style": 2,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.22,
+      "planningQuality": "partial",
+      "prSize": 1480,
+      "stepCompliance": null,
+      "stepTiming": null
+    },
+    {
+      "project": "nanny-app",
+      "prNumber": 42,
+      "title": "feat: add per-nanny paid holidays",
+      "dateMerged": "2026-05-18T18:36:14Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": null,
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 0,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 12.39,
+      "planningQuality": "partial",
+      "prSize": 974,
+      "stepCompliance": null,
+      "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 637,
+      "title": "fix(web): always render Active Projects strip when active projects exist",
+      "dateMerged": "2026-05-18T19:48:15Z",
+      "reviewRounds": 0,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": null,
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 4,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.25,
+      "planningQuality": "complete",
+      "prSize": 261,
+      "stepCompliance": null,
+      "stepTiming": null
+    },
+    {
+      "project": "baby-name-picker",
+      "prNumber": 36,
+      "title": "Add /web landing page branded as Alma with stacked-blocks icon",
+      "dateMerged": "2026-05-18T23:00:11Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 10,
+        "adversarialFixed": 10
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.67,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 10,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 4,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 4,
+          "defensive-coding": 0,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 1,
+          "style": 2,
+          "infrastructure": 1
+        }
+      },
+      "timeToMergeHours": 67.8,
+      "planningQuality": "complete",
+      "prSize": 7379,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b",
+          "4d"
+        ],
+        "skipReasons": "web/ has no CI pipeline yet",
+        "complianceRate": 0.778,
+        "skipAssessment": "neutral"
+      },
+      "stepTiming": {
+        "planMinutes": 5,
+        "implementMinutes": 15,
+        "testMinutes": 1,
+        "reviewMinutes": 7,
+        "pushMinutes": 2,
+        "totalMinutes": 30,
+        "bottleneck": "iterative design discussion (wall-clock 67h)",
+        "notes": "Active implementation time ~30min; long wall-clock driven by user-driven naming/icon iteration before implementation."
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 647,
+      "title": "feat(projects): add timestamped comment thread to sub-tasks",
+      "dateMerged": "2026-05-19T01:28:32Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 3,
+        "adversarialFixed": 3
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 1,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.57,
+      "planningQuality": "complete",
+      "prSize": 1557,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "2b",
+          "4a",
+          "4b",
+          "4d"
+        ],
+        "skipReasons": "solo dev shortcut: skipped /simplify (4a), CodeRabbit CLI (4b), and CI verification (4d). Hardening pass (2b) folded into 2a + adversarial round.",
+        "complianceRate": 0.56,
+        "skipAssessment": "neutral"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": 34,
+        "bottleneck": null,
+        "notes": "PR-creation to merge wall-clock = 34 min; pre-push agent work (implement + critic + fix) not separately timed"
+      }
     }
   ],
-  "generated": "2026-05-15T00:00:00Z"
+  "generated": "2026-05-18T23:30:00Z",
+  "lastUpdated": null
 }
