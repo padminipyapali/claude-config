@@ -70,6 +70,7 @@ Distilled rules from code reviews and post-mortems. For full incident history an
 - Button `disabled` state must match form validation rules exactly.
 - Hash-routing fallback: use `history.replaceState` (not `location.hash`), run on initial mount.
 - Module-level caches must be invalidated on auth transitions -- always revalidate on mount.
+- **Cache-busting query params (`?_t=Date.now()`) DO NOT refresh the canonical URL's browser cache slot — they create a separate slot.** Subsequent natural fetches to the canonical URL still hit the stale entry. When the server sets `Cache-Control: max-age=N, stale-while-revalidate=M` on a GET endpoint, the right primitive for "force a refresh AND repopulate the canonical slot" is `fetch(url, { cache: 'reload' })`, not `fetch(url + '?_t=' + Date.now())`. Pair this with explicit invalidation calls from every mutation path (create/delete/edit/star/etc.) that affects the cached query. <!-- Source: PR review, second-brain #651, 2026-05-19 -->
 - `aria-pressed` on toggle buttons (filter chips, star buttons, mute toggles).
 - Dynamic `aria-label` on multi-state buttons that progress through a flow (not just on/off).
 - Disable edit-trigger buttons during async saves to prevent stale-snapshot edits.
