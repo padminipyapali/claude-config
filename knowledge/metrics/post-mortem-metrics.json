@@ -13006,8 +13006,248 @@
         "bottleneck": null,
         "notes": "PR-creation to merge wall-clock = 7 min; pure-CSS follow-up to #647."
       }
+    },
+    {
+      "project": "baby-name-picker",
+      "prNumber": 41,
+      "title": "Establish a reproducible build pipeline for the bundled name database",
+      "dateMerged": "2026-05-27T22:23:13Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 2,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 1
+        }
+      },
+      "timeToMergeHours": 0.79,
+      "planningQuality": "complete",
+      "prSize": 3615,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "2b",
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "Orchestrator implementer->critic team pattern: a fresh-context critic served as adversarial review (4c/4d) in place of CodeRabbit CLI (4b) and /simplify (4a). Critic caught the architectural drift (shipped assets/seed.db could not be regenerated) in the prior corrections attempt, which prompted splitting into this pipeline PR first.",
+        "complianceRate": 0.67,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": 47,
+        "bottleneck": null,
+        "notes": "Wall-clock PR-creation->merge 47 min. Multi-agent dev loop; 0 post-merge fixes."
+      }
+    },
+    {
+      "project": "baby-name-picker",
+      "prNumber": 43,
+      "title": "Correct 23 baby-name meanings and origins in the seed data",
+      "dateMerged": "2026-05-27T22:25:09Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 2,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 1,
+          "documentation": 1,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.45,
+      "planningQuality": "complete",
+      "prSize": 367,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "2b",
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "Implementer->critic team. Implementer self-caught a dedup-ordering hazard during impl; critic independently verified exactly-23-rows-changed + web-verified accuracy. Two nice-to-haves (narrowed test gloss, comment) folded before commit. Used critic in place of CodeRabbit(4b)/simplify(4a).",
+        "complianceRate": 0.67,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": 27,
+        "bottleneck": null,
+        "notes": "Wall-clock 27 min. NOTE: a later deep per-language re-audit found 18 additional errors in OTHER (untouched) multi-origin rows; out of this PR's scope, not a regression."
+      }
+    },
+    {
+      "project": "baby-name-picker",
+      "prNumber": 47,
+      "title": "Version-control the project's Claude Code configuration",
+      "dateMerged": "2026-05-27T23:03:52Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.32,
+      "planningQuality": "complete",
+      "prSize": 451,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "5"
+        ],
+        "stepsSkipped": [
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "Config-only PR (committing previously-untracked .claude config + CLAUDE.md + .gitignore). No code logic -> tests N/A per CLAUDE.md. Orchestrator self-scanned committed files for secrets and hardcoded paths (the bug being fixed) instead of spawning a critic; gate proven block+allow end-to-end.",
+        "complianceRate": 0.33,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": 19,
+        "bottleneck": null,
+        "notes": "Wall-clock 19 min. adversarialCatchRate=null: config-only, no code logic to measure a catch rate against."
+      }
     }
   ],
   "generated": "2026-05-18T23:30:00Z",
-  "lastUpdated": null
+  "lastUpdated": "2026-05-27T23:26:44Z"
 }
