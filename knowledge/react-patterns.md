@@ -74,6 +74,7 @@ Distilled rules from code reviews and post-mortems. For full incident history an
 - `aria-pressed` on toggle buttons (filter chips, star buttons, mute toggles).
 - Dynamic `aria-label` on multi-state buttons that progress through a flow (not just on/off).
 - Disable edit-trigger buttons during async saves to prevent stale-snapshot edits.
+- **RN StyleSheet: when borrowing a design token's fields, copy `fontFamily` too.** Styles that cherry-pick `fontSize`/`fontWeight`/`letterSpacing` off a typography token (`fontSize: typography.name.fontSize`) but omit `fontFamily` silently fall back to the system sans — the custom font never applies, and it's invisible in code review because the size/weight look "set." Prefer spreading the whole token (`...typography.name`) or assign `fontFamily` explicitly. Sibling-sweep on fix: `grep -rn "typography\.[a-z]*\.fontSize"` and check each style for a matching `fontFamily`. <!-- Source: baby-name-picker compare detail overlay, 2026-05-28; sibling hit in app/top-picks.tsx -->
 - Every inline `<svg>` must have a `<title>` child for screen readers.
 - Visual progress bars need `role="progressbar"` with `aria-valuenow/min/max` and `aria-label`.
 - Decorative indicators/SVG icons: `aria-hidden="true"` on visual-only elements; inside labeled buttons also add `focusable="false"` and remove `<title>`.
