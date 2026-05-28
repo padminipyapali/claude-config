@@ -57,6 +57,7 @@ Distilled rules from code reviews and post-mortems. For full incident history an
 - Wrap every `JSON.parse` in render paths and `useMemo` with its own try/catch and sensible fallback.
 - Accessibility labels must derive from the same computed data as the visual display.
 - `overflow: "hidden"` clips iOS shadows -- split into outer (shadow) and inner (clipping) views.
+- **Adding `paddingBottom` to a parent does NOT open a gap above an absolutely-positioned child under Yoga 3.x (RN 0.83+).** An absolute child's inset (`bottom: 12`) is measured from the parent's **padding edge**, not its content edge — so container padding moves the pill *with* the content and opens no visible gap. To create spacing between in-flow content and an absolutely-positioned element, put `margin` on an in-flow sibling (the absolute element ignores sibling margins) rather than padding on the shared parent. Verdict was DO-NOT-SHIP on the padding version; deterministic fix was `marginBottom` on the centered content block. <!-- Source: post-mortem, baby-name-picker #84, 2026-05-28; critic caught pre-merge -->
 
 ## UI Patterns
 

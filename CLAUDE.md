@@ -90,7 +90,7 @@ Every feature/fix follows these steps. The orchestrator announces step transitio
 | 2 | **Implement** | Single pass on a feature branch. Correctness, validation, error handling together. |
 | 3 | **Test locally** | Build, lint, type-check. If UI changes, Playwright testing. Fix failures. |
 | 4 | **Local review** | `/simplify` (4a) + CodeRabbit CLI (4b) + adversarial review (4c). Fix all findings. |
-| 5 | **Push & create PR** | Push branch, `gh pr create`. No `/review-fix-loop` — local review is the gate. |
+| 5 | **Push & create PR** | Push branch, `gh pr create`. UI changes include a `## Designs` section with rendered mockup(s) — see `development-steps.md`. No `/review-fix-loop` — local review is the gate. |
 | 6 | **Post-merge** | Auto-run `/post-mortem [PR-number]` in background. |
 
 **What's intentionally NOT in this flow:** Separate hardening pass (2b), internal line-by-line review, GitHub CodeRabbit reviews, CI verification loop, hardening checklist artifact. These were over-engineered for solo development. The local review (Step 4) catches the same issues faster.
