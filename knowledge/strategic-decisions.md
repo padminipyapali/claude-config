@@ -70,3 +70,10 @@ Cross-project product thinking patterns. These are decision frameworks and produ
 - When a user reports a bug, the fix is tactical but the pattern is strategic. Ask: "What were you trying to accomplish when you hit this?" — the answer reveals workflow assumptions.
 - Feature requests encode unspoken product intuitions. Before implementing, ask: "What changed in your usage that made this feel necessary?" and "What are you doing manually right now that this would replace?"
 - Changes requested to existing features reveal where the original design assumption broke. Capture the delta between "what we assumed" and "what actually happened."
+
+## Data Presentation
+
+- When a record is simply absent from a dataset (not measured, out of scope), **omit the whole section rather than rendering a "no data" explainer.** An explainer reads as a negative judgment about the item ("unpopular," "missing") when it really only reflects a coverage gap in the source. Especially load-bearing when the dataset has a cultural/geographic bias (e.g. US-only SSA name popularity vs. a multicultural catalog) — a "no US data" label on a foreign name implies it's unpopular, which is the opposite of true.
+<!-- Source: baby-name-picker popularity-trends (#54) — no-US-data → omit section, 2026-05-27 -->
+- Prefer showing raw data over derived tiers/buckets when the cutoffs would be arbitrary. Bucketing a continuous metric (e.g. SSA rank → "Rare"/"Popular") imports judgmental labels and invented thresholds; the raw series is more accurate and lets the user interpret. Add interpretive labels only when the cutoffs are principled, not convenient.
+<!-- Source: baby-name-picker popularity-trends (#54) — kept trend arc over recency tiers, 2026-05-27 -->
