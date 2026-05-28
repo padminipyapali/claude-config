@@ -14081,10 +14081,90 @@ const METRICS_DATA = {
         "bottleneck": null,
         "notes": "Self-merged squash, no peer review, no CI. Critic SHIP with 2 cosmetic nits left. Stacked on #78; required rebase + add/add merge-conflict resolution (both branches created NameCard.test.tsx). 4a folded into critic; 4b CodeRabbit NOT run."
       }
+    },
+    {
+      "project": "baby-name-picker",
+      "prNumber": 81,
+      "title": "Fix the compare-flow detail overlay styling",
+      "dateMerged": "2026-05-28T21:29:07Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 1,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 1.4144,
+      "planningQuality": "complete",
+      "prSize": 245,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4d"
+        ],
+        "skipReasons": "4d (CI) \u2014 no CI checks configured (statusCheckRollup empty). NOTE: step 3 lint is a PHANTOM gate \u2014 PR body claimed 'npx expo lint \u2014 no new findings' but eslint is not installed; the lint command errors 'Cannot find module eslint' and runs zero rules. tsc + jest (378 passing, 3 new) did run.",
+        "complianceRate": 0.8889,
+        "skipAssessment": "neutral"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": 85,
+        "bottleneck": null,
+        "notes": "Self-merged squash (832eefe), no peer review, no CI. Presentational fix: NameDetailBody styles dropped fontFamily -> system sans instead of Cormorant serif; also removed rose border and swapped flex:1 for maxHeight+flexShrink (content-hug). CodeRabbit CLI ran 0-on-diff. Adversarial sibling-sweep CAUGHT the same fontFamily bug in app/top-picks.tsx (adversarialFindings:1) \u2014 scoped out, fixed same-day in follow-up branch fix/top-picks-serif-font (not a defect in this PR, so adversarialFixed:0). KEY: 'npx expo lint' gate is unrunnable project-wide (eslint not installed); lint 'pass' was misreported."
+      }
     }
   ],
   "generated": "2026-05-18T23:30:00Z",
-  "lastUpdated": "2026-05-28T20:12:10Z"
+  "lastUpdated": "2026-05-28"
 };
 function linReg(data) {
   const n = data.length;

@@ -457,6 +457,16 @@ Add when a bug class is caught 2+ times. Requirements: regex on changed lines, <
 
 ---
 
+## Gate-Tool Execution Verification
+
+Before recording any lint/type/test gate as "passed," confirm the tool actually RAN — an error-exit is a fail, not a pass. A checkbox without captured output is unfalsifiable.
+
+```bash
+# The mandated lint binary must resolve. An "Cannot find module" / "command not found" is a FAIL.
+npm run lint -- --version 2>&1 | grep -qiE 'error|cannot find|not found' && echo "GATE BROKEN: lint binary missing" || echo "lint resolvable"
+```
+Require the implementer to paste the gate's real summary line (`0 errors`, `N problems`, jest `Tests: N passed`), not a `[x]`. baby-name-picker #81 claimed `npx expo lint — no new findings` while `eslint` was absent from the project entirely (`expo lint` errored `Cannot find module 'eslint'` and ran zero rules) — a phantom gate that had silently passed on every prior PR.
+
 ## Post-Review: Learning Capture Gate
 
 Before writing the marker file:
