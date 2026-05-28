@@ -13385,8 +13385,167 @@
         "skipAssessment": "neutral"
       },
       "stepTiming": null
+    },
+    {
+      "project": "baby-name-picker",
+      "prNumber": 78,
+      "title": "Show name pronunciation on the compare card",
+      "dateMerged": "2026-05-28T20:02:54Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.5195,
+      "planningQuality": "complete",
+      "prSize": 979,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4d"
+        ],
+        "skipReasons": "4d (CI) \u2014 no CI checks configured in repo",
+        "complianceRate": 0.8889,
+        "skipAssessment": "neutral"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": 31,
+        "bottleneck": null,
+        "notes": "Self-merged squash, no peer review, no CI. Critic SHIP; one NIT (empty-string test) folded pre-merge. Also fixed a pre-existing RED main: gameStore.perGender fixture missing required familyJson field (stale-branch integration break from #73/family-tree). 4a folded into critic; 4b CodeRabbit run clean after scoping base to origin/main."
+      }
+    },
+    {
+      "project": "baby-name-picker",
+      "prNumber": 80,
+      "title": "Make the compare card Details CTA adapt to the gender accent",
+      "dateMerged": "2026-05-28T20:05:55Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.1367,
+      "planningQuality": "complete",
+      "prSize": 136,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b",
+          "4d"
+        ],
+        "skipReasons": "4b (CodeRabbit) \u2014 skipped; 4d (CI) \u2014 no CI checks configured",
+        "complianceRate": 0.6667,
+        "skipAssessment": "neutral"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": 8,
+        "bottleneck": null,
+        "notes": "Self-merged squash, no peer review, no CI. Critic SHIP with 2 cosmetic nits left. Stacked on #78; required rebase + add/add merge-conflict resolution (both branches created NameCard.test.tsx). 4a folded into critic; 4b CodeRabbit NOT run."
+      }
     }
   ],
   "generated": "2026-05-18T23:30:00Z",
-  "lastUpdated": "2026-05-27T23:26:44Z"
+  "lastUpdated": "2026-05-28T20:12:10Z"
 }
