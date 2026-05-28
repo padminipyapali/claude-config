@@ -173,6 +173,20 @@ After rebase, push with `-u` and open the PR. The body must use the project's `P
 
 ## PR Body Templates
 
+### Designs Section
+
+Every PR that builds or changes UI includes a **## Designs** section showing the mockup(s) of what is being built — it makes review far faster than reading code alone. Procedure:
+
+1. Render the relevant `docs/mockups/*.html` to PNG: serve the dir over a local HTTP server (`python3 -m http.server`; `file://` is blocked in the Playwright MCP), navigate, and take a **full-page** screenshot. Commit the PNG under `docs/mockups/renders/`.
+2. Embed it in the PR body. **Private repos** (the common case): `raw.githubusercontent.com` and `?raw=true` URLs do NOT render inline (GitHub's image proxy can't authenticate), so use a **clickable blob link** pinned to the commit SHA, plus a link to the source HTML:
+   ```
+   ## Designs
+   **[▶ View the <name> design (rendered) →](https://github.com/<owner>/<repo>/blob/<sha>/docs/mockups/renders/<name>.png)**  ·  source: [`<name>.html`](https://github.com/<owner>/<repo>/blob/<sha>/docs/mockups/<name>.html)
+   ```
+   (Public repos can use inline `![](raw.githubusercontent.com/.../<sha>/...png)`.)
+3. **Scope note:** if the mockup shows more than this PR ships (deferred placements, superseded framing like a dropped paywall), say so explicitly so reviewers aren't misled.
+4. Committing a PNG changes HEAD → the adversarial-review marker goes stale. Run `/adversarial-review` for the asset commit (a binary design asset is a trivial PASS) to refresh the marker before pushing; never hand-write the marker.
+
 ### Local Review Section
 
 Include in every PR body:
