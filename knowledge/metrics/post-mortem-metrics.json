@@ -13246,6 +13246,75 @@
         "bottleneck": null,
         "notes": "Wall-clock 19 min. adversarialCatchRate=null: config-only, no code logic to measure a catch rate against."
       }
+    },
+    {
+      "project": "baby-name-picker",
+      "prNumber": 66,
+      "title": "Trim 11 overlong/obscure names from the seed dataset",
+      "dateMerged": "2026-05-28T05:26:08Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.027,
+      "planningQuality": "complete",
+      "prSize": 11,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "data-only deletion; no code to simplify, CodeRabbit not run for an 11-row data trim",
+        "complianceRate": 0.56,
+        "skipAssessment": "neutral"
+      },
+      "stepTiming": null
     }
   ],
   "generated": "2026-05-18T23:30:00Z",
