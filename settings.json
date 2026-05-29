@@ -105,5 +105,6 @@
   },
   "effortLevel": "medium",
   "theme": "light",
-  "remoteControlAtStartup": false
+  "remoteControlAtStartup": false,
+  "skipWorkflowUsageWarning": true
 }
