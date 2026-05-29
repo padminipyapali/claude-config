@@ -27,7 +27,7 @@ Cross-project learnings organized by topic. These files contain detailed pattern
 | [living-documentation.md](living-documentation.md) | All | Feature-organized docs structure, flow diagram guidelines |
 | [process-patterns.md](process-patterns.md) | All | Development process: review efficiency, planning, iteration velocity |
 | [convention-violations.md](convention-violations.md) | All | Convention violation tracker: recurrence counts, enforcement status, escalation |
-| [design-preferences.md](design-preferences.md) | All (HTML/CSS) | Padmini's preferred visual theme, palette, typography, layout patterns |
+| [design-preferences.md](design-preferences.md) | All (HTML/CSS) | Padmini's preferred visual theme, palette, typography, layout, motion (proximity interaction is the default) |
 | [color-palettes.md](color-palettes.md) | All (HTML/CSS) | OKLCH color palettes (4 themes) for frontend projects, generated via kigen.design |
 | [second-brain-testing.md](second-brain-testing.md) | Second Brain | Local dev setup, bypassing login, running frontend/full stack |
 | [annotation-workflow.md](annotation-workflow.md) | All (tooling) | Mockup annotation system: inbox server, bookmarklet, feedback pickup |

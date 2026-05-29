@@ -80,3 +80,39 @@ Use consistent accent colors to identify domains:
 
 - **Empty states must be delightful and actionable.** Never leave a blank area or terse "No data" message. Include: (1) a clear message explaining what will appear, (2) a call-to-action guiding the next step (e.g., "Add your first vendor"), (3) optionally an illustration or icon to make it feel intentional. Empty states are the first thing new users see — they set the tone. <!-- Source: command-center dispatch dashboard, 2026-03 -->
 - **Truncated text must have full-text access.** Any text clipped with `truncate`, `text-ellipsis`, or `overflow-hidden` needs a `title` attribute (tooltip), expandable click, or other mechanism to view the full content. <!-- Source: remodel-app room sidebar, also in react-patterns.md -->
+
+## Motion & Interaction
+
+- **Proximity interaction is the default for every website.** As the cursor nears interactive elements, nearby elements respond on a *gradient* of distance (scale / lift / brightness / glow) rather than a binary hover on/off. Padmini loves this — "every time we design a website I want this interaction design to be used" (confirmed 2026-05-29). Apply it to docks, card grids, nav lists, button clusters — anywhere with a cluster of interactive targets.
+
+  **Rules that make it feel right (not gimmicky):**
+  - Use **true distance**, not just `clientX`: 2D radial (`Math.hypot`) for grids/free layouts; horizontal (`|Δx|`) for docks; vertical (`|Δy|`) for lists/nav.
+  - **Ease toward a target every frame** (lerp inside a `requestAnimationFrame` loop). Do NOT set styles directly inside `pointermove` — the easing is what gives motion weight.
+  - **Smoothstep falloff** (`t*t*(3-2*t)`), not linear, so there's no hard pop at the influence-radius edge.
+  - Respect `prefers-reduced-motion` (don't attach the effect under it). Reset styles on `pointerleave` / teardown. Use one shared pointer listener + one rAF loop for all targets; let the loop coast to an idle tick when nothing's animating.
+
+  **Reusable helpers (vanilla `attachProximity` + React `useProximity`) and a verified demo:** `~/dev/proximity-interaction/` (`proximity.js`, `useProximity.js`, `demo.html`, `index.html`). Not in git — copy into the project, or pull from there. Core model: `distance → smoothstep → 0..1 influence → ease → visual props`.
+
+  ```js
+  // minimal vanilla core — drop into any project
+  const smooth = t => (t = Math.max(0, Math.min(1, t)), t*t*(3-2*t));
+  const lerp = (a,b,n) => a + (b-a)*n;
+  const ptr = {x:-1e9,y:-1e9,inside:false};
+  addEventListener("pointermove", e => { ptr.x=e.clientX; ptr.y=e.clientY; ptr.inside=true; });
+  addEventListener("pointerleave", () => ptr.inside = false);
+  const nodes = [...root.children].map(el => ({el, cur:0}));
+  const RADIUS = 240, EASE = 0.18;
+  (function frame(){
+    for (const n of nodes){
+      const r = n.el.getBoundingClientRect();
+      const d = Math.hypot(ptr.x-(r.left+r.width/2), ptr.y-(r.top+r.height/2));
+      const tgt = ptr.inside ? smooth(1 - d/RADIUS) : 0;
+      n.cur = lerp(n.cur, tgt, EASE);
+      n.el.style.transform = `translateY(${(-n.cur*8).toFixed(2)}px) scale(${(1+n.cur*0.12).toFixed(3)})`;
+      n.el.style.filter = `brightness(${(1+n.cur*0.25).toFixed(3)})`;
+    }
+    requestAnimationFrame(frame);
+  })();
+  ```
+  <!-- Source: proximity-interaction demo, 2026-05-29; verified in-browser via Playwright -->
+
