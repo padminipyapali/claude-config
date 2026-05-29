@@ -103,8 +103,8 @@
     "feature-dev@claude-plugins-official": true,
     "coderabbit@claude-plugins-official": true
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
+  "skipWorkflowUsageWarning": true,
   "theme": "light",
-  "remoteControlAtStartup": false,
-  "skipWorkflowUsageWarning": true
+  "remoteControlAtStartup": false
 }
