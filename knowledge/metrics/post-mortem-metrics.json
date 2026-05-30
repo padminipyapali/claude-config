@@ -14546,8 +14546,62 @@
       "prSize": 189,
       "stepCompliance": null,
       "stepTiming": null
+    },
+    {
+      "project": "baby-name-picker",
+      "prNumber": 87,
+      "title": "Correct name pronunciations and origins (audit batch 1)",
+      "dateMerged": "2026-05-29T02:24:55Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 0.15,
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 1.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 1,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 4.2,
+      "planningQuality": "complete",
+      "prSize": 459,
+      "stepCompliance": null,
+      "stepTiming": null
     }
   ],
   "generated": "2026-05-28T22:10:51Z",
-  "lastUpdated": "2026-05-30T03:23:56Z"
+  "lastUpdated": "2026-05-29T02:24:55Z"
 }
