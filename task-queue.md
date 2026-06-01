@@ -4,7 +4,8 @@ Tasks queued because the target repo had active work in progress. Check `[PENDIN
 
 ---
 
-## [PENDING] Import Euphony-discovered real names into seed.db
+## [DONE] Import Euphony-discovered real names into seed.db
+- **Completed:** 2026-05-31 — PR #141 (https://github.com/padminipyapali/baby-name-picker/pull/141). 50 verified names added (1240→1290) via orchestrator team (worktree seed-euphony-names, branch feat/seed-euphony-discovered-names). Adversarial critic PASS; all seed tests green. Awaiting user merge approval (not merged).
 - **Repo:** /Users/padminipyapali/dev/baby-name-picker
 - **Queued:** 2026-05-31
 - **Context:** While building the "Euphony" coined-name generator/rater (tool at /Users/padminipyapali/dev/euphony-rater), screening + a second adversarial audit flagged ~84 generated candidates as *actually real* names. 82 of them are NOT yet in seed.db (1240 rows). User wants these real names added to the seed catalog.
