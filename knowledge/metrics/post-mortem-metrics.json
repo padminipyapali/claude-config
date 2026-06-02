@@ -14946,8 +14946,77 @@
         "skipAssessment": "neutral"
       },
       "stepTiming": null
+    },
+    {
+      "project": "baby-name-picker",
+      "prNumber": 149,
+      "title": "Add 17 more Euphony-discovered real names to the seed catalog",
+      "dateMerged": "2026-06-02T03:33:44Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 1.59,
+      "planningQuality": "complete",
+      "prSize": 47,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "pure data addition; CodeRabbit/simplify review code idioms, not catalog data values (consistent with #141)",
+        "complianceRate": 0.56,
+        "skipAssessment": "good"
+      },
+      "stepTiming": null
     }
   ],
   "generated": "2026-05-28T22:10:51Z",
-  "lastUpdated": "2026-06-01"
+  "lastUpdated": "2026-06-02T03:34:57Z"
 }
