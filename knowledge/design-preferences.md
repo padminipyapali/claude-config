@@ -80,6 +80,7 @@ Use consistent accent colors to identify domains:
 
 - **Empty states must be delightful and actionable.** Never leave a blank area or terse "No data" message. Include: (1) a clear message explaining what will appear, (2) a call-to-action guiding the next step (e.g., "Add your first vendor"), (3) optionally an illustration or icon to make it feel intentional. Empty states are the first thing new users see — they set the tone. <!-- Source: command-center dispatch dashboard, 2026-03 -->
 - **Truncated text must have full-text access.** Any text clipped with `truncate`, `text-ellipsis`, or `overflow-hidden` needs a `title` attribute (tooltip), expandable click, or other mechanism to view the full content. <!-- Source: remodel-app room sidebar, also in react-patterns.md -->
+- **Microcopy that juxtaposes a native form against an anglicized one must use a culturally-neutral connector.** When showing two pronunciations on one line, the chosen label was the bare conjunction "or" (`Say · NGAWK or NAWK`) over the rejected alternatives "easier" (frames the native form as hard) and "anglicized" (jargon + Anglo-centric framing). The native form is shown first, and the second form renders only when it is genuinely distinct. General rule: when copy sits at the boundary of two cultures/registers, pick the connector that asserts no hierarchy between them; default to the plainest conjunction and let order (native-first) carry the editorial intent. <!-- Source: post-mortem, baby-name-picker #148, 2026-06-01 -->
 
 ## Motion & Interaction
 
