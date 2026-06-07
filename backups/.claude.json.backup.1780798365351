@@ -38,7 +38,7 @@
     "permissions": 480,
     "rename-conversation": 480,
     "custom-commands": 422,
-    "git-worktrees": 477,
+    "git-worktrees": 487,
     "feedback-command": 482,
     "color-when-multi-clauding": 477,
     "vercel-plugin": 460,
@@ -52,7 +52,7 @@
     "team-onboarding-share": 451,
     "fotw-campaign-upsell": 486
   },
-  "promptQueueUseCount": 277635,
+  "promptQueueUseCount": 277637,
   "btwUseCount": 18,
   "cachedGrowthBookFeatures": {
     "tengu_ochre_hollow": false,
@@ -2203,8 +2203,8 @@
       "lastUsedAt": 1771285297606
     },
     "post-mortem": {
-      "usageCount": 201,
-      "lastUsedAt": 1780683130692
+      "usageCount": 203,
+      "lastUsedAt": 1780798286519
     },
     "coderabbit:review": {
       "usageCount": 28,
@@ -2436,7 +2436,7 @@
   "overageCreditUpsellSeenCount": 3,
   "additionalModelCostsCache": {},
   "remoteControlUpsellSeenCount": 3,
-  "closedIssuesLastChecked": 1780695778885,
+  "closedIssuesLastChecked": 1780797894171,
   "claudeAiMcpEverConnected": [
     "claude.ai Google Drive",
     "claude.ai Google Calendar"
@@ -2479,7 +2479,8 @@
     "image-paste": 1,
     "memory-command": 1,
     "web-app": 1,
-    "custom-agents": 1
+    "custom-agents": 1,
+    "git-worktrees": 1
   },
   "pluginUsage": {
     "frontend-design@claude-plugins-official": {
