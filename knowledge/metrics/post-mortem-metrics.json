@@ -579,7 +579,7 @@
     "stepsSkipped": [
      "4d"
     ],
-    "skipReasons": "4d (CI) — no CI checks configured in repo",
+    "skipReasons": "4d (CI) \u2014 no CI checks configured in repo",
     "complianceRate": 0.8889,
     "skipAssessment": "neutral"
    },
@@ -658,7 +658,7 @@
      "4b",
      "4d"
     ],
-    "skipReasons": "4b (CodeRabbit) — skipped; 4d (CI) — no CI checks configured",
+    "skipReasons": "4b (CodeRabbit) \u2014 skipped; 4d (CI) \u2014 no CI checks configured",
     "complianceRate": 0.6667,
     "skipAssessment": "neutral"
    },
@@ -738,7 +738,7 @@
     "stepsSkipped": [
      "4d"
     ],
-    "skipReasons": "4d (CI) — no CI checks configured (statusCheckRollup empty). NOTE: step 3 lint is a PHANTOM gate — PR body claimed 'npx expo lint — no new findings' but eslint is not installed; the lint command errors 'Cannot find module eslint' and runs zero rules. tsc + jest (378 passing, 3 new) did run.",
+    "skipReasons": "4d (CI) \u2014 no CI checks configured (statusCheckRollup empty). NOTE: step 3 lint is a PHANTOM gate \u2014 PR body claimed 'npx expo lint \u2014 no new findings' but eslint is not installed; the lint command errors 'Cannot find module eslint' and runs zero rules. tsc + jest (378 passing, 3 new) did run.",
     "complianceRate": 0.8889,
     "skipAssessment": "neutral"
    },
@@ -750,7 +750,7 @@
     "pushMinutes": null,
     "totalMinutes": 85,
     "bottleneck": null,
-    "notes": "Self-merged squash (832eefe), no peer review, no CI. Presentational fix: NameDetailBody styles dropped fontFamily -> system sans instead of Cormorant serif; also removed rose border and swapped flex:1 for maxHeight+flexShrink (content-hug). CodeRabbit CLI ran 0-on-diff. Adversarial sibling-sweep CAUGHT the same fontFamily bug in app/top-picks.tsx (adversarialFindings:1) — scoped out, fixed same-day in follow-up branch fix/top-picks-serif-font (not a defect in this PR, so adversarialFixed:0). KEY: 'npx expo lint' gate is unrunnable project-wide (eslint not installed); lint 'pass' was misreported."
+    "notes": "Self-merged squash (832eefe), no peer review, no CI. Presentational fix: NameDetailBody styles dropped fontFamily -> system sans instead of Cormorant serif; also removed rose border and swapped flex:1 for maxHeight+flexShrink (content-hug). CodeRabbit CLI ran 0-on-diff. Adversarial sibling-sweep CAUGHT the same fontFamily bug in app/top-picks.tsx (adversarialFindings:1) \u2014 scoped out, fixed same-day in follow-up branch fix/top-picks-serif-font (not a defect in this PR, so adversarialFixed:0). KEY: 'npx expo lint' gate is unrunnable project-wide (eslint not installed); lint 'pass' was misreported."
    }
   },
   {
@@ -2623,7 +2623,7 @@
     "stepsSkipped": [
      "4c"
     ],
-    "skipReasons": "4c (CodeRabbit) — CLI unavailable in environment",
+    "skipReasons": "4c (CodeRabbit) \u2014 CLI unavailable in environment",
     "complianceRate": 0.889,
     "skipAssessment": "bad"
    },
@@ -2704,7 +2704,7 @@
     "stepsSkipped": [
      "2b"
     ],
-    "skipReasons": "2b folded into 2a — single pass for CSS-heavy change",
+    "skipReasons": "2b folded into 2a \u2014 single pass for CSS-heavy change",
     "complianceRate": 0.89,
     "skipAssessment": "neutral"
    },
@@ -2716,7 +2716,7 @@
     "pushMinutes": 2,
     "totalMinutes": 43,
     "bottleneck": "implementation (worktree bug)",
-    "notes": "~10 min lost to worktree isolation bug — fixed in orchestrator protocol"
+    "notes": "~10 min lost to worktree isolation bug \u2014 fixed in orchestrator protocol"
    }
   },
   {
@@ -2864,7 +2864,7 @@
      "4c",
      "4d"
     ],
-    "skipReasons": "3-Playwright (N/A — no visual changes), 4a-4e (< 50 LOC, critic review done inline)",
+    "skipReasons": "3-Playwright (N/A \u2014 no visual changes), 4a-4e (< 50 LOC, critic review done inline)",
     "complianceRate": 0.44,
     "skipAssessment": "bad"
    },
@@ -3534,7 +3534,7 @@
   {
    "project": "leaflet",
    "prNumber": 8,
-   "title": "feat: end-to-end vertical slice — topic input, Claude generation, booklet display",
+   "title": "feat: end-to-end vertical slice \u2014 topic input, Claude generation, booklet display",
    "dateMerged": "2026-03-09T17:28:31Z",
    "reviewRounds": 5,
    "totalComments": 19,
@@ -3959,7 +3959,7 @@
     ],
     "skipReasons": "3-Playwright: backend-only (search.ts, search.test.ts). 4c-CodeRabbit: skipped (sub-100 LOC logic change).",
     "complianceRate": 0.8,
-    "skipAssessment": "Playwright skip justified (backend-only). CodeRabbit skip debatable — 100 LOC is borderline and CodeRabbit post-push found 2 issues."
+    "skipAssessment": "Playwright skip justified (backend-only). CodeRabbit skip debatable \u2014 100 LOC is borderline and CodeRabbit post-push found 2 issues."
    },
    "stepTiming": null
   },
@@ -5498,7 +5498,7 @@
   {
    "project": "second-brain",
    "prNumber": 3,
-   "title": "Phase 1: Core pipeline — classify, embed, store, respond",
+   "title": "Phase 1: Core pipeline \u2014 classify, embed, store, respond",
    "dateMerged": "2026-02-08T06:36:18Z",
    "reviewRounds": 2,
    "totalComments": 0,
@@ -8192,7 +8192,7 @@
      "4c",
      "4d"
     ],
-    "skipReasons": "minimal change — all quality gates skipped",
+    "skipReasons": "minimal change \u2014 all quality gates skipped",
     "complianceRate": 0.25,
     "skipAssessment": "neutral"
    }
@@ -8804,7 +8804,7 @@
   {
    "project": "second-brain",
    "prNumber": 191,
-   "title": "Deprecate ACTION intent — full removal (#168)",
+   "title": "Deprecate ACTION intent \u2014 full removal (#168)",
    "dateMerged": "2026-02-20T20:03:12Z",
    "reviewRounds": 2,
    "totalComments": 9,
@@ -9359,7 +9359,7 @@
      "4d",
      "4e"
     ],
-    "skipReasons": "4a-4e (code review loop) — skipped per user request",
+    "skipReasons": "4a-4e (code review loop) \u2014 skipped per user request",
     "complianceRate": 0.5,
     "skipAssessment": "bad"
    },
@@ -10080,7 +10080,7 @@
      "4c",
      "4d"
     ],
-    "skipReasons": "3: backend-only (valid); 4a-4e: claimed under 50 LOC logic threshold (invalid — 217 LOC total diff exceeds 50 LOC mandatory threshold)",
+    "skipReasons": "3: backend-only (valid); 4a-4e: claimed under 50 LOC logic threshold (invalid \u2014 217 LOC total diff exceeds 50 LOC mandatory threshold)",
     "complianceRate": 0.375,
     "skipAssessment": "bad"
    }
@@ -10088,7 +10088,7 @@
   {
    "project": "second-brain",
    "prNumber": 260,
-   "title": "feat: weekly review core — data queries, AI analysis, and email template",
+   "title": "feat: weekly review core \u2014 data queries, AI analysis, and email template",
    "dateMerged": "2026-02-26T05:54:15Z",
    "reviewRounds": 1,
    "totalComments": 6,
@@ -10127,7 +10127,7 @@
      "4c",
      "4d"
     ],
-    "skipReasons": "1: stacked PR, 3-Playwright: backend-only, 4a-4e: stacked PR (will review on final PR) — but PR was merged independently",
+    "skipReasons": "1: stacked PR, 3-Playwright: backend-only, 4a-4e: stacked PR (will review on final PR) \u2014 but PR was merged independently",
     "complianceRate": 0.25,
     "skipAssessment": "bad"
    }
@@ -10661,7 +10661,7 @@
   {
    "project": "second-brain",
    "prNumber": 280,
-   "title": "Fix chat idea capture 404 — align route path with frontend",
+   "title": "Fix chat idea capture 404 \u2014 align route path with frontend",
    "dateMerged": "2026-02-27T23:47:10Z",
    "reviewRounds": 1,
    "totalComments": 0,
@@ -11577,7 +11577,7 @@
      "2b",
      "3"
     ],
-    "skipReasons": "2b (hardening) — config-only, no business logic. 3 (Playwright) — CSS change is dev menu only, visually verified via lint.",
+    "skipReasons": "2b (hardening) \u2014 config-only, no business logic. 3 (Playwright) \u2014 CSS change is dev menu only, visually verified via lint.",
     "complianceRate": 0.78,
     "skipAssessment": "good"
    },
@@ -12143,7 +12143,7 @@
   {
    "project": "second-brain",
    "prNumber": 425,
-   "title": "Skip AI response for /todo command — return static confirmation",
+   "title": "Skip AI response for /todo command \u2014 return static confirmation",
    "dateMerged": "2026-03-15T03:11:27Z",
    "reviewRounds": 1,
    "totalComments": 0,
@@ -12760,7 +12760,7 @@
   {
    "project": "second-brain",
    "prNumber": 576,
-   "title": "fix(projects): design scrub — match Inner Shelf tokens",
+   "title": "fix(projects): design scrub \u2014 match Inner Shelf tokens",
    "dateMerged": "2026-05-05T20:52:46Z",
    "reviewRounds": 1,
    "totalComments": 0,
@@ -13735,7 +13735,7 @@
   {
    "project": "second-brain",
    "prNumber": 622,
-   "title": "feat(web): conditional Active Projects strip — pill row + dormant link",
+   "title": "feat(web): conditional Active Projects strip \u2014 pill row + dormant link",
    "dateMerged": "2026-05-06T23:36:44Z",
    "reviewRounds": 0,
    "totalComments": 0,
@@ -13797,7 +13797,7 @@
     "stepsSkipped": [
      "4b"
     ],
-    "skipReasons": "4b — reason: local critic + per-package vitest + tsc clean is the gate; CodeRabbit CLI not required to merge",
+    "skipReasons": "4b \u2014 reason: local critic + per-package vitest + tsc clean is the gate; CodeRabbit CLI not required to merge",
     "complianceRate": 0.889,
     "skipAssessment": "neutral"
    },
@@ -14121,7 +14121,7 @@
      "4c",
      "4d"
     ],
-    "skipReasons": "CSS-only follow-up — implementer self-tested via lint+build; orchestrator self-eyeballed the appended block (grid layout, color tokens) instead of spawning a critic round given the low-risk pure-styling scope.",
+    "skipReasons": "CSS-only follow-up \u2014 implementer self-tested via lint+build; orchestrator self-eyeballed the appended block (grid layout, color tokens) instead of spawning a critic round given the low-risk pure-styling scope.",
     "complianceRate": 0.44,
     "skipAssessment": "neutral"
    },
@@ -14139,7 +14139,7 @@
   {
    "project": "sleep-tracker",
    "prNumber": 15,
-   "title": "feat: V3 visual polish — unified design tokens and mockup alignment",
+   "title": "feat: V3 visual polish \u2014 unified design tokens and mockup alignment",
    "dateMerged": "2026-03-03T20:52:44Z",
    "reviewRounds": 2,
    "totalComments": 3,
@@ -14801,7 +14801,7 @@
      "4a",
      "4b"
     ],
-    "skipReasons": "Pure seed-data addition; CodeRabbit/simplify review code not data values. The relevant risk (name attestation, meaning accuracy, true origin, source-JSON↔SQL match) was verified by the independent adversarial critic.",
+    "skipReasons": "Pure seed-data addition; CodeRabbit/simplify review code not data values. The relevant risk (name attestation, meaning accuracy, true origin, source-JSON\u2194SQL match) was verified by the independent adversarial critic.",
     "complianceRate": 0.56,
     "skipAssessment": "good"
    },
@@ -14810,7 +14810,7 @@
   {
    "project": "baby-name-picker",
    "prNumber": 146,
-   "title": "Add Euphony — opt-in invented names (unified ranking, tagged)",
+   "title": "Add Euphony \u2014 opt-in invented names (unified ranking, tagged)",
    "dateMerged": "2026-06-02T00:32:36Z",
    "reviewRounds": 1,
    "totalComments": 0,
@@ -15978,7 +15978,7 @@
      "4b",
      "4d"
     ],
-    "skipReasons": "4b: CodeRabbit CLI failed deterministically both attempts ('Payload too large' — multi-MB PNG renames in diff; v0.5.3 cannot scope to text files), manual scripted review substituted; 4d: no CI configured on repo. Step 3 ran as scripted docs verification (links/YAML/manifests/greps) — docs-only PR, build/lint/test n/a (justified in PR body).",
+    "skipReasons": "4b: CodeRabbit CLI failed deterministically both attempts ('Payload too large' \u2014 multi-MB PNG renames in diff; v0.5.3 cannot scope to text files), manual scripted review substituted; 4d: no CI configured on repo. Step 3 ran as scripted docs verification (links/YAML/manifests/greps) \u2014 docs-only PR, build/lint/test n/a (justified in PR body).",
     "complianceRate": 0.78,
     "skipAssessment": "neutral"
    },
@@ -15990,7 +15990,7 @@
     "pushMinutes": 2,
     "totalMinutes": 60,
     "bottleneck": "2 Implement (24 files, 4 commits)",
-    "notes": "Orchestrator team pattern (implementer + fresh-context critic). CodeRabbit payload failure; scripted review substituted. Stacked on #2 — rebase --onto after parent squash-merge."
+    "notes": "Orchestrator team pattern (implementer + fresh-context critic). CodeRabbit payload failure; scripted review substituted. Stacked on #2 \u2014 rebase --onto after parent squash-merge."
    }
   },
   {
@@ -16063,6 +16063,166 @@
     "skipAssessment": "neutral"
    },
    "stepTiming": null
+  },
+  {
+   "project": "plush-press",
+   "prNumber": 5,
+   "title": "Add The End page treatment and move the cover title band to the top",
+   "dateMerged": "2026-06-10T04:57:39Z",
+   "reviewRounds": 1,
+   "totalComments": 0,
+   "commentCategories": {
+    "security": 0,
+    "correctness": 0,
+    "architecture": 0,
+    "style": 0,
+    "performance": 0,
+    "testing": 0,
+    "documentation": 0,
+    "other": 0
+   },
+   "localReview": {
+    "coderabbitFindings": null,
+    "coderabbitFixed": null,
+    "coderabbitIterations": null,
+    "adversarialFindings": 4,
+    "adversarialFixed": 4
+   },
+   "adversarialCatchRate": "unmeasured",
+   "fixupCommitRatio": 0.33,
+   "fixupMetrics": {
+    "postMergeFixRate": 0.0,
+    "preMergeCatchRateByStep": {
+     "4a": 0,
+     "4b": 0,
+     "4c": 0,
+     "4d": 4,
+     "postPush": 0
+    },
+    "preMergeIterationCount": 1,
+    "fixupTaxonomy": {
+     "validation": 0,
+     "a11y": 0,
+     "defensive-coding": 1,
+     "correctness": 1,
+     "dead-code": 0,
+     "test-quality": 0,
+     "documentation": 2,
+     "style": 0,
+     "infrastructure": 0
+    }
+   },
+   "timeToMergeHours": 0.07,
+   "planningQuality": "complete",
+   "prSize": 69,
+   "stepCompliance": {
+    "stepsRun": [
+     "1",
+     "2a",
+     "2b",
+     "3",
+     "4c",
+     "5"
+    ],
+    "stepsSkipped": [
+     "4a",
+     "4b",
+     "4d"
+    ],
+    "skipReasons": "4a: /simplify not run (recorded in PR body); 4b: CodeRabbit not run this session (recorded in PR body); 4d: no CI configured on repo. Step 3 ran as Playwright browser verification incl. print emulation, serializer round-trips, blocked-storage degradation.",
+    "complianceRate": 0.67,
+    "skipAssessment": "neutral"
+   },
+   "stepTiming": {
+    "planMinutes": null,
+    "implementMinutes": null,
+    "testMinutes": null,
+    "reviewMinutes": null,
+    "pushMinutes": null,
+    "totalMinutes": 50,
+    "bottleneck": null,
+    "notes": "Step Timing section present but not instrumented; wall clock ~50 min implement->review->fix->re-verify incl. one mid-flight spec change (band/no-band) resolved via rendered mockup picks. One coordination miss (superseded spec message) cost one extra round."
+   }
+  },
+  {
+   "project": "plush-press",
+   "prNumber": 7,
+   "title": "Add Pint Size board-book spread exporter producing the 12 print-ready PDFs",
+   "dateMerged": "2026-06-10T05:53:10Z",
+   "reviewRounds": 1,
+   "totalComments": 0,
+   "commentCategories": {
+    "security": 0,
+    "correctness": 0,
+    "architecture": 0,
+    "style": 0,
+    "performance": 0,
+    "testing": 0,
+    "documentation": 0,
+    "other": 0
+   },
+   "localReview": {
+    "coderabbitFindings": null,
+    "coderabbitFixed": null,
+    "coderabbitIterations": null,
+    "adversarialFindings": 4,
+    "adversarialFixed": 4
+   },
+   "adversarialCatchRate": "unmeasured",
+   "fixupCommitRatio": 0.67,
+   "fixupMetrics": {
+    "postMergeFixRate": 0.0,
+    "preMergeCatchRateByStep": {
+     "4a": 0,
+     "4b": 0,
+     "4c": 0,
+     "4d": 4,
+     "postPush": 0
+    },
+    "preMergeIterationCount": 3,
+    "fixupTaxonomy": {
+     "validation": 1,
+     "a11y": 0,
+     "defensive-coding": 0,
+     "correctness": 1,
+     "dead-code": 0,
+     "test-quality": 0,
+     "documentation": 1,
+     "style": 0,
+     "infrastructure": 1
+    }
+   },
+   "timeToMergeHours": 0.22,
+   "planningQuality": "complete",
+   "prSize": 392,
+   "stepCompliance": {
+    "stepsRun": [
+     "1",
+     "2a",
+     "2b",
+     "3",
+     "4c",
+     "5"
+    ],
+    "stepsSkipped": [
+     "4a",
+     "4b",
+     "4d"
+    ],
+    "skipReasons": "4a: /simplify not run (recorded in PR body); 4b: CodeRabbit not run this session (recorded in PR body); 4d: no CI configured on repo. Step 3 ran as physical-output verification (PDF MediaBoxes, font embedding via strings, rasterized visual checks, safe-area slack measurements).",
+    "complianceRate": 0.67,
+    "skipAssessment": "neutral"
+   },
+   "stepTiming": {
+    "planMinutes": null,
+    "implementMinutes": null,
+    "testMinutes": null,
+    "reviewMinutes": null,
+    "pushMinutes": null,
+    "totalMinutes": 75,
+    "bottleneck": "user content iteration (seven caption rounds)",
+    "notes": "Deliverable-first flow: 12 PDFs generated and user-verified before code review/PR. 3 critic rounds (R1: 3 findings, R2: 1, R3: APPROVE); legacy fix-up ratio inflated by mixed feature+fix commits. Critic independently re-derived trim/bleed/spine geometry."
+   }
   }
  ],
  "generated": "2026-05-28T22:10:51Z",
