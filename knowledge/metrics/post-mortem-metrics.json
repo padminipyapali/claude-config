@@ -16463,6 +16463,86 @@
         "bottleneck": null,
         "notes": "Not instrumented; ~5 min wall clock. Single commit, one critic round (APPROVE, zero findings). Executes PR #7 post-mortem recommendations (PAGES wording sync with typography normalization carried through)."
       }
+    },
+    {
+      "project": "plush-press",
+      "prNumber": 11,
+      "title": "Phase 0: normalize files to convention and archive the proven prompts.",
+      "dateMerged": "2026-06-10T16:39:34Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.12,
+      "planningQuality": "complete",
+      "prSize": 173,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4d"
+        ],
+        "skipReasons": "Files/docs-only PR (18 md + 4 png + 1 webp, zero source files): 2b/3/4a/4b n/a, justified in PR body; 4d no CI on repo. Critic tier = orchestrator self-eyeball (declared per protocol tier for no-logic-surface diffs), recorded as 4c: renames R100 clean, verbatim prompt anchors verified against user's original messages, zero stale 'softwash' strings, spec markers x2, backdrops convention exact -> PASS, 0 findings. Build/lint/test fields null (files-only).",
+        "complianceRate": 0.44,
+        "skipAssessment": "neutral"
+      },
+      "stepTiming": {
+        "planMinutes": 5,
+        "implementMinutes": 20,
+        "testMinutes": null,
+        "reviewMinutes": 2,
+        "pushMinutes": 2,
+        "totalMinutes": 35,
+        "bottleneck": "implement (4 mid-flight user scope additions)",
+        "notes": "~16:05 team+worktree, 16:10-16:30 implement absorbing FOUR mid-flight SendMessage scope additions (trio proven prompt, Softwash->Soft Watercolor amend-in-place, cast-lineup draft template, spec P4->P1 edit), 16:31 orchestrator review PASS, 16:33 PR, 16:39 merge. Message crossing between implementer reports and scope additions resolved via one consolidated outstanding-checklist ping (implementer verified-not-rebuilt, no-op'd a duplicate task). Implementer self-caught one write to the main checkout and relocated it to the worktree."
+      }
     }
   ],
   "generated": "2026-05-28T22:10:51Z",

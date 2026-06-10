@@ -147,7 +147,7 @@ Source: post-mortem, family-digest #4, 2026-04-22 — v2 critic claimed "no test
 - **Symptom:** Implementer reports tasks complete but worktree has zero diff.
 - **Cause:** File operations targeted the main repo instead of the worktree (e.g., absolute paths from plan context, or agent cwd never switched to worktree).
 - **Recovery:** Check main repo for uncommitted changes (`git status` in main). If changes are present there, create a branch, stage, and commit manually. Then re-run critic against the actual diff.
-- **Prevention:** Implementer startup checklist (see Worktree Interaction section above). Orchestrator post-implementation diff check catches this before the critic wastes a review cycle on an empty diff.
+- **Prevention:** Implementer startup checklist (see Worktree Interaction section above). Orchestrator post-implementation diff check catches this before the critic wastes a review cycle on an empty diff. Near-miss evidence the checklist works: plush-press #11's implementer briefly wrote one file into the MAIN checkout, self-caught it immediately, moved the file to the worktree, and cleaned up — the failure mode still occurs under context pressure (mid-flight scope additions), so the post-implementation `git -C <worktree> diff --stat` + main-checkout `git status` sweep remains mandatory even when the implementer reports clean.
 
 ## Session End / Team Teardown
 
