@@ -15858,6 +15858,140 @@
     "bottleneck": "4c local review (full-app sibling sweep was the long pole; CodeRabbit ~8 min)",
     "notes": "Wall-clock review ~55 min dominated by the app-wide haptic sweep; ran in parallel with sibling PRs."
    }
+  },
+  {
+   "project": "plush-press",
+   "prNumber": 2,
+   "title": "Add Book Assembler + The Zoo Bus (book #1)",
+   "dateMerged": "2026-06-10T02:56:37Z",
+   "reviewRounds": 1,
+   "totalComments": 0,
+   "commentCategories": {
+    "security": 0,
+    "correctness": 0,
+    "architecture": 0,
+    "style": 0,
+    "performance": 0,
+    "testing": 0,
+    "documentation": 0,
+    "other": 0
+   },
+   "localReview": {
+    "coderabbitFindings": null,
+    "coderabbitFixed": null,
+    "coderabbitIterations": null,
+    "adversarialFindings": null,
+    "adversarialFixed": null
+   },
+   "adversarialCatchRate": "unmeasured",
+   "fixupCommitRatio": 0.0,
+   "fixupMetrics": {
+    "postMergeFixRate": 0.5,
+    "preMergeCatchRateByStep": {
+     "4a": 0,
+     "4b": 0,
+     "4c": 0,
+     "4d": 0,
+     "postPush": 0
+    },
+    "preMergeIterationCount": 1,
+    "fixupTaxonomy": {
+     "validation": 0,
+     "a11y": 0,
+     "defensive-coding": 0,
+     "correctness": 0,
+     "dead-code": 0,
+     "test-quality": 0,
+     "documentation": 0,
+     "style": 0,
+     "infrastructure": 0
+    }
+   },
+   "timeToMergeHours": 22.35,
+   "planningQuality": "partial",
+   "prSize": 543,
+   "stepCompliance": null,
+   "stepTiming": null
+  },
+  {
+   "project": "plush-press",
+   "prNumber": 3,
+   "title": "Consolidate docs into a prompt-assembly system (templates + machine-readable bibles)",
+   "dateMerged": "2026-06-10T02:59:31Z",
+   "reviewRounds": 1,
+   "totalComments": 0,
+   "commentCategories": {
+    "security": 0,
+    "correctness": 0,
+    "architecture": 0,
+    "style": 0,
+    "performance": 0,
+    "testing": 0,
+    "documentation": 0,
+    "other": 0
+   },
+   "localReview": {
+    "coderabbitFindings": null,
+    "coderabbitFixed": null,
+    "coderabbitIterations": null,
+    "adversarialFindings": 1,
+    "adversarialFixed": 1
+   },
+   "adversarialCatchRate": "unmeasured",
+   "fixupCommitRatio": 0.2,
+   "fixupMetrics": {
+    "postMergeFixRate": 0.0,
+    "preMergeCatchRateByStep": {
+     "4a": 0,
+     "4b": 0,
+     "4c": 0,
+     "4d": 1,
+     "postPush": 0
+    },
+    "preMergeIterationCount": 1,
+    "fixupTaxonomy": {
+     "validation": 0,
+     "a11y": 0,
+     "defensive-coding": 0,
+     "correctness": 0,
+     "dead-code": 0,
+     "test-quality": 0,
+     "documentation": 1,
+     "style": 0,
+     "infrastructure": 0
+    }
+   },
+   "timeToMergeHours": 0.16,
+   "planningQuality": "complete",
+   "prSize": 780,
+   "stepCompliance": {
+    "stepsRun": [
+     "1",
+     "2a",
+     "2b",
+     "3",
+     "4a",
+     "4c",
+     "5"
+    ],
+    "stepsSkipped": [
+     "4b",
+     "4d"
+    ],
+    "skipReasons": "4b: CodeRabbit CLI failed deterministically both attempts ('Payload too large' \u2014 multi-MB PNG renames in diff; v0.5.3 cannot scope to text files), manual scripted review substituted; 4d: no CI configured on repo. Step 3 ran as scripted docs verification (links/YAML/manifests/greps) \u2014 docs-only PR, build/lint/test n/a (justified in PR body).",
+    "complianceRate": 0.78,
+    "skipAssessment": "neutral"
+   },
+   "stepTiming": {
+    "planMinutes": 20,
+    "implementMinutes": 25,
+    "testMinutes": 5,
+    "reviewMinutes": 7,
+    "pushMinutes": 2,
+    "totalMinutes": 60,
+    "bottleneck": "2 Implement (24 files, 4 commits)",
+    "notes": "Orchestrator team pattern (implementer + fresh-context critic). CodeRabbit payload failure; scripted review substituted. Stacked on #2 \u2014 rebase --onto after parent squash-merge."
+   }
   }
  ],
  "generated": "2026-05-28T22:10:51Z",
