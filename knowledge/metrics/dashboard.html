@@ -17222,6 +17222,227 @@ const METRICS_DATA = {
     "skipAssessment": "neutral"
    },
    "stepTiming": null
+  },
+  {
+   "project": "plush-press",
+   "prNumber": 14,
+   "title": "Restore the combine pattern and pages 08-09 lost from PR #12's merge.",
+   "dateMerged": "2026-06-10T23:28:42Z",
+   "reviewRounds": 1,
+   "totalComments": 0,
+   "commentCategories": {
+    "security": 0,
+    "correctness": 0,
+    "architecture": 0,
+    "style": 0,
+    "performance": 0,
+    "testing": 0,
+    "documentation": 0,
+    "other": 0
+   },
+   "localReview": {
+    "coderabbitFindings": null,
+    "coderabbitFixed": null,
+    "coderabbitIterations": null,
+    "adversarialFindings": 0,
+    "adversarialFixed": 0
+   },
+   "adversarialCatchRate": "unmeasured",
+   "fixupCommitRatio": 0.0,
+   "fixupMetrics": {
+    "postMergeFixRate": 0.0,
+    "preMergeCatchRateByStep": {
+     "4a": 0,
+     "4b": 0,
+     "4c": 0,
+     "4d": 0,
+     "postPush": 0
+    },
+    "preMergeIterationCount": 1,
+    "fixupTaxonomy": {
+     "validation": 0,
+     "a11y": 0,
+     "defensive-coding": 0,
+     "correctness": 0,
+     "dead-code": 0,
+     "test-quality": 0,
+     "documentation": 0,
+     "style": 0,
+     "infrastructure": 0
+    }
+   },
+   "timeToMergeHours": 6.08,
+   "planningQuality": "complete",
+   "prSize": 78,
+   "stepCompliance": {
+    "stepsRun": [
+     "2a",
+     "4c",
+     "5"
+    ],
+    "stepsSkipped": [
+     "1",
+     "2b",
+     "3",
+     "4a",
+     "4b",
+     "4d"
+    ],
+    "skipReasons": "Docs-only restore (4 md files, +78/-0) via cherry-pick of the orphaned f1c3cc5 from PR #12's silently-failed push. Review bar = identity verification against the already-reviewed batch (clean cherry-pick, all four files new, contents identical), recorded as 4c. 1/2b/3/4a/4b n/a for a verbatim restore; 4d no CI on repo. adversarialCatchRate unmeasured (zero post-push findings = no denominator).",
+    "complianceRate": 0.33,
+    "skipAssessment": "neutral"
+   },
+   "stepTiming": null
+  },
+  {
+   "project": "plush-press",
+   "prNumber": 15,
+   "title": "Add the studio text engine: scaffold, parsers, renderer, scene registry (MVP PR-1a).",
+   "dateMerged": "2026-06-10T23:28:59Z",
+   "reviewRounds": 1,
+   "totalComments": 0,
+   "commentCategories": {
+    "security": 0,
+    "correctness": 0,
+    "architecture": 0,
+    "style": 0,
+    "performance": 0,
+    "testing": 0,
+    "documentation": 0,
+    "other": 0
+   },
+   "localReview": {
+    "coderabbitFindings": 3,
+    "coderabbitFixed": 1,
+    "coderabbitIterations": 1,
+    "adversarialFindings": 2,
+    "adversarialFixed": 2
+   },
+   "adversarialCatchRate": "unmeasured",
+   "fixupCommitRatio": 0.5,
+   "fixupMetrics": {
+    "postMergeFixRate": 0.0,
+    "preMergeCatchRateByStep": {
+     "4a": 0,
+     "4b": 0,
+     "4c": 1,
+     "4d": 2,
+     "postPush": 0
+    },
+    "preMergeIterationCount": 1,
+    "fixupTaxonomy": {
+     "validation": 1,
+     "a11y": 0,
+     "defensive-coding": 0,
+     "correctness": 0,
+     "dead-code": 0,
+     "test-quality": 1,
+     "documentation": 1,
+     "style": 0,
+     "infrastructure": 0
+    }
+   },
+   "timeToMergeHours": 5.55,
+   "planningQuality": "complete",
+   "prSize": 8773,
+   "stepCompliance": {
+    "stepsRun": [
+     "1",
+     "2a",
+     "3",
+     "4c",
+     "4d",
+     "5"
+    ],
+    "stepsSkipped": [
+     "2b",
+     "4a",
+     "4b"
+    ],
+    "skipReasons": "No explicit 'Steps skipped:' line; reconstructed from PR body. 1 ran (plan + adversarial plan review, ~25 min, which found the missing scene-plate-photo template gap). 3 ran: 39 vitest green + lint + build. 4c CodeRabbit ran: 3 findings, 1 fixed (reversed candidates range), 2 rejected with written evidence (false-positive @/ alias claim; speculative optional-slot collapse). 4d fresh-context critic: PASS-WITH-FIXES, 2 findings fixed (wrong optional-slot comment claim; missing divergent-plate-path test). 2b folded into single-pass implement per current flow; 4a /simplify not recorded; 4b internal review superseded by the fresh-context critic.",
+    "complianceRate": 0.67,
+    "skipAssessment": "good"
+   },
+   "stepTiming": {
+    "planMinutes": 25,
+    "implementMinutes": 35,
+    "testMinutes": null,
+    "reviewMinutes": 25,
+    "pushMinutes": 2,
+    "totalMinutes": 87,
+    "bottleneck": "implement",
+    "notes": "Review = critic 15m + CodeRabbit 10m recorded separately; test time folded into implement; 4a not timed/run."
+   }
+  },
+  {
+   "project": "plush-press",
+   "prNumber": 16,
+   "title": "Add the image providers, keeper routing, and chain state (MVP PR-1b).",
+   "dateMerged": "2026-06-11T00:05:20Z",
+   "reviewRounds": 1,
+   "totalComments": 0,
+   "commentCategories": {
+    "security": 0,
+    "correctness": 0,
+    "architecture": 0,
+    "style": 0,
+    "performance": 0,
+    "testing": 0,
+    "documentation": 0,
+    "other": 0
+   },
+   "localReview": {
+    "coderabbitFindings": null,
+    "coderabbitFixed": null,
+    "coderabbitIterations": 1,
+    "adversarialFindings": 16,
+    "adversarialFixed": 15
+   },
+   "adversarialCatchRate": "unmeasured",
+   "fixupCommitRatio": 0.25,
+   "fixupMetrics": {
+    "postMergeFixRate": 0.0,
+    "preMergeCatchRateByStep": {
+     "4a": 0,
+     "4b": 0,
+     "4c": 0,
+     "4d": 15,
+     "postPush": 0
+    },
+    "preMergeIterationCount": 1,
+    "fixupTaxonomy": {
+     "validation": 0,
+     "a11y": 0,
+     "defensive-coding": 2,
+     "correctness": 5,
+     "dead-code": 2,
+     "test-quality": 1,
+     "documentation": 3,
+     "style": 2,
+     "infrastructure": 0
+    }
+   },
+   "timeToMergeHours": 0.2,
+   "planningQuality": "complete",
+   "prSize": 2796,
+   "stepCompliance": {
+    "stepsRun": [
+     "1",
+     "2a",
+     "2b",
+     "3",
+     "4a",
+     "4b",
+     "4c",
+     "4d",
+     "5"
+    ],
+    "stepsSkipped": [],
+    "skipReasons": "PR body: 'Steps skipped: none.' Local review was a JOINT fresh-context-critic + CodeRabbit CLI pass; the PR body records combined totals only (6 should-fix + 9 nits fixed in 41b31c2, 1 false positive rejected with in-place evidence = 16 raised / 15 fixed) with no per-tool split, so the combined totals are recorded under the adversarial fields and 4d; coderabbit* fields are null (not-tracked-separately, 1 iteration known). adversarialCatchRate unmeasured (zero post-push findings = no denominator). postMergeFixRate measured at merge+<1h (PR is HEAD of main).",
+    "complianceRate": 1.0,
+    "skipAssessment": "good"
+   },
+   "stepTiming": null
   }
  ],
  "generated": "2026-05-28T22:10:51Z",
