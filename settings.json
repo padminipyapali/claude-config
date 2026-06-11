@@ -106,5 +106,6 @@
   "effortLevel": "medium",
   "skipWorkflowUsageWarning": true,
   "theme": "light",
-  "remoteControlAtStartup": false
+  "remoteControlAtStartup": false,
+  "model": "claude-fable-5[1m]"
 }
