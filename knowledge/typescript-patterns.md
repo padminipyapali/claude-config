@@ -24,6 +24,7 @@ Cross-project learnings for TypeScript and Node.js development.
 - **Import types directly under automatic JSX transform.** With `jsx: "react-jsx"`, `React` is not in scope. Use `import type { ComponentType } from 'react'` not `React.ComponentType`, or the type reference will fail at compile time. <!-- Source: PR review, command-center #3, 2026-02-14 -->
 
 - **Type runtime validation sets as `Set<UnionType>` not `Set<string>`.** When a `Set` is used to validate input against a TypeScript union (e.g., `SessionNoteSource = "telegram" | "web" | "cli"`), declare it as `Set<SessionNoteSource>` not `Set<string>`. The compiler catches drift if a value is added/removed from the union but not the Set. Pair with `satisfies` for arrays: `["a", "b"] as const satisfies readonly MyUnion[]`. <!-- Source: PR review, command-center #30, 2026-02-20 -->
+- **`next build` + ESLint is NOT a typecheck gate for test files — add an explicit `tsc --noEmit` script whose tsconfig includes tests.** Next.js builds exclude test files from type-checking and ESLint (without type-aware rules) doesn't typecheck at all, so type errors in `*.test.ts` accumulate invisibly while "build PASS + lint PASS" looks green. plush-press #16 found 9 pre-existing type errors in providers.test.ts (untyped fetch mocks made `mock.calls[0]` an empty tuple) only when an `npm run typecheck` covering tests was added. Rule: every TS project gets a `typecheck` script that includes test globs, run in step 3 alongside build/lint. <!-- Source: post-mortem, plush-press #16, 2026-06-10 -->
 
 ## Conditional Logic
 

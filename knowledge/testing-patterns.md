@@ -5,6 +5,7 @@ Cross-project learnings for testing strategy, mocking, and assertions.
 ## Test Strategy
 
 - **"Include tests" means flow-level tests.** Pure-function tests on extracted helpers cannot catch missing code paths.
+- **Byte-identity anchoring for engines that wrap proven artifacts.** When building an engine whose job is to reproduce already-proven outputs (a template renderer over proven prompts, a build script over a frozen dataset), the highest-value tests are golden-master replays (template + original slot values → byte-identical proven output) plus parse/serialize round-trips on the real repo files. This doubles as a data audit: plush-press #15's strict parser surfaced two latent data bugs in existing files (`../`-prefixed attachment paths; invalid YAML in `story-page.md`) that no unit test would have found. <!-- Source: post-mortem, plush-press #15, 2026-06-10 -->
 
 ## Test Design
 
