@@ -92,6 +92,7 @@ Source: post-mortem, family-digest #4, 2026-04-22 — v2 critic claimed "no test
 5. Orchestrator prints STEP CHECK-IN -> assigns Step 5 to implementer.
 6. Skip detected -> orchestrator sends SKIP CHALLENGE to relevant agent.
 7. Before Step 5 -> orchestrator reads TaskList, verifies all 9 prior tasks complete, prints PRE-PR GATE.
+8. **Shared-resource reservations go in the SPAWN BRIEF, never in mid-flight messages.** Async teammate messages are processed only between the teammate's turns, so an instruction sent while the teammate is mid-task races its in-flight work. baby-name-picker #192/#193: an id-range reservation ("shift to 1468+") sent mid-flight arrived after the implementer had already committed ids 1425+, and a second renumber message arrived after the sibling implementer committed the SAME range — two collisions, one `reset --hard` reflog recovery, and a critic BLOCK on the transient state. When two parallel implementers share any allocation space (id ranges, ports, file names, migration numbers), partition it explicitly in each spawn brief before dispatch; treat mid-flight reallocation as requiring an explicit ACK from the teammate before any other agent relies on it. <!-- Source: post-mortem, baby-name-picker #192 + #193, 2026-06-11 -->
 
 ## Worktree Interaction
 
