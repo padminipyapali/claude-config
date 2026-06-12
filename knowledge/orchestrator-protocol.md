@@ -150,6 +150,11 @@ Source: post-mortem, family-digest #4, 2026-04-22 — v2 critic claimed "no test
 - **Recovery:** Check main repo for uncommitted changes (`git status` in main). If changes are present there, create a branch, stage, and commit manually. Then re-run critic against the actual diff.
 - **Prevention:** Implementer startup checklist (see Worktree Interaction section above). Orchestrator post-implementation diff check catches this before the critic wastes a review cycle on an empty diff. Near-miss evidence the checklist works: plush-press #11's implementer briefly wrote one file into the MAIN checkout, self-caught it immediately, moved the file to the worktree, and cleaned up — the failure mode still occurs under context pressure (mid-flight scope additions), so the post-implementation `git -C <worktree> diff --stat` + main-checkout `git status` sweep remains mandatory even when the implementer reports clean.
 
+**Repeatedly stalled implementer → replace, don't resuscitate; the worktree's on-disk WIP is the durable hand-off artifact** (plush-press #25 incident):
+- **Symptom:** Implementer hangs on long-running commands and is watchdog-killed (600s no-progress) — twice in a row on the same task.
+- **Recovery:** Spawn a FRESH-context replacement implementer pointed at the same pre-created worktree with a brief that says "finish from the uncommitted WIP on disk; run `git -C <worktree> status` + `diff` first to inventory what exists." The plush-press #25 replacement finished a ~4k-LOC UI slice from the stalled agent's uncommitted files because the work product lived on disk, not in the dead agent's transcript. Don't burn a third watchdog cycle re-messaging or re-spawning with the same prompt that hung.
+- **Why it works / what it requires:** Disk state transfers everything that matters between agents; transcript state transfers nothing. Corollary for spawn briefs: implementers must write work to disk incrementally (files saved, WIP commits fine) rather than accumulating long in-context-only work — that is what makes replacement cheap. Pair the replacement with a hung-command hygiene note in its brief (run dev servers/watchers with `run_in_background`, never foreground-block on them). <!-- Source: post-mortem, plush-press #25, 2026-06-11 -->
+
 ## Session End / Team Teardown
 
 After Step 5 (PR created):

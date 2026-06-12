@@ -66,6 +66,8 @@ Cross-project learnings for TypeScript and Node.js development.
 
 - **Use `fileURLToPath(import.meta.url)` for path resolution in ESM, not `new URL(import.meta.url).pathname`.** The `.pathname` property preserves percent-encoding (e.g., `%20` for spaces) and on Windows returns a leading `/C:/...` which is invalid. `fileURLToPath()` from `node:url` correctly decodes and normalizes the path on all platforms. When fixing this in one file, grep the repo for `new URL(import.meta.url).pathname` to catch all sibling instances. <!-- Source: PR review, command-center #33, 2026-02-20 -->
 
+- **Never derive a project/repo root with fixed `__dirname` arithmetic (`join(__dirname, "..", "..")`) — bundlers relocate modules, silently breaking N-levels-up logic. Walk up to marker directories instead.** Under `next dev`, Turbopack moved plush-press's `env.ts` into `.next/`, so its two-levels-up root resolution pointed inside the build dir and every filesystem-backed route 404'd (plush-press #25). Robust pattern: walk up from BOTH the module directory and `process.cwd()` to the first ancestor containing known marker files/dirs (e.g., `prompts/` + `books/`, or `package.json` + `.git`), and throw a specific error if no ancestor matches. Unit tests pass either way — only a real-dev-server smoke catches the regression (see testing-patterns.md). <!-- Source: post-mortem, plush-press #25, 2026-06-11 -->
+
 ## Numeric Parsing
 
 - **Never use `parseInt(...) || default` for numeric query/env params.** The `||` operator treats `0` as falsy, silently converting a valid `0` to the default. Use `Number.isNaN()` explicitly: `const parsed = Number.parseInt(s, 10); const value = Number.isNaN(parsed) ? defaultVal : parsed;`. <!-- Source: PR review, second-brain #284, 2026-02-28 -->
