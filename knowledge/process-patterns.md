@@ -228,6 +228,7 @@ Distilled rules from post-mortem analysis. For full incident history and evidenc
 
 ## Review Discipline
 
+- **For a new write-path route, exercise every declared entry/error branch against the live server before merge — this is what makes self-merge safe in a solo workflow.** plush-press #32 (createBook + `POST /api/books`, self-merged ~3.5 min, 0 review comments, 0 post-merge fixes) shipped clean precisely because the PR body recorded a real-runtime pass, not just green tests: POST created `books/<slug>/{backdrops,shelf,README.md}` on disk, `GET /api/scenes?book=<slug>` returned empty (not 404) confirming the new-empty-book path, a duplicate POST returned 409, and the throwaway book was cleaned up + the commit verified to hold exactly the intended files. When there is no peer reviewer, the runtime walk of all entry points (create / duplicate-conflict / consume-empty) IS the review gate — tests assert the units, runtime proves the artifact that ships behaves. Record the runtime evidence in the PR body so the gate is auditable. <!-- Source: post-mortem, plush-press #32, 2026-06-16 -->
 - Never merge immediately after CHANGES_REQUESTED; acknowledge findings before merging.
 - For PRs over 300 lines, wait 10+ minutes for CodeRabbit before merging.
 - Space out PR submissions by 10+ minutes to avoid rate limits.
