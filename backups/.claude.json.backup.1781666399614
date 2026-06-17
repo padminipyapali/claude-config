@@ -53,7 +53,7 @@
     "fotw-campaign-upsell": 494,
     "agents-view-multiclauding": 498
   },
-  "promptQueueUseCount": 277770,
+  "promptQueueUseCount": 277772,
   "btwUseCount": 19,
   "cachedGrowthBookFeatures": {
     "tengu_prompt_cache_1h_config": {
@@ -2312,8 +2312,8 @@
       "lastUsedAt": 1771563394325
     },
     "mockup": {
-      "usageCount": 60,
-      "lastUsedAt": 1781066307086
+      "usageCount": 61,
+      "lastUsedAt": 1781665249384
     },
     "capture-learning": {
       "usageCount": 1,
@@ -2328,8 +2328,8 @@
       "lastUsedAt": 1771285297606
     },
     "post-mortem": {
-      "usageCount": 222,
-      "lastUsedAt": 1781656896654
+      "usageCount": 223,
+      "lastUsedAt": 1781664214245
     },
     "coderabbit:review": {
       "usageCount": 28,
@@ -2645,8 +2645,8 @@
       "lastUsedNumStartups": 484
     },
     "playwright@claude-plugins-official": {
-      "usageCount": 278,
-      "lastUsedAt": 1781658241048,
+      "usageCount": 297,
+      "lastUsedAt": 1781666325868,
       "lastUsedNumStartups": 502
     },
     "feature-dev@claude-plugins-official": {
