@@ -58,6 +58,8 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 
 - **Treat LLM-extracted values as untrusted input at every call site.** When a function receives values extracted by an LLM (dates, times, categories, IDs), bad/impossible values are the expected case — not an edge case. If you add input validation to such a function (e.g., `buildRemindAt` throwing on invalid hour/minute), every caller must have try/catch, because the LLM WILL produce invalid values. The safe default on validation failure is to skip the feature gracefully (no reminder set) rather than crash the entire message processing pipeline. <!-- Source: PR review, second-brain #187, 2026-02-20 -->
 
+- **When the LLM selects among a fixed set (calendars, categories, routes, accounts), have it emit a human NAME and resolve name→id server-side against the configured set — never let the model emit the raw id directly.** Match case-insensitively + trim-tolerant; an unknown or missing name falls back to a designated default. This makes a hallucinated/injected id structurally impossible: the resolver can only return an id that's in the configured set (or "" / the default). Pair with: list the choices in the prompt by name + description inside an escaped, anti-injection-framed data tag (same framing as the user-content tags), and validate the discriminator/required fields of the tool output before use. <!-- Source: adversarial review, second-brain #672 calendar routing, 2026-06-21 -->
+
 ## Date/Time Extraction
 
 - **Use user's timezone, not UTC.** `extractDueDate` must use the user's timezone. The `en-CA` locale trick produces YYYY-MM-DD format.
