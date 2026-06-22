@@ -18482,8 +18482,80 @@
       },
       "stepTiming": null,
       "notes": "Theme-system retrofit: +1814/-409 across 47 files, 1 commit, exceeds 600-LOC cap but is a near-atomic token-routing refactor (half-migrated looks broken, so ships cohesively). 28 consumers migrated to makeStyles(colors). Self-merged solo dev with full 3-role orchestrator team (dev-nocturne) + fresh-context critic. Critic found 0 code defects via real verification: mechanical 28-key light-palette diff (zero drift), sub-agent stranded-static-colors audit across 25 files, static WCAG pass standing in for un-runnable simulator. adversarialCatchRate unmeasured (0 found, 0 escaped, no denominator). 0 post-merge fixes."
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 683,
+      "title": "fix(calendar): resolve bare weekdays deterministically and show previous date on update confirmations",
+      "dateMerged": "2026-06-22T19:50:25Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 3,
+        "adversarialFixed": 3,
+        "ciStatus": "passed (Vercel green; pre-existing unrelated main build/lint break noted, not touched by branch)"
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 3,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 1,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.097,
+      "planningQuality": "complete",
+      "prSize": 547,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "4a /simplify and 4b CodeRabbit not recorded in PR body; small focused 2-bug fix (+517/-30, 5 files). 4c adversarial ran two rounds and caught 2 blockers + 1 should-fix.",
+        "complianceRate": 0.7778,
+        "skipAssessment": "neutral"
+      },
+      "stepTiming": null,
+      "notes": "Two calendar-write Telegram bugs from manual testing: #681 bare-weekday off-by-one + address-in-title; #682 update confirmation missing previous date. Root cause of #681: weekday->date arithmetic delegated to the LLM; fix injects a deterministic 14-day weekday->YYYY-MM-DD table (buildCalendarDateReference) into BOTH write and query prompts. NOTABLE: the fresh-context critic caught TWO execution-verified off-by-one bugs in the NEW date-helper itself for far-east zones (UTC+13/+14 -- the fix initially reintroduced the same off-by-one bug class it was fixing by reformatting a UTC-noon instant through Intl in the target tz) PLUS a missed sibling (the calendar-query prompt); all fixed in a second pass. adversarialCatchRate=1.0 computed from evidence (3 issues caught locally by the critic that would otherwise have shipped, 0 post-merge escapes -- not a hardcoded baseline). Process friction: the require-adversarial-review push hook is worktree-unaware (keyed off main-checkout HEAD/path not the worktree's), so the push was initially blocked despite a valid marker; resolved by pushing with cwd set to the worktree -- recurrence of #647. Code learnings already captured in llm-integration.md (LLM date-table + far-east-tz UTC-date-part rules, sourced to #681/#682) and project docs/BUGS.md (BUG-031, BUG-032). Self-merged solo dev. 3 commits (core fix incl. squashed critic fixes, doc-header correction, BUGS.md capture)."
     }
   ],
   "generated": "2026-05-28T22:10:51Z",
-  "lastUpdated": "2026-06-17T05:00:02Z"
+  "lastUpdated": "2026-06-22T19:53:11Z"
 }
