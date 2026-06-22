@@ -18554,8 +18554,80 @@
       },
       "stepTiming": null,
       "notes": "Two calendar-write Telegram bugs from manual testing: #681 bare-weekday off-by-one + address-in-title; #682 update confirmation missing previous date. Root cause of #681: weekday->date arithmetic delegated to the LLM; fix injects a deterministic 14-day weekday->YYYY-MM-DD table (buildCalendarDateReference) into BOTH write and query prompts. NOTABLE: the fresh-context critic caught TWO execution-verified off-by-one bugs in the NEW date-helper itself for far-east zones (UTC+13/+14 -- the fix initially reintroduced the same off-by-one bug class it was fixing by reformatting a UTC-noon instant through Intl in the target tz) PLUS a missed sibling (the calendar-query prompt); all fixed in a second pass. adversarialCatchRate=1.0 computed from evidence (3 issues caught locally by the critic that would otherwise have shipped, 0 post-merge escapes -- not a hardcoded baseline). Process friction: the require-adversarial-review push hook is worktree-unaware (keyed off main-checkout HEAD/path not the worktree's), so the push was initially blocked despite a valid marker; resolved by pushing with cwd set to the worktree -- recurrence of #647. Code learnings already captured in llm-integration.md (LLM date-table + far-east-tz UTC-date-part rules, sourced to #681/#682) and project docs/BUGS.md (BUG-031, BUG-032). Self-merged solo dev. 3 commits (core fix incl. squashed critic fixes, doc-header correction, BUGS.md capture)."
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 687,
+      "title": "feat(calendar): compute free/busy availability deterministically",
+      "dateMerged": "2026-06-22T20:42:43Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 4,
+        "adversarialFixed": 4,
+        "ciStatus": "Vercel preview SUCCESS; pre-existing unrelated main build/lint break (#684) noted, not touched by branch"
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.4,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 2,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 3,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.087,
+      "planningQuality": "complete",
+      "prSize": 1608,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "4a /simplify and 4b CodeRabbit not recorded in PR body; per MEMORY.md lightweight-review policy these are skippable, though this PR (+1593) exceeds the ~100 LOC threshold the policy names. 4c adversarial ran 3 rounds (fresh-context critic) and caught 4 issues.",
+        "complianceRate": 0.6667,
+        "skipAssessment": "neutral"
+      },
+      "stepTiming": null,
+      "notes": "Third instance in one week of the 'LLM doing computation it shouldn't' root anti-pattern, all surfaced by manual Telegram testing not review: #681 (LLM weekday->date arithmetic off-by-one) -> #683 (deterministic fix reintroduced the same off-by-one in far-east tz) -> #685 (LLM doing free/busy interval-subtraction; reported a day 'fully booked 8am-8pm' when the only event ended 7pm, hiding a free 7-8pm slot). Fix replaces LLM interval-math with a pure unit-tested engine (packages/server/src/services/calendar-availability.ts): clip busy intervals to day+window, merge overlapping/adjacent, subtract, drop zero-length gaps; model only classifies the question + extracts windows/days; answer formatted deterministically in code (no second narration call -> zero added latency). Two mid-implementation requirements from continued testing folded into the SAME PR cleanly (shared the new engine + the forced tool's availability object): default availability to this-week instead of asking 'which day?'; support multiple named windows (coffee+lunch). adversarialCatchRate=1.0 computed from EVIDENCE: the fresh-context critic caught 4 issues across 3 rounds that would otherwise have shipped -- (1) SHOULD-FIX out-of-fetch-range days reported confidently 'all free' (the INVERSE false-confidence trap; fixed by bounding availability to the fetched coverage range + explicit out-of-range refusal), (2) an unused param, (3) an availability-vs-clarify precedence gap, (4) a duplicated lookup-window constant (hoisted into the leaf module as CALENDAR_LOOKUP_WINDOW_DAYS) -- vs 0 post-merge escapes (687 is the latest merged PR; no follow-up fix PRs). Author self-review caught NONE. 5 commits: core fix, week-default+multi-window feature, out-of-range guard+drop-unused-param (critic fix), host-constant refactor (critic fix), docs BUG-033. fixupCommitRatio=0.4 (2 critic-fix commits / 5); the 2 feature/core commits + 1 doc commit are not quality fix-ups. preMergeCatchRateByStep 4c=2 counts the two fix COMMITS attributable to the adversarial/critic step (the 4 findings were squashed into 2 commits). Code learnings already captured in llm-integration.md (delegate-computation + bound-to-fetched-range entries, sourced #685) and docs/BUGS.md (BUG-033). Process learnings added this post-mortem to process-patterns.md: three-strike LLM-computation recurrence -> promote to a plan-time premise check; inverse-false-confidence critic check; author-self-review-caught-none; fold-mid-flight-requirements-when-same-code-path. Self-merged solo dev in ~5 min."
     }
   ],
   "generated": "2026-05-28T22:10:51Z",
-  "lastUpdated": "2026-06-22T19:53:11Z"
+  "lastUpdated": "2026-06-22T20:45:55Z"
 }
