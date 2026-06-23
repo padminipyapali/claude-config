@@ -18697,6 +18697,77 @@
       },
       "stepTiming": null,
       "notes": "Issue #684 'restore green main'. HEADLINE finding: most of the reported 'broad pre-existing break' was a LOCAL STALE-BUILD ARTIFACT, not a real defect -- packages/shared/dist/ is gitignored, so dependents' local tsc compiled against an old dist while CI (rebuilds shared fresh) was always green; the VITE_* build error was also local-only. This false 'main is broken' premise had been RE-REPORTED across PRs #683/#687 by successive agents reading it from continuation summaries instead of verifying -- a textbook violation of the global 'do not trust continuation summaries about repo state' rule, propagated for 3 PRs. The 3 REAL, small CI-affecting fixes: (1) targeted biome-ignore on Lightbox backdrop click a11y (Escape-close + close button already existed); (2) test mock in entry.test.ts missing starred:false (production SQL/mapper correct); (3) message-processor.test.ts reminder test used hardcoded 2026-03-15 due-date that rotted past now, so createReminder (gated on remindAt>now) never fired -> moved to 2099-12-31 sentinel. NEWLY UNMASKED: fixing the biome error revealed 82 stylelint errors in App.css because the root lint script 'biome lint . && npm run lint:css' short-circuited on the biome failure for many PRs; 11 are REAL undefined custom properties (--coral-rgb/--text-tertiary from PR #594), a latent visual bug -- correctly DEFERRED to issue #689 with proper bug framing, not dismissed. adversarialCatchRate=UNMEASURED: the 3 fixes were author-found during investigation; the fresh-context critic + adversarial gate VALIDATED the claims (PASS) but no evidence they independently CAUGHT an escaped issue, so the catch denominator is ill-defined -- marked unmeasured per the post-mortem-integrity rule rather than hardcoded. 0 post-merge fixes (688 is the latest merged PR; no follow-ups). 2 commits: 1 fix + 1 docs (BUG-034). Process learnings captured this post-mortem: process-patterns.md Session Start Discipline (verify 'main is broken' premise: rebuild gitignored workspace deps + check CI vs local before acting; false premise survived 3 PRs by inheritance) and Automation Opportunities (chained '&&' lint gate masks downstream steps -- audit each step independently; newly-unmasked real findings get a tracked issue). Code-level lessons already in testing-patterns.md (date-rot sentinel, sourced #688) and docs/BUGS.md (BUG-034: date-rot, stale dist, chained-lint short-circuit). Self-merged solo dev in ~58 min."
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 691,
+      "title": "fix(web): resolve undefined CSS custom properties and clear App.css stylelint errors",
+      "dateMerged": "2026-06-23T04:14:04Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0,
+        "ciStatus": "Vercel SUCCESS; single fresh-context reviewer folded critic into adversarial gate -> PASS"
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.019,
+      "planningQuality": "complete",
+      "prSize": 114,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "No '## Local Review'/'Steps skipped:' line in body (PR body has a '## Verification' section with green-lint evidence instead). Small mostly-cosmetic CSS-only diff (+72/-42, App.css only): per MEMORY.md lightweight-review-for-small-PRs policy the standalone critic (4b/4a) was deliberately FOLDED into a single fresh-context reviewer that also ran the adversarial gate (4c). Gate PASSED: verified token mappings semantically correct, every rgba()->rgb() conversion value-preserving, zero stale keyframe references.",
+        "complianceRate": 0.5556,
+        "skipAssessment": "good"
+      },
+      "stepTiming": null,
+      "notes": "Closes #689; the deferred follow-up from #688 (which unmasked these 83 stylelint errors by fixing a biome error that had been short-circuiting the chained 'biome lint . && npm run lint:css' gate). REAL bug component: 11 undefined CSS custom properties (--coral-rgb, --text-tertiary, introduced PR #594) were silently dropping declarations, rendering wrong colors in active tabs, drag-active outlines, coral buttons, empty-state text -- fixed by mapping to existing tokens (--accent-rgb, --text-muted), no new colors invented. Remaining diff is value-preserving cosmetic cleanup (modern rgb() space-separated notation, % alpha, kebab-case keyframe renames with reference updates, multi-line keyframe blocks, word-wrap->overflow-wrap, removed redundant vendor-prefix appearance). TWO process learnings captured this post-mortem: (1) MID-SCOPE ESCALATION -- mid-implementation the implementer discovered 14 errors OUTSIDE the two scoped buckets (vendor-prefix appearance, non-kebab keyframe names, single-line keyframe declarations, deprecated word-break) and ASKED for scope confirmation rather than silently expanding OR silently leaving 'npm run lint' red; orchestrator approved fixing all 14 to reach a fully-green lint. Good escalation behavior vs silent scope creep / silent red gate -> added to process-patterns.md Scope Decisions. (2) LIGHTWEIGHT-REVIEW FOLD-CRITIC-INTO-GATE -- for this small mechanical CSS-only diff the standalone critic role was folded into a single fresh-context reviewer that also ran the adversarial gate, consistent with the user's lightweight-review-for-small-PRs preference -> added to process-patterns.md Process Compliance as a legitimate scope-calibration of the review lane. adversarialCatchRate=UNMEASURED: the reviewer VALIDATED the implementer's claims (PASS) with no evidence it independently CAUGHT an escaped issue, so the catch denominator is ill-defined -- marked unmeasured per the post-mortem-integrity rule. 0 post-merge fixes (691 is the latest merged PR). 1 commit (1 fix, 0 fix-ups). Self-merged solo dev ~68s after creation; Vercel preview SUCCESS, no peer review (expected for solo). Verification in body: stylelint 0 errors (from 83), root 'npm run lint' exit 0, 285 web tests pass."
     }
   ],
   "generated": "2026-05-28T22:10:51Z",
