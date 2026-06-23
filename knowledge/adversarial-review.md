@@ -308,6 +308,24 @@ git diff main...HEAD --name-only -- '*.tsx' '*.jsx' | xargs grep -nE '>[★♥�
 ```
 Ad-hoc Unicode glyphs inside buttons/spans render inconsistently across fonts/OSes and produce uneven baselines next to text labels. Fix: replace with inline `<svg aria-hidden="true" focusable="false">` icons; ensure parent has `aria-label`/`<title>`. When fixing, sibling-sweep the entire feature area in the same PR. <!-- Source: post-mortem, remodel-hq #83, 2026-05-15 -->
 
+### 0.26 User/LLM content interpolated into Markdown without escaping
+```bash
+git diff main...HEAD -- '*.ts' '*.js' | grep -nE '`(#{1,6} |[-*] |\[).*\$\{' || echo "PASS: no raw interpolation into Markdown structural prefixes"
+```
+Any user- or LLM-generated string written into a Markdown heading (`## ${title}`), bullet (`- ${content}`), or link label (`[${label}]`) can forge document structure: an embedded newline + `## ` injects a sibling heading, a newline + `- ` injects a list item, and a `]` closes a link span early. This is the Markdown analogue of the XML/HTML raw-interpolation check (0.10), and is HIGHEST risk for LLM-emitted fields (summaries, captions) written into a trusted/exported document a human or downstream AI will read. Fix: route every dynamic value through an `inlineText` helper (collapse newlines to spaces so it stays on its structural line) or an `inlineCode` helper (backtick-fenced + CommonMark padding so embedded backticks can't break the span); escape `[`/`]` in link labels. When you fix ONE site, sibling-sweep every other place dynamic content lands in Markdown (second-brain #693 found 6 more sites after the first fix, including an LLM-generated inbox summary). <!-- Source: post-mortem, second-brain #693, 2026-06-23 -->
+
+### 0.27 Secret/connection-string passed as a subprocess argv
+```bash
+git diff main...HEAD -- '*.ts' '*.js' | grep -nE '(execFile|spawn|exec|execSync)\(' -A3 | grep -nE '(DATABASE_URL|connectionString|password|PG(PASS|PASSWORD)|token|secret|api[_-]?key)' || echo "PASS: no secrets on subprocess argv"
+```
+A secret or DB connection-string (with password) passed as a command-line argument to a child process is visible to ANY local user via `ps`/`/proc/<pid>/cmdline` for the process's whole lifetime. second-brain #693: `pg_dump <connstring-with-password>` leaked the DB password on argv. Fix: pass secrets through the child's ENVIRONMENT (for libpq tools, parse the URL into `PGHOST`/`PGPORT`/`PGUSER`/`PGPASSWORD`/`PGDATABASE`/`PGSSLMODE` env vars), never as an argv element; prefer `execFile` with an `env:` option over a shell string. Manual-confirm hits (the grep flags proximity, not proof). <!-- Source: post-mortem, second-brain #693, 2026-06-23 -->
+
+### 0.28 Size cap enforced AFTER fully buffering a remote body
+```bash
+git diff main...HEAD -- '*.ts' '*.js' | grep -nE '\.(arrayBuffer|buffer|text|blob)\(\)' -A4 | grep -nE '(length|size|byteLength|maxBytes|cap|limit) *[<>]=?' && echo "REVIEW: size check appears AFTER full-body buffering — verify it streams" || echo "PASS"
+```
+A `maxBytes`/size check applied to the result of `response.arrayBuffer()`/`.buffer()`/`.text()` runs too late — the entire body is already in memory, so a misbehaving or hostile server (especially when redirects are followed) can OOM the process before the cap is ever evaluated; concurrency multiplies it. second-brain #693: the 25MB media cap was checked only after `arrayBuffer()` buffered the whole download, at x5 concurrency. Fix: reject early on an oversized `Content-Length`, then read `response.body` as a STREAM and abort the moment the running byte total exceeds the cap (fall back to a still-capped buffered read only when no stream is available); cancel the response body on every early-return path so the socket is reclaimed. Memory must be bounded regardless of a dishonest or absent Content-Length. <!-- Source: post-mortem, second-brain #693, 2026-06-23 -->
+
 ### Adding new patterns
 Add when a bug class is caught 2+ times. Requirements: regex on changed lines, <20% false-positive rate.
 

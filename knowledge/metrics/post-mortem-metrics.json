@@ -18768,6 +18768,168 @@
       },
       "stepTiming": null,
       "notes": "Closes #689; the deferred follow-up from #688 (which unmasked these 83 stylelint errors by fixing a biome error that had been short-circuiting the chained 'biome lint . && npm run lint:css' gate). REAL bug component: 11 undefined CSS custom properties (--coral-rgb, --text-tertiary, introduced PR #594) were silently dropping declarations, rendering wrong colors in active tabs, drag-active outlines, coral buttons, empty-state text -- fixed by mapping to existing tokens (--accent-rgb, --text-muted), no new colors invented. Remaining diff is value-preserving cosmetic cleanup (modern rgb() space-separated notation, % alpha, kebab-case keyframe renames with reference updates, multi-line keyframe blocks, word-wrap->overflow-wrap, removed redundant vendor-prefix appearance). TWO process learnings captured this post-mortem: (1) MID-SCOPE ESCALATION -- mid-implementation the implementer discovered 14 errors OUTSIDE the two scoped buckets (vendor-prefix appearance, non-kebab keyframe names, single-line keyframe declarations, deprecated word-break) and ASKED for scope confirmation rather than silently expanding OR silently leaving 'npm run lint' red; orchestrator approved fixing all 14 to reach a fully-green lint. Good escalation behavior vs silent scope creep / silent red gate -> added to process-patterns.md Scope Decisions. (2) LIGHTWEIGHT-REVIEW FOLD-CRITIC-INTO-GATE -- for this small mechanical CSS-only diff the standalone critic role was folded into a single fresh-context reviewer that also ran the adversarial gate, consistent with the user's lightweight-review-for-small-PRs preference -> added to process-patterns.md Process Compliance as a legitimate scope-calibration of the review lane. adversarialCatchRate=UNMEASURED: the reviewer VALIDATED the implementer's claims (PASS) with no evidence it independently CAUGHT an escaped issue, so the catch denominator is ill-defined -- marked unmeasured per the post-mortem-integrity rule. 0 post-merge fixes (691 is the latest merged PR). 1 commit (1 fix, 0 fix-ups). Self-merged solo dev ~68s after creation; Vercel preview SUCCESS, no peer review (expected for solo). Verification in body: stylelint 0 errors (from 83), root 'npm run lint' exit 0, 285 web tests pass."
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 690,
+      "title": "feat(export): portable, self-describing data backup (PR1: core export)",
+      "dateMerged": "2026-06-23T20:29:02Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 6,
+        "coderabbitFixed": 4,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2,
+        "ciStatus": "Vercel SUCCESS; full server suite 1841 pass / 0 fail / 48 skipped"
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 1,
+          "4b": 6,
+          "4c": 2,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 3,
+        "fixupTaxonomy": {
+          "validation": 1,
+          "a11y": 0,
+          "defensive-coding": 2,
+          "correctness": 2,
+          "dead-code": 1,
+          "test-quality": 2,
+          "documentation": 2,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 16.27,
+      "planningQuality": "complete",
+      "prSize": 1966,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "All 9 trackable steps ran. Playwright (a sub-part of step 3) was N/A \u2014 backend-only CLI, zero UI files \u2014 and recorded explicitly in the PR body. Step 3 (build+lint+test) ran: full suite 1841 pass.",
+        "complianceRate": 1.0,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": 25,
+        "implementMinutes": 12,
+        "testMinutes": null,
+        "reviewMinutes": 28,
+        "pushMinutes": 5,
+        "totalMinutes": 70,
+        "bottleneck": "4a-4c Review (~28 min; fresh-context critic + CodeRabbit)",
+        "notes": "Plan had 1 adversarial REVISE round catching 5 pre-code blockers (keyset-on-composite-PK crash, no storage download method, legacy Telegram media_url, chat tables only in migrations, env-loading path) -> zero redesign commits. Test folded into implement. Push includes rebase onto #688 + marker re-cert."
+      },
+      "notes": "Part of #686 (3-PR backup feature; PR1 of 3). Clean atomic-feature run: plan-stage adversarial review caught 5 pre-code blockers, 0 redesign commits, 0 post-push GitHub comments, 0 post-merge fixes (#691 closes #689 from #688, unrelated to export). CodeRabbit 6 findings: 1 critical (inbox_items missing from re-import LOAD_ORDER -> fixed + drift test), 3 major (writer abort/cleanup edges, best-effort tmp cleanup, KnownTable discriminated union), 2 trivial enum-sync nitpicks SKIPPED with recorded reason (only 2 of ~11 shared enums are runtime Sets; rest need new infra). +1 self-found doc-drift. /simplify removed 1 dead import. Adversarial caught 1 input-validation (whitespace DATABASE_URL guard) + 1 test-hygiene. adversarialCatchRate=UNMEASURED per integrity rule (gates caught+validated but all-possible-issues denominator ill-defined). Legacy fix-up ratio 0.5 = 3 review commits / 6 (commit 2 is a planned 2b hardening pass, not a fixup). Self-merged solo dev, no peer review (expected); Vercel preview SUCCESS. PR body is exemplary (full Local Review + Step Timing + Fix-Up Metrics + Perf & Cost). Generalizable learnings (squash-merge stacked-PR rebase --onto + marker recert) captured jointly with stacked child #693."
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 693,
+      "title": "feat(export): media binaries, Markdown views & pg_dump (PR2)",
+      "dateMerged": "2026-06-23T20:35:23Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 16,
+        "coderabbitFixed": 16,
+        "coderabbitIterations": 3,
+        "adversarialFindings": 3,
+        "adversarialFixed": 3,
+        "ciStatus": "Vercel SUCCESS; full server suite 1897 pass / 0 fail / 48 skipped (orchestrator-verified post-review)"
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.75,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 7,
+          "4c": 16,
+          "4d": 3,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 4,
+        "fixupTaxonomy": {
+          "validation": 7,
+          "a11y": 0,
+          "defensive-coding": 3,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 1,
+          "documentation": 1,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.378,
+      "planningQuality": "complete",
+      "prSize": 3197,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "All 9 trackable steps ran. Playwright (sub-part of step 3) N/A \u2014 backend CLI \u2014 recorded in body. Full server suite 1897 pass.",
+        "complianceRate": 1.0,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": 90,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": 5,
+        "totalMinutes": null,
+        "bottleneck": "Implement (stalled-implementer handoff) + 4a-4c Review (per-module critic sub-agents + 3 CodeRabbit rounds)",
+        "notes": "Implement spanned multiple cycles INCLUDING a stalled-implementer handoff: the implementer committed partial WIP then went dormant across idle cycles; recovered by standing it down and spawning a fresh implementer that finished from the on-disk WIP. Review timing qualitative in body (critic + 3 CodeRabbit rounds). Push includes rebase --onto squashed main after #690 merged + marker re-cert. Precise per-step minutes not recorded -> nulls where unquantified."
+      },
+      "notes": "Part of #686 \u2014 PR2 of 3 (stacked on #690; PR3 = scheduling, not yet built). Layered local-review gate (per-module critic sub-agents + 3-round CodeRabbit + explicit sibling-sweep + adversarial Tier 0) caught 100% of real issues pre-push; 0 GitHub-review comments, 0 post-merge fixes. TWO SECURITY MAJORs caught pre-merge: (1) media OOM \u2014 25MB cap enforced only AFTER arrayBuffer() buffered the whole body, so a hostile/redirecting server at x5 concurrency could OOM; fixed by early Content-Length reject + streaming abort + body cancel on early-returns; (2) pg_dump credential exposure \u2014 connection URL with password was the last argv element (visible via ps//proc/cmdline); fixed by passing libpq PG* env vars via the child env, no connstring on argv. Sibling-sweep found 6 Markdown-injection sites (incl. LLM-generated inbox ai_summary) where \\n## / \\n- could forge document structure in the trusted backup; fixed via shared inlineText/inlineCode helpers. preMergeIterationCount=4 (3 CodeRabbit rounds + 1 sibling-sweep) = high friction but appropriate for a 3186-LOC security-sensitive PR (media-download + subprocess-exec + Markdown rendering); 0 escapes => friction was the gate working, not rework. Legacy fix-up ratio 0.75 keyword-based (6 of 8 commits) over-counts; TRUE review-driven fixups = 4 (commits 5-8); commit 3 is the test commit, commit 4 a pre-review pg_dump design reconciliation. PROCESS EVENTS captured to knowledge: (a) implementer STALL + WIP-commit-as-handoff recovery (stand down dormant agent, respawn fresh from committed WIP; bound implementer liveness) -> process-patterns.md; (b) stacked-PR squash-merge add/add conflict resolved via git rebase --onto + content-identity proof + marker re-cert + force-push -> process-patterns.md; (c) 3 new Tier 0 greps (0.26 Markdown-injection, 0.27 secret-on-argv, 0.28 size-cap-after-buffering) -> adversarial-review.md; (d) LLM-output-into-Markdown structure-injection sink -> llm-integration.md. Two rebase+marker-recert cycles total across the stack (PR1 onto #688, PR2 onto squashed main). adversarialCatchRate=UNMEASURED per integrity rule. Self-merged solo dev, Vercel SUCCESS, no peer review (expected). >600-LOC atomic-feature exception declared+justified (three artifacts share one exporter integration)."
     }
   ],
   "generated": "2026-05-28T22:10:51Z",
