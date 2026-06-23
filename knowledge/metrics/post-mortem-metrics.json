@@ -18626,6 +18626,77 @@
       },
       "stepTiming": null,
       "notes": "Third instance in one week of the 'LLM doing computation it shouldn't' root anti-pattern, all surfaced by manual Telegram testing not review: #681 (LLM weekday->date arithmetic off-by-one) -> #683 (deterministic fix reintroduced the same off-by-one in far-east tz) -> #685 (LLM doing free/busy interval-subtraction; reported a day 'fully booked 8am-8pm' when the only event ended 7pm, hiding a free 7-8pm slot). Fix replaces LLM interval-math with a pure unit-tested engine (packages/server/src/services/calendar-availability.ts): clip busy intervals to day+window, merge overlapping/adjacent, subtract, drop zero-length gaps; model only classifies the question + extracts windows/days; answer formatted deterministically in code (no second narration call -> zero added latency). Two mid-implementation requirements from continued testing folded into the SAME PR cleanly (shared the new engine + the forced tool's availability object): default availability to this-week instead of asking 'which day?'; support multiple named windows (coffee+lunch). adversarialCatchRate=1.0 computed from EVIDENCE: the fresh-context critic caught 4 issues across 3 rounds that would otherwise have shipped -- (1) SHOULD-FIX out-of-fetch-range days reported confidently 'all free' (the INVERSE false-confidence trap; fixed by bounding availability to the fetched coverage range + explicit out-of-range refusal), (2) an unused param, (3) an availability-vs-clarify precedence gap, (4) a duplicated lookup-window constant (hoisted into the leaf module as CALENDAR_LOOKUP_WINDOW_DAYS) -- vs 0 post-merge escapes (687 is the latest merged PR; no follow-up fix PRs). Author self-review caught NONE. 5 commits: core fix, week-default+multi-window feature, out-of-range guard+drop-unused-param (critic fix), host-constant refactor (critic fix), docs BUG-033. fixupCommitRatio=0.4 (2 critic-fix commits / 5); the 2 feature/core commits + 1 doc commit are not quality fix-ups. preMergeCatchRateByStep 4c=2 counts the two fix COMMITS attributable to the adversarial/critic step (the 4 findings were squashed into 2 commits). Code learnings already captured in llm-integration.md (delegate-computation + bound-to-fetched-range entries, sourced #685) and docs/BUGS.md (BUG-033). Process learnings added this post-mortem to process-patterns.md: three-strike LLM-computation recurrence -> promote to a plan-time premise check; inverse-false-confidence critic check; author-self-review-caught-none; fold-mid-flight-requirements-when-same-code-path. Self-merged solo dev in ~5 min."
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 688,
+      "title": "fix: restore green build/test/lint on main (a11y lint + two stale tests)",
+      "dateMerged": "2026-06-23T03:20:10Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0,
+        "ciStatus": "Vercel preview SUCCESS; fresh-context critic PASS, adversarial gate PASS"
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.97,
+      "planningQuality": "complete",
+      "prSize": 25,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "No '## Local Review' / 'Steps skipped:' lines in PR body. Per MEMORY.md lightweight-review policy a +23/-2, 3-fix PR under ~100 LOC may skip critic-heavy gates; implementer -> fresh-context critic (PASS) -> adversarial gate (PASS) ran. 4a /simplify and 4b CodeRabbit not recorded.",
+        "complianceRate": 0.7778,
+        "skipAssessment": "good"
+      },
+      "stepTiming": null,
+      "notes": "Issue #684 'restore green main'. HEADLINE finding: most of the reported 'broad pre-existing break' was a LOCAL STALE-BUILD ARTIFACT, not a real defect -- packages/shared/dist/ is gitignored, so dependents' local tsc compiled against an old dist while CI (rebuilds shared fresh) was always green; the VITE_* build error was also local-only. This false 'main is broken' premise had been RE-REPORTED across PRs #683/#687 by successive agents reading it from continuation summaries instead of verifying -- a textbook violation of the global 'do not trust continuation summaries about repo state' rule, propagated for 3 PRs. The 3 REAL, small CI-affecting fixes: (1) targeted biome-ignore on Lightbox backdrop click a11y (Escape-close + close button already existed); (2) test mock in entry.test.ts missing starred:false (production SQL/mapper correct); (3) message-processor.test.ts reminder test used hardcoded 2026-03-15 due-date that rotted past now, so createReminder (gated on remindAt>now) never fired -> moved to 2099-12-31 sentinel. NEWLY UNMASKED: fixing the biome error revealed 82 stylelint errors in App.css because the root lint script 'biome lint . && npm run lint:css' short-circuited on the biome failure for many PRs; 11 are REAL undefined custom properties (--coral-rgb/--text-tertiary from PR #594), a latent visual bug -- correctly DEFERRED to issue #689 with proper bug framing, not dismissed. adversarialCatchRate=UNMEASURED: the 3 fixes were author-found during investigation; the fresh-context critic + adversarial gate VALIDATED the claims (PASS) but no evidence they independently CAUGHT an escaped issue, so the catch denominator is ill-defined -- marked unmeasured per the post-mortem-integrity rule rather than hardcoded. 0 post-merge fixes (688 is the latest merged PR; no follow-ups). 2 commits: 1 fix + 1 docs (BUG-034). Process learnings captured this post-mortem: process-patterns.md Session Start Discipline (verify 'main is broken' premise: rebuild gitignored workspace deps + check CI vs local before acting; false premise survived 3 PRs by inheritance) and Automation Opportunities (chained '&&' lint gate masks downstream steps -- audit each step independently; newly-unmasked real findings get a tracked issue). Code-level lessons already in testing-patterns.md (date-rot sentinel, sourced #688) and docs/BUGS.md (BUG-034: date-rot, stale dist, chained-lint short-circuit). Self-merged solo dev in ~58 min."
     }
   ],
   "generated": "2026-05-28T22:10:51Z",
