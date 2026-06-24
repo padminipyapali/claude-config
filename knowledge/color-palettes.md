@@ -190,3 +190,64 @@ Bold, high-contrast. Good for creative portfolios, fashion, entertainment.
 - **To customize:** Adjust the hue angle in OKLCH to shift the palette while keeping perceptual uniformity. Adjust chroma to make colors more vivid or muted.
 - **Kigen tool:** Use [kigen.design/color](https://kigen.design/color) to fine-tune individual scales with the Tailwind algorithm and OKLCH output.
 - **Dark mode:** Invert the scale (950 becomes background, 50 becomes text). The perceptual uniformity means contrast ratios hold in both directions.
+
+---
+
+# App Theme Palettes — "Ria" editorial multi-theme system
+
+From the Ria baby-name app (React Native). A cohesive set of **named, switchable
+themes** built on ONE token contract (every theme implements the same keys), with
+Cormorant Garamond (serif display) + Inter (sans chrome). Reusable anywhere you
+want a small family of moods rather than just light/dark. Origin: Ria PRs
+#199 (Nocturne) + the Clair Obscur/Plein Air theme work (2026-06).
+
+**Design principles worth stealing:**
+- **Name themes after a coherent set, not "dark/light."** Here: a French
+  painting-term pairing — **Plein Air** (natural outdoor light) ↔ **Clair Obscur**
+  (dramatic chiaroscuro) — plus **Light** (editorial) and **Nocturne** (jewel
+  dark). Names carry mood and make the toggle feel intentional.
+- **Light themes keep per-deck accents; dark themes collapse to ONE signature
+  accent.** Nocturne and Clair Obscur fold rose/blue/plum into a single gold
+  family (calmer, more luxe on dark). Light/Plein Air keep distinct accents.
+- **Chiaroscuro = light, not just dark color.** Clair Obscur reads different from
+  Nocturne because of a single warm radial light source (a candle-glow) + a
+  focused card that glows "lit from within" — not because it's a darker hex.
+- **One token contract.** Same keys for every theme: `background, surface,
+  surfaceAlt, text, textSecondary/Tertiary/Quaternary, border, borderLight`, an
+  accent family (`rose/blue/plum` × `base/dark/light/glow`), `sage` group for
+  origin/tag text, `muted`, `white` (= ink drawn ON the accent fill), `overlayTint`.
+
+### Light — "Premium Editorial" (warm cream, rose/sage)
+`background #FAF9F7` · `surface #FFFFFF` · `surfaceAlt #FDFCFA` · `text #1A1A1A` ·
+`textSecondary #6B6560` · `textTertiary #9B958E` · `textQuaternary #C4C1BA` ·
+`border #E8E6E1` · `borderLight #F0EEEA` · rose(girls) `#DE5F8B`/dark `#BD4570`/light `#FAEEF1` ·
+plum(all) `#8E6BA8`/light `#F3EEF7` · sage(origin) `#576A55`/light `#EDF5EC`.
+
+### Plein Air — luminous open-air daylight (cool white, garden naturals)
+`background #F1F5F1` · `surface #FFFFFF` · `surfaceAlt #F8FBF8` · `text #28332C` (pine ink) ·
+`textSecondary #5C6B60` · `textTertiary #92A096` · `textQuaternary #BDC8BF` ·
+`border #E2EAE2` · `borderLight #EEF3ED` · rose(girls) `#D97E70`/dark `#C0604F`/light `#FBEEEA` ·
+sky(boys) `#4F94A6`/dark `#36758A`/light `#E7F1F3` · sage(all/origin) `#6E9A6A`/deep `#4F7A4C`/light `#EAF2E7` ·
+sun(highlight) `#E0A24A`/light `#FBF1DD`. Signature: soft top sun-glow
+`radial-gradient(150% 50% at 50% 0%, sunLight, transparent)`.
+
+### Nocturne — Sabyasachi oxblood + antique gold + emerald (jewel dark)
+`background #170710` (oxblood velvet) · `surface #240F18` · `surfaceAlt #1E0C14` ·
+`text #F0E4CB` · `textSecondary #CDB88C` · `textTertiary #9C8460` · `textQuaternary #5E4232` ·
+`border rgba(198,162,90,0.16)` · `borderLight rgba(198,162,90,0.08)` ·
+**single gold accent** (rose/blue/plum all =) base `#C6A25A`/dark `#9C7A36`/light `rgba(198,162,90,0.10)`/glow `rgba(198,162,90,0.13)` ·
+sage(origin) emerald `#8CC0A1`/mid `#6FA07F`/light `#11281E` · `white` (ink on gold) `#241009`.
+
+### Clair Obscur — candlelit chiaroscuro (warm umber + antique gold)
+`background #0F0B07` (warm umber) · `surface #221910` · `surfaceAlt #1A130C` ·
+`text #EFE6CF` (parchment) · `textSecondary #CBB489` · `textTertiary #94815B` · `textQuaternary #5C4D35` ·
+`border rgba(201,162,75,0.20)` · `borderLight rgba(201,162,75,0.08)` ·
+**single gold accent** (warmer/gilt vs Nocturne) base `#C9A24B`/dark `#9E7A2F`/light `rgba(201,162,75,0.10)`/glow `rgba(201,162,75,0.14)` ·
+sage(origin) gilt-olive `#A7A06A`/mid `#8C8654`/light `rgba(167,160,106,0.12)` · `white` (ink on gold) `#1A130C` ·
+`overlayTint rgba(15,11,7,0.18)`. Signature: warm candle-glow
+`radial-gradient(140% 55% at 50% 26%, rgba(224,178,96,0.16), transparent)` +
+focused card `box-shadow: 0 0 50px rgba(201,162,75,0.10)` with a gold-catching border.
+
+**The pairing at a glance:** Plein Air (bright, even, garden) ↔ Clair Obscur
+(dark, one light source, gilt) are deliberate opposites; Light ↔ Nocturne are the
+"safe" editorial light/dark. Ship 2 or 4 — they share the same token contract.
