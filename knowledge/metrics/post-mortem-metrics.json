@@ -19254,6 +19254,86 @@
         "notes": "Per-step minutes not recorded. Local dev loop (implement+critic+fix) before push; created->merged ~3 min; 2 commits (feature + critic degenerate-interval fix)."
       },
       "notes": "FEATURE: reshape the 'what's on today' Telegram agenda into per-calendar sections + a distinct nanny-coverage band (Covered intervals naming the coverer) + a Free-pockets line (hands-free sub-intervals inside coverage, >=15 min), gated on new GOOGLE_COVERAGE_CALENDARS env. Built via orchestrator 3-role team. THE CRITIC CATCH (1 caught / 1 total, all pre-merge -> adversarialCatchRate=1.0): the fresh-context critic flagged that a degenerate coverage event (start===end or end<start) flowed straight into the coverage interval union, emitting a phantom '\\U0001f37c Covered 5:00-5:00 PM' band AND -- because a zero-length point still satisfies the half-open overlap test -- leaking its summary into a real band's coverer list. Fixed pre-merge (commit 2) by filtering timed coverage to positive-duration spans up front, mirroring the existing subtractBusy busy-set guard; tests added (zero-length + reversed). 0 blockers, 0 post-merge escapes. KEY PROCESS LESSON (planning gap, not a code defect): during implementation the team surfaced that the MORNING DIGEST uses a SEPARATE renderer (buildCalendarSection, with travel times) that does NOT share this formatter, so the grouping+coverage treatment landed ONLY on the Q&A 'what's on today' path. The orchestrator's plan had implicitly assumed both surfaces shared one formatter -- a shared-vs-separate render-path question that should have been resolved in planning (Step 1) before scoping the feature as 'applies to the agenda'. Scope was then correctly narrowed and documented in the PR Decisions section (Q&A path only; digest left untouched, follow-up if wanted). FOLLOW-UPS: (a) optionally extend grouping+coverage to buildCalendarSection (morning digest); (b) user must set GOOGLE_COVERAGE_CALENDARS in prod for the band to appear -- with it unset the agenda still renders the new grouped layout, no coverage band. Self-merged solo dev (mergedBy==author, no peer review -- expected for this workflow), Vercel SUCCESS, no GitHub inline/CodeRabbit comments. +1003/-? across 9 files, 2 commits. Lint/build/test green: server suite 2213 pass / 48 skip."
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 739,
+      "title": "fix(calendar): route far-future dated questions to the deterministic agenda (align date reference with the 92-day window)",
+      "dateMerged": "2026-06-25T23:16:38Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0,
+        "ciStatus": "Vercel SUCCESS; @second-brain/server suite 2215 pass, 48 skipped (orchestrator-verified)"
+      },
+      "adversarialCatchRate": null,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.016,
+      "planningQuality": "complete",
+      "prSize": 99,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "Lightweight review for a small PR (~77 LOC, 2 files) per the standing rule: skip the separate fresh-context critic + CodeRabbit/simplify (4a/4b) under ~100 LOC; keep build/lint/test + the adversarial gate. Built via implementer; orchestrator reviewed the diff directly and ran the adversarial gate (0 blockers).",
+        "complianceRate": 0.78,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "Per-step minutes not recorded. Local dev loop (diagnose + implement + adversarial gate) before push; created->merged ~57s on GitHub; 1 commit."
+      },
+      "notes": "FIX (Closes #738): far-future dated calendar questions ('show me events on 7/25', ~30 days out, asked 2026-06-25) were REFUSED with 'calendar data only extends through mid-July (~July 15)' even though the calendar fetch/coverage window is already 92 days and the deterministic answerAgenda/answerAvailability paths held the data -- the classifier just never routed there. ROOT CAUSE (data-window-vs-prompt-window mismatch, #716 class): (1) CALENDAR_DATE_REFERENCE_DAYS was hard-coded to 14, so the weekday->date reference the model resolves named dates from spanned only 14 days and 7/25 had no sanctioned way to become days:['2026-07-25']; (2) the grounding <events> block is a deliberately small 21-day excerpt and the prompt told the model to decline for any day outside it, so the model treated the 21-day excerpt as the calendar's true horizon and refused instead of classifying as agenda mode. FIX (response.ts, prompt + one constant, +77/-22, 2 files): CALENDAR_DATE_REFERENCE_DAYS is now a drift-proof ALIAS of CALENDAR_LOOKUP_WINDOW_DAYS (92) so every in-window date is individually resolvable (full 92 day-lines, ~600 extra tokens, DST-safe UTC-parts logic unchanged); reworded AGENDA/AVAILABILITY rules to set days for a named date even beyond <events>, scoped the 'say so plainly' decline to specific-EVENT lookups, and framed <events> as a near-term excerpt not the calendar's limit. Deterministic paths + EVENTS_BLOCK_WINDOW_DAYS untouched. Intended side effect: buildCalendarDateReference is shared by the calendar-WRITE classifier, so the write path can now also resolve far-future dates (e.g. 'schedule dentist Aug 22') -- capability gain, no regression. PROCESS: lightweight review per standing rule (skip separate critic + CodeRabbit under ~100 LOC; keep build/lint/test + adversarial gate); built via implementer, orchestrator reviewed diff + ran adversarial gate, 0 blockers. adversarialCatchRate=UNMEASURED (0 caught / 0 total) -- no separate critic spawned by design for a lightweight-review small PR, so the critic step was not exercised; recorded honestly as null rather than fabricated as 1.0. THE MEANINGFUL PROCESS SIGNAL is a DIFFERENT one: the INITIAL diagnosis from a single exploration agent was WRONG -- it claimed the lookup/coverage-window constant was still 14 and needed bumping to 92, when on origin/main that window was ALREADY 92. The orchestrator caught the misattribution by reading the constants directly against origin/main, confirmed the data window was already correct, and RE-DIAGNOSED the real cause (the 14-day date-reference constant, a different symbol, + the decline-from-excerpt prompt). Had the orchestrator trusted the exploration pass, the fix would have bumped an already-92 constant and shipped with the refusal still live. LEARNING CAPTURED in process-patterns.md (Planning Discipline): verify a diagnosing agent's root-cause claim against the actual source-of-truth branch (origin/main) before implementing -- exploration agents can read stale worktree copies and misattribute the cause; plus the constant-alias-not-copy-literal drift rule. Validation green: build/lint/test, @second-brain/server 2215 pass / 48 skip; tests added (reference spans the lookup window incl. a ~30-day-out date, drift-guard CALENDAR_DATE_REFERENCE_DAYS===CALENDAR_LOOKUP_WINDOW_DAYS, in-window-far-future 'No events' not refusal, >92d still refuses). The classifier is an LLM (unit tests mock it) so the real gate is a post-deploy LIVE re-test: 'events on 7/25' should return the deterministic agenda, not a refusal. Self-merged solo dev (mergedBy==author, no peer review -- expected), Vercel SUCCESS, 1 Vercel bot comment (excluded), 0 GitHub inline/CodeRabbit comments. Squash-merged as 4ff3645, branch fix/calendar-date-reference-window, 1 commit, created->merged ~57s."
     }
   ],
   "generated": "2026-05-28T22:10:51Z",
