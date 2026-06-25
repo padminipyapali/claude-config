@@ -333,7 +333,11 @@ check_start "0.10" "Raw interpolation in XML/HTML template strings"
 if [[ -z "$DIFF_TS" ]]; then
   check_skip "no TS/JS diff"
 else
-  result=$(echo "$DIFF_TS" | grep -E '^\+.*`<\w+[^>]*\$\{' 2>/dev/null || true)
+  # `<[^`]*${ — matches interpolation in BOTH attribute position (<doc src="${x}">)
+  # AND element content (<entry>${x}</entry>). The old `<\w+[^>]*${ stopped at the
+  # first '>', silently missing the element-content wrap that is the commonest shape
+  # for embedding untrusted user/LLM text as data in an AI prompt (second-brain #720).
+  result=$(echo "$DIFF_TS" | grep -E '^\+.*`<[^`]*\$\{' 2>/dev/null || true)
   if [[ -z "$result" ]]; then
     check_pass
   else

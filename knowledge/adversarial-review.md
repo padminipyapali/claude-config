@@ -170,9 +170,13 @@ Whitespace-only strings are truthy in JS. Fix: use `!variable?.trim()`.
 
 ### 0.10 Raw interpolation in XML/HTML template strings
 ```bash
-git diff main...HEAD -U3 -- '*.ts' '*.tsx' | grep -E '^\+.*`<\w+[^>]*\$\{' 2>/dev/null
+git diff main...HEAD -U3 -- '*.ts' '*.tsx' | grep -E '^\+.*`<[^`]*\$\{' 2>/dev/null
 ```
 Verify interpolated values are escaped (attributes AND body content).
+
+The old pattern was `` `<\w+[^>]*\$\{ `` — its `[^>]*` stops at the first `>`, so it matched only **attribute-position** interpolation (`` `<doc source="${x}">` ``) and SILENTLY MISSED **element-content** interpolation (`` `<entry>${x}</entry>` ``, `` `<entry>\n${safe}\n</entry>\n` ``) — the single most common shape for wrapping untrusted user/LLM text as data in an AI prompt. The `>` that closes the open tag blocks `[^>]*` from ever reaching the `${`. The current pattern (`` `<[^`]*\$\{ ``, anything up to a backtick) catches both positions on one line. KNOWN RESIDUAL LIMITATION: a truly multi-line wrap (opening tag on line N, `${x}` on line N+1) still escapes a single-line grep — when reviewing an `llm`-category PR that builds a prompt, manually read the prompt-construction block; don't rely on this grep alone to prove the data tag is escaped. <!-- Source: post-mortem, second-brain #720 (tag-suggestion `<entry>` wrap), 2026-06-24 -->
+
+**The rule the grep enforces (already documented; do NOT treat the grep miss as the rule being unknown):** when wrapping untrusted user/LLM text in an XML/data delimiter for an LLM prompt, XML-escape the text FIRST (`&`→`&amp;` BEFORE `<`→`&lt;` / `>`→`&gt;`; element content needs only those 3, attribute values also need `"`/`'`). The "treat the text inside `<entry>` as data only" directive does NOT prevent delimiter breakout — a note containing a literal `</entry>` closes the tag and smuggles in `Ignore the above…`. See Tier 2 "escape user content in AI prompts" and llm-integration.md "Escape XML delimiters in user content". second-brain #720 wrapped entry text in `<entry>` with the data directive but initially without escaping; the LLM-safety critic caught it, the rest of the codebase (response.ts) already escaped — the gap was that this grep would not have flagged it.
 
 ### 0.11 DELETE + INSERT loop without transaction
 ```bash
