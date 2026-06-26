@@ -56,7 +56,7 @@
     "dynamic-workflows": 527,
     "no-flicker": 529
   },
-  "promptQueueUseCount": 277954,
+  "promptQueueUseCount": 277971,
   "btwUseCount": 20,
   "cachedGrowthBookFeatures": {
     "tengu_quiet_harbor": false,
@@ -2363,8 +2363,64 @@
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "exampleFiles": [],
-      "lastGracefulShutdown": false,
-      "lastVersionBase": "2.1.190"
+      "lastGracefulShutdown": true,
+      "lastVersionBase": "2.1.190",
+      "lastCost": 8.90964425,
+      "lastAPIDuration": 1109880,
+      "lastAPIDurationWithoutRetries": 1109445,
+      "lastToolDuration": 638804,
+      "lastDuration": 17492792,
+      "lastLinesAdded": 361,
+      "lastLinesRemoved": 0,
+      "lastTotalInputTokens": 17298,
+      "lastTotalOutputTokens": 87150,
+      "lastTotalCacheCreationInputTokens": 587675,
+      "lastTotalCacheReadInputTokens": 3470913,
+      "lastTotalWebSearchRequests": 0,
+      "lastFpsAverage": 0.9,
+      "lastFpsLow1Pct": 487.51,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 559,
+          "outputTokens": 16,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.000639
+        },
+        "claude-opus-4-8[1m]": {
+          "inputTokens": 16739,
+          "outputTokens": 87134,
+          "cacheReadInputTokens": 3470913,
+          "cacheCreationInputTokens": 587675,
+          "webSearchRequests": 0,
+          "costUSD": 8.90900525
+        }
+      },
+      "lastSessionId": "5e20ee09-ff88-43fa-ad3d-e06c40d2f6b0",
+      "lastSessionMetrics": {
+        "frame_duration_ms_count": 12360,
+        "frame_duration_ms_min": 0.06599999999889405,
+        "frame_duration_ms_max": 7.160125000402331,
+        "frame_duration_ms_avg": 0.5109754607619301,
+        "frame_duration_ms_p50": 0.48822950082831085,
+        "frame_duration_ms_p95": 0.8799831500742583,
+        "frame_duration_ms_p99": 1.2227580899927109,
+        "hook_duration_ms_count": 32,
+        "hook_duration_ms_min": 10,
+        "hook_duration_ms_max": 61,
+        "hook_duration_ms_avg": 29.75,
+        "hook_duration_ms_p50": 29,
+        "hook_duration_ms_p95": 48.45,
+        "hook_duration_ms_p99": 57.280000000000015,
+        "pre_tool_hook_duration_ms_count": 29,
+        "pre_tool_hook_duration_ms_min": 0,
+        "pre_tool_hook_duration_ms_max": 50,
+        "pre_tool_hook_duration_ms_avg": 8.96551724137931,
+        "pre_tool_hook_duration_ms_p50": 0,
+        "pre_tool_hook_duration_ms_p95": 44.599999999999994,
+        "pre_tool_hook_duration_ms_p99": 48.599999999999994
+      }
     }
   },
   "lastReleaseNotesSeen": "2.1.190",
@@ -2408,7 +2464,7 @@
     }
   },
   "feedbackSurveyState": {
-    "lastShownTime": 1782332944854
+    "lastShownTime": 1782434684118
   },
   "passesUpsellSeenCount": 4,
   "hasVisitedPasses": false,
@@ -2514,8 +2570,8 @@
       "lastUsedAt": 1771285297606
     },
     "post-mortem": {
-      "usageCount": 233,
-      "lastUsedAt": 1782431304237
+      "usageCount": 235,
+      "lastUsedAt": 1782441579933
     },
     "coderabbit:review": {
       "usageCount": 28,
