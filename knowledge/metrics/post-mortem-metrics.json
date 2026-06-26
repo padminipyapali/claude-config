@@ -19799,6 +19799,88 @@
         "bottleneck": null,
         "notes": "Built from a design-workflow implementer-ready spec (post-pack-collapse mechanic over synthetic-blocks-in-the-packer). Body has no per-step timing table, so minutes are null. Contract-first, byte-identical PR-A: lands the persistence + refine-round-trip contract (load-bearing change = refine coerceAnalysis re-normalizing actionMode/batchKey identically to main coercion) before any consumer (PR-B/C) exists, guarded by a mandatory round-trip regression test."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 752,
+      "title": "feat(scheduler): exclude decisions from the schedule + Decisions section [PR-B of #749]",
+      "dateMerged": "2026-06-26T18:17:46Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0,
+        "ciStatus": "Vercel SUCCESS; server 2321 passed / 48 skipped"
+      },
+      "adversarialCatchRate": null,
+      "adversarialCatchRateNote": "unmeasured \u2014 no separate fresh-context critic ran (deliberately skipped under the lightweight-gate convention + the velocity push); PR-B used a lightweight orchestrator gate, not a critic. 0/(0+0) undefined; 0 post-merge escapes. Not fabricated to 1.0. Scope note: PR-C (commit-path + event creation) is being paused for a real critic.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.005,
+      "planningQuality": "complete",
+      "prSize": 299,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b",
+          "4c-critic"
+        ],
+        "skipReasons": "Fresh-context critic + separate /simplify (4a) + CodeRabbit (4b) deliberately skipped per the standing lightweight-review-for-small-additive-PRs preference and the active velocity push ('let's get these merged'). Lightweight orchestrator gate kept and load-bearing: build/lint/test (2321 passed), the dangling-dependency filter (a non-decision depending on an excluded decision still packs \u2014 no phantom blocker), stable numbering (decisions occupy no number), decisions never reaching events/numberMap, all-block byte-identity, adversarial-review marker. Scope note: the waiver is scoped to A/B; PR-C (commit-path + event creation) is paused for a real critic.",
+        "complianceRate": 0.6667,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "Built from a lean-scheduler implementer-ready spec; first behavioral use of PR-A's actionMode. Body has no per-step timing table, so minutes are null. Load-bearing change = the dangling-dependency filter (each survivor's dependsOn drops ids pointing at an excluded decision, so a non-decision that depended on one is not stranded by a phantom never-placed blocker). packTodos/placementsToEvents/commit untouched; all-block path byte-identical to pre-PR-B."
+      }
     }
   ],
   "generated": "2026-05-28T22:10:51Z",
