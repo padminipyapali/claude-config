@@ -19636,8 +19636,89 @@
         "bottleneck": null,
         "notes": "Body has a ## Step Timing section but as narrative prose (explore -> architect -> adversarial plan review -> implement 1 pass -> gates -> adversarial gate -> PR, single session), not the per-step | Step | Duration | table the skill parses, so per-step minutes are null."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 750,
+      "title": "feat(tags): one-time idempotent backfill to canonicalize existing tag rows",
+      "dateMerged": "2026-06-26T16:05:17Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2,
+        "ciStatus": "Vercel Preview SUCCESS; server 2300 passed / 48 skipped (incl. 18 new)"
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 2,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 1
+        }
+      },
+      "timeToMergeHours": 0.01,
+      "planningQuality": "complete",
+      "prSize": 842,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "Separate /simplify (4a) + CodeRabbit (4b) skipped; covered by a 3-lens perspective-diverse code review (data-loss / idempotency-concurrency / SQL-edge-case, verdict SHIP-READY) substituting for the internal critic, plus the strict adversarial gate (4c) on a self-contained script. Build/lint/test (3) and CI (4d) kept; adversarial gate (4c) kept and load-bearing (caught the NUL/binary defect + a trim guard that every other layer missed).",
+        "complianceRate": 0.7778,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": "adversarial gate (2 fix cycles: NUL/binary-source delimiter, then exposed non-.trim() env guard)",
+        "notes": "Body has a ## Step Timing section but as a notes-only table (Plan -> Implement -> Gates -> Review -> Apply -> PR), no per-step durations, so minutes are null. Notable ordering: Apply-to-prod (step 5 in the body's table: dry-run reviewed -> --apply, 5 renames) preceded the adversarial gate passing and the PR; the gate then failed twice before HEAD 581c64f passed."
+      }
     }
   ],
   "generated": "2026-05-28T22:10:51Z",
-  "lastUpdated": "2026-06-26T04:28:08Z"
+  "lastUpdated": "2026-06-26T16:05:17Z"
 }
