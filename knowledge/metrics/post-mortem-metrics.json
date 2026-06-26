@@ -19881,8 +19881,90 @@
         "bottleneck": null,
         "notes": "Built from a lean-scheduler implementer-ready spec; first behavioral use of PR-A's actionMode. Body has no per-step timing table, so minutes are null. Load-bearing change = the dangling-dependency filter (each survivor's dependsOn drops ids pointing at an excluded decision, so a non-decision that depended on one is not stranded by a phantom never-placed blocker). packTodos/placementsToEvents/commit untouched; all-block path byte-identical to pre-PR-B."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 758,
+      "title": "feat(scheduler): batch errands + admin into single calendar events [PR-C of #749]",
+      "dateMerged": "2026-06-26T21:37:32Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0,
+        "ciStatus": "Vercel SUCCESS; server 2352 passed / 48 skipped"
+      },
+      "adversarialCatchRate": null,
+      "adversarialCatchRateNote": "unmeasured \u2014 the fresh-context critic RAN FULLY (PR-C touches the calendar-write/event-creation/commit path, so it graduated OUT of the A/B lightweight gate to a real critic). It independently verified: no overflow/double-booking path, member-id survival through persist\u2192parseStoredEvents\u2192commit, exactly one createEvent per run (count==runs not members), and byte-identical no-op path. Verdict: ship-ready, 0 blockers, 0 SHOULD-FIX, 2 cosmetic NITs only. caught/(caught+escaped) = 0/(0+0) for ACTIONABLE findings = undefined \u2192 recorded as unmeasured per the metric-integrity rule, NOT fabricated to 1.0. 0 post-merge escapes. This is the strong-signal case (full critic ran, found the design genuinely clean) vs PR-A/B's lightweight-gate unmeasured (no critic ran at all).",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.079,
+      "planningQuality": "complete",
+      "prSize": 987,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4c-critic",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "Separate /simplify (4a) and CodeRabbit CLI (4b) skipped per the lightweight-review preference, BUT \u2014 unlike PR-A/B \u2014 the fresh-context critic (4c) was deliberately RE-INSTATED because PR-C creates calendar events and touches the commit path. Risk-graduated review: A/B (additive/byte-identical) shipped on the lightweight gate; C (event-creating/commit-path) got the full critic. The critic verified no overflow/double-booking, member-id survival persist\u2192parse\u2192commit, one createEvent per run, byte-identical no-op path; 2352 tests green.",
+        "complianceRate": 0.7778,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "PR body has no per-step timing table (minutes null). ~337 LOC production + tests (diff +973/-14 across 6 files incl. tests). Load-bearing change = post-pack collapseBatches transform with RE-FIT + fall-back-to-individuals safety valve (firstFit only fits within one free interval, so a non-contiguous reclaim falls back rather than emitting an overflowing/overlapping block) + parseStoredEvents preserving memberTodoIds so the run\u2192todos trace survives persist\u2192commit. packTodos untouched; zero-errand/admin path byte-identical."
+      }
     }
   ],
   "generated": "2026-05-28T22:10:51Z",
-  "lastUpdated": "2026-06-26T16:05:17Z"
+  "lastUpdated": "2026-06-26"
 }
