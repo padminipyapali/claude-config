@@ -330,6 +330,16 @@ git diff main...HEAD -- '*.ts' '*.js' | grep -nE '\.(arrayBuffer|buffer|text|blo
 ```
 A `maxBytes`/size check applied to the result of `response.arrayBuffer()`/`.buffer()`/`.text()` runs too late — the entire body is already in memory, so a misbehaving or hostile server (especially when redirects are followed) can OOM the process before the cap is ever evaluated; concurrency multiplies it. second-brain #693: the 25MB media cap was checked only after `arrayBuffer()` buffered the whole download, at x5 concurrency. Fix: reject early on an oversized `Content-Length`, then read `response.body` as a STREAM and abort the moment the running byte total exceeds the cap (fall back to a still-capped buffered read only when no stream is available); cancel the response body on every early-return path so the socket is reclaimed. Memory must be bounded regardless of a dishonest or absent Content-Length. <!-- Source: post-mortem, second-brain #693, 2026-06-23 -->
 
+### 0.29 Changed source file git classifies as binary (NUL byte / control char in source)
+```bash
+git diff main...HEAD --name-only -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.json' '*.css' '*.md' '*.sql' | while read f; do
+  [ -f "$f" ] || continue
+  if LC_ALL=C grep -qP '\x00' "$f" 2>/dev/null; then echo "BINARY/NUL IN SOURCE: $f (contains a NUL byte — git will treat it as binary)"; fi
+done
+git diff main...HEAD --numstat -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.json' '*.css' '*.md' '*.sql' | awk '$1=="-" && $2=="-" {print "BINARY DIFF: "$3" (git shows - - / \"Bin\" — diff is unreviewable as text)"}'
+```
+A literal NUL (`\x00`) — or other control bytes — embedded in a text source file (e.g. `` `${a}\0${b}` `` used as a delimiter, a stray paste artifact) makes git classify the file as **binary**: `git show`/the GitHub PR diff render `Bin 0 -> N bytes` / `- -` numstat instead of a text diff, so the change is **unreviewable as text** and blame/diff are permanently degraded. CRITICAL: this class defeats EVERY other gate — Biome/ESLint, `tsc`, and the test run all pass (the byte is valid in a JS string and the code runs), and ALL text-based greps (including the rest of Tier 0) emit ZERO `+` lines for a binary blob, so they silently scan nothing. It also slips human/LLM review because the NUL renders invisibly (as a space). Fix: replace the control byte with an ordinary delimiter that is provably absent from both halves (for a `(uuid, canonical-name)` composite key a single space works — UUIDs have none and a canonical name that folds `[\s_]+`→`-` can't contain whitespace). Then re-verify `git show` renders a real text diff. <!-- Source: adversarial review, second-brain #748, 2026-06-26 — NUL delimiter in a TS grouping key passed lint/tsc/2300 tests + a 3-lens code review; only git's binary classification surfaced it -->
+
 ### Adding new patterns
 Add when a bug class is caught 2+ times. Requirements: regex on changed lines, <20% false-positive rate.
 
