@@ -14,6 +14,7 @@ Cross-project learnings organized by topic. These files contain detailed pattern
 | [typescript-patterns.md](typescript-patterns.md) | TypeScript, Node.js | Type safety, async patterns, API boundaries, env vars |
 | [react-patterns.md](react-patterns.md) | React, React Native | Hooks, state management, FlatList, optimistic UI, a11y |
 | [llm-integration.md](llm-integration.md) | Claude API, OpenAI, LLMs | Prompt design, output parsing, safety, classification |
+| [image-generation-consistency.md](image-generation-consistency.md) | AI image gen (Gemini/DALL·E/diffusion), illustration | Multi-image consistency: deterministic color-grade, axis-split fixes, judge/verify panels, operator color tuner |
 | [database-patterns.md](database-patterns.md) | PostgreSQL, SQL, Supabase | Schema design, indexes, triggers, pg driver quirks |
 | [firebase-patterns.md](firebase-patterns.md) | Firebase, Firestore | Security rules, multi-tenant access, auth patterns |
 | [telegram-bot-patterns.md](telegram-bot-patterns.md) | grammY, Telegram Bot API | Identity mapping, webhooks, bot architecture |
@@ -54,6 +55,7 @@ When starting work on a project, load files matching these stacks:
 - **Firebase** → firebase-patterns
 - **Telegram bot** → telegram-bot-patterns, architecture-patterns
 - **LLM/AI features** → llm-integration
+- **AI image generation / illustration** → image-generation-consistency, llm-integration
 - **Any project (dev workflow)** → orchestrator-protocol, development-steps
 - **Any project pre-PR** → adversarial-review, review-and-triage
 - **Any project pre-plan** → strategic-decisions
