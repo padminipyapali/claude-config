@@ -20691,8 +20691,320 @@
         "bottleneck": null,
         "notes": "Not tracked in PR body; total estimated from first-commit->merge (~28 min branch lifetime)."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 628,
+      "title": "fix(digest): wrap theme source quotes in inner span to fix expanded-gap regression.",
+      "dateMerged": "2026-06-27T07:29:39Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 1113.0,
+      "planningQuality": "complete",
+      "prSize": 20,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "4a (/simplify) skipped per PR body (5-line CSS+JSX change, no abstractions to extract). CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero. Adversarial review PASS via fresh-context critic (sibling sweep clean, grid-collapse math correct).",
+        "complianceRate": 0.556,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "20-day wall-clock = clean still-relevant stale PR (CSS-only digest gap regression); verified live on main before merge. Single squashed commit (973e178). CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero."
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 782,
+      "title": "fix(server): scope updateBotResponseMetadata to the authenticated user.",
+      "dateMerged": "2026-06-27T08:05:01Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.029,
+      "planningQuality": "complete",
+      "prSize": 133,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "4a not separately recorded. CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero. Adversarial review = fresh-context critic-batch + a DEEP security verification: confirmed no idempotency/0-row regression (the bot_response row is always pre-fetched under a user-scoped predicate, so AND user_id=$3 only excludes already-excluded rows). 0 blockers.",
+        "complianceRate": 0.556,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "Security hardening salvaged from the closed/superseded #665 (the #666 sibling shipped the calendar-write feature but dropped #665's user-scoping). Threaded an authenticated userId through shared commit/refine fns to 3 call sites + AND user_id=$3 + cross-user isolation test. Single squashed commit (952ae6a). Deep fresh-context security verification was the load-bearing gate. CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero."
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 783,
+      "title": "fix(reflection): don't infer family relationships for named people.",
+      "dateMerged": "2026-06-27T08:05:04Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.024,
+      "planningQuality": "complete",
+      "prSize": 33,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "4a not separately recorded. CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero. Adversarial review = fresh-context critic-batch, 0 blockers.",
+        "complianceRate": 0.556,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "RE-AUTHORED (not rebased) against current main from stale PR #540 \u2014 its branch was 122 commits behind after response.ts was refactored to a contextPreamble + JSON-citation prompt structure. 3 prompts (detectWeeklyThemes/generateReflectionQuestion/generateReflectionArc) + 3 prompt-presence tests. Single squashed commit (09339c2). CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero."
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 655,
+      "title": "fix(web): replace native sub-task date input with compact date chip.",
+      "dateMerged": "2026-06-27T08:05:06Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 437.5,
+      "planningQuality": "complete",
+      "prSize": 176,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "4a not separately recorded. CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero. Adversarial review = fresh-context critic-batch (critic verdict SHIP) + Pre-PR adversarial checklist, 0 blockers. PR includes a ## Designs section (UI change).",
+        "complianceRate": 0.556,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "67-commits-stale PR REBASED onto main (one trivial App.css conflict) + re-gated. Reuses the existing compact DatePicker chip pattern (TodoPanel/EntryCard) for project-detail sub-task rows + add-sub-task footer; removed dead .project-subtodo-due-display / .project-detail-add-date CSS. 4 chip tests (clock pinned). Single squashed commit (e4cba3d). CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero."
+      }
     }
   ],
   "generated": "2026-06-26T22:35:00Z",
-  "lastUpdated": "2026-06-27T05:54:15Z"
+  "lastUpdated": "2026-06-27T08:09:10Z"
 }
