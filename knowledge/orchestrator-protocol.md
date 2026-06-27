@@ -125,6 +125,12 @@ Source: post-mortem, family-digest #4, 2026-04-22 — v2 critic claimed "no test
 2. If zero diff: **do not spawn critic**. Flag the failure to the user immediately — "Implementer reported complete but worktree has zero changes."
 3. This is a hard gate — no diff means no review means no PR.
 
+### Critic / Gate Verification — run gates IN the worktree, not the main checkout
+
+A reviewer/gate agent must run lint, type-check, and tests **from inside the worktree**, and prove it before trusting any green result. The Bash tool resets CWD between calls, so a `cd <worktree>` in one call does NOT persist — every gate command must re-`cd` into the worktree (or use `npm --prefix`/`git -C`/`tsc -p`). A gate accidentally run from the main checkout is **falsely green**: the PR's new files don't exist there, so lint/tsc/tests never see the new code and the suite passes while skipping the very thing under review. Mechanical guards, in order: (1) before recording any gate result, run `git rev-parse --show-toplevel` (with `cd <worktree>` in the same command) and confirm it equals the worktree path AND `git rev-parse HEAD` equals the commit under review; (2) confirm the new test files are actually collected — `npx vitest list | grep -c <new-file>` must be > 0, and the suite's total test count must be ≥ the count the implementer/orchestrator reported (a lower count = files silently uncollected = wrong tree or a glob/exclude miss); (3) `ls <worktree>/<new-file>` resolves. A "files checked" / "tests passed" number that is *lower* than expected is the tell — investigate before writing the marker, never after.
+
+<!-- Source: adversarial-review GATE, second-brain #797 (connection-graph PR-1a), 2026-06-27. The gate agent first ran lint/tsc/full-suite from the MAIN checkout (CWD reset between Bash calls silently dropped it out of the worktree); all three reported green because the 3 new test files don't exist in main — `vitest list` returned 0 collected cases and the file `ls` 404'd, which surfaced the wrong tree. Re-running from the worktree gave 325 lint files (vs 269), tsc clean, and PASS (2634)/FAIL(0) including the 35 new cases. A falsely-green gate would have written the push-unblock marker for unreviewed code. -->
+
 ### Orchestrator Stale-Base Check (before push, after critic PASS)
 
 1. `git -C <worktree-path> fetch origin main --quiet`
