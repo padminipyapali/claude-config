@@ -21463,8 +21463,89 @@
         "bottleneck": null,
         "notes": "No '## Step Timing' section in the PR body -> per-step durations not recorded. Open-to-merge window ~60s (created 2026-06-27T22:12:59Z -> merged 22:13:59Z); essentially all dev time (Explore tracing 3 causes, validate-first real-model probe BEFORE coding that descoped cause #3, fix, 10 tests, fresh-context critic SHIP) preceded PR creation. Single squashed commit (-> a6796ef on main). +303/-11 across 5 files (~150 production LOC: message-processor.ts +93/-? routing gate + tryNoReplyScheduleRefine, schedule-todos-refine.ts +29 PRIORITY_ORDER_RE detector, entry.ts +20 createdAt on findMostRecentBotResponse; remainder is tests in the two .test.ts files)."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 821,
+      "title": "feat(schedule-todos): first-class prioritize/reorder refinement edit.",
+      "dateMerged": "2026-06-27T22:45:47Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "adversarialCatchRateNote": "critic-ran-clean shade (two-shades rule, process-patterns line 21) -- NOT a fabricated 1.0, NOT the critic-skipped null. A fresh-context critic RAN against the full diff and returned SHIP with 0 blockers / 0 actionable findings. Its LOAD-BEARING check was the one the team-lead flagged as the structural risk: that seeding the user-prioritized ids first in orderForPacking does NOT violate the dependency floor. Verified: orderForPacking's `visit` recursion pulls a prioritized todo's dependency CHAIN in ahead of it (the blocker is emitted before the prioritized seed), and packTodos's start-floor is untouched -- so prioritization reorders the SEED of the topological walk, never a real ordering constraint. The critic also confirmed: validation in response.ts keeps only in-range #numbers in the model's given order, dedupes first-occurrence, drops non-integer/out-of-range/dup (input.prioritizeFirst guarded with Array.isArray); runRefine resolves #numbers -> surviving todo ids with a removed-id no-op (!survivingIds.has(id)) so removing AND prioritizing a todo in the same turn is safe; `?? []` guards a pre-#817 / mock edit object on both the runRefine and orderForPacking seams; back-compat is byte-identical when prioritizeFirst is omitted (empty seed array -> the priority-sorted walk is unchanged); and the DEPENDENCY-vs-PRIORITIZE prompt split is clean (addDependency reserved for pairwise 'A before B', prioritizeFirst for blanket 'X first'). adversarialFindings=0 / adversarialFixed=0, so a real catch-rate fraction is undefined (0/0) -> null. The DECISIVE correctness gate, though, was NOT the critic but a VALIDATE-FIRST REAL-MODEL RELIABILITY PROBE (N=10) run BEFORE+AFTER the change on the LIVE model: the reported message ('...is highest priority ... First to be scheduled') went from prioritizeFirst->target 0/10 (the old N-1-dependency-edge encoding was a coin flip; 'prioritize the dentist' was a SILENT NO-OP) to 10/10. Controls confirmed the model distinguishes a blanket 'X first' (->prioritizeFirst) from a pairwise 'do diapers before the dentist' (->addDependency) -- i.e. the new prompt's DEPENDENCY-vs-PRIORITIZE rule actually discriminates on the real model, which mocked tests can never assert. This is the right gate for 'is this LLM output reliable enough to ship': the probe quantified the win (0/10->10/10) as a number, not a vibe. CodeRabbit (4b) NOT run (~150 production LOC, lightweight-review-small-PRs lane). 0 post-merge escapes (no PR after #821 touches schedule-todos / response.ts / todo-scheduling.ts). 5th fix in the schedule-todos cluster this session, SAME implementer context reused for BUILDING, fresh-context critic per fix for REVIEWING. #817 was the planned reliability-upgrade follow-up DESCOPED out of #818 by THAT PR's probe (which found the 'X first' reorder fired ~50% of the time); #821 closes it -- the probe-as-scoping instrument from #818 became the probe-as-ship-gate here.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.0164,
+      "planningQuality": "complete",
+      "prSize": 310,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "CodeRabbit (4b) NOT run -- ~150 production LOC across 8 files (298 add / 12 del; ~180 of the adds are tests in 4 .test.ts files). No explicit 'Steps skipped:' line in the PR body, so the 4b skip was UNRECORDED in-artifact (the same process gap noted across the schedule-todos cluster #808/#813/#814/#818 this session); recorded here as not-tracked (null) for the CodeRabbit findings counts, not zero. Step 1 ran a VALIDATE-FIRST real-model N=10 probe BEFORE+AFTER coding -- the DECISIVE gate (0/10 -> 10/10 on the reported message; controls confirmed blanket-'X first' -> prioritize vs pairwise-'A before B' -> dependency). Step 2 built by the SAME implementer that fixed the rest of the schedule-todos cluster (context reused; 5th fix). Step 4c = independent fresh-context critic -> SHIP, specifically verifying the dependency floor isn't violated by the prioritize seed (orderForPacking recurses deps first; packTodos start-floor untouched). Step 4d CI = Vercel SUCCESS. 14 deterministic tests; full server suite (2721) green.",
+        "complianceRate": 0.889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "No '## Step Timing' section in the PR body -> per-step durations not recorded. Open-to-merge window ~59s (created 2026-06-27T22:44:48Z -> merged 22:45:47Z); essentially all dev time (validate-first N=10 real-model probe before coding, implementation, 14 deterministic tests, fresh-context critic SHIP) preceded PR creation. Single squashed commit (-> 4aa3f91 on main). +298/-12 across 8 files (~150 production LOC: response.ts +49/-4 prioritizeFirst edit + prompt/tool-schema DEPENDENCY-vs-PRIORITIZE split + validation, todo-scheduling.ts +22/-2 orderForPacking prioritizeFirstIds seed, schedule-todos-refine.ts +18 runRefine #number->id resolution with removed-id no-op, schedule-todos-proposal.ts +13 wiring; remainder is tests across the 4 .test.ts files)."
+      }
     }
   ],
   "generated": "2026-06-27T18:11:50Z",
-  "lastUpdated": "2026-06-27"
+  "lastUpdated": "2026-06-27T22:45:47Z"
 }
