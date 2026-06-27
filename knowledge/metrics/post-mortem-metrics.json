@@ -20533,8 +20533,88 @@
         "bottleneck": null,
         "notes": "Timing not recorded in PR body. Full dev loop ran locally before push; main fix commit 70b6fcd (01:26), probe month-end date fix c0bd6ed (01:40, scripts only \u2014 prod untouched), created->merged 22s (squash self-merge). Validation = full fresh-context critic (0 blockers/0 SHOULD-FIX/2 NITs) + real-model dry-run:cal-delete probe (all 12 ids, no clarify)."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 772,
+      "title": "feat(server): HouseholdSheetService \u2014 live-read the kids' master sheet (nannies, doctors, schedules) [#770]",
+      "dateMerged": "2026-06-27T05:50:25Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": null,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.00528,
+      "planningQuality": "complete",
+      "prSize": 1042,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b",
+          "4c",
+          "4d"
+        ],
+        "skipReasons": "VALIDATE-FIRST REAL-DATA PROBE gate instead of a fresh-context critic \u2014 deliberate and correct for a READ-ONLY external-integration parser: the real risk is parser/tab-name correctness against a HUMAN-EDITED Google Sheet, which a code critic reasoning about code cannot assess but a live read can. The read-only probe against the real sheet was the load-bearing gate and CAUGHT 3 real bugs the unit fixtures missed (wrong tab names, header-below-banner, section-bleed) + a live 403 (Sheets API not enabled). 4a/4b/4c/4d not separately recorded; build/lint/test green pre-push (2427 pass). No side effects, no DB, no user surface (that's P2).",
+        "complianceRate": 0.556,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "Timing not recorded in PR body. Full dev loop ran locally before push; single squashed commit 5556aac (authored 05:18, committed 05:47), created->merged 19s (squash self-merge). Validation = a VALIDATE-FIRST real-sheet read-only probe (caught wrong tab names + header-below-banner + section-bleed + a live 403; +4 real-shape tests) in lieu of a code critic \u2014 the load-bearing gate for an external-source parser."
+      }
     }
   ],
   "generated": "2026-06-26T22:35:00Z",
-  "lastUpdated": "2026-06-27T01:42:50Z"
+  "lastUpdated": "2026-06-27T05:54:15Z"
 }
