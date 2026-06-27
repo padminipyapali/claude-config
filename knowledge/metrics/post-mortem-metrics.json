@@ -21301,6 +21301,87 @@
       "prSize": 1066,
       "stepCompliance": null,
       "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 814,
+      "title": "feat(schedule-todos): roll to next week on weekends + name the specific days in replies.",
+      "dateMerged": "2026-06-27T21:39:04Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "adversarialCatchRateNote": "critic-ran-clean shade (per the two-shades rule), NOT a fabricated 1.0. A fresh-context critic RAN against the diff and returned SHIP with 0 blockers / 0 actionable findings: the `nextWeekWeekdays` date math was verified DST/month/year/leap-safe (anchors on local parts + UTC arithmetic), the weekday path was verified non-regressed (`rolledToNextWeek` defaults false -> byte-identical 'this week' output), and the dead `NO_FREE_TIME_REPLY` constant removal was confirmed zero-reference. adversarialFindings=0 / adversarialFixed=0, so a real catch-rate fraction is undefined (0/0) -> null per the metric-integrity rule (NOT a fabricated 1.0, and NOT the critic-skipped null -- the critic DID run). The LOAD-BEARING correctness gate was a VALIDATE-FIRST probe anchored to a SATURDAY against the user's REAL calendar -- the anchor that exactly matched the user's live repro -- which confirmed the window rolls to next week's Mon-Fri (06-29..07-03), rolledToNextWeek=true, 1965 free min -> a real proposal; a Wednesday anchor confirmed NO roll (this week, Wed-Fri). CodeRabbit (4b) was NOT run (~150 production LOC). 0 post-merge escapes (no follow-up PR touches the schedule-todos files). Sibling of #806/#808 (same subsystem, same implementer context); distinct bug: there the busy-set wrongly INCLUDED coverage, here the relative-time WINDOW degenerated to empty on a weekend.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.0175,
+      "planningQuality": "complete",
+      "prSize": 473,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "CodeRabbit (4b) NOT run -- ~150 production LOC across 9 files (435 add / 38 del; ~285 of the adds are tests). No explicit 'Steps skipped:' line in the PR body, so the 4b skip was UNRECORDED in-artifact (the same process gap noted on sibling #808/#805/#813 this session); recorded here as not-tracked (null) for the CodeRabbit findings counts, not zero. Step 1 used a read-only Explore agent to MAP the week-window machinery (defaultWeekDays today..Sunday + weekdaysOnly) and root-cause the weekend dead-end. Step 2 was built by the SAME implementer that fixed #806/#808 (context reused across three related fixes on the same scheduler subsystem). Step 3 included a VALIDATE-FIRST probe anchored to a SATURDAY (the user's live repro) against the REAL calendar -- confirmed rollover to next week's Mon-Fri, rolledToNextWeek=true, 1965 free min -> real proposal -- PLUS a Wednesday anchor (no roll). Step 4c = independent fresh-context critic -> SHIP (date math DST/month/year/leap-safe, no weekday-path regression). Step 4d CI = Vercel Preview SUCCESS. 18 tests; full server suite (2666) green.",
+        "complianceRate": 0.889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "No '## Step Timing' section in the PR body -> per-step durations not recorded. Open-to-merge window ~63s (created 2026-06-27T21:38:01Z -> merged 21:39:04Z); essentially all dev time (Explore week-window mapping, Saturday+Wednesday validate-first probes against the real calendar, fix, 18 tests, fresh-context critic SHIP) preceded PR creation. Single squashed commit (5b45c35 -> b7ad54d on main). +435/-38 across 9 files (~150 production LOC: calendar-availability.ts +52, schedule-todos-proposal.ts +93/-13, todo-scheduling.ts +17/-4, schedule-todos-refine.ts +3, schedule-todos-handler.ts +8/-6; remainder is tests)."
+      }
     }
   ],
   "generated": "2026-06-27T18:11:50Z",
