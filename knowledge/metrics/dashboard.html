@@ -21621,10 +21621,91 @@ const METRICS_DATA = {
         "bottleneck": null,
         "notes": "Per-step timing not recorded in PR body. Open-to-merge window ~7.5 min (created 18:01:17Z -> merged 18:08:47Z); most dev time (understand pass, implement, 29 tests, real-data probe, critic) preceded PR creation. Single squashed commit (04eba9a -> e47ac2a on main). ~457 production LOC + ~459 test LOC across 7 files; full server suite (2541) green."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 808,
+      "title": "fix(schedule-todos): exclude nanny-coverage calendars from the todo free-time busy set.",
+      "dateMerged": "2026-06-27T20:37:06Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "adversarialCatchRateNote": "critic-ran-clean shade: a fresh-context critic RAN against the diff and returned SHIP with 0 blockers and 0 actionable findings (layering hidden->coverage-excluded->busy correct; filterOutCoverageCalendars scoped to the scheduler path with no regression to the availability/agenda filters; tests assert the #806 repro). adversarialFindings=0 / adversarialFixed=0 so a real catch-rate fraction is undefined (0/0) -> null per the metric-integrity rule, NOT fabricated 1.0, and NOT the critic-skipped null (the critic DID run). CodeRabbit (4b) was NOT run -- small fix (~54 production LOC), recorded as not-tracked (null), not zero, per the lightweight-review-for-small-PRs convention. The LOAD-BEARING correctness gate was a validate-first diagnostic probe against the user's REAL calendar that quantified the bug before/after under 4 configs (busy=Home->1965 free min, busy=EMPTY->0 false 'fully booked', fixed+EMPTY->60, fixed+Home->1965) and confirmed the 'Shelo 8am-7pm' shifts live on the Nannies/coverage calendar. 0 post-merge escapes to date.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.016,
+      "planningQuality": "complete",
+      "prSize": 231,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "CodeRabbit (4b) NOT run -- small bug fix (~54 production LOC across 2 files) per the lightweight-review-for-small-PRs convention; recorded as not-tracked (null), not zero. Step 1 (plan/diagnose) used a read-only Explore agent to root-cause the false 'fully booked'. Step 3 included a VALIDATE-FIRST diagnostic probe against the REAL calendar that QUANTIFIED the bug before/after under 4 busy-config combinations (busy=Home->1965 free min, busy=EMPTY->0, fixed+EMPTY->60, fixed+Home->1965) and confirmed the nanny shifts are on the coverage calendar -- the load-bearing correctness gate. Step 4c = fresh-context critic -> SHIP (0 blockers, 0 findings). Step 4d CI = Vercel Preview SUCCESS. The probe also surfaced a CONFIG dimension: GOOGLE_BUSY_CALENDARS should be the Home calendar (or unset->defaults to Home); empty or a broad list is the production trigger.",
+        "complianceRate": 0.889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "Per-step timing not recorded in PR body. Open-to-merge window ~1 min (created 2026-06-27T20:36:08Z -> merged 20:37:06Z = 58s); essentially all dev time (Explore root-cause, validate-first real-calendar probe, fix, 9 tests, re-probe, fresh-context critic) preceded PR creation. Single squashed commit (b44c4eb -> 0d214de on main). +221/-10 across 4 files (~54 production LOC: schedule-todos-proposal.ts +19/-6, calendar.ts +35/-0; ~167 test LOC across 2 test files, 9 tests). Full server suite (2614) green."
+      }
     }
   ],
   "generated": "2026-06-27T18:11:50Z",
-  "lastUpdated": "2026-06-27T18:11:50Z"
+  "lastUpdated": "2026-06-27T20:40:25Z"
 };
 function linReg(data) {
   const n = data.length;
