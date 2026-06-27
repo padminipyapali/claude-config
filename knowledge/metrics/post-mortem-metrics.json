@@ -20613,6 +20613,84 @@
         "bottleneck": null,
         "notes": "Timing not recorded in PR body. Full dev loop ran locally before push; single squashed commit 5556aac (authored 05:18, committed 05:47), created->merged 19s (squash self-merge). Validation = a VALIDATE-FIRST real-sheet read-only probe (caught wrong tab names + header-below-banner + section-bleed + a live 403; +4 real-shape tests) in lieu of a code critic \u2014 the load-bearing gate for an external-source parser."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 779,
+      "title": "feat(reference): REFERENCE_LOOKUP intent for household master-sheet lookups.",
+      "dateMerged": "2026-06-27T07:12:52Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 5,
+        "coderabbitFixed": 4,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 4,
+          "4d": 2,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 2,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.04,
+      "planningQuality": "complete",
+      "prSize": 808,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4b",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a"
+        ],
+        "skipReasons": "4a (/simplify) not separately recorded; critic + CodeRabbit ran as the review gate",
+        "complianceRate": 0.889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": 28,
+        "bottleneck": null,
+        "notes": "Not tracked in PR body; total estimated from first-commit->merge (~28 min branch lifetime)."
+      }
     }
   ],
   "generated": "2026-06-26T22:35:00Z",
