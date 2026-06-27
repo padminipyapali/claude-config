@@ -21003,8 +21003,89 @@
         "bottleneck": null,
         "notes": "67-commits-stale PR REBASED onto main (one trivial App.css conflict) + re-gated. Reuses the existing compact DatePicker chip pattern (TodoPanel/EntryCard) for project-detail sub-task rows + add-sub-task footer; removed dead .project-subtodo-due-display / .project-detail-add-date CSS. 4 chip tests (clock pinned). Single squashed commit (e4cba3d). CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 791,
+      "title": "feat(calendar): nightly nanny-coverage gap check for the week ahead.",
+      "dateMerged": "2026-06-27T18:08:47Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 1,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "adversarialCatchRateNote": "critic-ran-clean shade: fresh-context critic RAN and returned SHIP with exactly ONE non-blocking should-fix (no-coverage-events sentinel) plus an acknowledged product question (evening cutoff), BOTH deliberately DEFERRED to tracked follow-up #789 rather than fixed in-PR. 0 blockers. So adversarialFindings=1 / adversarialFixed=0, and a real catch-rate fraction is undefined (0 fixed of 0 blockers) -> null, NOT fabricated 1.0, NOT a critic-skipped null. CodeRabbit (4b) was NOT run on this PR (not-tracked, not 0). 0 post-merge escapes to date.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.125,
+      "planningQuality": "complete",
+      "prSize": 919,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "CodeRabbit (4b) NOT run on this PR -- recorded as not-tracked (null), not zero. Step 1 (plan) included a 5-agent parallel read-only UNDERSTAND pass that corrected a false premise (assumed #678's gap-detection existed; the real shipped feature #737 was the INVERSE). Step 4c = fresh-context critic -> SHIP with one deferred should-fix (#789). Step 4d CI = Vercel build SUCCESS. A real-data validate-first probe against the live calendar (12 commitments + 8 shifts -> 3 gaps) ran after unit tests as the load-bearing correctness gate.",
+        "complianceRate": 0.889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "Per-step timing not recorded in PR body. Open-to-merge window ~7.5 min (created 18:01:17Z -> merged 18:08:47Z); most dev time (understand pass, implement, 29 tests, real-data probe, critic) preceded PR creation. Single squashed commit (04eba9a -> e47ac2a on main). ~457 production LOC + ~459 test LOC across 7 files; full server suite (2541) green."
+      }
     }
   ],
-  "generated": "2026-06-26T22:35:00Z",
-  "lastUpdated": "2026-06-27T08:09:10Z"
+  "generated": "2026-06-27T18:11:50Z",
+  "lastUpdated": "2026-06-27T18:11:50Z"
 }
