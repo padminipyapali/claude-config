@@ -21544,8 +21544,89 @@
         "bottleneck": null,
         "notes": "No '## Step Timing' section in the PR body -> per-step durations not recorded. Open-to-merge window ~59s (created 2026-06-27T22:44:48Z -> merged 22:45:47Z); essentially all dev time (validate-first N=10 real-model probe before coding, implementation, 14 deterministic tests, fresh-context critic SHIP) preceded PR creation. Single squashed commit (-> 4aa3f91 on main). +298/-12 across 8 files (~150 production LOC: response.ts +49/-4 prioritizeFirst edit + prompt/tool-schema DEPENDENCY-vs-PRIORITIZE split + validation, todo-scheduling.ts +22/-2 orderForPacking prioritizeFirstIds seed, schedule-todos-refine.ts +18 runRefine #number->id resolution with removed-id no-op, schedule-todos-proposal.ts +13 wiring; remainder is tests across the 4 .test.ts files)."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 825,
+      "title": "feat(schedule-todos): include due-dated todos, placed by their due date.",
+      "dateMerged": "2026-06-27T23:06:26Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "adversarialCatchRateNote": "critic-ran-clean shade (two-shades rule, process-patterns line 21) -- NOT a fabricated 1.0, NOT the critic-skipped null. A fresh-context critic RAN against the full +351/-35 diff and returned SHIP with 0 blockers / 0 actionable findings. Its LOAD-BEARING checks were the three the team-lead flagged as the structural risks of deadline-aware placement: (1) a dated todo is NEVER placed AFTER its due date -- verified via a TIMEZONE-IMMUNE YYYY-MM-DD string compare (dueDateToYmd converts the pg DATE -> a UTC YYYY-MM-DD with no off-by-one, and packTodos scans earliest-day-first and rejects any candidate day whose ymd > the deadline ymd), so the never-after invariant holds regardless of the server/user timezone; (2) the UNDATED path is byte-identical to pre-#825 (a todo with no dueDate threads through selection/packer/render exactly as before -- the new dated branch is additive, gated on dueDate being present); (3) dueDateToYmd NEVER throws (pg DATE is always a valid date or null; null short-circuits to the undated path). The critic also confirmed composition: the dated-first / soonest-deadline-leading selection preserves the #817 prioritizeFirst floor and the dependency floor (a dated todo's dependency chain is still pulled in ahead of it), and the #812 weekend rollover still applies to the undated remainder. adversarialFindings=0 / adversarialFixed=0, so a real catch-rate fraction is undefined (0/0) -> null. But the DECISIVE correctness gate was NOT the critic -- it was a VALIDATE-FIRST PROBE RUN AGAINST THE REAL PRODUCTION DB + the real Google Calendar: the probe QUERIED the user's actual open todos (no synthetic injection) and found the user's genuine 'Mira packing list for Yosemite' due 2026-06-29 (the exact todo from the bug report), ran the full schedule-todos flow, and confirmed that BEFORE the fix it was silently dropped (the open.filter(t => !t.dueDate) handler excluded it -- not even counted in the remaining), and AFTER the fix it APPEARS in the proposal, PLACED ON 6/29 (its deadline), with two genuinely past-due todos placed ASAP with their due dates rendered inline. This is the strongest form of the validate-first family (#772/#779/#791/#808): the fix was proven on the EXACT failing input pulled live from production, not a fixture that re-encodes the author's assumptions. CodeRabbit (4b) NOT run (~250 production LOC, lightweight-review-small-PRs lane). 0 post-merge escapes. 6th fix in the schedule-todos cluster this session, SAME implementer context reused for BUILDING, fresh-context critic per fix for REVIEWING. ONE non-blocking follow-up the critic noted (recorded, not fixed): there is no EXPLICIT test for the 'dated todo blocked by an UNPLACED dependency -> reason=deadline' combined edge -- the behavior is correct and its constituent paths (can't-fit-before-deadline -> deadline reason; dependency floor) are each tested individually, but the specific intersection isn't asserted by a dedicated test.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.0164,
+      "planningQuality": "complete",
+      "prSize": 386,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "CodeRabbit (4b) NOT run -- ~250 production LOC across 7 files (+351/-35; the 3 .test.ts files carry the 16 new tests). No explicit 'Steps skipped:' line in the PR body, so the 4b skip was UNRECORDED in-artifact -- the same process gap noted across the whole schedule-todos cluster (#808/#813/#814/#818/#821) this session; recorded here as not-tracked (null) for the CodeRabbit findings counts, not zero. Step 1 = a VALIDATE-FIRST probe against the REAL production DB + real calendar that surfaced the user's ACTUAL due-dated todo ('Mira packing list for Yosemite' due 2026-06-29) and proved the before(dropped)/after(placed-on-6/29) behavior on the exact failing input. Step 2 built by the SAME implementer that fixed the rest of the schedule-todos cluster (context reused; 6th fix). Step 4c = independent fresh-context critic -> SHIP, verifying never-placed-after-deadline (tz-immune YYYY-MM-DD compare), undated-path byte-identical, dueDateToYmd never throws, and composition with #817 prioritizeFirst + dependencies + #812 weekend rollover. Step 4d CI = Vercel SUCCESS. 16 tests; full server suite (2735) green.",
+        "complianceRate": 0.889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "No '## Step Timing' section in the PR body -> per-step durations not recorded. Open-to-merge window ~59s (created 2026-06-27T23:05:27Z -> merged 23:06:26Z); essentially all dev time (validate-first probe against the real production DB, implementation, 16 tests, fresh-context critic SHIP) preceded PR creation. Single squashed commit (-> 7a62556 on main). +351/-35 across 7 files (~250 production LOC: todo-scheduling.ts +96/-... packer deadline constraint + dueDateToYmd, schedule-todos-handler.ts +51 selection now includes dated todos + remaining-count, schedule-todos-proposal.ts +8 dueDate threading, schedule-todos-refine.ts +9 preserve dueDate on re-pack; remainder is the 16 tests across 3 .test.ts files)."
+      }
     }
   ],
   "generated": "2026-06-27T18:11:50Z",
-  "lastUpdated": "2026-06-27T22:45:47Z"
+  "lastUpdated": "2026-06-27T23:06:26Z"
 }
