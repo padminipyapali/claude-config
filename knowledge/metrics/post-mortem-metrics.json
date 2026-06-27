@@ -20373,8 +20373,88 @@
         "bottleneck": null,
         "notes": "PR body has no per-step timing table (minutes null); ~7.6 min GitHub wall-clock (created 22:19:42 -> merged 22:27:18), dev loop ran locally pre-push. 2 commits: feature commit 36bcf88 (+803/-5, 12 files, ALREADY contained the updateEntryContent extracted_text=NULL stale-derived-text fix surfaced by the implementer's own critic pass) and post-critic commit 868df8c (+13/-3: JSDoc reword + prefers-reduced-motion CSS NIT only). ~313 LOC production + tests. server 2388 + web 346 tests green."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 766,
+      "title": "fix(hooks): make adversarial-review gate worktree-aware",
+      "dateMerged": "2026-06-27T01:25:40Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.306,
+      "planningQuality": "complete",
+      "prSize": 150,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "2b",
+          "4a",
+          "4b",
+          "4d"
+        ],
+        "skipReasons": "Hooks-only bash change (no TypeScript). 2b hardening N/A (single-pass gate fix). 4a simplify + 4b CodeRabbit skipped (lightweight hooks-only change, pre-vetted parked commit). 4d TS lint/build/test N/A \u2014 no TS changed; the meaningful gate was the hermetic bash test (4/4) which maps to step 3 Test.",
+        "complianceRate": 0.556,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "Timing not recorded in PR body. Unusual flow: issue #703 was already implemented in a parked worktree commit (9ed7539, ~2 days old); cherry-picked onto clean branch off main, hermetic test re-run 4/4, adversarial gate (deep no-weakening review, 7 probes) PASS. created->merged 18.4 min."
+      }
     }
   ],
   "generated": "2026-06-26T22:35:00Z",
-  "lastUpdated": "2026-06-26T22:35:00Z"
+  "lastUpdated": "2026-06-26"
 }
