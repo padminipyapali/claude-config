@@ -21165,8 +21165,89 @@
         "bottleneck": null,
         "notes": "Per-step timing not recorded in PR body. Open-to-merge window ~1 min (created 2026-06-27T20:36:08Z -> merged 20:37:06Z = 58s); essentially all dev time (Explore root-cause, validate-first real-calendar probe, fix, 9 tests, re-probe, fresh-context critic) preceded PR creation. Single squashed commit (b44c4eb -> 0d214de on main). +221/-10 across 4 files (~54 production LOC: schedule-todos-proposal.ts +19/-6, calendar.ts +35/-0; ~167 test LOC across 2 test files, 9 tests). Full server suite (2614) green."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 805,
+      "title": "feat(connections): Connection Graph PR-1a \u2014 durable reciprocal multi-lane associative memory (Pillar 1 engine)",
+      "dateMerged": "2026-06-27T21:18:22Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 4,
+        "adversarialFixed": 4
+      },
+      "adversarialCatchRate": 1.0,
+      "adversarialCatchRateNote": "REAL non-trivial catch \u2014 this is the case the metric-integrity rule was designed for, NOT a fabricated 1.0. An INDEPENDENT fresh-context critic ran against the diff and returned APPROVE-WITH-FIXES with 4 actionable findings, ALL fixed and amended pre-merge: (1) MUST-FIX \u2014 the thread lineage lane emitted DIRECT parent/children, contradicting its own comments AND the plan (which specified >=2-hop ancestors/descendants + siblings); a genuine spec/behavior divergence (the strongest catch). (3 SHOULD-FIX) \u2014 (2) double-build of the same entry's connections; (3) missing scheduler-downgrade guard (nightly semantic-only pass could overwrite a richer multi-lane edge); (4) missing fire-and-forget wiring test. After the 4 fixes were amended, the adversarial gate (4c) found 0 ADDITIONAL must-fix. caught=4 (critic), escaped=0 (gate found nothing new; 0 post-merge escapes as of analysis) -> adversarialCatchRate = 4/(4+0) = 1.0, evidence-backed. The thread-lane bug especially would have shipped wrong associative edges (treating direct-reply lineage as a 'connection' rather than the intended >=2-hop associative memory). CodeRabbit (4b) was NOT run on this 1828-LOC engine PR (recorded null, not zero); the independent critic substituted for it. The PR body carried NO explicit 'Steps skipped:' line, so the 4b skip was UNRECORDED -- the process gap to close on a PR this size.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 4,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 1,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 1.21,
+      "planningQuality": "complete",
+      "prSize": 1828,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "CodeRabbit (4b) NOT run on a 1828-LOC (+1714/-114, 20 files) engine PR; the independent fresh-context critic substituted (APPROVE-WITH-FIXES, 4 findings all fixed). NOTE: at 1828 LOC this is ABOVE the lightweight-review-for-small-PRs (~100 LOC) threshold, so unlike #808 the 4b skip is NOT auto-justified by size -- it relied on the strong critic substitute, and the PR body carried no explicit 'Steps skipped:' line, so the skip was UNRECORDED (the gap to close). Step 1 plan used an explore->plan->adversarial-plan-review workflow that discovered the entry_connections table ALREADY existed with 4+ consumers (upgrade, not greenfield) and produced 5 plan must-fixes. Step 2 rebased onto current origin/main mid-build when #798 landed (migration renumbered 027->028, schema.sql conflict resolved keeping #798's OWNER_RELAY). Step 4c = independent fresh-context critic -> APPROVE-WITH-FIXES -> 4 fixes amended -> adversarial gate PASS (0 additional must-fix). Step 4d CI = Vercel Preview SUCCESS. Migration 028 is MANUAL (apply in Supabase); a backfill (dry-run default) + PR-1b (web Related panel) follow -- this is mid-feature.",
+        "complianceRate": 0.889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": "plan+review (qualitative)",
+        "notes": "PR body's Step Timing table is QUALITATIVE (notes only, no durations). Open-to-merge window ~72 min (created 2026-06-27T20:05:56Z -> merged 21:18:22Z); the heaviest phases were Plan (explore->plan->adversarial-plan-review, table-already-exists discovery + 5 plan must-fixes) and Review (independent critic APPROVE-WITH-FIXES -> 4 fixes -> adversarial gate). A 'wrong-tree' trap occurred during the gate: its first lint/tsc/test pass silently ran from the MAIN checkout (Bash CWD reset) and falsely came back GREEN because the new files don't exist in main; it was caught and re-run from the worktree. Single squashed commit (705ce32 -> 0e2cd37 on main). +1714/-114 across 20 files; 2634 server tests (+8 new) green."
+      }
     }
   ],
   "generated": "2026-06-27T18:11:50Z",
-  "lastUpdated": "2026-06-27T20:40:25Z"
+  "lastUpdated": "2026-06-27T21:22:10Z"
 }
