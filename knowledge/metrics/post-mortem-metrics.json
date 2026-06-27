@@ -20453,8 +20453,88 @@
         "bottleneck": null,
         "notes": "Timing not recorded in PR body. Unusual flow: issue #703 was already implemented in a parked worktree commit (9ed7539, ~2 days old); cherry-picked onto clean branch off main, hermetic test re-run 4/4, adversarial gate (deep no-weakening review, 7 probes) PASS. created->merged 18.4 min."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 768,
+      "title": "fix(calendar): delete multiple/recurring events in one confirmable action (no more clarify loop)",
+      "dateMerged": "2026-06-27T01:42:50Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 1
+        }
+      },
+      "timeToMergeHours": 0.0061,
+      "planningQuality": "complete",
+      "prSize": 810,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b",
+          "4d"
+        ],
+        "skipReasons": "Full 3-role team with a REAL fresh-context critic (mandated: change DELETES events, highest blast radius). 4a simplify + 4b CodeRabbit not separately recorded in PR body (subsumed by the full critic pass). 4d CI loop n/a (local build/lint/test green pre-push: 2403 pass). The load-bearing prompt gate was the real-model dry-run:cal-delete probe (step-3-adjacent), which the critic structurally could not assert.",
+        "complianceRate": 0.667,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "Timing not recorded in PR body. Full dev loop ran locally before push; main fix commit 70b6fcd (01:26), probe month-end date fix c0bd6ed (01:40, scripts only \u2014 prod untouched), created->merged 22s (squash self-merge). Validation = full fresh-context critic (0 blockers/0 SHOULD-FIX/2 NITs) + real-model dry-run:cal-delete probe (all 12 ids, no clarify)."
+      }
     }
   ],
   "generated": "2026-06-26T22:35:00Z",
-  "lastUpdated": "2026-06-26"
+  "lastUpdated": "2026-06-27T01:42:50Z"
 }
