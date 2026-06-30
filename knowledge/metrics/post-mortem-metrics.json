@@ -21857,6 +21857,85 @@
         "skipAssessment": "good"
       },
       "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 830,
+      "title": "fix(calendar): busy-filter the agenda free-pocket calc so kids' calendars don't shrink free time.",
+      "dateMerged": "2026-06-30T03:06:19Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "adversarialCatchRateNote": "null by the metric-integrity directive (do NOT fabricate 1.0): this is the critic-RAN-CLEAN shade. The fresh-context adversarial critic (4c) RAN against the +164/-8 agenda diff and returned SHIP with 0 actionable findings (threading types line up as Set<string> throughout, filterToBusyCalendars ordered before the free-pocket subtraction, back-compat byte-identical for empty busyIds, no agenda items hidden). 0/(0+0) is undefined -> null, distinct from the critic-found-and-fixed shade (#828, 1/1 -> 1.0) and from critic-skipped (no signal). CodeRabbit (4b) was NOT run -> null. The KEY meta-signal this PR carries is NOT in the catch rate: #830 is a 2-day-later live-bug DIRECT MISS of #808's own captured sibling-sweep lesson. #808 (process-patterns.md) said the coverage-vs-busy distinction must be applied at EVERY busy/free consumer, but the #808 sweep only audited the schedule-todos compute path; the agenda free-pocket DISPLAY consumer (buildCoverageLines, reached via answerAgenda -> formatAgendaAnswer) was never swept and shipped the bug, surfaced by live use ('what do I have tomorrow' showed a bogus Free 4:00-4:30 when the parent was actually free ~9:30-10, 11-1:30, 4-7). The fix threads busyCalendarIds through the agenda path and applies filterToBusyCalendars to the free-pocket subtraction set. A validate-first probe against the REAL Tue 6/30 calendar confirmed before(4:00-4:30)/after(9:30-10, 11-1:30, 4-7) and that the Covered band is byte-identical. 7 tests, full server suite (2754) green. So the escape is a process gap (reactive sweep covered only the consumers already being touched, not the display/format paths), NOT a critic miss on this PR.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.02,
+      "planningQuality": "complete",
+      "prSize": 172,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "4b CodeRabbit not run (per lightweight-review-small-prs convention, ~40 prod LOC bug fix); 4a simplify folded into single-pass implement. 4c adversarial critic RAN (fresh-context, SHIP).",
+        "complianceRate": 0.5556,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "Step Timing section not in PR body; not tracked."
+      }
     }
   ],
   "generated": "2026-06-27T18:11:50Z",
