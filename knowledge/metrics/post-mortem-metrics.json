@@ -22177,8 +22177,169 @@
         "bottleneck": null,
         "notes": "No '## Step Timing' section in the PR body -> per-step durations not recorded. Open->merge wall-clock = ~59 seconds (created 2026-07-01T05:56:22Z -> merged 05:57:21Z, 0.0164h), so the ENTIRE dev loop -- two-fix triage, validate-first probes with the bot's own token, the two-round adversarial gate, and the full server suite -- ran PRE-ADVANCE; the GitHub window only reflects the branch advance + merge. 2 commits squashed into da43a26. +496/-27 across 8 files: services/calendar.ts (+77, respondToEvent + NotAnAttendeeError + EventResponseStatus + self-attendee patch), processor/calendar-write-commit.ts (+128, describeWriteError cause-chain walk + 404/410 stale-id batch tolerance), intent-handlers/calendar-write-handler.ts (+16, organizer->cancel vs attendee->rsvp branch), services/response.ts (+57, surface the real reason), plus 4 test files (+~279 across calendar-write-commit.test.ts, calendar-write.test.ts, calendar-write-pending-reply.test.ts, response.calendar-write.test.ts; 17 new tests)."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 841,
+      "title": "fix(web): reminder override, keyboard-nav a11y, completed-today dimming + state mirroring",
+      "dateMerged": "2026-07-01T21:00:08Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "adversarialCatchRateNote": "NULL (critic-ran-clean shade), NOT a fabricated/hardcoded 1.0. The lightweight-review lane's adversarial gate (4c) RAN on this ~40-source-LOC diff and returned SHIP with only MINOR NON-BLOCKING test-coverage-gap notes: it caught 0 in-scope defects and 0 escaped post-merge, so caught/(caught+escaped)=0/(0+0) is undefined -> recorded null, exactly like #830. This is distinct from the MEASURED found-and-fixed 1.0 of #828 (1/1), #831 (4/4), #833 (1/1), #837 (1/1), where a review step caught a genuine would-be-broken-merge blocker; reporting 1.0 here would manufacture catch-effectiveness the gate never demonstrated (the four fixes were correct on first implementation, nothing to fix). PROVENANCE NOTE: CodeRabbit DID surface the four bugs, but that was a PRE-WORK DISCOVERY run against existing main code -- it authored the issue (#839), not an in-loop 4b review of THIS PR's NEW code; the in-loop gate that graded this diff was the adversarial review, which ran clean. That seeding CodeRabbit run was against a STALE LOCAL main (same failure mode as #831); the triage step correctly split its findings by PROVENANCE into three buckets and actioned only the first: (1) real bugs on current main verified against origin/main -> B1-B4/#839/this PR: B1 a manual due-date override still armed the free-text-parsed reminder for a discarded time (reminderISO = formDueDate ? null : detection.reminderISO); B2 a role=button card's onKeyDown navigated even when a child star/dismiss button was the key target because children only stopPropagation on click not keydown (guard: if e.target!==e.currentTarget return); B3 opacity:0.72 on the completed-today group dimmed the whole card subtree incl focus rings (moved dimming to the .bucket header); B4 completedTodayTodos is a distinct query not a slice of completedTodos so the entry mutators never mirrored it -> stale until reload (added completedTodayTodosRef + mirrored optimistic/revert in updateEntry/updateDueDate/setReminderForTodo/reformatEntry). (2) a FALSE POSITIVE fetchRelatedEntries response-envelope finding that did not reproduce against current source -> dropped with evidence, NOT fixed. (3) IN-FLIGHT todo-scheduling correctness findings owned by feat/schedule-todos-propose -> filed as OPEN issue #842, NOT dragged into this 40-LOC frontend fix. Gates: lint clean, web build/tsc clean, web suite 447 passed / 0 failures, Vercel Preview SUCCESS. localReview.coderabbit = null (no Local Review section AND the CodeRabbit involvement was pre-work discovery, not in-loop 4b); adversarial recorded 0 found / 0 fixed (tracked, gate ran clean -- the project hook requires a passing adversarial gate for HEAD, so 4c demonstrably ran).",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.561,
+      "planningQuality": "complete",
+      "prSize": 156,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "No explicit 'Steps skipped:' line in the PR body, so compliance is reconstructed from evidence. Step 1 = CodeRabbit-seeded bug batch triaged by provenance (real/false-positive/other-feature) with each real bug verified against origin/main -> #839. Step 2 = single pass on fix/web-todo-thread-panel-bugs across 7 files (1 squash commit d69d732, ~40 net source LOC): B1 reminder-override gate in TodoPanel.tsx, B2 e.target!==e.currentTarget keydown guard in ThreadPanel.tsx, B3 CSS dimming moved to .bucket header in App.css, B4 completedTodayTodosRef + mirrored optimistic/revert paths in hooks.ts. Step 3 = lint clean + web build/tsc clean + FULL web suite 447 passed / 0 failures. Step 4a (/simplify) folded into the single-pass implement. Step 4c = adversarial review RAN (lightweight lane, adversarial-only) and returned SHIP with only minor non-blocking test-coverage-gap notes -- the project hook requires a passing adversarial gate for HEAD, so 4c demonstrably ran. Step 4d = Vercel Preview check SUCCESS (NOTE: actual deploy target is Railway, not Vercel; the Vercel check is preview-only). Step 5 = branch advance + gh pr create (self-merged; no GitHub reviewers). 4b (in-loop CodeRabbit) + the implementer/critic split NOT run (~40 source LOC, under the <~100 LOC lightweight-review lane) -> 4b counted skipped. skipAssessment good: 0 post-merge escapes, and the in-loop CodeRabbit skip is well-justified given a CodeRabbit discovery run had ALREADY surfaced (and over-surfaced) findings for this surface.",
+        "complianceRate": 0.889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "No Step Timing section in the PR body -> per-step durations not recorded. Open->merge wall-clock = ~34 min (created 2026-07-01T20:26:28Z -> merged 21:00:08Z, ~0.561h), and the lightweight local loop (triage + single-pass implement + full web suite + adversarial gate) ran PRE-PUSH, so the GitHub window reflects branch advance + merge only. 1 squash commit d69d732. +147/-9 across 7 files: TodoPanel.tsx (B1 reminder-override), ThreadPanel.tsx (B2 keydown target guard), App.css (B3 dimming moved to header), hooks.ts (B4 completedTodayTodosRef + mirrored mutators), plus 3 test files (TodoPanel.test.tsx, ThreadPanel.test.tsx incl a B2 over-correction guard, hooks.test.ts)."
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 840,
+      "title": "fix(telegram): reply-fallback parity on TODO/reformat callback edits + redact chatId log",
+      "dateMerged": "2026-07-01T21:00:05Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "adversarialCatchRateNote": "adversarialCatchRate=null CRITIC-RAN-CLEAN shade (NOT fabricated-1.0, NOT an escape): the lightweight-lane adversarial gate (4c) RAN and returned SHIP with ZERO blocking findings and 0 escapes -> 0 caught / 0 escaped = undefined -> null, the same shade as #830 (0/0). This is a ~50-production-LOC CodeRabbit follow-up to #826/#828 (Closes #838): (A2/A3) the TODO-status (~L747) and reformat (~L782) inline-callback handlers only console.warn-ed a non-benign editMessageText failure -- leaving the user a stale keyboard with no feedback -- unlike the calendar-confirm/owner-relay/delegate-todo siblings which already fell back to ctx.reply(); this PR gives all four the identical shape (isMessageNotModified->return; else warn + reply-with-own-.catch()), TODO-status keeping reply_markup so buttons still work; (A1) the calendar-confirm entry log printed the raw Telegram chatId, redacted to presence-only chatIdPresent flag; (A4) the delegate-todo-undo fallback shipped untested, backfilled with sibling tests. The adversarial gate's ONLY output was ONE COSMETIC NON-BLOCKING NIT that was NOT FIXED and shipped as-is: the redaction expression chatId.length>0 is TAUTOLOGICAL -- chatId is guarded three lines up (const chatId=String(...??''); if(!chatId) return early), so at the log line it is always a non-empty string and the length check is always true (the log always prints the present flag as true, conveying no info). It leaks nothing (redaction goal met) so it is cosmetic, not a defect; logged as an ESCAPED COSMETIC (surfaced, consciously unfixed), kept OUT of both the numerator and denominator of the blocker rate. Recording 1.0 would fabricate a catch that did not happen; recording 0.0 would falsely imply a real escape -> null is the honest value. Post-merge escapes=0 (no follow-up touches these handlers). PROCESS LEARNING: the parity gap itself was a SIBLING-SWEEP MISS from #826/#828 (fallback added to 3 handlers, 2 siblings left log-only + a 4th untested), surfaced by CodeRabbit AFTER merge -- exactly what universal convention #1 (sibling sweep) exists to prevent. localReview: no 'Local Review' section -> CodeRabbit counts not-tracked (null); adversarial recorded 0 blocking found / 0 fixed from the SHIP verdict + the project's adversarial-gate hook (a passing review for HEAD is required to advance). 4b (CodeRabbit CLI) NOT run (lightweight-review lane). Build+lint clean, full server suite 2813 passed / 0 failures, Vercel Preview CI SUCCESS.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.69,
+      "planningQuality": "complete",
+      "prSize": 115,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "No explicit 'Steps skipped' line; reconstructed from evidence. Step 1 = issue #838 enumerated A1-A4 (2 parity gaps, 1 log redaction, 1 test backfill) verified against origin/main. Step 2 = single pass on fix/telegram-callback-feedback-parity, 1 commit (176304c), +17/-6 production in telegram.ts + 92 test LOC. Step 3 = build + lint + FULL server suite 2813 passed/0 failures; new tests dispatched through the REAL callback router (handleCallbackQuery), asserting non-benign 400 -> ctx.reply (with reply_markup for TODO-status) + warn, and benign 'message is not modified' 400 -> no reply. Step 4a (/simplify) folded into the single-pass implement. Step 4c = adversarial gate RAN (SHIP, 1 cosmetic non-blocking nit surfaced+unfixed) -- the project hook requires a passing gate for HEAD to advance the branch, so 4c demonstrably ran. Step 4d = Vercel preview check SUCCESS (NOTE: actual deploy target is Railway, not Vercel; Vercel is preview-only). Step 5 = branch advance + PR opened (self-merged; no GitHub reviewers). 4b (CodeRabbit CLI) NOT run -> counted skipped (lightweight-review lane). skipAssessment good: 0 post-merge escapes; skipping the CodeRabbit CLI round on a ~50-LOC single-concern parity follow-up is the intended lightweight lane.",
+        "complianceRate": 0.8889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "No 'Step Timing' section -> per-step durations not recorded. Open->merge wall-clock = ~41 minutes (created 2026-07-01T20:18:41Z -> merged 21:00:05Z, 0.69h); the full local loop (triage, implement, full suite, adversarial gate) ran PRE-ADVANCE, so the GitHub window reflects only the branch advance + merge. 1 commit (176304c). +109/-6 across 2 files: channels/telegram.ts (+17/-6: reply-fallback parity on TODO-status + reformat edit-failure paths, chatId log redaction) and channels/telegram.test.ts (+92: delegate-todo-undo + TODO-status callback edit-fallback sibling tests)."
+      }
     }
   ],
   "generated": "2026-06-30T19:42:20Z",
-  "lastUpdated": "2026-07-01T05:58:00Z"
+  "lastUpdated": "2026-07-01T21:05:38Z"
 }
