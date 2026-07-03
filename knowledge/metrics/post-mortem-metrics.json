@@ -22338,8 +22338,86 @@
         "bottleneck": null,
         "notes": "No 'Step Timing' section -> per-step durations not recorded. Open->merge wall-clock = ~41 minutes (created 2026-07-01T20:18:41Z -> merged 21:00:05Z, 0.69h); the full local loop (triage, implement, full suite, adversarial gate) ran PRE-ADVANCE, so the GitHub window reflects only the branch advance + merge. 1 commit (176304c). +109/-6 across 2 files: channels/telegram.ts (+17/-6: reply-fallback parity on TODO-status + reformat edit-failure paths, chatId log redaction) and channels/telegram.test.ts (+92: delegate-todo-undo + TODO-status callback edit-fallback sibling tests)."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 846,
+      "title": "feat(calendar): slot-check \u2014 paste proposed slots, get free/conflict + coverage per slot; respect transparency.",
+      "dateMerged": "2026-07-03T00:21:18Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 1.0,
+      "adversarialCatchRateNote": "adversarialCatchRate=1.0 MEASURED found-and-fixed (NOT fabricated/hardcoded, NOT a critic-ran-clean null): the VALIDATE-FIRST real-model+real-calendar probe -- a review activity, the correct gate for a feature reading a live calendar -- caught a GENUINE would-be-wrong behavior pre-merge that the 25 opaque-event unit tests were structurally blind to: NO free/busy path respected Google `transparency`, so a Free-marked all-day 'Tahoe' event was OVER-BLOCKING free slots (a pre-existing latent bug in the shared availability engine, exercised for the first time by slot-check). It was FOUND and FIXED within this PR (the #844 co-fix: thread transparency through CalendarEvent->CalendarQueryEvent->AvailabilityEvent, skip transparent timed events in busyIntervalsForDay) and 0 escaped -> 1/(1+0)=1.0. The fresh-context critic additionally SURFACED the sibling-sweep gap (3 other free/busy consumers -- Today-Card api.ts ~L3518, todo-scheduler schedule-todos-proposal.ts ~L214, agenda free-pockets -- still dropping transparency), correctly triaged as a zero-regression conservative-over-block FOLLOW-UP #845 (OPEN), and VALIDATED data-safety + the checkSlots math against real assertions; it also produced ONE false-positive finding (a 'PROBE_DEBUG console.error' that was a legit `probe` local var), caught by grepping the committed diff before acting (an untracked temp probe FILE it flagged WAS real and correctly deleted). postMergeFixRate=0.0: #846 is the most recent merged PR, no later PR touches its files, and #845 is deliberate tracked follow-up (the 3 unswept consumers are UNCHANGED-from-before and over-block conservatively, never double-book), NOT an escape. CodeRabbit was NOT run. The catch landed folded into the single feature commit (probe ran before/during implement), so there are 0 discrete fix commits despite the real catch.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 1,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.016,
+      "planningQuality": "complete",
+      "prSize": 802,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "4b (CodeRabbit) not run; full fresh-context adversarial gate (4c) + validate-first real-data probe + full server suite (2835/0) covered the diff; 4a folded into single-pass implement",
+        "complianceRate": 0.8889,
+        "skipAssessment": "neutral"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": null
+      }
     }
   ],
   "generated": "2026-06-30T19:42:20Z",
-  "lastUpdated": "2026-07-01T21:05:38Z"
+  "lastUpdated": "2026-07-03T00:26:41Z"
 }
