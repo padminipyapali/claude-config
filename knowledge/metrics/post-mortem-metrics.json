@@ -579,7 +579,7 @@
         "stepsSkipped": [
           "4d"
         ],
-        "skipReasons": "4d (CI) \u2014 no CI checks configured in repo",
+        "skipReasons": "4d (CI) — no CI checks configured in repo",
         "complianceRate": 0.8889,
         "skipAssessment": "neutral"
       },
@@ -658,7 +658,7 @@
           "4b",
           "4d"
         ],
-        "skipReasons": "4b (CodeRabbit) \u2014 skipped; 4d (CI) \u2014 no CI checks configured",
+        "skipReasons": "4b (CodeRabbit) — skipped; 4d (CI) — no CI checks configured",
         "complianceRate": 0.6667,
         "skipAssessment": "neutral"
       },
@@ -738,7 +738,7 @@
         "stepsSkipped": [
           "4d"
         ],
-        "skipReasons": "4d (CI) \u2014 no CI checks configured (statusCheckRollup empty). NOTE: step 3 lint is a PHANTOM gate \u2014 PR body claimed 'npx expo lint \u2014 no new findings' but eslint is not installed; the lint command errors 'Cannot find module eslint' and runs zero rules. tsc + jest (378 passing, 3 new) did run.",
+        "skipReasons": "4d (CI) — no CI checks configured (statusCheckRollup empty). NOTE: step 3 lint is a PHANTOM gate — PR body claimed 'npx expo lint — no new findings' but eslint is not installed; the lint command errors 'Cannot find module eslint' and runs zero rules. tsc + jest (378 passing, 3 new) did run.",
         "complianceRate": 0.8889,
         "skipAssessment": "neutral"
       },
@@ -750,7 +750,7 @@
         "pushMinutes": null,
         "totalMinutes": 85,
         "bottleneck": null,
-        "notes": "Self-merged squash (832eefe), no peer review, no CI. Presentational fix: NameDetailBody styles dropped fontFamily -> system sans instead of Cormorant serif; also removed rose border and swapped flex:1 for maxHeight+flexShrink (content-hug). CodeRabbit CLI ran 0-on-diff. Adversarial sibling-sweep CAUGHT the same fontFamily bug in app/top-picks.tsx (adversarialFindings:1) \u2014 scoped out, fixed same-day in follow-up branch fix/top-picks-serif-font (not a defect in this PR, so adversarialFixed:0). KEY: 'npx expo lint' gate is unrunnable project-wide (eslint not installed); lint 'pass' was misreported."
+        "notes": "Self-merged squash (832eefe), no peer review, no CI. Presentational fix: NameDetailBody styles dropped fontFamily -> system sans instead of Cormorant serif; also removed rose border and swapped flex:1 for maxHeight+flexShrink (content-hug). CodeRabbit CLI ran 0-on-diff. Adversarial sibling-sweep CAUGHT the same fontFamily bug in app/top-picks.tsx (adversarialFindings:1) — scoped out, fixed same-day in follow-up branch fix/top-picks-serif-font (not a defect in this PR, so adversarialFixed:0). KEY: 'npx expo lint' gate is unrunnable project-wide (eslint not installed); lint 'pass' was misreported."
       }
     },
     {
@@ -2623,7 +2623,7 @@
         "stepsSkipped": [
           "4c"
         ],
-        "skipReasons": "4c (CodeRabbit) \u2014 CLI unavailable in environment",
+        "skipReasons": "4c (CodeRabbit) — CLI unavailable in environment",
         "complianceRate": 0.889,
         "skipAssessment": "bad"
       },
@@ -2704,7 +2704,7 @@
         "stepsSkipped": [
           "2b"
         ],
-        "skipReasons": "2b folded into 2a \u2014 single pass for CSS-heavy change",
+        "skipReasons": "2b folded into 2a — single pass for CSS-heavy change",
         "complianceRate": 0.89,
         "skipAssessment": "neutral"
       },
@@ -2716,7 +2716,7 @@
         "pushMinutes": 2,
         "totalMinutes": 43,
         "bottleneck": "implementation (worktree bug)",
-        "notes": "~10 min lost to worktree isolation bug \u2014 fixed in orchestrator protocol"
+        "notes": "~10 min lost to worktree isolation bug — fixed in orchestrator protocol"
       }
     },
     {
@@ -2864,7 +2864,7 @@
           "4c",
           "4d"
         ],
-        "skipReasons": "3-Playwright (N/A \u2014 no visual changes), 4a-4e (< 50 LOC, critic review done inline)",
+        "skipReasons": "3-Playwright (N/A — no visual changes), 4a-4e (< 50 LOC, critic review done inline)",
         "complianceRate": 0.44,
         "skipAssessment": "bad"
       },
@@ -3534,7 +3534,7 @@
     {
       "project": "leaflet",
       "prNumber": 8,
-      "title": "feat: end-to-end vertical slice \u2014 topic input, Claude generation, booklet display",
+      "title": "feat: end-to-end vertical slice — topic input, Claude generation, booklet display",
       "dateMerged": "2026-03-09T17:28:31Z",
       "reviewRounds": 5,
       "totalComments": 19,
@@ -3959,7 +3959,7 @@
         ],
         "skipReasons": "3-Playwright: backend-only (search.ts, search.test.ts). 4c-CodeRabbit: skipped (sub-100 LOC logic change).",
         "complianceRate": 0.8,
-        "skipAssessment": "Playwright skip justified (backend-only). CodeRabbit skip debatable \u2014 100 LOC is borderline and CodeRabbit post-push found 2 issues."
+        "skipAssessment": "Playwright skip justified (backend-only). CodeRabbit skip debatable — 100 LOC is borderline and CodeRabbit post-push found 2 issues."
       },
       "stepTiming": null
     },
@@ -5498,7 +5498,7 @@
     {
       "project": "second-brain",
       "prNumber": 3,
-      "title": "Phase 1: Core pipeline \u2014 classify, embed, store, respond",
+      "title": "Phase 1: Core pipeline — classify, embed, store, respond",
       "dateMerged": "2026-02-08T06:36:18Z",
       "reviewRounds": 2,
       "totalComments": 0,
@@ -8192,7 +8192,7 @@
           "4c",
           "4d"
         ],
-        "skipReasons": "minimal change \u2014 all quality gates skipped",
+        "skipReasons": "minimal change — all quality gates skipped",
         "complianceRate": 0.25,
         "skipAssessment": "neutral"
       }
@@ -8804,7 +8804,7 @@
     {
       "project": "second-brain",
       "prNumber": 191,
-      "title": "Deprecate ACTION intent \u2014 full removal (#168)",
+      "title": "Deprecate ACTION intent — full removal (#168)",
       "dateMerged": "2026-02-20T20:03:12Z",
       "reviewRounds": 2,
       "totalComments": 9,
@@ -9359,7 +9359,7 @@
           "4d",
           "4e"
         ],
-        "skipReasons": "4a-4e (code review loop) \u2014 skipped per user request",
+        "skipReasons": "4a-4e (code review loop) — skipped per user request",
         "complianceRate": 0.5,
         "skipAssessment": "bad"
       },
@@ -10080,7 +10080,7 @@
           "4c",
           "4d"
         ],
-        "skipReasons": "3: backend-only (valid); 4a-4e: claimed under 50 LOC logic threshold (invalid \u2014 217 LOC total diff exceeds 50 LOC mandatory threshold)",
+        "skipReasons": "3: backend-only (valid); 4a-4e: claimed under 50 LOC logic threshold (invalid — 217 LOC total diff exceeds 50 LOC mandatory threshold)",
         "complianceRate": 0.375,
         "skipAssessment": "bad"
       }
@@ -10088,7 +10088,7 @@
     {
       "project": "second-brain",
       "prNumber": 260,
-      "title": "feat: weekly review core \u2014 data queries, AI analysis, and email template",
+      "title": "feat: weekly review core — data queries, AI analysis, and email template",
       "dateMerged": "2026-02-26T05:54:15Z",
       "reviewRounds": 1,
       "totalComments": 6,
@@ -10127,7 +10127,7 @@
           "4c",
           "4d"
         ],
-        "skipReasons": "1: stacked PR, 3-Playwright: backend-only, 4a-4e: stacked PR (will review on final PR) \u2014 but PR was merged independently",
+        "skipReasons": "1: stacked PR, 3-Playwright: backend-only, 4a-4e: stacked PR (will review on final PR) — but PR was merged independently",
         "complianceRate": 0.25,
         "skipAssessment": "bad"
       }
@@ -10661,7 +10661,7 @@
     {
       "project": "second-brain",
       "prNumber": 280,
-      "title": "Fix chat idea capture 404 \u2014 align route path with frontend",
+      "title": "Fix chat idea capture 404 — align route path with frontend",
       "dateMerged": "2026-02-27T23:47:10Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -11577,7 +11577,7 @@
           "2b",
           "3"
         ],
-        "skipReasons": "2b (hardening) \u2014 config-only, no business logic. 3 (Playwright) \u2014 CSS change is dev menu only, visually verified via lint.",
+        "skipReasons": "2b (hardening) — config-only, no business logic. 3 (Playwright) — CSS change is dev menu only, visually verified via lint.",
         "complianceRate": 0.78,
         "skipAssessment": "good"
       },
@@ -12143,7 +12143,7 @@
     {
       "project": "second-brain",
       "prNumber": 425,
-      "title": "Skip AI response for /todo command \u2014 return static confirmation",
+      "title": "Skip AI response for /todo command — return static confirmation",
       "dateMerged": "2026-03-15T03:11:27Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -12760,7 +12760,7 @@
     {
       "project": "second-brain",
       "prNumber": 576,
-      "title": "fix(projects): design scrub \u2014 match Inner Shelf tokens",
+      "title": "fix(projects): design scrub — match Inner Shelf tokens",
       "dateMerged": "2026-05-05T20:52:46Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -13735,7 +13735,7 @@
     {
       "project": "second-brain",
       "prNumber": 622,
-      "title": "feat(web): conditional Active Projects strip \u2014 pill row + dormant link",
+      "title": "feat(web): conditional Active Projects strip — pill row + dormant link",
       "dateMerged": "2026-05-06T23:36:44Z",
       "reviewRounds": 0,
       "totalComments": 0,
@@ -13797,7 +13797,7 @@
         "stepsSkipped": [
           "4b"
         ],
-        "skipReasons": "4b \u2014 reason: local critic + per-package vitest + tsc clean is the gate; CodeRabbit CLI not required to merge",
+        "skipReasons": "4b — reason: local critic + per-package vitest + tsc clean is the gate; CodeRabbit CLI not required to merge",
         "complianceRate": 0.889,
         "skipAssessment": "neutral"
       },
@@ -14121,7 +14121,7 @@
           "4c",
           "4d"
         ],
-        "skipReasons": "CSS-only follow-up \u2014 implementer self-tested via lint+build; orchestrator self-eyeballed the appended block (grid layout, color tokens) instead of spawning a critic round given the low-risk pure-styling scope.",
+        "skipReasons": "CSS-only follow-up — implementer self-tested via lint+build; orchestrator self-eyeballed the appended block (grid layout, color tokens) instead of spawning a critic round given the low-risk pure-styling scope.",
         "complianceRate": 0.44,
         "skipAssessment": "neutral"
       },
@@ -14139,7 +14139,7 @@
     {
       "project": "sleep-tracker",
       "prNumber": 15,
-      "title": "feat: V3 visual polish \u2014 unified design tokens and mockup alignment",
+      "title": "feat: V3 visual polish — unified design tokens and mockup alignment",
       "dateMerged": "2026-03-03T20:52:44Z",
       "reviewRounds": 2,
       "totalComments": 3,
@@ -14801,7 +14801,7 @@
           "4a",
           "4b"
         ],
-        "skipReasons": "Pure seed-data addition; CodeRabbit/simplify review code not data values. The relevant risk (name attestation, meaning accuracy, true origin, source-JSON\u2194SQL match) was verified by the independent adversarial critic.",
+        "skipReasons": "Pure seed-data addition; CodeRabbit/simplify review code not data values. The relevant risk (name attestation, meaning accuracy, true origin, source-JSON↔SQL match) was verified by the independent adversarial critic.",
         "complianceRate": 0.56,
         "skipAssessment": "good"
       },
@@ -14810,7 +14810,7 @@
     {
       "project": "baby-name-picker",
       "prNumber": 146,
-      "title": "Add Euphony \u2014 opt-in invented names (unified ranking, tagged)",
+      "title": "Add Euphony — opt-in invented names (unified ranking, tagged)",
       "dateMerged": "2026-06-02T00:32:36Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -15978,7 +15978,7 @@
           "4b",
           "4d"
         ],
-        "skipReasons": "4b: CodeRabbit CLI failed deterministically both attempts ('Payload too large' \u2014 multi-MB PNG renames in diff; v0.5.3 cannot scope to text files), manual scripted review substituted; 4d: no CI configured on repo. Step 3 ran as scripted docs verification (links/YAML/manifests/greps) \u2014 docs-only PR, build/lint/test n/a (justified in PR body).",
+        "skipReasons": "4b: CodeRabbit CLI failed deterministically both attempts ('Payload too large' — multi-MB PNG renames in diff; v0.5.3 cannot scope to text files), manual scripted review substituted; 4d: no CI configured on repo. Step 3 ran as scripted docs verification (links/YAML/manifests/greps) — docs-only PR, build/lint/test n/a (justified in PR body).",
         "complianceRate": 0.78,
         "skipAssessment": "neutral"
       },
@@ -15990,7 +15990,7 @@
         "pushMinutes": 2,
         "totalMinutes": 60,
         "bottleneck": "2 Implement (24 files, 4 commits)",
-        "notes": "Orchestrator team pattern (implementer + fresh-context critic). CodeRabbit payload failure; scripted review substituted. Stacked on #2 \u2014 rebase --onto after parent squash-merge."
+        "notes": "Orchestrator team pattern (implementer + fresh-context critic). CodeRabbit payload failure; scripted review substituted. Stacked on #2 — rebase --onto after parent squash-merge."
       }
     },
     {
@@ -16449,7 +16449,7 @@
           "4b",
           "4d"
         ],
-        "skipReasons": "4a: /simplify not run (recorded in PR body); 4b: CodeRabbit not run (recorded); 4d: no CI configured on repo. Tests n/a justified \u2014 content-only change (8 caption strings). Step 3 ran as critic-verified parse check + char-for-char match against the board-book caption set + typography scan.",
+        "skipReasons": "4a: /simplify not run (recorded in PR body); 4b: CodeRabbit not run (recorded); 4d: no CI configured on repo. Tests n/a justified — content-only change (8 caption strings). Step 3 ran as critic-verified parse check + char-for-char match against the board-book caption set + typography scan.",
         "complianceRate": 0.67,
         "skipAssessment": "neutral"
       },
@@ -16609,7 +16609,7 @@
           "4b",
           "4d"
         ],
-        "skipReasons": "Docs-only verbatim transcription (5 md files, +50/-2, zero source files): orchestrator transcribed user-donated prompts directly, no team \u2014 review bar = verbatim integrity, recorded as 4c (text checked against the user's original messages, one original typo preserved and annotated, 0 findings). 1/2b/3/4a/4b n/a for transcription; 4d no CI on repo. Build/test fields null (docs-only). adversarialCatchRate unmeasured (zero post-push findings = no denominator).",
+        "skipReasons": "Docs-only verbatim transcription (5 md files, +50/-2, zero source files): orchestrator transcribed user-donated prompts directly, no team — review bar = verbatim integrity, recorded as 4c (text checked against the user's original messages, one original typo preserved and annotated, 0 findings). 1/2b/3/4a/4b n/a for transcription; 4d no CI on repo. Build/test fields null (docs-only). adversarialCatchRate unmeasured (zero post-push findings = no denominator).",
         "complianceRate": 0.33,
         "skipAssessment": "neutral"
       },
@@ -17114,7 +17114,7 @@
           "4b",
           "4d"
         ],
-        "skipReasons": "Content-only PR (+100/-0: hero PNG, bible, proven prompt). First-try Gemini lock \u2014 zero rejected candidates; first BABY variant of the hero recipe (age-down guard, baby-valid pose whitelist, reduced 6-expression set). PR body states 'Steps skipped: 3, 4a, 4b (content-only; self-verification per the orchestrator-authored-content lane)'; 4d additionally absent (no CI). Self-verified: YAML parses, convention paths, look[] mirrors prose, full-res hero 1664x2566. adversarialCatchRate unmeasured (zero post-push findings = no denominator, per metric-integrity rule). postMergeFixRate 0 measured at merge (PR is HEAD of main). inspiration_photos intentionally empty (seeds attached in Gemini directly) \u2014 backfill debt flagged in bible; recurring pattern (#18 shipped without seeds, #20 backfilled them).",
+        "skipReasons": "Content-only PR (+100/-0: hero PNG, bible, proven prompt). First-try Gemini lock — zero rejected candidates; first BABY variant of the hero recipe (age-down guard, baby-valid pose whitelist, reduced 6-expression set). PR body states 'Steps skipped: 3, 4a, 4b (content-only; self-verification per the orchestrator-authored-content lane)'; 4d additionally absent (no CI). Self-verified: YAML parses, convention paths, look[] mirrors prose, full-res hero 1664x2566. adversarialCatchRate unmeasured (zero post-push findings = no denominator, per metric-integrity rule). postMergeFixRate 0 measured at merge (PR is HEAD of main). inspiration_photos intentionally empty (seeds attached in Gemini directly) — backfill debt flagged in bible; recurring pattern (#18 shipped without seeds, #20 backfilled them).",
         "complianceRate": 0.56,
         "skipAssessment": "neutral"
       },
@@ -17185,7 +17185,7 @@
           "4b",
           "4d"
         ],
-        "skipReasons": "3/4a/4b stated in PR body (docs-only); 4d: repo has no CI. 4c ran as orchestrator diff spot-check (no fresh critic \u2014 small mechanical docs change).",
+        "skipReasons": "3/4a/4b stated in PR body (docs-only); 4d: repo has no CI. 4c ran as orchestrator diff spot-check (no fresh critic — small mechanical docs change).",
         "complianceRate": 0.56,
         "skipAssessment": "neutral"
       },
@@ -17256,7 +17256,7 @@
           "4b",
           "4d"
         ],
-        "skipReasons": "4b: CodeRabbit CLI hung 52 min with zero output, killed; re-attempt skipped by explicit user directive (recorded in PR body; fresh-context adversarial critic covered the surface). 4d: repo has no CI (statusCheckRollup empty) \u2014 typecheck/lint/build ran locally as step 3.",
+        "skipReasons": "4b: CodeRabbit CLI hung 52 min with zero output, killed; re-attempt skipped by explicit user directive (recorded in PR body; fresh-context adversarial critic covered the surface). 4d: repo has no CI (statusCheckRollup empty) — typecheck/lint/build ran locally as step 3.",
         "complianceRate": 0.78,
         "skipAssessment": "neutral"
       },
@@ -17543,7 +17543,7 @@
         "stepsSkipped": [
           "4b"
         ],
-        "skipReasons": "4b (CodeRabbit) \u2014 excluded by user directive",
+        "skipReasons": "4b (CodeRabbit) — excluded by user directive",
         "complianceRate": 0.89,
         "skipAssessment": "neutral"
       },
@@ -18433,7 +18433,7 @@
         "coderabbitIterations": 1,
         "adversarialFindings": 0,
         "adversarialFixed": 0,
-        "playwrightTesting": "N/A (RN app; simulator/on-device deferred \u2014 native CNG build too slow/SIGKILL-prone in this env)",
+        "playwrightTesting": "N/A (RN app; simulator/on-device deferred — native CNG build too slow/SIGKILL-prone in this env)",
         "ciStatus": "all passed"
       },
       "adversarialCatchRate": "unmeasured",
@@ -18834,7 +18834,7 @@
           "5"
         ],
         "stepsSkipped": [],
-        "skipReasons": "All 9 trackable steps ran. Playwright (a sub-part of step 3) was N/A \u2014 backend-only CLI, zero UI files \u2014 and recorded explicitly in the PR body. Step 3 (build+lint+test) ran: full suite 1841 pass.",
+        "skipReasons": "All 9 trackable steps ran. Playwright (a sub-part of step 3) was N/A — backend-only CLI, zero UI files — and recorded explicitly in the PR body. Step 3 (build+lint+test) ran: full suite 1841 pass.",
         "complianceRate": 1,
         "skipAssessment": "good"
       },
@@ -18915,7 +18915,7 @@
           "5"
         ],
         "stepsSkipped": [],
-        "skipReasons": "All 9 trackable steps ran. Playwright (sub-part of step 3) N/A \u2014 backend CLI \u2014 recorded in body. Full server suite 1897 pass.",
+        "skipReasons": "All 9 trackable steps ran. Playwright (sub-part of step 3) N/A — backend CLI — recorded in body. Full server suite 1897 pass.",
         "complianceRate": 1,
         "skipAssessment": "good"
       },
@@ -18929,7 +18929,7 @@
         "bottleneck": "Implement (stalled-implementer handoff) + 4a-4c Review (per-module critic sub-agents + 3 CodeRabbit rounds)",
         "notes": "Implement spanned multiple cycles INCLUDING a stalled-implementer handoff: the implementer committed partial WIP then went dormant across idle cycles; recovered by standing it down and spawning a fresh implementer that finished from the on-disk WIP. Review timing qualitative in body (critic + 3 CodeRabbit rounds). Push includes rebase --onto squashed main after #690 merged + marker re-cert. Precise per-step minutes not recorded -> nulls where unquantified."
       },
-      "notes": "Part of #686 \u2014 PR2 of 3 (stacked on #690; PR3 = scheduling, not yet built). Layered local-review gate (per-module critic sub-agents + 3-round CodeRabbit + explicit sibling-sweep + adversarial Tier 0) caught 100% of real issues pre-push; 0 GitHub-review comments, 0 post-merge fixes. TWO SECURITY MAJORs caught pre-merge: (1) media OOM \u2014 25MB cap enforced only AFTER arrayBuffer() buffered the whole body, so a hostile/redirecting server at x5 concurrency could OOM; fixed by early Content-Length reject + streaming abort + body cancel on early-returns; (2) pg_dump credential exposure \u2014 connection URL with password was the last argv element (visible via ps//proc/cmdline); fixed by passing libpq PG* env vars via the child env, no connstring on argv. Sibling-sweep found 6 Markdown-injection sites (incl. LLM-generated inbox ai_summary) where \\n## / \\n- could forge document structure in the trusted backup; fixed via shared inlineText/inlineCode helpers. preMergeIterationCount=4 (3 CodeRabbit rounds + 1 sibling-sweep) = high friction but appropriate for a 3186-LOC security-sensitive PR (media-download + subprocess-exec + Markdown rendering); 0 escapes => friction was the gate working, not rework. Legacy fix-up ratio 0.75 keyword-based (6 of 8 commits) over-counts; TRUE review-driven fixups = 4 (commits 5-8); commit 3 is the test commit, commit 4 a pre-review pg_dump design reconciliation. PROCESS EVENTS captured to knowledge: (a) implementer STALL + WIP-commit-as-handoff recovery (stand down dormant agent, respawn fresh from committed WIP; bound implementer liveness) -> process-patterns.md; (b) stacked-PR squash-merge add/add conflict resolved via git rebase --onto + content-identity proof + marker re-cert + force-push -> process-patterns.md; (c) 3 new Tier 0 greps (0.26 Markdown-injection, 0.27 secret-on-argv, 0.28 size-cap-after-buffering) -> adversarial-review.md; (d) LLM-output-into-Markdown structure-injection sink -> llm-integration.md. Two rebase+marker-recert cycles total across the stack (PR1 onto #688, PR2 onto squashed main). adversarialCatchRate=UNMEASURED per integrity rule. Self-merged solo dev, Vercel SUCCESS, no peer review (expected). >600-LOC atomic-feature exception declared+justified (three artifacts share one exporter integration)."
+      "notes": "Part of #686 — PR2 of 3 (stacked on #690; PR3 = scheduling, not yet built). Layered local-review gate (per-module critic sub-agents + 3-round CodeRabbit + explicit sibling-sweep + adversarial Tier 0) caught 100% of real issues pre-push; 0 GitHub-review comments, 0 post-merge fixes. TWO SECURITY MAJORs caught pre-merge: (1) media OOM — 25MB cap enforced only AFTER arrayBuffer() buffered the whole body, so a hostile/redirecting server at x5 concurrency could OOM; fixed by early Content-Length reject + streaming abort + body cancel on early-returns; (2) pg_dump credential exposure — connection URL with password was the last argv element (visible via ps//proc/cmdline); fixed by passing libpq PG* env vars via the child env, no connstring on argv. Sibling-sweep found 6 Markdown-injection sites (incl. LLM-generated inbox ai_summary) where \\n## / \\n- could forge document structure in the trusted backup; fixed via shared inlineText/inlineCode helpers. preMergeIterationCount=4 (3 CodeRabbit rounds + 1 sibling-sweep) = high friction but appropriate for a 3186-LOC security-sensitive PR (media-download + subprocess-exec + Markdown rendering); 0 escapes => friction was the gate working, not rework. Legacy fix-up ratio 0.75 keyword-based (6 of 8 commits) over-counts; TRUE review-driven fixups = 4 (commits 5-8); commit 3 is the test commit, commit 4 a pre-review pg_dump design reconciliation. PROCESS EVENTS captured to knowledge: (a) implementer STALL + WIP-commit-as-handoff recovery (stand down dormant agent, respawn fresh from committed WIP; bound implementer liveness) -> process-patterns.md; (b) stacked-PR squash-merge add/add conflict resolved via git rebase --onto + content-identity proof + marker re-cert + force-push -> process-patterns.md; (c) 3 new Tier 0 greps (0.26 Markdown-injection, 0.27 secret-on-argv, 0.28 size-cap-after-buffering) -> adversarial-review.md; (d) LLM-output-into-Markdown structure-injection sink -> llm-integration.md. Two rebase+marker-recert cycles total across the stack (PR1 onto #688, PR2 onto squashed main). adversarialCatchRate=UNMEASURED per integrity rule. Self-merged solo dev, Vercel SUCCESS, no peer review (expected). >600-LOC atomic-feature exception declared+justified (three artifacts share one exporter integration)."
     },
     {
       "project": "second-brain",
@@ -19449,7 +19449,7 @@
     {
       "project": "second-brain",
       "prNumber": 743,
-      "title": "fix(schedule-todos): don't propose todo slots in the past \u2014 clip today's window to the current time",
+      "title": "fix(schedule-todos): don't propose todo slots in the past — clip today's window to the current time",
       "dateMerged": "2026-06-26T00:40:54Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -19744,7 +19744,7 @@
         "ciStatus": "Vercel SUCCESS; server 2295 passed / 48 skipped"
       },
       "adversarialCatchRate": null,
-      "adversarialCatchRateNote": "unmeasured \u2014 no separate fresh-context critic ran (deliberately skipped per explicit user direction); PR-A used a lightweight orchestrator gate, not a critic. 0/(0+0) undefined; 0 post-merge escapes. Not fabricated to 1.0.",
+      "adversarialCatchRateNote": "unmeasured — no separate fresh-context critic ran (deliberately skipped per explicit user direction); PR-A used a lightweight orchestrator gate, not a critic. 0/(0+0) undefined; 0 post-merge escapes. Not fabricated to 1.0.",
       "fixupCommitRatio": 0,
       "fixupMetrics": {
         "postMergeFixRate": 0,
@@ -19826,7 +19826,7 @@
         "ciStatus": "Vercel SUCCESS; server 2321 passed / 48 skipped"
       },
       "adversarialCatchRate": null,
-      "adversarialCatchRateNote": "unmeasured \u2014 no separate fresh-context critic ran (deliberately skipped under the lightweight-gate convention + the velocity push); PR-B used a lightweight orchestrator gate, not a critic. 0/(0+0) undefined; 0 post-merge escapes. Not fabricated to 1.0. Scope note: PR-C (commit-path + event creation) is being paused for a real critic.",
+      "adversarialCatchRateNote": "unmeasured — no separate fresh-context critic ran (deliberately skipped under the lightweight-gate convention + the velocity push); PR-B used a lightweight orchestrator gate, not a critic. 0/(0+0) undefined; 0 post-merge escapes. Not fabricated to 1.0. Scope note: PR-C (commit-path + event creation) is being paused for a real critic.",
       "fixupCommitRatio": 0,
       "fixupMetrics": {
         "postMergeFixRate": 0,
@@ -19867,7 +19867,7 @@
           "4b",
           "4c-critic"
         ],
-        "skipReasons": "Fresh-context critic + separate /simplify (4a) + CodeRabbit (4b) deliberately skipped per the standing lightweight-review-for-small-additive-PRs preference and the active velocity push ('let's get these merged'). Lightweight orchestrator gate kept and load-bearing: build/lint/test (2321 passed), the dangling-dependency filter (a non-decision depending on an excluded decision still packs \u2014 no phantom blocker), stable numbering (decisions occupy no number), decisions never reaching events/numberMap, all-block byte-identity, adversarial-review marker. Scope note: the waiver is scoped to A/B; PR-C (commit-path + event creation) is paused for a real critic.",
+        "skipReasons": "Fresh-context critic + separate /simplify (4a) + CodeRabbit (4b) deliberately skipped per the standing lightweight-review-for-small-additive-PRs preference and the active velocity push ('let's get these merged'). Lightweight orchestrator gate kept and load-bearing: build/lint/test (2321 passed), the dangling-dependency filter (a non-decision depending on an excluded decision still packs — no phantom blocker), stable numbering (decisions occupy no number), decisions never reaching events/numberMap, all-block byte-identity, adversarial-review marker. Scope note: the waiver is scoped to A/B; PR-C (commit-path + event creation) is paused for a real critic.",
         "complianceRate": 0.6667,
         "skipAssessment": "good"
       },
@@ -19908,7 +19908,7 @@
         "ciStatus": "Vercel SUCCESS; server 2352 passed / 48 skipped"
       },
       "adversarialCatchRate": null,
-      "adversarialCatchRateNote": "unmeasured \u2014 the fresh-context critic RAN FULLY (PR-C touches the calendar-write/event-creation/commit path, so it graduated OUT of the A/B lightweight gate to a real critic). It independently verified: no overflow/double-booking path, member-id survival through persist\u2192parseStoredEvents\u2192commit, exactly one createEvent per run (count==runs not members), and byte-identical no-op path. Verdict: ship-ready, 0 blockers, 0 SHOULD-FIX, 2 cosmetic NITs only. caught/(caught+escaped) = 0/(0+0) for ACTIONABLE findings = undefined \u2192 recorded as unmeasured per the metric-integrity rule, NOT fabricated to 1.0. 0 post-merge escapes. This is the strong-signal case (full critic ran, found the design genuinely clean) vs PR-A/B's lightweight-gate unmeasured (no critic ran at all).",
+      "adversarialCatchRateNote": "unmeasured — the fresh-context critic RAN FULLY (PR-C touches the calendar-write/event-creation/commit path, so it graduated OUT of the A/B lightweight gate to a real critic). It independently verified: no overflow/double-booking path, member-id survival through persist→parseStoredEvents→commit, exactly one createEvent per run (count==runs not members), and byte-identical no-op path. Verdict: ship-ready, 0 blockers, 0 SHOULD-FIX, 2 cosmetic NITs only. caught/(caught+escaped) = 0/(0+0) for ACTIONABLE findings = undefined → recorded as unmeasured per the metric-integrity rule, NOT fabricated to 1.0. 0 post-merge escapes. This is the strong-signal case (full critic ran, found the design genuinely clean) vs PR-A/B's lightweight-gate unmeasured (no critic ran at all).",
       "fixupCommitRatio": 0,
       "fixupMetrics": {
         "postMergeFixRate": 0,
@@ -19949,7 +19949,7 @@
           "4a",
           "4b"
         ],
-        "skipReasons": "Separate /simplify (4a) and CodeRabbit CLI (4b) skipped per the lightweight-review preference, BUT \u2014 unlike PR-A/B \u2014 the fresh-context critic (4c) was deliberately RE-INSTATED because PR-C creates calendar events and touches the commit path. Risk-graduated review: A/B (additive/byte-identical) shipped on the lightweight gate; C (event-creating/commit-path) got the full critic. The critic verified no overflow/double-booking, member-id survival persist\u2192parse\u2192commit, one createEvent per run, byte-identical no-op path; 2352 tests green.",
+        "skipReasons": "Separate /simplify (4a) and CodeRabbit CLI (4b) skipped per the lightweight-review preference, BUT — unlike PR-A/B — the fresh-context critic (4c) was deliberately RE-INSTATED because PR-C creates calendar events and touches the commit path. Risk-graduated review: A/B (additive/byte-identical) shipped on the lightweight gate; C (event-creating/commit-path) got the full critic. The critic verified no overflow/double-booking, member-id survival persist→parse→commit, one createEvent per run, byte-identical no-op path; 2352 tests green.",
         "complianceRate": 0.7778,
         "skipAssessment": "good"
       },
@@ -19961,7 +19961,7 @@
         "pushMinutes": null,
         "totalMinutes": null,
         "bottleneck": null,
-        "notes": "PR body has no per-step timing table (minutes null). ~337 LOC production + tests (diff +973/-14 across 6 files incl. tests). Load-bearing change = post-pack collapseBatches transform with RE-FIT + fall-back-to-individuals safety valve (firstFit only fits within one free interval, so a non-contiguous reclaim falls back rather than emitting an overflowing/overlapping block) + parseStoredEvents preserving memberTodoIds so the run\u2192todos trace survives persist\u2192commit. packTodos untouched; zero-errand/admin path byte-identical."
+        "notes": "PR body has no per-step timing table (minutes null). ~337 LOC production + tests (diff +973/-14 across 6 files incl. tests). Load-bearing change = post-pack collapseBatches transform with RE-FIT + fall-back-to-individuals safety valve (firstFit only fits within one free interval, so a non-contiguous reclaim falls back rather than emitting an overflowing/overlapping block) + parseStoredEvents preserving memberTodoIds so the run→todos trace survives persist→commit. packTodos untouched; zero-errand/admin path byte-identical."
       }
     },
     {
@@ -19991,7 +19991,7 @@
         "ciStatus": "Vercel SUCCESS; server tsc clean; 2306 passed / 48 skipped (incl. 6 new)"
       },
       "adversarialCatchRate": null,
-      "adversarialCatchRateNote": "unmeasured \u2014 the adversarial gate PASSED with 0 must-fix CODE defects, and the implementer's own fresh-context critic returned SHIP (0 code fixes). The only finding was a non-blocking commit-message WORDING nit (the 'vocabularies don't overlap' claim is too strong; only `journal` is banned by GENERIC_TAGS so the rich suggester could emit e.g. `recipe` \u2014 benign, entry_tags ON CONFLICT DO NOTHING). That is a doc-accuracy catch, not a code-defect catch. Actionable CODE catches pre-merge = 0; post-merge escapes = 0. caught/(caught+escaped) = 0/(0+0) = undefined \u2192 recorded as unmeasured per the metric-integrity rule, NOT fabricated to 1.0. Note: unlike PR-C/#758 (where the orchestrator ran a full fresh-context critic), here the implementer ran its OWN fresh-context critic (SHIP) under the lightweight-review path for a sub-100-LOC-logic server PR; the doc nit was caught by the adversarial gate.",
+      "adversarialCatchRateNote": "unmeasured — the adversarial gate PASSED with 0 must-fix CODE defects, and the implementer's own fresh-context critic returned SHIP (0 code fixes). The only finding was a non-blocking commit-message WORDING nit (the 'vocabularies don't overlap' claim is too strong; only `journal` is banned by GENERIC_TAGS so the rich suggester could emit e.g. `recipe` — benign, entry_tags ON CONFLICT DO NOTHING). That is a doc-accuracy catch, not a code-defect catch. Actionable CODE catches pre-merge = 0; post-merge escapes = 0. caught/(caught+escaped) = 0/(0+0) = undefined → recorded as unmeasured per the metric-integrity rule, NOT fabricated to 1.0. Note: unlike PR-C/#758 (where the orchestrator ran a full fresh-context critic), here the implementer ran its OWN fresh-context critic (SHIP) under the lightweight-review path for a sub-100-LOC-logic server PR; the doc nit was caught by the adversarial gate.",
       "fixupCommitRatio": 0,
       "fixupMetrics": {
         "postMergeFixRate": 0,
@@ -20032,7 +20032,7 @@
           "4a",
           "4b"
         ],
-        "skipReasons": "Separate /simplify (4a) and CodeRabbit CLI (4b) skipped per the standing lightweight-review-for-small-PRs preference (sub-100-LOC logic: ~25 LOC + 6 tests, server-only, fire-and-forget). The fresh-context critic (4c) was NOT skipped \u2014 the implementer ran its own independent fresh-context critic, which returned SHIP (0 fixes). The lightweight orchestrator gate (lint clean, server tsc clean, 2306 tests pass, adversarial-review marker) was kept and load-bearing. Planning used a full explore\u2192propose WORKFLOW (4 read-only explorers \u2192 recommendation) before implementation \u2014 first PR this session to do so.",
+        "skipReasons": "Separate /simplify (4a) and CodeRabbit CLI (4b) skipped per the standing lightweight-review-for-small-PRs preference (sub-100-LOC logic: ~25 LOC + 6 tests, server-only, fire-and-forget). The fresh-context critic (4c) was NOT skipped — the implementer ran its own independent fresh-context critic, which returned SHIP (0 fixes). The lightweight orchestrator gate (lint clean, server tsc clean, 2306 tests pass, adversarial-review marker) was kept and load-bearing. Planning used a full explore→propose WORKFLOW (4 read-only explorers → recommendation) before implementation — first PR this session to do so.",
         "complianceRate": 0.7778,
         "skipAssessment": "good"
       },
@@ -20044,13 +20044,13 @@
         "pushMinutes": null,
         "totalMinutes": null,
         "bottleneck": null,
-        "notes": "PR body has a qualitative Step Timing table but no per-step minutes (all null). Plan phase used an explore\u2192propose workflow (4 explorers \u2192 recommendation) + user decisions (coverage = main capture paths, UX = fully silent). Implement = single pass: wire `tag`+`tagSuggestion` into MessageProcessor (server.ts, +2) \u2014 fixing a real gap that left Telegram untagged and the coarse classifier-tag dead \u2014 plus a fire-and-forget rich auto-tag block in runPostProcessing on CREATE only (post-processor.ts +20: guarded suggestTags\u2192addTagToEntry per name, per-tag .catch + wrapping .catch, not awaited so capture latency unchanged) + 6 tests. Covers the 3 MessageProcessor.process() channels (Telegram, web compose, web reply); direct create routes (todos/ideas/comments/prompt-replies) bypass the pipeline and are out of scope. PR 1 of 2 for #756 (issue stays OPEN); PR 2 removes the now-redundant web Suggest-tags button + accept step and adds a delayed feed refresh."
+        "notes": "PR body has a qualitative Step Timing table but no per-step minutes (all null). Plan phase used an explore→propose workflow (4 explorers → recommendation) + user decisions (coverage = main capture paths, UX = fully silent). Implement = single pass: wire `tag`+`tagSuggestion` into MessageProcessor (server.ts, +2) — fixing a real gap that left Telegram untagged and the coarse classifier-tag dead — plus a fire-and-forget rich auto-tag block in runPostProcessing on CREATE only (post-processor.ts +20: guarded suggestTags→addTagToEntry per name, per-tag .catch + wrapping .catch, not awaited so capture latency unchanged) + 6 tests. Covers the 3 MessageProcessor.process() channels (Telegram, web compose, web reply); direct create routes (todos/ideas/comments/prompt-replies) bypass the pipeline and are out of scope. PR 1 of 2 for #756 (issue stays OPEN); PR 2 removes the now-redundant web Suggest-tags button + accept step and adds a delayed feed refresh."
       }
     },
     {
       "project": "second-brain",
       "prNumber": 759,
-      "title": "feat(scheduler): refine-aware batch skip \u2014 'skip #N' on a run removes its members [PR-D of #749]",
+      "title": "feat(scheduler): refine-aware batch skip — 'skip #N' on a run removes its members [PR-D of #749]",
       "dateMerged": "2026-06-26T22:03:44Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -20073,7 +20073,7 @@
         "ciStatus": "Vercel SUCCESS; server 2359 passed / 48 skipped"
       },
       "adversarialCatchRate": null,
-      "adversarialCatchRateNote": "unmeasured (critic-skipped shade) \u2014 NO separate fresh-context critic ran. PR-D is refine-internal: it only changes WHICH todos are in the in-flight proposal (numbersToIds expands a batch number \u2192 all its memberTodoIds; parseRefinableMetadata preserves+validates memberTodoIds; setDuration/addDependency on a batch are documented intentional no-ops). It creates NO external side effects \u2014 events are created later, only on confirm \u2014 so it shipped on the LIGHTWEIGHT orchestrator gate (build/lint/test 2359 passed + adversarial marker + focused diff verification of the remove-expansion and memberTodoIds-preservation), consistent with risk-graduated review (full critic for external-side-effect PRs like PR-C #758; lightweight for additive/internal ones). caught/(caught+escaped) has NO numerator because no critic was run \u2192 recorded as unmeasured per the metric-integrity rule, NOT fabricated. This is the critic-SKIPPED shade (no signal at all), distinct from PR-C's full-critic-ran-clean shade (strong clean signal). 0 post-merge escapes: no follow-up fix touches schedule-todos-refine.ts; #760 is an unrelated tags PR. COMPLETES the lean smart-scheduler (PR-A #751, PR-B #752, PR-C #758, PR-D #759 all merged); validated payoff 51\u219229 calendar items (-43%) on real data.",
+      "adversarialCatchRateNote": "unmeasured (critic-skipped shade) — NO separate fresh-context critic ran. PR-D is refine-internal: it only changes WHICH todos are in the in-flight proposal (numbersToIds expands a batch number → all its memberTodoIds; parseRefinableMetadata preserves+validates memberTodoIds; setDuration/addDependency on a batch are documented intentional no-ops). It creates NO external side effects — events are created later, only on confirm — so it shipped on the LIGHTWEIGHT orchestrator gate (build/lint/test 2359 passed + adversarial marker + focused diff verification of the remove-expansion and memberTodoIds-preservation), consistent with risk-graduated review (full critic for external-side-effect PRs like PR-C #758; lightweight for additive/internal ones). caught/(caught+escaped) has NO numerator because no critic was run → recorded as unmeasured per the metric-integrity rule, NOT fabricated. This is the critic-SKIPPED shade (no signal at all), distinct from PR-C's full-critic-ran-clean shade (strong clean signal). 0 post-merge escapes: no follow-up fix touches schedule-todos-refine.ts; #760 is an unrelated tags PR. COMPLETES the lean smart-scheduler (PR-A #751, PR-B #752, PR-C #758, PR-D #759 all merged); validated payoff 51→29 calendar items (-43%) on real data.",
       "fixupCommitRatio": 0,
       "fixupMetrics": {
         "postMergeFixRate": 0,
@@ -20114,7 +20114,7 @@
           "4b",
           "4c"
         ],
-        "skipReasons": "PR-D is refine-internal (changes which todos are in the proposal; events only created on confirm \u2014 no external side effects), so it shipped on the LIGHTWEIGHT orchestrator gate per the risk-graduated rule: /simplify (4a), CodeRabbit CLI (4b), and the fresh-context critic (4c) skipped; build/lint/test (2359 passed, 48 skipped) + adversarial marker kept, plus a focused diff verification of the remove-expansion (batch number \u2192 all memberTodoIds) and memberTodoIds preservation/validation in parseRefinableMetadata. Counterpart to PR-C #758, which RE-INSTATED the full critic because it created calendar events \u2014 risk-graduation applied symmetrically (escalate for side-effect slices, de-escalate for internal ones).",
+        "skipReasons": "PR-D is refine-internal (changes which todos are in the proposal; events only created on confirm — no external side effects), so it shipped on the LIGHTWEIGHT orchestrator gate per the risk-graduated rule: /simplify (4a), CodeRabbit CLI (4b), and the fresh-context critic (4c) skipped; build/lint/test (2359 passed, 48 skipped) + adversarial marker kept, plus a focused diff verification of the remove-expansion (batch number → all memberTodoIds) and memberTodoIds preservation/validation in parseRefinableMetadata. Counterpart to PR-C #758, which RE-INSTATED the full critic because it created calendar events — risk-graduation applied symmetrically (escalate for side-effect slices, de-escalate for internal ones).",
         "complianceRate": 0.6667,
         "skipAssessment": "good"
       },
@@ -20126,7 +20126,7 @@
         "pushMinutes": null,
         "totalMinutes": null,
         "bottleneck": null,
-        "notes": "PR body has no per-step timing table (minutes null). 3 files, +366/-11 (377 LOC). Load-bearing change in schedule-todos-refine.ts: numbersToIds (remove resolver) expands a batch number \u2192 all its memberTodoIds (individual numbers still resolve to one todoId; synthetic batch: id never added to the remove set); parseRefinableMetadata preserves+validates memberTodoIds on each numberMap entry (non-empty array of non-empty strings; malformed dropped) where it previously rebuilt {number,todoId} only; setDuration/addDependency on a batch number are documented intentional no-ops. Round-trip test: propose batched \u2192 skip #1 \u2192 all members removed \u2192 renumber \u2192 confirm creates events without them. Completes the lean smart-scheduler; PR-C's packing/collapse/event logic untouched."
+        "notes": "PR body has no per-step timing table (minutes null). 3 files, +366/-11 (377 LOC). Load-bearing change in schedule-todos-refine.ts: numbersToIds (remove resolver) expands a batch number → all its memberTodoIds (individual numbers still resolve to one todoId; synthetic batch: id never added to the remove set); parseRefinableMetadata preserves+validates memberTodoIds on each numberMap entry (non-empty array of non-empty strings; malformed dropped) where it previously rebuilt {number,todoId} only; setDuration/addDependency on a batch number are documented intentional no-ops. Round-trip test: propose batched → skip #1 → all members removed → renumber → confirm creates events without them. Completes the lean smart-scheduler; PR-C's packing/collapse/event logic untouched."
       }
     },
     {
@@ -20152,11 +20152,11 @@
         "coderabbitIterations": null,
         "adversarialFindings": 0,
         "adversarialFixed": 0,
-        "adversarialFindingNote": "Adversarial gate PASSED with 0 must-fix, all tiers evidenced. The implementer's own fresh-context critic returned SHIP (0 fixes). The orchestrator's only pre-commit catch was a DESIGN VERIFICATION (confirming the delayed triggerFeedRefresh timer actually fires because the composer stays mounted via a `return null` toggle, so onClose does not cancel the setTimeout) \u2014 not a defect fix, the code was already correct. 0 actionable code findings.",
+        "adversarialFindingNote": "Adversarial gate PASSED with 0 must-fix, all tiers evidenced. The implementer's own fresh-context critic returned SHIP (0 fixes). The orchestrator's only pre-commit catch was a DESIGN VERIFICATION (confirming the delayed triggerFeedRefresh timer actually fires because the composer stays mounted via a `return null` toggle, so onClose does not cancel the setTimeout) — not a defect fix, the code was already correct. 0 actionable code findings.",
         "ciStatus": "Vercel SUCCESS; server 2345 passed / 48 skipped; web 326 passed; lint clean (Biome + stylelint); server+shared tsc clean; web vite build bundles; sibling-sweep zero dangling refs"
       },
       "adversarialCatchRate": null,
-      "adversarialCatchRateNote": "unmeasured \u2014 the adversarial gate PASSED with 0 must-fix, and the implementer's own fresh-context critic returned SHIP (0 fixes). The orchestrator's only pre-commit catch was confirming the delayed-refresh actually fires (a design verification, NOT a defect fix \u2014 the timer is correct by construction because the composer is rendered unconditionally and toggles via `return null`, so onClose does not unmount it / cancel the timer). Real code catches pre-merge = 0; post-merge escapes = 0 (no follow-up fix touches the area; #756 closed by this merge). caught/(caught+escaped) = 0/(0+0) = undefined \u2192 recorded as unmeasured per the metric-integrity rule, NOT fabricated to 1.0. Same 'critic ran fully, design genuinely clean, 0 escapes' shade as #758 (strong negative-finding signal), not the 'no critic ran' shade.",
+      "adversarialCatchRateNote": "unmeasured — the adversarial gate PASSED with 0 must-fix, and the implementer's own fresh-context critic returned SHIP (0 fixes). The orchestrator's only pre-commit catch was confirming the delayed-refresh actually fires (a design verification, NOT a defect fix — the timer is correct by construction because the composer is rendered unconditionally and toggles via `return null`, so onClose does not unmount it / cancel the timer). Real code catches pre-merge = 0; post-merge escapes = 0 (no follow-up fix touches the area; #756 closed by this merge). caught/(caught+escaped) = 0/(0+0) = undefined → recorded as unmeasured per the metric-integrity rule, NOT fabricated to 1.0. Same 'critic ran fully, design genuinely clean, 0 escapes' shade as #758 (strong negative-finding signal), not the 'no critic ran' shade.",
       "fixupCommitRatio": 0,
       "fixupMetrics": {
         "postMergeFixRate": 0,
@@ -20197,7 +20197,7 @@
           "4a",
           "4b"
         ],
-        "skipReasons": "Separate /simplify (4a) and CodeRabbit CLI (4b) skipped per the standing lightweight-review-for-small-PRs preference, further justified by the deletion-heavy shape: the dominant risk of a removal PR is dangling references, which the sibling-sweep (zero remaining references to any removed symbol/route/CSS class) covers directly. The fresh-context critic (4c) was NOT skipped \u2014 the implementer ran its own independent fresh-context critic, which returned SHIP (0 fixes). The lightweight orchestrator gate (lint clean, server+shared tsc clean, web vite build, 2345 server + 326 web tests, sibling-sweep, adversarial-review marker) was kept and load-bearing. Planning was inherited from the PR1 (#757) explore\u2192propose workflow \u2014 the UI removal was the pre-scoped follow-up named when #757 was planned.",
+        "skipReasons": "Separate /simplify (4a) and CodeRabbit CLI (4b) skipped per the standing lightweight-review-for-small-PRs preference, further justified by the deletion-heavy shape: the dominant risk of a removal PR is dangling references, which the sibling-sweep (zero remaining references to any removed symbol/route/CSS class) covers directly. The fresh-context critic (4c) was NOT skipped — the implementer ran its own independent fresh-context critic, which returned SHIP (0 fixes). The lightweight orchestrator gate (lint clean, server+shared tsc clean, web vite build, 2345 server + 326 web tests, sibling-sweep, adversarial-review marker) was kept and load-bearing. Planning was inherited from the PR1 (#757) explore→propose workflow — the UI removal was the pre-scoped follow-up named when #757 was planned.",
         "complianceRate": 0.7778,
         "skipAssessment": "good"
       },
@@ -20209,7 +20209,7 @@
         "pushMinutes": null,
         "totalMinutes": null,
         "bottleneck": null,
-        "notes": "PR body has a qualitative Step Timing table but no per-step minutes (all null). The only hard wall-clock signal is the ~10.4m GitHub open\u2192merge window (created 22:05:57, merged 22:16:22 UTC), which excludes the local dev loop. Plan inherited from PR1's explore\u2192propose workflow (UI removal was the pre-scoped follow-up). Implement = single pass: remove the suggest+accept apparatus (EntryComposerSheet draft chips/acceptedTags/acceptTag/tagWarning; ThreadPanel TagEditor suggest button + useSuggestedTags; hooks useSuggestedTags/useDraftTagSuggestions + caches; api fetchTagSuggestions/fetchDraftTagSuggestions; the two dead routes GET /entries/:id/tag-suggestions + POST /tag-suggestions; dead CSS) + collapse handleSubmit + add one delayed triggerFeedRefresh (~2.5s, AUTO_TAG_REFRESH_DELAY_MS) + update tests. KEPT the tagSuggestion service (PR1's create-time engine), the manual add/remove path, and ApiRouterDeps.tagSuggestion (removing it would churn 7 unrelated test files). Closed #756."
+        "notes": "PR body has a qualitative Step Timing table but no per-step minutes (all null). The only hard wall-clock signal is the ~10.4m GitHub open→merge window (created 22:05:57, merged 22:16:22 UTC), which excludes the local dev loop. Plan inherited from PR1's explore→propose workflow (UI removal was the pre-scoped follow-up). Implement = single pass: remove the suggest+accept apparatus (EntryComposerSheet draft chips/acceptedTags/acceptTag/tagWarning; ThreadPanel TagEditor suggest button + useSuggestedTags; hooks useSuggestedTags/useDraftTagSuggestions + caches; api fetchTagSuggestions/fetchDraftTagSuggestions; the two dead routes GET /entries/:id/tag-suggestions + POST /tag-suggestions; dead CSS) + collapse handleSubmit + add one delayed triggerFeedRefresh (~2.5s, AUTO_TAG_REFRESH_DELAY_MS) + update tests. KEPT the tagSuggestion service (PR1's create-time engine), the manual add/remove path, and ApiRouterDeps.tagSuggestion (removing it would churn 7 unrelated test files). Closed #756."
       }
     },
     {
@@ -20238,7 +20238,7 @@
         "ciStatus": "Vercel SUCCESS; server 2368 passed / 48 skipped"
       },
       "adversarialCatchRate": null,
-      "adversarialCatchRateNote": "unmeasured (critic-skipped shade) \u2014 NO separate fresh-context critic ran. PR #763 widens looksLikeRefinement (bare 1-3 digit numbers, a plural-aware duration regex, \"don't/do not schedule\" phrasing, negative-guarded so v2/covid19/1st don't trip) and teaches the interpreter prompt to treat a bare number like #N (don't schedule N -> remove; N will take X minutes -> setDuration). It is refine-internal with NO external side effects (events created later, only on confirm), so it shipped on the LIGHTWEIGHT orchestrator gate: build/lint/test (2368 passed, 48 skipped) + deterministic detection tests + adversarial marker. caught/(caught+escaped) has NO numerator because no critic ran -> recorded as unmeasured per the metric-integrity rule, NOT fabricated. The LOAD-BEARING validation was a REAL-MODEL probe the USER ran before merge: dry-run:refine Scenario B ('don't schedule 1 / 2 will take 10 minutes') confirmed the live model emits remove incl 1 + setDuration incl {number:2, minutes:10} \u2014 the mocks-can't-catch-prompt-quality guard (same as #735/#739), the right instrument for a prompt-quality change. THIRD natural-phrasing miss in the refine loop (after #732/#735): recurring class = the deterministic gate fronting the LLM interpreter is too narrow for how the user phrases revisions; lesson = widen the gate TOWARD the LLM (accept cheap LLM-rejected false positives) instead of enumerating phrasings. 0 post-merge escapes: #763 is the newest merge, no follow-up fix touches schedule-todos-refine.ts.",
+      "adversarialCatchRateNote": "unmeasured (critic-skipped shade) — NO separate fresh-context critic ran. PR #763 widens looksLikeRefinement (bare 1-3 digit numbers, a plural-aware duration regex, \"don't/do not schedule\" phrasing, negative-guarded so v2/covid19/1st don't trip) and teaches the interpreter prompt to treat a bare number like #N (don't schedule N -> remove; N will take X minutes -> setDuration). It is refine-internal with NO external side effects (events created later, only on confirm), so it shipped on the LIGHTWEIGHT orchestrator gate: build/lint/test (2368 passed, 48 skipped) + deterministic detection tests + adversarial marker. caught/(caught+escaped) has NO numerator because no critic ran -> recorded as unmeasured per the metric-integrity rule, NOT fabricated. The LOAD-BEARING validation was a REAL-MODEL probe the USER ran before merge: dry-run:refine Scenario B ('don't schedule 1 / 2 will take 10 minutes') confirmed the live model emits remove incl 1 + setDuration incl {number:2, minutes:10} — the mocks-can't-catch-prompt-quality guard (same as #735/#739), the right instrument for a prompt-quality change. THIRD natural-phrasing miss in the refine loop (after #732/#735): recurring class = the deterministic gate fronting the LLM interpreter is too narrow for how the user phrases revisions; lesson = widen the gate TOWARD the LLM (accept cheap LLM-rejected false positives) instead of enumerating phrasings. 0 post-merge escapes: #763 is the newest merge, no follow-up fix touches schedule-todos-refine.ts.",
       "fixupCommitRatio": 0,
       "fixupMetrics": {
         "postMergeFixRate": 0,
@@ -20279,7 +20279,7 @@
           "4b",
           "4c"
         ],
-        "skipReasons": "Refine-internal, no external side effects (only widens which replies reach the interpreter + prompt mappings; events created later, only on confirm), so it shipped on the LIGHTWEIGHT orchestrator gate per the risk-graduated rule: /simplify (4a), CodeRabbit CLI (4b), and the fresh-context critic (4c) skipped; build/lint/test (2368 passed, 48 skipped) + deterministic detection tests + adversarial marker kept. In place of a critic, the USER ran a real-model dry-run:refine probe (Scenario B) before merge \u2014 the correct gate for a prompt-quality change, which a mocked critic round could not assert.",
+        "skipReasons": "Refine-internal, no external side effects (only widens which replies reach the interpreter + prompt mappings; events created later, only on confirm), so it shipped on the LIGHTWEIGHT orchestrator gate per the risk-graduated rule: /simplify (4a), CodeRabbit CLI (4b), and the fresh-context critic (4c) skipped; build/lint/test (2368 passed, 48 skipped) + deterministic detection tests + adversarial marker kept. In place of a critic, the USER ran a real-model dry-run:refine probe (Scenario B) before merge — the correct gate for a prompt-quality change, which a mocked critic round could not assert.",
         "complianceRate": 0.6667,
         "skipAssessment": "good"
       },
@@ -20359,7 +20359,7 @@
           "4a",
           "4b"
         ],
-        "skipReasons": "Full fresh-context critic (4c) RAN \u2014 this feature modifies user-visible displayed content, runs an LLM pass, and the preserve-original invariant is load-bearing, so it earned the full critic rather than the lightweight gate. /simplify (4a) and CodeRabbit CLI (4b) skipped per the standing lightweight-review-for-small-PRs preference (~313 LOC production), with the critic + adversarial gate carrying the review load.",
+        "skipReasons": "Full fresh-context critic (4c) RAN — this feature modifies user-visible displayed content, runs an LLM pass, and the preserve-original invariant is load-bearing, so it earned the full critic rather than the lightweight gate. /simplify (4a) and CodeRabbit CLI (4b) skipped per the standing lightweight-review-for-small-PRs preference (~313 LOC production), with the critic + adversarial gate carrying the review load.",
         "complianceRate": 0.7778,
         "skipAssessment": "good"
       },
@@ -20439,7 +20439,7 @@
           "4b",
           "4d"
         ],
-        "skipReasons": "Hooks-only bash change (no TypeScript). 2b hardening N/A (single-pass gate fix). 4a simplify + 4b CodeRabbit skipped (lightweight hooks-only change, pre-vetted parked commit). 4d TS lint/build/test N/A \u2014 no TS changed; the meaningful gate was the hermetic bash test (4/4) which maps to step 3 Test.",
+        "skipReasons": "Hooks-only bash change (no TypeScript). 2b hardening N/A (single-pass gate fix). 4a simplify + 4b CodeRabbit skipped (lightweight hooks-only change, pre-vetted parked commit). 4d TS lint/build/test N/A — no TS changed; the meaningful gate was the hermetic bash test (4/4) which maps to step 3 Test.",
         "complianceRate": 0.556,
         "skipAssessment": "good"
       },
@@ -20531,13 +20531,13 @@
         "pushMinutes": null,
         "totalMinutes": null,
         "bottleneck": null,
-        "notes": "Timing not recorded in PR body. Full dev loop ran locally before push; main fix commit 70b6fcd (01:26), probe month-end date fix c0bd6ed (01:40, scripts only \u2014 prod untouched), created->merged 22s (squash self-merge). Validation = full fresh-context critic (0 blockers/0 SHOULD-FIX/2 NITs) + real-model dry-run:cal-delete probe (all 12 ids, no clarify)."
+        "notes": "Timing not recorded in PR body. Full dev loop ran locally before push; main fix commit 70b6fcd (01:26), probe month-end date fix c0bd6ed (01:40, scripts only — prod untouched), created->merged 22s (squash self-merge). Validation = full fresh-context critic (0 blockers/0 SHOULD-FIX/2 NITs) + real-model dry-run:cal-delete probe (all 12 ids, no clarify)."
       }
     },
     {
       "project": "second-brain",
       "prNumber": 772,
-      "title": "feat(server): HouseholdSheetService \u2014 live-read the kids' master sheet (nannies, doctors, schedules) [#770]",
+      "title": "feat(server): HouseholdSheetService — live-read the kids' master sheet (nannies, doctors, schedules) [#770]",
       "dateMerged": "2026-06-27T05:50:25Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -20599,7 +20599,7 @@
           "4c",
           "4d"
         ],
-        "skipReasons": "VALIDATE-FIRST REAL-DATA PROBE gate instead of a fresh-context critic \u2014 deliberate and correct for a READ-ONLY external-integration parser: the real risk is parser/tab-name correctness against a HUMAN-EDITED Google Sheet, which a code critic reasoning about code cannot assess but a live read can. The read-only probe against the real sheet was the load-bearing gate and CAUGHT 3 real bugs the unit fixtures missed (wrong tab names, header-below-banner, section-bleed) + a live 403 (Sheets API not enabled). 4a/4b/4c/4d not separately recorded; build/lint/test green pre-push (2427 pass). No side effects, no DB, no user surface (that's P2).",
+        "skipReasons": "VALIDATE-FIRST REAL-DATA PROBE gate instead of a fresh-context critic — deliberate and correct for a READ-ONLY external-integration parser: the real risk is parser/tab-name correctness against a HUMAN-EDITED Google Sheet, which a code critic reasoning about code cannot assess but a live read can. The read-only probe against the real sheet was the load-bearing gate and CAUGHT 3 real bugs the unit fixtures missed (wrong tab names, header-below-banner, section-bleed) + a live 403 (Sheets API not enabled). 4a/4b/4c/4d not separately recorded; build/lint/test green pre-push (2427 pass). No side effects, no DB, no user surface (that's P2).",
         "complianceRate": 0.556,
         "skipAssessment": "good"
       },
@@ -20611,7 +20611,7 @@
         "pushMinutes": null,
         "totalMinutes": null,
         "bottleneck": null,
-        "notes": "Timing not recorded in PR body. Full dev loop ran locally before push; single squashed commit 5556aac (authored 05:18, committed 05:47), created->merged 19s (squash self-merge). Validation = a VALIDATE-FIRST real-sheet read-only probe (caught wrong tab names + header-below-banner + section-bleed + a live 403; +4 real-shape tests) in lieu of a code critic \u2014 the load-bearing gate for an external-source parser."
+        "notes": "Timing not recorded in PR body. Full dev loop ran locally before push; single squashed commit 5556aac (authored 05:18, committed 05:47), created->merged 19s (squash self-merge). Validation = a VALIDATE-FIRST real-sheet read-only probe (caught wrong tab names + header-below-banner + section-bleed + a live 403; +4 real-shape tests) in lieu of a code critic — the load-bearing gate for an external-source parser."
       }
     },
     {
@@ -20755,7 +20755,7 @@
           "4a",
           "4b"
         ],
-        "skipReasons": "4a (/simplify) skipped per PR body (5-line CSS+JSX change, no abstractions to extract). CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero. Adversarial review PASS via fresh-context critic (sibling sweep clean, grid-collapse math correct).",
+        "skipReasons": "4a (/simplify) skipped per PR body (5-line CSS+JSX change, no abstractions to extract). CodeRabbit (4b) NOT run on this batch — recorded as not-tracked (null), not zero. Adversarial review PASS via fresh-context critic (sibling sweep clean, grid-collapse math correct).",
         "complianceRate": 0.556,
         "skipAssessment": "good"
       },
@@ -20767,7 +20767,7 @@
         "pushMinutes": null,
         "totalMinutes": null,
         "bottleneck": null,
-        "notes": "20-day wall-clock = clean still-relevant stale PR (CSS-only digest gap regression); verified live on main before merge. Single squashed commit (973e178). CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero."
+        "notes": "20-day wall-clock = clean still-relevant stale PR (CSS-only digest gap regression); verified live on main before merge. Single squashed commit (973e178). CodeRabbit (4b) NOT run on this batch — recorded as not-tracked (null), not zero."
       }
     },
     {
@@ -20833,7 +20833,7 @@
           "4a",
           "4b"
         ],
-        "skipReasons": "4a not separately recorded. CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero. Adversarial review = fresh-context critic-batch + a DEEP security verification: confirmed no idempotency/0-row regression (the bot_response row is always pre-fetched under a user-scoped predicate, so AND user_id=$3 only excludes already-excluded rows). 0 blockers.",
+        "skipReasons": "4a not separately recorded. CodeRabbit (4b) NOT run on this batch — recorded as not-tracked (null), not zero. Adversarial review = fresh-context critic-batch + a DEEP security verification: confirmed no idempotency/0-row regression (the bot_response row is always pre-fetched under a user-scoped predicate, so AND user_id=$3 only excludes already-excluded rows). 0 blockers.",
         "complianceRate": 0.556,
         "skipAssessment": "good"
       },
@@ -20845,7 +20845,7 @@
         "pushMinutes": null,
         "totalMinutes": null,
         "bottleneck": null,
-        "notes": "Security hardening salvaged from the closed/superseded #665 (the #666 sibling shipped the calendar-write feature but dropped #665's user-scoping). Threaded an authenticated userId through shared commit/refine fns to 3 call sites + AND user_id=$3 + cross-user isolation test. Single squashed commit (952ae6a). Deep fresh-context security verification was the load-bearing gate. CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero."
+        "notes": "Security hardening salvaged from the closed/superseded #665 (the #666 sibling shipped the calendar-write feature but dropped #665's user-scoping). Threaded an authenticated userId through shared commit/refine fns to 3 call sites + AND user_id=$3 + cross-user isolation test. Single squashed commit (952ae6a). Deep fresh-context security verification was the load-bearing gate. CodeRabbit (4b) NOT run on this batch — recorded as not-tracked (null), not zero."
       }
     },
     {
@@ -20911,7 +20911,7 @@
           "4a",
           "4b"
         ],
-        "skipReasons": "4a not separately recorded. CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero. Adversarial review = fresh-context critic-batch, 0 blockers.",
+        "skipReasons": "4a not separately recorded. CodeRabbit (4b) NOT run on this batch — recorded as not-tracked (null), not zero. Adversarial review = fresh-context critic-batch, 0 blockers.",
         "complianceRate": 0.556,
         "skipAssessment": "good"
       },
@@ -20923,7 +20923,7 @@
         "pushMinutes": null,
         "totalMinutes": null,
         "bottleneck": null,
-        "notes": "RE-AUTHORED (not rebased) against current main from stale PR #540 \u2014 its branch was 122 commits behind after response.ts was refactored to a contextPreamble + JSON-citation prompt structure. 3 prompts (detectWeeklyThemes/generateReflectionQuestion/generateReflectionArc) + 3 prompt-presence tests. Single squashed commit (09339c2). CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero."
+        "notes": "RE-AUTHORED (not rebased) against current main from stale PR #540 — its branch was 122 commits behind after response.ts was refactored to a contextPreamble + JSON-citation prompt structure. 3 prompts (detectWeeklyThemes/generateReflectionQuestion/generateReflectionArc) + 3 prompt-presence tests. Single squashed commit (09339c2). CodeRabbit (4b) NOT run on this batch — recorded as not-tracked (null), not zero."
       }
     },
     {
@@ -20989,7 +20989,7 @@
           "4a",
           "4b"
         ],
-        "skipReasons": "4a not separately recorded. CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero. Adversarial review = fresh-context critic-batch (critic verdict SHIP) + Pre-PR adversarial checklist, 0 blockers. PR includes a ## Designs section (UI change).",
+        "skipReasons": "4a not separately recorded. CodeRabbit (4b) NOT run on this batch — recorded as not-tracked (null), not zero. Adversarial review = fresh-context critic-batch (critic verdict SHIP) + Pre-PR adversarial checklist, 0 blockers. PR includes a ## Designs section (UI change).",
         "complianceRate": 0.556,
         "skipAssessment": "good"
       },
@@ -21001,7 +21001,7 @@
         "pushMinutes": null,
         "totalMinutes": null,
         "bottleneck": null,
-        "notes": "67-commits-stale PR REBASED onto main (one trivial App.css conflict) + re-gated. Reuses the existing compact DatePicker chip pattern (TodoPanel/EntryCard) for project-detail sub-task rows + add-sub-task footer; removed dead .project-subtodo-due-display / .project-detail-add-date CSS. 4 chip tests (clock pinned). Single squashed commit (e4cba3d). CodeRabbit (4b) NOT run on this batch \u2014 recorded as not-tracked (null), not zero."
+        "notes": "67-commits-stale PR REBASED onto main (one trivial App.css conflict) + re-gated. Reuses the existing compact DatePicker chip pattern (TodoPanel/EntryCard) for project-detail sub-task rows + add-sub-task footer; removed dead .project-subtodo-due-display / .project-detail-add-date CSS. 4 chip tests (clock pinned). Single squashed commit (e4cba3d). CodeRabbit (4b) NOT run on this batch — recorded as not-tracked (null), not zero."
       }
     },
     {
@@ -21169,7 +21169,7 @@
     {
       "project": "second-brain",
       "prNumber": 805,
-      "title": "feat(connections): Connection Graph PR-1a \u2014 durable reciprocal multi-lane associative memory (Pillar 1 engine)",
+      "title": "feat(connections): Connection Graph PR-1a — durable reciprocal multi-lane associative memory (Pillar 1 engine)",
       "dateMerged": "2026-06-27T21:18:22Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -21191,7 +21191,7 @@
         "adversarialFixed": 4
       },
       "adversarialCatchRate": 1,
-      "adversarialCatchRateNote": "REAL non-trivial catch \u2014 this is the case the metric-integrity rule was designed for, NOT a fabricated 1.0. An INDEPENDENT fresh-context critic ran against the diff and returned APPROVE-WITH-FIXES with 4 actionable findings, ALL fixed and amended pre-merge: (1) MUST-FIX \u2014 the thread lineage lane emitted DIRECT parent/children, contradicting its own comments AND the plan (which specified >=2-hop ancestors/descendants + siblings); a genuine spec/behavior divergence (the strongest catch). (3 SHOULD-FIX) \u2014 (2) double-build of the same entry's connections; (3) missing scheduler-downgrade guard (nightly semantic-only pass could overwrite a richer multi-lane edge); (4) missing fire-and-forget wiring test. After the 4 fixes were amended, the adversarial gate (4c) found 0 ADDITIONAL must-fix. caught=4 (critic), escaped=0 (gate found nothing new; 0 post-merge escapes as of analysis) -> adversarialCatchRate = 4/(4+0) = 1.0, evidence-backed. The thread-lane bug especially would have shipped wrong associative edges (treating direct-reply lineage as a 'connection' rather than the intended >=2-hop associative memory). CodeRabbit (4b) was NOT run on this 1828-LOC engine PR (recorded null, not zero); the independent critic substituted for it. The PR body carried NO explicit 'Steps skipped:' line, so the 4b skip was UNRECORDED -- the process gap to close on a PR this size.",
+      "adversarialCatchRateNote": "REAL non-trivial catch — this is the case the metric-integrity rule was designed for, NOT a fabricated 1.0. An INDEPENDENT fresh-context critic ran against the diff and returned APPROVE-WITH-FIXES with 4 actionable findings, ALL fixed and amended pre-merge: (1) MUST-FIX — the thread lineage lane emitted DIRECT parent/children, contradicting its own comments AND the plan (which specified >=2-hop ancestors/descendants + siblings); a genuine spec/behavior divergence (the strongest catch). (3 SHOULD-FIX) — (2) double-build of the same entry's connections; (3) missing scheduler-downgrade guard (nightly semantic-only pass could overwrite a richer multi-lane edge); (4) missing fire-and-forget wiring test. After the 4 fixes were amended, the adversarial gate (4c) found 0 ADDITIONAL must-fix. caught=4 (critic), escaped=0 (gate found nothing new; 0 post-merge escapes as of analysis) -> adversarialCatchRate = 4/(4+0) = 1.0, evidence-backed. The thread-lane bug especially would have shipped wrong associative edges (treating direct-reply lineage as a 'connection' rather than the intended >=2-hop associative memory). CodeRabbit (4b) was NOT run on this 1828-LOC engine PR (recorded null, not zero); the independent critic substituted for it. The PR body carried NO explicit 'Steps skipped:' line, so the 4b skip was UNRECORDED -- the process gap to close on a PR this size.",
       "fixupCommitRatio": 0,
       "fixupMetrics": {
         "postMergeFixRate": 0,
@@ -21250,7 +21250,7 @@
     {
       "project": "second-brain",
       "prNumber": 813,
-      "title": "feat(server): delegate todos \u2014 allowlisted partner adds to owner's list with undo",
+      "title": "feat(server): delegate todos — allowlisted partner adds to owner's list with undo",
       "dateMerged": "2026-06-27T21:32:54Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -21272,7 +21272,7 @@
         "adversarialFixed": null
       },
       "adversarialCatchRate": null,
-      "adversarialCatchRateNote": "UNMEASURED \u2014 the critic-ran-clean shade (per the two-shades rule, process-patterns #758/line 21), NOT a fabricated 1.0. This server-side feature (+1055/-11, 20 files) went through the implementer -> fresh-context critic -> adversarial-gate team flow with 0 GitHub-review comments and 0 post-merge escapes (no follow-up PR touches the delegate-todo files). But the PR body has NO `## Local Review` section, so the critic's/adversarial findings COUNTS were not recorded in any captured artifact \u2014 there is no evidence value to compute a rate from (caught/(caught+escaped) has an unknown numerator). Set null per the metric-integrity rule rather than invent a denominator. Distinct from #805 (same session), where the critic's 4 findings WERE enumerated and a 1.0 was evidence-backed; here the gate ran but its tally wasn't written down.",
+      "adversarialCatchRateNote": "UNMEASURED — the critic-ran-clean shade (per the two-shades rule, process-patterns #758/line 21), NOT a fabricated 1.0. This server-side feature (+1055/-11, 20 files) went through the implementer -> fresh-context critic -> adversarial-gate team flow with 0 GitHub-review comments and 0 post-merge escapes (no follow-up PR touches the delegate-todo files). But the PR body has NO `## Local Review` section, so the critic's/adversarial findings COUNTS were not recorded in any captured artifact — there is no evidence value to compute a rate from (caught/(caught+escaped) has an unknown numerator). Set null per the metric-integrity rule rather than invent a denominator. Distinct from #805 (same session), where the critic's 4 findings WERE enumerated and a 1.0 was evidence-backed; here the gate ran but its tally wasn't written down.",
       "fixupCommitRatio": 0,
       "fixupMetrics": {
         "postMergeFixRate": 0,
@@ -21629,7 +21629,7 @@
     {
       "project": "second-brain",
       "prNumber": 823,
-      "title": "feat(connections): Connection Graph PR-1b \u2014 the 'Related' panel reads the graph",
+      "title": "feat(connections): Connection Graph PR-1b — the 'Related' panel reads the graph",
       "dateMerged": "2026-06-28T03:22:12Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -21791,7 +21791,7 @@
     {
       "project": "plush-press",
       "prNumber": 88,
-      "title": "\u2728\ud83e\uddea Finish the story \u2014 opt-in multi-page storybook assembler",
+      "title": "✨🧪 Finish the story — opt-in multi-page storybook assembler",
       "dateMerged": "2026-06-29T21:18:08Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -22043,7 +22043,7 @@
         "adversarialFixed": 1
       },
       "adversarialCatchRate": 1.0,
-      "adversarialCatchRateNote": "MEASURED found-and-fixed 1.0 (NOT a fabricated/hardcoded value, and NOT the #830 critic-ran-clean null): the two-round adversarial gate (4c) caught exactly 1 GENUINE in-scope BLOCKER pre-merge and 0 escaped -> 1/(1+0)=1.0. Round 1: the implementer's first fix added a per-day clamp to formatAgendaAnswer ONLY, but the fresh-context critic proved with CHARACTER-BUDGET MATH that two paths could STILL exceed Telegram's 4096 cap and re-crash production: (a) the out-of-range append concatenated AFTER answerAgenda's clamped body (clamp budgeted the body, not body+append), and (b) the sibling availability path (answerAvailability) had no length guard at all. Verdict: FIX-THEN-SHIP, marker WITHHELD. Round 2 added the DURABLE fix -- a single final BACKSTOP: generateCalendarQueryResponse routes EVERY answer (agenda, availability, out-of-range append, the catch fallback) through one capTelegramText() chokepoint at the single return site (response.ts:2607), guaranteeing <=4096 regardless of append size or availability length. Re-review proved capTelegramText's ceiling is EXACTLY 4096 even on pathological inputs (no linebreak / break-at-0), the chokepoint covers every exit, clarify passes through, and back-compat is byte-identical for under-cap answers -> SHIP, marker granted. A validate-first probe against the REAL calendar reproduced the exact fix: 'this week' 4532 -> 3827 chars (<=4096, ends cleanly), 'tomorrow' 960 unchanged. The escape this gate prevented was a RECURRING production crash: shipping the incomplete round-1 fix would have left #832's '\u201cSorry, something went wrong\u201d' still reachable via the append and availability paths. This is the same found-and-fixed shade as #828 (1/1) and #831 (4/4), distinct from #830's critic-ran-clean (0/0 -> null). CodeRabbit (4b) was NOT run (~110 prod LOC bug fix, lightweight-review lane). Tests: 6 (3 per-day clamp: over-4096 -> clamped + 'more days' note with early days kept, short body untouched, single oversized day hard-truncated; 2 backstop: a 7-day agenda + 50-date out-of-range append forces the backstop and asserts the truncated note, a long availability answer stays <=4096; all assert real <=4096 length). Full server suite 2791 passed / 0 failures. localReview: no '## Local Review' section in the PR body, so CodeRabbit counts are not-tracked (null); the adversarial finding is recorded 1 found / 1 fixed from the PR-body 'Review (two rounds)' evidence + the project's adversarial-gate push hook (a passing review for HEAD is required to push).",
+      "adversarialCatchRateNote": "MEASURED found-and-fixed 1.0 (NOT a fabricated/hardcoded value, and NOT the #830 critic-ran-clean null): the two-round adversarial gate (4c) caught exactly 1 GENUINE in-scope BLOCKER pre-merge and 0 escaped -> 1/(1+0)=1.0. Round 1: the implementer's first fix added a per-day clamp to formatAgendaAnswer ONLY, but the fresh-context critic proved with CHARACTER-BUDGET MATH that two paths could STILL exceed Telegram's 4096 cap and re-crash production: (a) the out-of-range append concatenated AFTER answerAgenda's clamped body (clamp budgeted the body, not body+append), and (b) the sibling availability path (answerAvailability) had no length guard at all. Verdict: FIX-THEN-SHIP, marker WITHHELD. Round 2 added the DURABLE fix -- a single final BACKSTOP: generateCalendarQueryResponse routes EVERY answer (agenda, availability, out-of-range append, the catch fallback) through one capTelegramText() chokepoint at the single return site (response.ts:2607), guaranteeing <=4096 regardless of append size or availability length. Re-review proved capTelegramText's ceiling is EXACTLY 4096 even on pathological inputs (no linebreak / break-at-0), the chokepoint covers every exit, clarify passes through, and back-compat is byte-identical for under-cap answers -> SHIP, marker granted. A validate-first probe against the REAL calendar reproduced the exact fix: 'this week' 4532 -> 3827 chars (<=4096, ends cleanly), 'tomorrow' 960 unchanged. The escape this gate prevented was a RECURRING production crash: shipping the incomplete round-1 fix would have left #832's '“Sorry, something went wrong”' still reachable via the append and availability paths. This is the same found-and-fixed shade as #828 (1/1) and #831 (4/4), distinct from #830's critic-ran-clean (0/0 -> null). CodeRabbit (4b) was NOT run (~110 prod LOC bug fix, lightweight-review lane). Tests: 6 (3 per-day clamp: over-4096 -> clamped + 'more days' note with early days kept, short body untouched, single oversized day hard-truncated; 2 backstop: a 7-day agenda + 50-date out-of-range append forces the backstop and asserts the truncated note, a long availability answer stays <=4096; all assert real <=4096 length). Full server suite 2791 passed / 0 failures. localReview: no '## Local Review' section in the PR body, so CodeRabbit counts are not-tracked (null); the adversarial finding is recorded 1 found / 1 fixed from the PR-body 'Review (two rounds)' evidence + the project's adversarial-gate push hook (a passing review for HEAD is required to push).",
       "fixupCommitRatio": 0.0,
       "fixupMetrics": {
         "postMergeFixRate": 0.0,
@@ -22342,7 +22342,7 @@
     {
       "project": "second-brain",
       "prNumber": 846,
-      "title": "feat(calendar): slot-check \u2014 paste proposed slots, get free/conflict + coverage per slot; respect transparency.",
+      "title": "feat(calendar): slot-check — paste proposed slots, get free/conflict + coverage per slot; respect transparency.",
       "dateMerged": "2026-07-03T00:21:18Z",
       "reviewRounds": 1,
       "totalComments": 0,
@@ -22573,8 +22573,87 @@
         "bottleneck": null,
         "notes": "No Step Timing section in the PR body -> per-step durations not recorded. Open->merge wall-clock = ~58s (created 2026-07-03T06:20:03Z -> merged 06:21:01Z, ~0.016h); the entire lightweight local loop (explore + single-pass implement + Playwright visual verify + full web suite + adversarial gate) ran PRE-PUSH, so the GitHub window reflects branch advance + self-merge only. 1 squash commit e419e49. +63/-22 across 3 files: App.css, EntryCard.tsx, EntryCard.test.tsx."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 855,
+      "title": "feat(calendar): AMPP OOO calendar — reflect the owner's out-of-office in availability, slot-check, agenda, scheduling.",
+      "dateMerged": "2026-07-07T05:35:11Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 1.0,
+      "adversarialCatchRateNote": "MEASURED found-and-fixed = 1.0, NOT a fabricated/hardcoded default. The fresh-context critic ran TWO rounds and in round 1 WITHHELD the ship marker on a genuine should-fix: the new who's-out classifier prompt (services/ooo.ts) interpolated the raw Google event TITLE into the LLM prompt WITHOUT XML-escaping -> a prompt-injection / delimiter-break (the #720 / #237 escape class), while the sibling calendar-prompt path already escaped. The fix (route titles through escapeHtml before the prompt) was a would-be-broken-merge blocker the gate caught pre-merge, so caught/(caught+escaped) = 1/(1+0) = 1.0. The critic ALSO verified the two highest-risk properties before SHIP: (a) the new LLM call cannot crash the availability hot path (two never-throw guard layers degrade to no-OOO, and it is not called when there are no OOO events in the window -- no #853/#850 crash-masking reintroduced), and (b) the shared getEventsForRange dedup change is BOUNDED (never changes event count, byte-identical when OOO unconfigured, opaque-Home copy keeps precedence). SEPARATELY, validate-first against the REAL AMPP OOO calendar + REAL model caught TWO more bugs the passing unit/batch tests MASKED, pre-review: (1) the who's-out prompt never gave the model the owner/co-parent NAMES, so a title-only event 'Amitt @ Ambio' defaulted to owner-out -- invisible in an isolated batch probe, only the real e2e exposed it; fixed via config-derived display names + making the title authoritative over attendees. (2) getEventsForRange's dedupeAndSort (first-calendar-wins on summary+start+allDay) SILENTLY DROPPED the OOO-tagged copy of any trip also on the primary calendar with the same title ('Burning Man Week', 'Padmini @ Hoffman'), making the feature INERT for the common duplicated-trip case; the implementer initially 'proved' e2e only on a NON-duplicated trip, sidestepping it; fixed with Option B OOO-aware dedup and re-verified e2e on the previously-failing duplicated trips. So 3 real bugs were caught pre-merge total (2 by validate-first, 1 by the critic); adversarialCatchRate reflects the critic's in-loop catch honestly.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 1,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.016,
+      "planningQuality": "complete",
+      "prSize": 1661,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a",
+          "4b"
+        ],
+        "skipReasons": "Large cohesive atomic feature (+1635/-26, prSize 1661; ~721 prod LOC / ~747 total per the PR body -- over the 600 guideline but a single JSDoc/prompt-heavy OOO Phase-1 unit; reviewable logic well under). Step 1 plan enumerated the OOO calendar wiring + the who's-out classifier + the 4 consumer surfaces (availability/slot-check/agenda/schedule-todos) + the #846 transparency-override interaction. Step 2 single pass by a fresh implementer (1 squash commit b290aaf across 18 files): services/ooo.ts (batched title-authoritative LLM classifier, config-derived names, never-throw), the dedup 'Option B' fix in calendar.ts, and the 4 consumer surfaces. Step 3 = build + lint + FULL server suite green (28 new tests: who's-out owner/coparent/both/attendee-derived/injection, dedup regression x4, availability/slot-check/schedule-todos/agenda owner-OOO) PLUS validate-first against the REAL AMPP OOO calendar + REAL model (who's-out 9/9; e2e 'am I free Sep 2 / Nov 10?' on Burning Man / Hoffman -- both duplicated on Home -> 'You're marked OOO'; coparent-only Dec 1 -> free), which caught 2 bugs the unit tests masked. Step 4c = TWO-round fresh-context critic (round 1 FIX-THEN-SHIP withholding the marker on the prompt-injection escape should-fix; round 2 SHIP after escapeHtml, LLM-failure guards + dedup bounding verified). Step 5 = branch advance + gh pr create (self-merged). 4a (/simplify) + 4b (in-loop CodeRabbit) NOT run -- 4b CodeRabbit skipped for this feature; the 2-round adversarial critic + real-data validate-first were the gate. skipAssessment good: 0 post-merge escapes (no follow-up fix PR; #855 is the latest merged PR).",
+        "complianceRate": 1.0,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "No Step Timing section in the PR body -> per-step durations not recorded. Open->merge wall-clock = ~57s (created 2026-07-07T05:34:14Z -> merged 05:35:11Z, ~0.016h); the entire local loop (plan + single-pass implement + validate-first on the real calendar/model + full server suite + 2-round adversarial critic) ran PRE-PUSH, so the GitHub window reflects branch advance + self-merge only. 1 squash commit b290aaf. +1635/-26 across 18 files."
+      }
     }
   ],
-  "generated": "2026-06-30T19:42:20Z",
-  "lastUpdated": "2026-07-04T00:00:00Z"
+  "generated": "2026-07-07T05:39:40.011574+00:00",
+  "lastUpdated": "2026-07-07T05:39:40.011574+00:00"
 }
