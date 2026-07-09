@@ -6,7 +6,7 @@
   "hasSeenTasksHint": true,
   "tipsHistory": {
     "new-user-warmup": 9,
-    "plan-mode-for-complex-tasks": 545,
+    "plan-mode-for-complex-tasks": 550,
     "memory-command": 546,
     "theme-command": 544,
     "colorterm-truecolor": 1,
@@ -30,7 +30,7 @@
     "mobile-app": 411,
     "frontend-design-plugin": 346,
     "guest-passes": 548,
-    "ide-upsell-external-terminal": 545,
+    "ide-upsell-external-terminal": 550,
     "custom-agents": 547,
     "agent-flag": 413,
     "overage-promo": 100,
@@ -38,7 +38,7 @@
     "permissions": 544,
     "rename-conversation": 541,
     "custom-commands": 422,
-    "git-worktrees": 540,
+    "git-worktrees": 550,
     "feedback-command": 544,
     "color-when-multi-clauding": 549,
     "vercel-plugin": 494,
@@ -53,12 +53,12 @@
     "fotw-campaign-upsell": 494,
     "agents-view-multiclauding": 498,
     "plugin-disuse-review": 549,
-    "dynamic-workflows": 547,
+    "dynamic-workflows": 550,
     "no-flicker": 550,
     "artifact-publish-plan": 546,
     "workflow-size-prompting-ambient": 545
   },
-  "promptQueueUseCount": 278518,
+  "promptQueueUseCount": 278526,
   "btwUseCount": 25,
   "cachedGrowthBookFeatures": {
     "tengu_silk_almanac": false,
@@ -2546,8 +2546,8 @@
       "lastUsedAt": 1782576947055
     },
     "adversarial-review": {
-      "usageCount": 146,
-      "lastUsedAt": 1783228613928
+      "usageCount": 147,
+      "lastUsedAt": 1783578418080
     },
     "review": {
       "usageCount": 4,
@@ -2906,21 +2906,21 @@
   "tipLifetimeShownCounts": {
     "theme-command": 4,
     "paste-images-mac": 7,
-    "plan-mode-for-complex-tasks": 13,
+    "plan-mode-for-complex-tasks": 14,
     "fotw-campaign-upsell": 8,
     "double-esc-code-restore": 7,
     "continue": 7,
     "shift-tab": 7,
     "guest-passes": 20,
     "voice-mode": 7,
-    "ide-upsell-external-terminal": 15,
+    "ide-upsell-external-terminal": 16,
     "enter-to-steer-in-relatime": 4,
     "todo-list": 4,
     "image-paste": 4,
     "memory-command": 5,
     "web-app": 5,
     "custom-agents": 5,
-    "git-worktrees": 6,
+    "git-worktrees": 7,
     "color-when-multi-clauding": 7,
     "default-permission-mode-config": 7,
     "install-github-app": 6,
@@ -2934,7 +2934,7 @@
     "remote-control": 4,
     "feedback-command": 4,
     "plugin-disuse-review": 2,
-    "dynamic-workflows": 8,
+    "dynamic-workflows": 9,
     "no-flicker": 3,
     "artifact-publish-plan": 2,
     "workflow-size-prompting-ambient": 1

@@ -30,7 +30,7 @@
     "mobile-app": 411,
     "frontend-design-plugin": 346,
     "guest-passes": 548,
-    "ide-upsell-external-terminal": 545,
+    "ide-upsell-external-terminal": 550,
     "custom-agents": 547,
     "agent-flag": 413,
     "overage-promo": 100,
@@ -58,7 +58,7 @@
     "artifact-publish-plan": 546,
     "workflow-size-prompting-ambient": 545
   },
-  "promptQueueUseCount": 278518,
+  "promptQueueUseCount": 278526,
   "btwUseCount": 25,
   "cachedGrowthBookFeatures": {
     "tengu_silk_almanac": false,
@@ -2546,8 +2546,8 @@
       "lastUsedAt": 1782576947055
     },
     "adversarial-review": {
-      "usageCount": 146,
-      "lastUsedAt": 1783228613928
+      "usageCount": 147,
+      "lastUsedAt": 1783578418080
     },
     "review": {
       "usageCount": 4,
@@ -2712,6 +2712,10 @@
     "dataviz": {
       "usageCount": 1,
       "lastUsedAt": 1783577122428
+    },
+    "update-config": {
+      "usageCount": 1,
+      "lastUsedAt": 1783578661122
     }
   },
   "showSpinnerTree": false,
@@ -2913,7 +2917,7 @@
     "shift-tab": 7,
     "guest-passes": 20,
     "voice-mode": 7,
-    "ide-upsell-external-terminal": 15,
+    "ide-upsell-external-terminal": 16,
     "enter-to-steer-in-relatime": 4,
     "todo-list": 4,
     "image-paste": 4,
