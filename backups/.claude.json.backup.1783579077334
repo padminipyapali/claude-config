@@ -58,7 +58,7 @@
     "artifact-publish-plan": 546,
     "workflow-size-prompting-ambient": 545
   },
-  "promptQueueUseCount": 278525,
+  "promptQueueUseCount": 278531,
   "btwUseCount": 25,
   "cachedGrowthBookFeatures": {
     "tengu_silk_almanac": false,
@@ -2546,8 +2546,8 @@
       "lastUsedAt": 1782576947055
     },
     "adversarial-review": {
-      "usageCount": 146,
-      "lastUsedAt": 1783228613928
+      "usageCount": 147,
+      "lastUsedAt": 1783578418080
     },
     "review": {
       "usageCount": 4,
@@ -2712,6 +2712,10 @@
     "dataviz": {
       "usageCount": 1,
       "lastUsedAt": 1783577122428
+    },
+    "update-config": {
+      "usageCount": 1,
+      "lastUsedAt": 1783578661122
     }
   },
   "showSpinnerTree": false,
