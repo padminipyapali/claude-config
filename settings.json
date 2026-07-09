@@ -104,6 +104,7 @@
     "feature-dev@claude-plugins-official": true,
     "coderabbit@claude-plugins-official": true
   },
+  "cleanupPeriodDays": 3650,
   "effortLevel": "medium",
   "skipWorkflowUsageWarning": true,
   "theme": "light",
