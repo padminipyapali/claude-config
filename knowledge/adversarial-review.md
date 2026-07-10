@@ -382,6 +382,7 @@ Add when a bug class is caught 2+ times. Requirements: regex on changed lines, <
 ### 1.7 Interactive Mode State Cleanup
 1. When entering one interactive mode, all competing modes are reset.
 2. Check: "If mode A is active and user triggers mode B, does A get cleaned up?"
+3. **New message-trigger gate on a shared input path must narrow its match AND persist input on every non-completing branch.** When a PR adds a detector/interceptor to a shared message handler (URL detector, command prefix, keyword gate), verify two things: (a) the trigger is narrow enough not to capture unrelated messages — a "message *contains* X" match will hijack a longer sentence that merely mentions X; require "message *is essentially* X" (or an explicit command form) so normal capture still falls through; (b) EVERY branch that doesn't complete the flow (cancel/decline, unreadable/invalid target, reserved/duplicate, stale/expired) still persists the user's original input as a normal entry and says so — a confirm gate that drops the pasted content on cancel is silent data loss. Enumerate the non-completing branches explicitly and give each a persistence test. <!-- Source: post-mortem, second-brain #873, 2026-07-10 — critic caught a Sheets-URL connect gate that hijacked any message containing a URL and dropped it on cancel -->
 
 ---
 
