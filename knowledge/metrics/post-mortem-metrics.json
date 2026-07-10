@@ -22785,8 +22785,212 @@
       "prSize": 364,
       "stepCompliance": null,
       "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 862,
+      "title": "fix: absorb idle pg-pool errors in the backup export and make pg_dump failures loud",
+      "dateMerged": "2026-07-09T10:40:12Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 1,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 3.79,
+      "planningQuality": "complete",
+      "prSize": 894,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4c",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "CodeRabbit not recorded in PR body; critic (internal review) + adversarial ran",
+        "complianceRate": 0.8889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": null
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 869,
+      "title": "feat(reference): contacts sheet (Postable export) lookups behind REFERENCE_LOOKUP",
+      "dateMerged": "2026-07-10T15:54:56Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": 2,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 1.0,
+      "adversarialCatchRateNote": "Critic-ran-with-findings shade: fresh-context critic ran the adversarial checklist and caught 2 blocking findings pre-push (raw-substring PII over-matching grounding contact PII into LLM calls; plural-possessive 'Smiths'' recall regression). Both fixed pre-push; 0 post-merge escapes. 2/2 known issues caught locally.",
+      "fixupCommitRatio": 0.667,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 2,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.03,
+      "planningQuality": "complete",
+      "prSize": 1104,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "CodeRabbit CLI timed out server-side on both attempts (initial + backoff retry, IDs 8333b8b5, 47d5066b); skipped with justification per dev flow.",
+        "complianceRate": 0.8889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 865,
+      "title": "fix(tags): always tag proper nouns and steer away from vague theme labels",
+      "dateMerged": "2026-07-09T12:00:59Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": null,
+        "adversarialFixed": null
+      },
+      "adversarialCatchRate": "unmeasured",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.54,
+      "planningQuality": "complete",
+      "prSize": 59,
+      "stepCompliance": null,
+      "stepTiming": null
     }
   ],
   "generated": "2026-07-07T05:39:40.011574+00:00",
-  "lastUpdated": "2026-07-09T06:45:23Z"
+  "lastUpdated": "2026-07-10T00:00:00Z"
 }
