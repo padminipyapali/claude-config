@@ -23205,8 +23205,80 @@
     "skipAssessment": "neutral"
    },
    "stepTiming": null
+  },
+  {
+   "project": "second-brain",
+   "prNumber": 876,
+   "title": "fix(sources): generic-lookup follow-ups \u2014 column alignment, header caps, parallel fetch, channel capability gate",
+   "dateMerged": "2026-07-10T20:44:52Z",
+   "reviewRounds": 1,
+   "totalComments": 0,
+   "commentCategories": {
+    "security": 0,
+    "correctness": 0,
+    "architecture": 0,
+    "style": 0,
+    "performance": 0,
+    "testing": 0,
+    "documentation": 0,
+    "other": 0
+   },
+   "localReview": {
+    "coderabbitFindings": null,
+    "coderabbitFixed": null,
+    "coderabbitIterations": null,
+    "adversarialFindings": 0,
+    "adversarialFixed": 0
+   },
+   "adversarialCatchRate": 1.0,
+   "adversarialCatchRateNote": "This PR IS the resolution of #874's deferred CodeRabbit findings (#875): the 4 residual items were fixed in one clean implementer pass and a fresh-context critic APPROVED with no blocking findings \u2014 it independently verified all-blank rows can't reach rendering, TELEGRAM is unconditionally injected into the connect-flow channel set (no silent regression), and >200-column rows stay positionally aligned. Notably it confirms #874's flagged 'column misalignment' WAS a real correctness bug (blank cells were dropped rather than kept in place, so the model could attribute a value to the wrong column) \u2014 validating the #874 caveat that caught-and-deferred is only safe if the deferred items are verified non-blocking; here one was a genuine correctness defect. CodeRabbit (4b) not re-run on this ~102-LOC fix per the lightweight-review policy for sub-100-LOC PRs (it had already produced these findings on the parent). 0 post-merge escapes; #875 closed.",
+   "fixupCommitRatio": 0.0,
+   "fixupMetrics": {
+    "postMergeFixRate": 0.0,
+    "preMergeCatchRateByStep": {
+     "4a": 0,
+     "4b": 0,
+     "4c": 0,
+     "4d": 0,
+     "postPush": 0
+    },
+    "preMergeIterationCount": 1,
+    "fixupTaxonomy": {
+     "validation": 0,
+     "a11y": 0,
+     "defensive-coding": 0,
+     "correctness": 0,
+     "dead-code": 0,
+     "test-quality": 0,
+     "documentation": 0,
+     "style": 0,
+     "infrastructure": 0
+    }
+   },
+   "timeToMergeHours": 0.008,
+   "planningQuality": "complete",
+   "prSize": 102,
+   "stepCompliance": {
+    "stepsRun": [
+     "1",
+     "2a",
+     "2b",
+     "3",
+     "4a",
+     "4c",
+     "4d",
+     "5"
+    ],
+    "stepsSkipped": [
+     "4b"
+    ],
+    "skipReasons": "~102-LOC fix PR \u2014 CodeRabbit (4b) not re-run per the lightweight-review policy for sub-100-LOC changes; the findings being fixed came from CodeRabbit's own completed run on the parent #874. Critic (4c) still ran and approved with no findings.",
+    "complianceRate": 0.8889,
+    "skipAssessment": "good"
+   },
+   "stepTiming": null
   }
  ],
  "generated": "2026-07-07T05:39:40.011574+00:00",
- "lastUpdated": "2026-07-10T20:31:00Z"
+ "lastUpdated": "2026-07-10T20:46:00Z"
 }
