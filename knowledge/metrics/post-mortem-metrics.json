@@ -23333,8 +23333,87 @@
       "stepCompliance": null,
       "stepComplianceNote": "PR body documents steps 1c/2/3/4a/4b/4c/5 in prose ('## Review evidence') but omits the structured 'Steps skipped:' line, so compliance is unparseable per the tracking format. Evidence indicates full compliance.",
       "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 880,
+      "title": "feat(reflect): on-demand reflective prompts via /reflect (PR-A of #877)",
+      "dateMerged": "2026-07-10T22:04:21Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 1,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": null,
+      "adversarialCatchRateNote": "unmeasured \u2014 critic-ran-clean shade: fresh-context critic ran a full pass and returned 0 must-fix findings (0/(0+0) undefined), 0 post-push escapes. Not critic-skipped.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.014,
+      "planningQuality": "complete",
+      "prSize": 1886,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "Playwright tier skipped (backend-only, no UI) \u2014 not a trackable step",
+        "complianceRate": 1.0,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": 20,
+        "implementMinutes": 45,
+        "testMinutes": 10,
+        "reviewMinutes": 45,
+        "pushMinutes": 5,
+        "totalMinutes": 125,
+        "bottleneck": "implement/review (45m each)",
+        "notes": "critic hit transient API drop, resumed via SendMessage; CodeRabbit ~8min"
+      }
     }
   ],
   "generated": "2026-07-07T05:39:40.011574+00:00",
-  "lastUpdated": "2026-07-10T20:46:00Z"
+  "lastUpdated": "2026-07-10T22:04:21Z"
 }
