@@ -23554,8 +23554,63 @@
         "skipAssessment": "good"
       },
       "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 888,
+      "title": "fix: shared pg pool error handling for scripts and client-level listener in the exporter",
+      "dateMerged": "2026-07-10T23:57:21Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 1.0,
+      "adversarialCatchRateNote": "measured \u2014 fresh-context critic (3-role team) returned APPROVE with ZERO change requests; the single load-bearing risk (pooler compatibility of the startup-option search_path pin) was pre-verified against production db-pool.ts (#851/#852/#853) before review. Adversarial sibling sweep found+fixed 1 issue pre-merge (the eighth unprotected script retag-entries-backfill.ts, merged via #885 after issue #863 was filed). 0 post-push review comments, 0 post-merge fix PRs (latest merged PR at post-mortem time). CodeRabbit not evidenced (null); PR body has a '## Review' section but no formal '## Local Review' header. Reviewer agent crashed twice on API errors; orchestrator verified its on-disk deliverables and ran final gates itself.",
+      "fixupCommitRatio": 1.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 1,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.01,
+      "planningQuality": "complete",
+      "prSize": 714,
+      "stepCompliance": null,
+      "stepTiming": null
     }
   ],
   "generated": "2026-07-07T05:39:40.011574+00:00",
-  "lastUpdated": "2026-07-10T22:46:25Z"
+  "lastUpdated": "2026-07-10T23:57:21Z"
 }
