@@ -23689,8 +23689,568 @@
         "bottleneck": "Local review (CodeRabbit CLI retries)",
         "notes": "Implement+Test reported combined (~25m). +~5m rebase onto advanced main (stale-base). CodeRabbit CLI retries were the review bottleneck."
       }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 892,
+      "title": "feat(admin): Clear all button + fix doubled \"Added by\" in pending summaries",
+      "dateMerged": "2026-07-13T05:26:27Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 1,
+        "coderabbitFixed": 1,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "adversarialCatchRateNote": "n=1. Critic ran and PASSed clean (0 findings); the single real finding (an optimistic-assertion test-quality nit) was caught by CodeRabbit, not the adversarial checklist.",
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 1,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 1,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.01,
+      "planningQuality": "complete",
+      "prSize": 291,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": "n/a"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": 20,
+        "testMinutes": null,
+        "reviewMinutes": 25,
+        "pushMinutes": 2,
+        "totalMinutes": 47,
+        "bottleneck": "Local review",
+        "notes": "Implement+Test combined ~20m. No separate plan step logged (shared #881 umbrella plan)."
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 895,
+      "title": "feat(admin): read-only Config viewer panel",
+      "dateMerged": "2026-07-13T06:01:49Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 6,
+        "coderabbitFixed": 5,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 5,
+        "adversarialFixed": 5
+      },
+      "adversarialCatchRate": 0.5,
+      "adversarialCatchRateNote": "n=10 (5 critic hardening catches + 5 CodeRabbit fixes). 1 CodeRabbit finding (in-flight model-id swap) rejected as out-of-scope, filed as #894, excluded from denominator.",
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 5,
+          "4d": 5,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 5,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 3,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.01,
+      "planningQuality": "complete",
+      "prSize": 1217,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": "n/a"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": 35,
+        "testMinutes": null,
+        "reviewMinutes": 35,
+        "pushMinutes": 2,
+        "totalMinutes": 82,
+        "bottleneck": "Implement / Local review (tie ~35m)",
+        "notes": "Incl. ~10m rebase onto #892. Model-id constant extraction (37 usages) inflated implement. 5 CR fix categories bucketed as defensive-coding (not individually enumerated in PR body)."
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 898,
+      "title": "feat(admin): Data health panel with repair actions",
+      "dateMerged": "2026-07-13T06:30:38Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 5,
+        "coderabbitFixed": 4,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "adversarialCatchRateNote": "n=4. Critic PASSed clean; all 4 real findings caught by CodeRabbit (incl. refetch-wipes-grid, a graceful-degradation class the adversarial checklist covers but missed). 1 CR finding (count/fetch TOCTOU) skipped with justification, excluded from denominator.",
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 4,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 1,
+          "documentation": 0,
+          "style": 1,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.01,
+      "planningQuality": "complete",
+      "prSize": 1327,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": "n/a"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": 30,
+        "testMinutes": null,
+        "reviewMinutes": 40,
+        "pushMinutes": 2,
+        "totalMinutes": 82,
+        "bottleneck": "Local review",
+        "notes": "Incl. ~10m rebase onto #895."
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 900,
+      "title": "feat(admin): Backup panel \u2014 export as tar.gz download",
+      "dateMerged": "2026-07-13T06:53:35Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 5,
+        "coderabbitFixed": 3,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "adversarialCatchRateNote": "n=3. Critic PASSed clean; all 3 real fixes caught by CodeRabbit (stream teardown, tar-timeout wedge, blob-revoke race \u2014 resource/defensive classes the adversarial checklist covers but missed). 1 CR finding rejected with evidence, 1 deferred, 1 acknowledged; all excluded from denominator.",
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 3,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 2,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.01,
+      "planningQuality": "complete",
+      "prSize": 678,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": "n/a"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": 25,
+        "testMinutes": null,
+        "reviewMinutes": 35,
+        "pushMinutes": 2,
+        "totalMinutes": 70,
+        "bottleneck": "Local review",
+        "notes": "Incl. ~8m rebase onto #898."
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 901,
+      "title": "feat(admin): Jobs dashboard with run history and manual triggers",
+      "dateMerged": "2026-07-13T07:15:50Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 1,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 1.0,
+      "adversarialCatchRateNote": "n=1. Critic caught the sole real finding (runAdminJob return-type mismatch). CodeRabbit's 1 major finding was validated as a false positive (fire-and-forget path cannot throw) and fixed nothing; excluded from denominator.",
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 1,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.01,
+      "planningQuality": "complete",
+      "prSize": 2002,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": "n/a"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": 45,
+        "testMinutes": null,
+        "reviewMinutes": 40,
+        "pushMinutes": 2,
+        "totalMinutes": 99,
+        "bottleneck": "Implement (7 schedulers instrumented)",
+        "notes": "Incl. ~12m rebase over #898+#900. Largest slice (2002 LOC)."
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 902,
+      "title": "feat(admin): per-message processing trace (message inspector backend)",
+      "dateMerged": "2026-07-13T07:33:47Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 3,
+        "coderabbitFixed": 2,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 0.5,
+      "adversarialCatchRateNote": "n=4 (2 critic correctness catches + 2 CodeRabbit fixes). Critic caught classifier durationMs misattribution and enrichment ERROR-vs-OK. 1 CR finding (error strings beside message preview) judged non-blocking for single-user, excluded from denominator. 2 CR fix categories bucketed as defensive-coding (not enumerated).",
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 2,
+          "4d": 2,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 2,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.01,
+      "planningQuality": "complete",
+      "prSize": 1390,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": "n/a"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": 50,
+        "testMinutes": null,
+        "reviewMinutes": 45,
+        "pushMinutes": 2,
+        "totalMinutes": 107,
+        "bottleneck": "Implement (hot-path trace + non-enumerable meta design)",
+        "notes": "Incl. ~10m rebase post-#901. Longest total in the series."
+      }
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 903,
+      "title": "feat(admin): Message inspector panel",
+      "dateMerged": "2026-07-13T13:39:44Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 2,
+        "coderabbitFixed": 2,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 4,
+        "adversarialFixed": 4
+      },
+      "adversarialCatchRate": 0.667,
+      "adversarialCatchRateNote": "n=6 (4 critic catches + 2 CodeRabbit fixes). Critic caught load-more-wipes-list, missing status-dot aria-label, a mock-only SQL test gap (added 9 service-level tests the route suite could not reach), and the cursor-boundary doc. 2 CR fix categories bucketed as defensive-coding (not enumerated).",
+      "fixupCommitRatio": 0.5,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 2,
+          "4d": 4,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 1,
+          "defensive-coding": 2,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 1,
+          "documentation": 1,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.01,
+      "planningQuality": "complete",
+      "prSize": 1550,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": "n/a"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": 30,
+        "testMinutes": null,
+        "reviewMinutes": 40,
+        "pushMinutes": 2,
+        "totalMinutes": 72,
+        "bottleneck": "Local review",
+        "notes": "No rebase (last in chain)."
+      }
     }
   ],
   "generated": "2026-07-07T05:39:40.011574+00:00",
-  "lastUpdated": "2026-07-10T23:57:21Z"
+  "lastUpdated": "2026-07-13T13:48:35Z"
 }
