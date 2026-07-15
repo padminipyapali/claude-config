@@ -58,7 +58,7 @@
     "artifact-publish-plan": 556,
     "workflow-size-prompting-ambient": 545
   },
-  "promptQueueUseCount": 278782,
+  "promptQueueUseCount": 278789,
   "btwUseCount": 25,
   "cachedGrowthBookFeatures": {
     "tengu_pewter_summit": true,
@@ -3030,9 +3030,9 @@
       "lastUsedNumStartups": 525
     },
     "playwright@claude-plugins-official": {
-      "usageCount": 1775,
-      "lastUsedAt": 1784041308362,
-      "lastUsedNumStartups": 553
+      "usageCount": 1778,
+      "lastUsedAt": 1784078735918,
+      "lastUsedNumStartups": 556
     },
     "feature-dev@claude-plugins-official": {
       "usageCount": 5,
