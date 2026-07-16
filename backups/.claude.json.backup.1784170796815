@@ -29,7 +29,7 @@
     "web-app": 546,
     "mobile-app": 411,
     "frontend-design-plugin": 346,
-    "guest-passes": 554,
+    "guest-passes": 557,
     "ide-upsell-external-terminal": 554,
     "custom-agents": 547,
     "agent-flag": 413,
@@ -59,7 +59,7 @@
     "workflow-size-prompting-ambient": 557,
     "c4e-desktop": 556
   },
-  "promptQueueUseCount": 278793,
+  "promptQueueUseCount": 278797,
   "btwUseCount": 25,
   "cachedGrowthBookFeatures": {
     "tengu_sotto_voce": true,
@@ -2999,7 +2999,7 @@
     "double-esc-code-restore": 8,
     "continue": 8,
     "shift-tab": 8,
-    "guest-passes": 22,
+    "guest-passes": 23,
     "voice-mode": 8,
     "ide-upsell-external-terminal": 17,
     "enter-to-steer-in-relatime": 4,
