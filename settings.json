@@ -43,7 +43,7 @@
       "mcp__plugin_playwright_playwright__browser_install"
     ]
   },
-  "model": "opus[1m]",
+  "model": "fable",
   "hooks": {
     "PreToolUse": [
       {
