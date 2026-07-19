@@ -165,3 +165,7 @@ Cross-project learnings for TypeScript and Node.js development.
 ## When promoting inline logic to a shared helper, port the STRONGEST caller's guards (second-brain #907 PR-B, 2026-07-19)
 
 Extracting inline logic into a shared helper can silently DROP an invariant a caller relied on: a date-span walk was extracted (bounded implicitly by the caller's `wanted` day set), then a later PR routed a shipped path through the helper — which enumerated the event's full unbounded [start,end) span — while a sibling kept its own explicit 60-day cap. Rule: when unifying N inline copies, port the strongest copy's guards (loop caps, bounds checks) INTO the helper, and sweep all siblings to delegate to it — never leave the shared helper less defensive than any code it replaced. Review trigger: any "now delegates to" refactor — diff the old inline guards against the helper.
+
+## A shared cap carries the donor caller's horizon assumptions (second-brain #907 PR-B, 2026-07-19)
+
+Follow-up to the "port the strongest guard" rule: when a cap/threshold moves into a shared helper, re-derive its VALUE against every NEW consumer's range — a 60-day span cap valid for a weekly scheduler silently truncated multi-month absences once the same helper fed a 365-day scan, reintroducing the false-negative the guard family exists to prevent. Size runaway guards to the widest legitimate horizon any consumer can query (here MAX_QUERY_WINDOW_DAYS), not to the donor's domain.
