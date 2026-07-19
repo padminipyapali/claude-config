@@ -58,3 +58,7 @@ Cross-project learnings for Telegram bots (grammY, Bot API).
 
 ---
 *Sources: second-brain, command-center*
+
+## Prepend caveats when output can be tail-truncated (second-brain #906, 2026-07-19)
+
+Telegram replies are capped (4096 chars) by truncating from the TAIL. Any caveat/note appended to a long rendered answer (clamp notices, "results limited to..." notes) is dropped exactly when the answer is long enough to need it. Rule: inside answer builders that run BEFORE the cap, PREPEND caveats; appending is only safe when the note is added AFTER the cap has already run. Generalizes to any channel with tail truncation.

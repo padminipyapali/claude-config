@@ -115,3 +115,14 @@ Cross-project learnings for working with Claude API, OpenAI, and LLMs in general
 ---
 *Sources: second-brain, lexica, remodel-hq, plush-press*
 - **Batch runners over an error-swallowing LLM service need outage heuristics: track the longest consecutive-empty-result streak and warn on zero-effect runs.** When a per-item service swallows provider errors and returns `[]` (often deliberately, for graceful per-item degradation), a batch/backfill script driving it can experience a total LLM outage that looks like a clean "0 changes, 0 errors" run. Don't change the service's contract — add heuristics in the runner: (1) track the longest streak of consecutive empty results and warn above a threshold; (2) warn when an apply-mode run made N>0 LLM calls but produced zero effects. Companion rules for the same script class: connection-level DB errors (Postgres class 08/57P0x, socket errors) must propagate and abort rather than be counted per-item; a row deleted mid-run (FK 23503) is logged distinctly and skipped. <!-- Source: post-mortem, second-brain #885 (re-tag backfill, critic findings), 2026-07-10 -->
+
+## Forced tool calls: max_tokens truncation parses as "malformed", not as an error (second-brain #906, 2026-07-19)
+
+A forced `tool_choice: { type: "tool" }` call with a tight `max_tokens` can truncate the tool's JSON input mid-array. The response then PARSES as malformed/empty input — not an API error — so generic "couldn't answer" fallbacks fire with no signal about the real cause. Found when a calendar tool schema forced the model to enumerate ~122 `YYYY-MM-DD` day strings against `max_tokens: 500`.
+
+Mitigations (apply all three):
+1. **Offer a compact input shape** so the model never has to enumerate: accept `range: {start, end}` and expand it in code, instead of a per-item array. Keep the array form for sparse sets; merge + dedupe when both are set.
+2. **Give max_tokens headroom** sized to the worst-case legitimate tool payload, not the typical one.
+3. **Check `stop_reason === "max_tokens"`** after parsing: if the parse degraded, return an actionable message ("try narrowing the range") instead of the generic fallback; log it every time — but log only metadata (query length, parse mode), NEVER the query text (PII).
+
+Audit trigger: grep `tool_choice: { type: "tool"` and inspect each call's `max_tokens` against its worst-case output — batch/array-emitting tools are the high-risk ones, and "never throws, returns empty default" wrappers make the truncation silent.
