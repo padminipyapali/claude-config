@@ -126,3 +126,7 @@ Mitigations (apply all three):
 3. **Check `stop_reason === "max_tokens"`** after parsing: if the parse degraded, return an actionable message ("try narrowing the range") instead of the generic fallback; log it every time — but log only metadata (query length, parse mode), NEVER the query text (PII).
 
 Audit trigger: grep `tool_choice: { type: "tool"` and inspect each call's `max_tokens` against its worst-case output — batch/array-emitting tools are the high-risk ones, and "never throws, returns empty default" wrappers make the truncation silent.
+
+## Keep stemming consistent across sibling keyword groups (second-brain #907, 2026-07-19)
+
+When narrowing keyword regexes to kill false positives, keep stemming CONSISTENT across sibling keyword groups: an exact-word `\btravel\b` sitting next to a stemmed `arriv\w*|depart\w*` leaves an asymmetric recall hole ("Traveling to Boston" missed). For a safety-relevant classifier the miss lands in the dangerous false-negative direction. Review heuristic: scan the whole keyword table for stemming asymmetry, not each pattern in isolation.
