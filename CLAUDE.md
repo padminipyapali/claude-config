@@ -60,6 +60,7 @@ When creating a new project or initializing a new codebase, always run `/project
 - For projects with releases, follow semantic versioning (MAJOR.MINOR.PATCH).
 - Issue lifecycle: include `Closes #N` in PR commit messages. For multi-PR issues, close manually after the last PR merges.
 - Post-merge: automatically run `/post-mortem [PR-number]` in the background.
+- **Living feature spec (multi-session features).** Any feature expected to span more than one session gets `docs/<FEATURE>_SPEC.md` in its repo BEFORE implementation starts: a Status block (current stage + next action + date), stages→tasks as checkboxes, decisions locked, and open questions. It must contain everything a fresh agent needs to resume from the doc alone. Update the Status block and checkboxes in the same PR/session as the work it tracks; add a pointer to the spec in the project CLAUDE.md. Prefer the repo doc over a GitHub issue (cheaper to read/update, versioned with the code). Example: plush-press `docs/ART_STYLES_SPEC.md`, `docs/AUTO_BOOK_SPEC.md`.
 - **Post-mortem metric integrity.** `/post-mortem` must compute `adversarialCatchRate` from evidence or mark `"unmeasured"` — never hardcode. 130+ PRs had fabricated baselines.
 
 ## Convention Complexity Budget
