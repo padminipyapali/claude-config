@@ -206,6 +206,11 @@ Include in every PR body:
 - **Pre-merge catch rate by step:** 4a: N | 4b: N | 4c: N | 4d: N | post-push: N
 - **Pre-merge iteration count:** N (1=healthy, 2=normal, 3+=friction)
 - **Fix-up taxonomy:** { category: count, ... } (exclude infrastructure)
+
+## Step Timing
+- **Per-step minutes:** 1: Nm | 2: Nm | 3: Nm | 4a: Nm | 4b: Nm | 4c: Nm | 5: Nm
+  (approximate is fine; "n/a" for skipped steps — post-mortems need durations, not
+  just statuses, to find bottlenecks; three PRs in a row recorded stepTiming: null)
 ```
 
 **Depth over compliance.** The adversarial review line records the number of checklist items that produced verifiable grep evidence out of the total applicable items — not just "ran/skipped." This distinguishes genuine execution (grep output logged, callers traced by file:line) from performative compliance (checklist read but items assessed by judgment). Post-mortem data shows PR #272 had 87.5% binary compliance but only 10% actual execution depth.
