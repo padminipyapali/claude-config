@@ -7,6 +7,15 @@
 - Verification is proportionate: run lint + typecheck (+ tests if any touch code paths); for UI changes, screenshot the affected page(s) at wide AND ~1000px viewports before calling it done.
 - Straight to PR after self-review of the diff. CodeRabbit/adversarial review skipped.
 - If mid-change the diff outgrows the criteria, stop and switch to the team pattern.
+
+**HANDS-ON LANE** (added 2026-07-20 — operator asked for faster iteration on small/medium single-concern changes; sits between the fast path and the full team). Use for single-concern changes up to ~300 LOC that touch logic but not schemas/data models:
+- The main agent edits DIRECTLY in a pre-created worktree — no implementer spawn, no relay round-trips (relay latency + crossed messages were the #1 time sink measured 2026-07-20).
+- During iteration: run ONLY the affected test files + typecheck (~30s). Full suite + lint ONCE before push.
+- **Operator tests before push**: boot the worktree's dev server on a spare port (e.g. `npm run dev -- --port 3001`) and hand the operator the URL. Iterate there — a review round on the preview server costs ~2 min vs ~30 min through push/CI/merge/pull. Caveats: worktree has no `.secrets/` (generation shows the key-missing UI state — fine for UI checks) and reads the worktree's data snapshot. Kill ONLY the preview server you started (verify PID by cwd), never the operator's servers.
+- On operator sign-off: push → `gh pr merge --auto --squash` (NOTE: gh resolves this repo to a stale fork name — pass `--repo padminipyapali/plush-press` explicitly) so CI merges it without babysitting → pull main afterward so the live app hot-reloads.
+- **UI changes MUST assert displayed state** (rendered select values / labels / visible text), not just hook state — asserting hook state is exactly how the 2026-07-20 style-display bug escaped. A screenshot check on the preview server satisfies this for one-offs.
+- CodeRabbit CLI returns automatically when a change exceeds ~150 LOC of source (tests excluded) or touches >4 source files — the cheapest gate for the cross-file class an orchestrator eyeball structurally misses.
+- Post-mortems for fast-path/hands-on-lane PRs are BATCHED (one weekly sweep covering the week's small PRs), not run per-PR. Full-team PRs keep per-PR post-mortems.
 - This agent is the **orchestrator**. It does NOT write or review code directly.
 - Spawn an **implementer** (`general-purpose`) to write code. **Create the worktree manually first** (see below), then spawn WITHOUT `isolation: "worktree"`.
 - Spawn a **critic** (`general-purpose`, fresh context) to review code.
