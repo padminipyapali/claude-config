@@ -373,3 +373,15 @@ then an ordinary save from another surface); (4) prefer store-level structural g
 omitting a protected field cannot drop it; only the dedicated endpoint may clear it) over
 whack-a-mole site fixes — same philosophy as the live-data test tripwire.
 The operator's one-liner: "the gauntlet inspects what changes; the operator inspects what happens."
+**SHIPPED as plush-press #352 (BUG-016)**: the fix landed at BOTH levels — (a) `coerceRaw` now
+spreads/preserves `styleId`/`done`/`authors` (the offending field-pick site), and (b) a store-level
+preserve-guard in `saveProject` makes the dedicated style PATCH (`preserveStyleId: false`) the ONLY
+legitimate un-pinner — rule (4) made structural, not conventional. The critic's lone MINOR-must-fix
+(a schema-keyof MIRROR test: `coerceRaw`'s output keys must structurally cover the schema's keys, so
+the NEXT schema field can't be silently dropped by the same class) independently converged with the
+hooks-audit's tripwire recommendation — two fresh contexts proposing the same structural guard is a
+strong signal it's the right durable shape. Catch record: 1/1 issue caught pre-push by the
+adversarial critic, 0 post-push, 0 post-merge; one clean `rebase --onto` for a BUGS.md collision.
+<!-- Source: post-mortem, plush-press #352, 2026-07-20; fix-shape + schema-keyof mirror-test convergence -->
+
+- **Small-change fast path, first use (plush-press #351): a ≤10-LOC, display-only, root-caused, test-carrying fix may skip the critic + CodeRabbit — and the skip was validated by outcome.** The StyleSwitcher value-before-options fix (BUG-015, 8 code LOC) shipped via an explicitly pre-authorized fast path: no separate critic pass, no CodeRabbit; kept: root-cause analysis, a regression test pinning the exact race (mount pinned + unresolved fetch → value never falls back to Default), and all four gates (typecheck/lint/vitest/build). Outcome: 0 post-push findings, 0 post-merge fixes, CI green, merged in 5 minutes — skip assessment GOOD. The load-bearing eligibility criteria (all required, not any): (1) tiny diff (≤10 code LOC); (2) display-only blast radius (state on disk already correct); (3) the root cause is UNDERSTOOD and written down (BUGS.md entry), not patched symptomatically; (4) the fix carries its own regression test; (5) full mechanical gates still run. The fast path trades the critic for the root-cause writeup + test — it is NOT a license to skip gates on "simple-looking" changes whose root cause is unverified, and per-use outcome must keep being assessed (a single clean first use is evidence, not proof). <!-- Source: post-mortem, plush-press #351, 2026-07-20; first fast-path use, outcome-validated -->
