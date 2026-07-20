@@ -25065,6 +25065,168 @@
         "bottleneck": null,
         "notes": "PR body Step Timing is qualitative only: root cause confirmed by running the failing test; single implement pass; typecheck/lint/full vitest 2540 pass green; critic + CodeRabbit both 0 findings; commit-to-merge ~12 min, PR-open-to-merge ~8 min"
       }
+    },
+    {
+      "project": "plush-press",
+      "prNumber": 336,
+      "title": "Add the read-only Styles shelf (Stage 4 of Art Styles).",
+      "dateMerged": "2026-07-20T16:28:33Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 3,
+        "coderabbitFixed": 3,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 3,
+        "adversarialFixed": 3
+      },
+      "adversarialCatchRate": 1.0,
+      "adversarialCatchRateNote": "MEASURED from evidence: 6 total findings across the PR lifecycle (fresh-context critic 3 MINOR: route book-counts through canonical resolveBookStyleId, thread repoRoot into projects-dir + character-manifest resolution, record Stage-6a canonicalizer follow-up in spec; CodeRabbit CLI 3 minor: 2x hermetic test fixtures pin/restore PLUSH_PROJECTS_DIR + PLUSH_CHARACTERS_JSON, 1x empty-slot dashed border full square). All 6 fixed pre-push; 0 post-push comments, 0 post-merge fixes -> 6/6 caught locally = 1.0. Division-of-labor held (4th consecutive plush-press data point): critic = semantic/consistency (canonical resolver, split-root reads), CodeRabbit = test-hermeticity + CSS robustness. Read-only UI PR (zero paid actions/mutations); LOC over 600 soft cap declared with breakdown (520 TS/TSX + 184 presentational CSS + 518 tests) and single-concern justification; rebased onto green main (#335) and re-ran all four gates before CodeRabbit.",
+      "fixupCommitRatio": 0.67,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 3,
+          "4d": 3,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 2,
+          "documentation": 1,
+          "style": 1,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 1.53,
+      "planningQuality": "complete",
+      "prSize": 1259,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "2b",
+          "4a"
+        ],
+        "skipReasons": "2b (hardening pass) retired from the flow per global CLAUDE.md; 4a (/simplify) folded into critic + CodeRabbit passes per PR body",
+        "complianceRate": 0.78,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "PR body Step Timing qualitative only: single implement pass; full suite ~6s (2561 tests), build exit 0; review = critic (3 minors fixed) -> rebase onto #335 -> re-ran 4 gates -> CodeRabbit single pass (3 minors fixed, no retry). PR-open-to-merge 1.53h with CI green in ~5 min."
+      }
+    },
+    {
+      "project": "plush-press",
+      "prNumber": 337,
+      "title": "Decouple the recovered-book rebuild test from the live books.",
+      "dateMerged": "2026-07-20T16:28:38Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 1,
+        "coderabbitFixed": 1,
+        "coderabbitIterations": 2,
+        "adversarialFindings": 1,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 1.0,
+      "adversarialCatchRateNote": "MEASURED from evidence: 2 findings total (fresh-context critic: safe-to-ship + 1 optional MINOR taken - exercise the parser's mid-file flush branch; CodeRabbit CLI: 1 minor fixed - cast assertion accepted a subset, tightened to exact four baseChars + count + order). Both fixed pre-push; 0 post-push comments, 0 post-merge fixes -> 2/2 = 1.0. Second live-data test decoupling (rebuildRecoveredProjects.test.ts), found by a PROACTIVE sibling sweep actioning post-mortem #335's recommendation within the hour - caught BEFORE the operator's in-flight page-add could redden CI (contrast #335's reactive fix after ~10h red main). During review the implementer CORRECTED the critic's premise about branch reachability, and exercising the mid-file flush branch surfaced a latent parser quirk (quote-less interior heading silently overwritten by the next heading - cannot occur in well-formed 12-page story.md; documented in PR body, out of scope for test-only PR). Process incident: heredoc-mangled PR body (fixed via gh pr edit) burned a duplicate CodeRabbit run and rate-limited the free tier - new process-patterns entry: --body-file + verify rendered body before spending review quota.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 1,
+          "4d": 1,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 2,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 1.46,
+      "planningQuality": "complete",
+      "prSize": 259,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "2b",
+          "4a"
+        ],
+        "skipReasons": "2b (hardening pass) retired per global CLAUDE.md; 4a (/simplify) not evidenced - single-file test-only conversion; build sub-step of 3 declared-skipped in-worktree (no node_modules, symlink tripped Turbopack out-of-root check; test-only diff excluded from production bundle, typecheck - which compiles the test file - green)",
+        "complianceRate": 0.78,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": "CodeRabbit free-tier rate limit (duplicate run burned by the heredoc-mangled PR body)",
+        "notes": "PR body Step Timing qualitative only: single implement pass +197/-62 on one file; typecheck/lint green, full vitest 2544 pass (target file 25/25); critic 1 optional taken + CodeRabbit 1 minor fixed; PR-open-to-merge 1.46h, CI green in ~5 min."
+      }
     }
   ],
   "generated": "2026-07-07T05:39:40.011574+00:00",
