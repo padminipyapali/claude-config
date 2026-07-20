@@ -1,6 +1,12 @@
-# ORCHESTRATOR TEAM PATTERN — REQUIRED FOR ALL CODE CHANGES
+# ORCHESTRATOR TEAM PATTERN — REQUIRED FOR SUBSTANTIAL CODE CHANGES
 
-**ALL code changes use the 3-role team pattern. NO EXCEPTIONS.**
+**Substantial code changes use the 3-role team pattern. Small changes use the fast path below.**
+
+**SMALL-CHANGE FAST PATH** (added 2026-07-20 — operator asked for less ceremony on simple fixes). A change qualifies when ALL hold: ≤2 files, ≤ ~60 changed LOC, no business-logic/data-model/schema changes (CSS, copy, config, docs, small markup tweaks), and no new dependencies. For qualifying changes:
+- The main agent edits directly in a worktree (same worktree rule below) — no implementer, no critic.
+- Verification is proportionate: run lint + typecheck (+ tests if any touch code paths); for UI changes, screenshot the affected page(s) at wide AND ~1000px viewports before calling it done.
+- Straight to PR after self-review of the diff. CodeRabbit/adversarial review skipped.
+- If mid-change the diff outgrows the criteria, stop and switch to the team pattern.
 - This agent is the **orchestrator**. It does NOT write or review code directly.
 - Spawn an **implementer** (`general-purpose`) to write code. **Create the worktree manually first** (see below), then spawn WITHOUT `isolation: "worktree"`.
 - Spawn a **critic** (`general-purpose`, fresh context) to review code.
