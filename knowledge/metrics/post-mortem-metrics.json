@@ -24687,8 +24687,80 @@
       "prSize": 257,
       "stepCompliance": null,
       "stepTiming": null
+    },
+    {
+      "project": "plush-press",
+      "prNumber": 328,
+      "title": "Bind a book to an art style and thread it into the composite render path (Stage 2 of Art Styles)",
+      "dateMerged": "2026-07-20T01:34:57Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 1,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 3,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": 0.0,
+      "adversarialCatchRateNote": "Measured at n=1: the only local finding (per-page style re-fetch, efficiency class) came from CodeRabbit; the fresh-context critic ran a full entry-point matrix and returned SHIP/0 findings. 0.0 here means the single finding was CodeRabbit-flavored, not that the critic failed (cf. second-brain #892-#903 division-of-labor entry). Finding deferred with code comment + spec follow-up, not fixed.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.31,
+      "planningQuality": "complete",
+      "prSize": 814,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4a"
+        ],
+        "skipReasons": "4a /simplify not run as a separate pass -- code written to the house patterns (omit-when-absent field, pure mapper in client-safe module, id-tagged single state object); recorded explicitly in the PR body's ## Local Review section.",
+        "complianceRate": 0.889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": null
     }
   ],
   "generated": "2026-07-07T05:39:40.011574+00:00",
-  "lastUpdated": "2026-07-20T00:13:12Z"
+  "lastUpdated": "2026-07-19"
 }
