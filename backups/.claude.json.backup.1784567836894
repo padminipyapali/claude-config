@@ -59,7 +59,7 @@
     "workflow-size-prompting-ambient": 557,
     "c4e-desktop": 556
   },
-  "promptQueueUseCount": 278996,
+  "promptQueueUseCount": 279000,
   "btwUseCount": 25,
   "cachedGrowthBookFeatures": {
     "tengu-top-of-feed-tip": {
@@ -3100,9 +3100,9 @@
       "lastUsedNumStartups": 525
     },
     "playwright@claude-plugins-official": {
-      "usageCount": 1816,
-      "lastUsedAt": 1784565738092,
-      "lastUsedNumStartups": 562
+      "usageCount": 1828,
+      "lastUsedAt": 1784567765482,
+      "lastUsedNumStartups": 563
     },
     "feature-dev@claude-plugins-official": {
       "usageCount": 5,

@@ -59,7 +59,7 @@
     "workflow-size-prompting-ambient": 557,
     "c4e-desktop": 556
   },
-  "promptQueueUseCount": 278990,
+  "promptQueueUseCount": 279001,
   "btwUseCount": 25,
   "cachedGrowthBookFeatures": {
     "tengu-top-of-feed-tip": {
@@ -2722,8 +2722,8 @@
       "lastUsedAt": 1771285297606
     },
     "post-mortem": {
-      "usageCount": 283,
-      "lastUsedAt": 1784565117565
+      "usageCount": 285,
+      "lastUsedAt": 1784567836884
     },
     "coderabbit:review": {
       "usageCount": 28,
@@ -3100,9 +3100,9 @@
       "lastUsedNumStartups": 525
     },
     "playwright@claude-plugins-official": {
-      "usageCount": 1816,
-      "lastUsedAt": 1784565738092,
-      "lastUsedNumStartups": 562
+      "usageCount": 1830,
+      "lastUsedAt": 1784567796518,
+      "lastUsedNumStartups": 563
     },
     "feature-dev@claude-plugins-official": {
       "usageCount": 5,
