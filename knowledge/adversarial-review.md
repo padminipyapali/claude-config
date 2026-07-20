@@ -238,6 +238,9 @@ git diff main...HEAD --name-only -- '*.tsx' | xargs grep -lE 'useCallback' 2>/de
 done
 ```
 
+### 0.16b Async-resolved config gating paid/persisting actions
+For every action that spends money (a generation call) or persists data (a write/stamp), and whose parameters come from async-resolved config (a resolved style, a fetched setting): verify the action is **held** while the config is pending and **blocks loudly** on resolve failure — never falls through to a default. A mismatch-flag-after or "self-healing" display is NOT sufficient once the money is spent or the bytes are written. Ask both windows explicitly: (a) the pending window (race), (b) the resolve-failure path (deterministic silent default). Write-path sibling: for any new **partial-update** endpoint, ask "what does this clobber if a concurrent writer lands between read and save?" — require optimistic concurrency (base-version → 409), not a blind whole-record write. <!-- Source: post-mortem, plush-press #344/#346/#348, 2026-07-20; class hit 6 of 7 consecutive PRs (#338–#348) -->
+
 ### 0.17 Conditional UI branch completeness
 ```bash
 git diff main...HEAD --name-only -- '*.tsx' | xargs grep -nE 'if\s*\(\s*(is|has|show|hide|can)[A-Z]' 2>/dev/null
