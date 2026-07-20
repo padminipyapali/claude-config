@@ -24831,6 +24831,78 @@
         "skipAssessment": "good"
       },
       "stepTiming": null
+    },
+    {
+      "project": "plush-press",
+      "prNumber": 333,
+      "title": "Wire style specimens into the harmonize render path (Stage 3b of Art Styles)",
+      "dateMerged": "2026-07-20T03:54:12Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 2,
+        "coderabbitFixed": 2,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 2,
+        "adversarialFixed": 2
+      },
+      "adversarialCatchRate": 0.5,
+      "adversarialCatchRateNote": "Measured from evidence at n=4 local findings: fresh-context critic caught 2 MINORs (latent castRefCount landmine -- numbering hardcoded against a parked-empty cast-ref array, fixed by deriving from the actual array via planRenderSpecimens; stale comment filename). CodeRabbit CLI (clean first run, no rate-limit retry needed) caught the 1 MAJOR the critic missed (two-snapshot resolveStyleSpecimens read -- a file appearing/vanishing between reads could leave an enumerated slot without its path; fixed with single-snapshot slotsForSet helper) plus 1 minor (JPEG-downscale failure dropped an enumerated specimen; now keeps original PNG bytes). 0.5 = critic-caught / total local findings. Second consecutive PR in this series (#330, #333) where CodeRabbit alone caught the concurrency/consistency MAJOR while the critic caught the semantic latent landmine.",
+      "fixupCommitRatio": 0.667,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 2,
+          "4d": 2,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 2,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 2,
+          "correctness": 1,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 1,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.07,
+      "planningQuality": "complete",
+      "prSize": 750,
+      "stepCompliance": {
+        "stepsRun": [
+          "2a",
+          "2b",
+          "3",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "1",
+          "4a"
+        ],
+        "skipReasons": "Step 1 plan-first skipped: spec's Stage 3b section + Stage 2's threading pattern defined the shape; the one design fork (client/server sync mechanism) was stated up front and resolved+documented by the implementer. 4a /simplify folded into critic + CodeRabbit passes (planRenderSpecimens / slotsForSet extractions are the simplification outcomes). Both recorded in the PR body's Steps skipped section.",
+        "complianceRate": 0.778,
+        "skipAssessment": "good"
+      },
+      "stepTiming": null
     }
   ],
   "generated": "2026-07-07T05:39:40.011574+00:00",
