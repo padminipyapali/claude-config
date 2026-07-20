@@ -25440,6 +25440,87 @@ const METRICS_DATA = {
         "skipAssessment": "good"
       },
       "stepTiming": null
+    },
+    {
+      "project": "plush-press",
+      "prNumber": 334,
+      "title": "Show the resolved art style on every render surface (style badge).",
+      "dateMerged": "2026-07-20T14:20:59Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 3,
+        "coderabbitFixed": 3,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 2,
+        "adversarialFixed": 1
+      },
+      "adversarialCatchRate": 0.4,
+      "adversarialCatchRateNote": "Measured from evidence at n=5 local findings: fresh-context critic (SHIP) caught 2 MINORs (1 applied, 1 consciously skipped with rationale); CodeRabbit CLI (single clean run) caught 3 incl. the sole MAJOR \u2014 a same-book styleId rebind could submit the stale style (resolved state keyed only by book id; fixed by keying to the requested binding in badge + render gate, with rebind regression test) \u2014 plus a rebind cache-tag minor and a min-width ellipsize minor. 0.4 = critic-caught / total local findings. THIRD consecutive PR (#330, #333, #334) where CodeRabbit alone caught the staleness/consistency MAJOR on a critic-SHIPped surface. 0 post-push comments, 0 post-merge fixes; shift-left 100%. Note: PR's CI run was red from a PRE-EXISTING product-data-coupled failure on main (recipeRefs orphan-crop assert broken by autosave commits), unrelated to this diff.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 1,
+          "4b": 0,
+          "4c": 3,
+          "4d": 1,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 2,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.43,
+      "planningQuality": "complete",
+      "prSize": 820,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "2b"
+        ],
+        "skipReasons": "2b (hardening pass) retired from the flow per global CLAUDE.md; Playwright sub-step of 3 skipped by declared rationale (static indicator, jsdom component tests cover every badge state)",
+        "complianceRate": 0.89,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "PR body Step Timing is qualitative only (sequence, no durations): one implement pass; four gates green; /simplify -> single clean CodeRabbit run -> adversarial; branch-to-merge ~26 min"
+      }
     }
   ],
   "generated": "2026-07-07T05:39:40.011574+00:00",
