@@ -24984,8 +24984,89 @@
         "bottleneck": null,
         "notes": "PR body Step Timing is qualitative only (sequence, no durations): one implement pass; four gates green; /simplify -> single clean CodeRabbit run -> adversarial; branch-to-merge ~26 min"
       }
+    },
+    {
+      "project": "plush-press",
+      "prNumber": 335,
+      "title": "Decouple the face-crop integrity test from the live catalog.",
+      "dateMerged": "2026-07-20T14:41:54Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 0,
+        "coderabbitFixed": 0,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 0,
+        "adversarialFixed": 0
+      },
+      "adversarialCatchRate": "unmeasured",
+      "adversarialCatchRateNote": "Unmeasured by definition: zero findings anywhere (fresh-context critic 0 findings \u2014 including explicitly verifying the fixture's cropOrphans() helper exercises the REAL faceCropSlug, not a re-implementation; CodeRabbit CLI clean single run; 0 post-push comments; 0 post-merge fixes), so there is no denominator. Clean-sheet urgent CI-unblock: test-only fixture conversion (+71/-42, 1 file) of recipeRefs.test.ts, which had coupled the face-crop integrity suite to the live catalog \u2014 CI went red when an operator data commit added the human shalu-pini without a face-crop. Closes the RECURRING tests-must-not-couple-to-product-data class (ledgered 2026-06-16; recurred here ~half a day after the graduation data commit) for this file, and resolves #334's post-mortem recommendation #1 ~20 min after it was written. Merged with the CI 'studio' check GREEN \u2014 main un-reddened after ~10h.",
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 0,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 0,
+          "correctness": 0,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 0,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.13,
+      "planningQuality": "complete",
+      "prSize": 113,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "3",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "2b",
+          "4a"
+        ],
+        "skipReasons": "2b (hardening pass) retired from the flow per global CLAUDE.md; 4a (/simplify) not evidenced \u2014 urgent single-file test-only CI unblock; build sub-step of 3 declared-skipped in-worktree (no node_modules; test-only diff excluded from the production bundle, typecheck \u2014 a superset that compiles the test file \u2014 green)",
+        "complianceRate": 0.78,
+        "skipAssessment": "good"
+      },
+      "stepTiming": {
+        "planMinutes": null,
+        "implementMinutes": null,
+        "testMinutes": null,
+        "reviewMinutes": null,
+        "pushMinutes": null,
+        "totalMinutes": null,
+        "bottleneck": null,
+        "notes": "PR body Step Timing is qualitative only: root cause confirmed by running the failing test; single implement pass; typecheck/lint/full vitest 2540 pass green; critic + CodeRabbit both 0 findings; commit-to-merge ~12 min, PR-open-to-merge ~8 min"
+      }
     }
   ],
   "generated": "2026-07-07T05:39:40.011574+00:00",
-  "lastUpdated": "2026-07-19"
+  "lastUpdated": "2026-07-20"
 }
