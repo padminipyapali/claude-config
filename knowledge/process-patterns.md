@@ -359,3 +359,17 @@ Distilled rules from post-mortem analysis. For full incident history and evidenc
 
 - **Prototype-first, then port via the team, for generative/AI-pipeline features.** De-risk an open-ended generative problem with small runnable scratchpad prototypes (prove the prompt/mechanic empirically), THEN have the implementer port the proven logic into the app. Converts "invent it in review" into "port a known-good thing" → high fidelity, no architectural churn, typically one review round. <!-- Source: post-mortem, plush-press #88, 2026-06-29 -->
 - **A fresh-context critic is the review gate for solo self-merges.** When there's no GitHub peer review and no CodeRabbit (e.g. zero-dep tools), an independent fresh-context critic in the 3-role team substitutes effectively — on #88 it caught a real should-fix (stale render-state counted as success) plus 4 robustness nits, all fixed pre-merge. Don't skip it just because the PR is self-merged. <!-- Source: post-mortem, plush-press #88, 2026-06-29 -->
+
+## Diff-scoped review misses relationship bugs (2026-07-20, plush-press styleId stripper)
+Five silent un-pins of a book's styleId survived a 5-reviewer gauntlet because every review was
+diff-scoped and the bug lived in UNCHANGED code: old save surfaces rebuilt the project from a
+field list, dropping the newly-added field on every ordinary save. Rules that came out of it:
+(1) adding a field to a core entity obligates a PRODUCER sweep (every writer/serializer/payload
+literal), the mirror of the union-member consumer sweep — now folded into universal convention 8;
+(2) entry-point matrices must enumerate WRITERS of shared state, not just readers ("who else
+writes this file, and what do they write?"); (3) fixtures test one surface — schedule at least
+one ENSEMBLE regression per feature simulating the real multi-surface session (pin via endpoint,
+then an ordinary save from another surface); (4) prefer store-level structural guards (a save
+omitting a protected field cannot drop it; only the dedicated endpoint may clear it) over
+whack-a-mole site fixes — same philosophy as the live-data test tripwire.
+The operator's one-liner: "the gauntlet inspects what changes; the operator inspects what happens."

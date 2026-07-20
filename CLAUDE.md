@@ -90,7 +90,7 @@ Hard cap: **10 universal manual conventions** maximum. These are conventions req
 5. Default to fix — every local finding must be fixed immediately. No severity triage or deferrals.
 6. Tests required — cover every type/feature combination, not just the happy path.
 7. Fire-and-forget try/catch granularity — each await inside fire-and-forget methods needs its own try/catch.
-8. New union member completeness — grep all switches/maps/conditionals when adding a value to a type union.
+8. New union member / schema field completeness — grep all CONSUMERS (switches/maps/conditionals) when adding a union value, AND all PRODUCERS (every save/serialize/payload-construction site) when adding a field to a core entity: any writer that rebuilds the object from a field list silently drops the new field on every save (the plush-press styleId stripper, 2026-07-20 — five silent un-pins that every diff-scoped review missed because the bug lived in unchanged writers).
 9. Error message specificity — edge cases get specific messages, not generic fallthrough.
 10. Structured evidence required — PASS/FAIL/SKIP with verifiable evidence per checklist item (no "looks fine").
 
