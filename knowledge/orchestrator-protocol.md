@@ -105,6 +105,19 @@ Source: post-mortem, family-digest #4, 2026-04-22 — v2 critic claimed "no test
 4. Orchestrator stays in main checkout for monitoring and narration.
 5. On teardown: worktree cleaned up if no changes; persists if changes were pushed.
 
+**⛔ Worktree teardown gate (added 2026-07-21 after the orchestrator force-removed a
+worktree mid-edit and destroyed an implementer's uncommitted follow-up work):**
+NEVER `git worktree remove --force` until ALL THREE hold:
+1. **No agent owns it** — the implementer has explicitly reported done AND has no
+   follow-up assigned or self-started (a merged PR does NOT mean the agent is done:
+   follow-up commits may be in flight on the same checkout).
+2. **The tree is clean** — `git -C <worktree> status --porcelain` is empty (untracked
+   included). A dirty tree means live work; ask the owning agent, never assume.
+3. **The branch is merged or explicitly abandoned** by the operator/agent.
+If any check fails, leave the worktree alone and message the owning agent. Also:
+always run worktree add/remove with ABSOLUTE paths from the repo root — relative
+paths from a stale CWD have created nested worktrees twice.
+
 ### Implementer Startup Checklist (first thing the implementer does)
 
 1. Verify the worktree path exists: `ls <worktree-path>/package.json` (or equivalent).
