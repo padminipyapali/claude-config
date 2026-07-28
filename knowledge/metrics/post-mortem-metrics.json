@@ -26702,6 +26702,147 @@
       "prSize": 1441,
       "stepCompliance": null,
       "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 945,
+      "title": "feat(server): today's priorities \u2014 today-card payload, pin/unpin, and /today (PR-A of #942)",
+      "dateMerged": "2026-07-28T00:06:07Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": 4,
+        "coderabbitFixed": 3,
+        "coderabbitIterations": 1,
+        "adversarialFindings": 12,
+        "adversarialFixed": 11
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.333,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 3,
+          "4c": 3,
+          "4d": 2,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 4,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 2,
+          "dead-code": 0,
+          "test-quality": 1,
+          "documentation": 1,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 3.15,
+      "planningQuality": "complete",
+      "prSize": 1452,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4b",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [],
+        "skipReasons": "",
+        "complianceRate": 1.0,
+        "skipAssessment": "good"
+      },
+      "stepTiming": null
+    },
+    {
+      "project": "second-brain",
+      "prNumber": 948,
+      "title": "feat(web): today's priorities on the hero card + pin toggle on todo rows (PR-B of #942)",
+      "dateMerged": "2026-07-28T00:08:41Z",
+      "reviewRounds": 1,
+      "totalComments": 0,
+      "commentCategories": {
+        "security": 0,
+        "correctness": 0,
+        "architecture": 0,
+        "style": 0,
+        "performance": 0,
+        "testing": 0,
+        "documentation": 0,
+        "other": 0
+      },
+      "localReview": {
+        "coderabbitFindings": null,
+        "coderabbitFixed": null,
+        "coderabbitIterations": null,
+        "adversarialFindings": 4,
+        "adversarialFixed": 4
+      },
+      "adversarialCatchRate": 1.0,
+      "fixupCommitRatio": 0.0,
+      "fixupMetrics": {
+        "postMergeFixRate": 0.0,
+        "preMergeCatchRateByStep": {
+          "4a": 0,
+          "4b": 4,
+          "4c": 0,
+          "4d": 0,
+          "postPush": 0
+        },
+        "preMergeIterationCount": 1,
+        "fixupTaxonomy": {
+          "validation": 0,
+          "a11y": 0,
+          "defensive-coding": 1,
+          "correctness": 3,
+          "dead-code": 0,
+          "test-quality": 0,
+          "documentation": 1,
+          "style": 0,
+          "infrastructure": 0
+        }
+      },
+      "timeToMergeHours": 0.009,
+      "planningQuality": "complete",
+      "prSize": 776,
+      "stepCompliance": {
+        "stepsRun": [
+          "1",
+          "2a",
+          "2b",
+          "3",
+          "4a",
+          "4c",
+          "4d",
+          "5"
+        ],
+        "stepsSkipped": [
+          "4b"
+        ],
+        "skipReasons": "collapsed follow-up loop: single combined adversarial+code review pass; plan fully reviewed at PR-A (#945)",
+        "complianceRate": 0.889,
+        "skipAssessment": "good"
+      },
+      "stepTiming": null
     }
   ],
   "generated": "2026-07-07T05:39:40.011574+00:00",
