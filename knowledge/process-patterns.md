@@ -399,3 +399,40 @@ adversarial critic, 0 post-push, 0 post-merge; one clean `rebase --onto` for a B
 <!-- Source: post-mortem, plush-press #352, 2026-07-20; fix-shape + schema-keyof mirror-test convergence -->
 
 - **Small-change fast path, first use (plush-press #351): a ≤10-LOC, display-only, root-caused, test-carrying fix may skip the critic + CodeRabbit — and the skip was validated by outcome.** The StyleSwitcher value-before-options fix (BUG-015, 8 code LOC) shipped via an explicitly pre-authorized fast path: no separate critic pass, no CodeRabbit; kept: root-cause analysis, a regression test pinning the exact race (mount pinned + unresolved fetch → value never falls back to Default), and all four gates (typecheck/lint/vitest/build). Outcome: 0 post-push findings, 0 post-merge fixes, CI green, merged in 5 minutes — skip assessment GOOD. The load-bearing eligibility criteria (all required, not any): (1) tiny diff (≤10 code LOC); (2) display-only blast radius (state on disk already correct); (3) the root cause is UNDERSTOOD and written down (BUGS.md entry), not patched symptomatically; (4) the fix carries its own regression test; (5) full mechanical gates still run. The fast path trades the critic for the root-cause writeup + test — it is NOT a license to skip gates on "simple-looking" changes whose root cause is unverified, and per-use outcome must keep being assessed (a single clean first use is evidence, not proof). <!-- Source: post-mortem, plush-press #351, 2026-07-20; first fast-path use, outcome-validated -->
+
+## A fleet of agents optimises INSIDE the frame you hand them — none will question it
+
+**2026-07-30, plush-press.** Five mockup agents were asked "where should this feature live in
+the product?", each assigned a different UI shape, plus a sixth fresh-context adversarial
+critic asked to rank them and to answer "what did all five miss?". The critic found six real
+gaps. **All six agents, and the orchestrator, missed the same thing: the brief presumed the
+new feature REPLACED the existing one.** The operator saw it in one sentence — the old path
+does something the new one structurally cannot (composited characters can only stand in front
+of a scene; the existing harmonize puts them *in* it, sitting on rocks, occluded by bushes).
+
+Every mockup therefore designed a migration when the correct product was a **choice**.
+
+**Why parallelism did not help.** Diversity of *answers* is not diversity of *questions*. Five
+agents exploring five UI shapes are five samples from one premise — a bigger fleet only
+produces more confident agreement. The adversarial critic did not catch it either, because
+"adversarial" was scoped to the five artifacts, not to the brief that generated them.
+
+**Same failure recorded earlier the same week:** *"A team never questions a premise you handed
+it"* (memory: verify-premise-before-building) — where a feature was spawned off a stale code
+comment nobody re-tested. This is now a second, independent instance, so treat it as a rule
+rather than an anecdote.
+
+**What to do:**
+1. **State the premise explicitly in the brief, as a claim, and ask one agent to attack IT** —
+   not the outputs. "Is replacement the right frame?" is a different task from "rank these
+   five".
+2. **Ask what the OLD thing does that the new one cannot.** Nearly every "replace X" brief
+   should survive this question before any design work starts; if nobody can answer it, the
+   brief is a migration plan wearing a product question's clothes.
+3. **When the human catches something a fleet missed, write down the SHAPE of the miss**, not
+   just the fact. Here the shape is: agents optimise within a frame, humans see the frame.
+4. Corollary for cost: the fleet was not wasted — the five interaction models were reusable —
+   but the correct response to a premise break is **one consolidated revision**, not re-running
+   the fleet. Re-running regenerates the same premise-shaped answers.
+
+<!-- Source: plush-press, staged staging / group plates, 2026-07-30 -->
