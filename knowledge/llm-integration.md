@@ -134,3 +134,56 @@ When narrowing keyword regexes to kill false positives, keep stemming CONSISTENT
 ## Time-range planners must extract BOTH directions (second-brain #932, 2026-07-22)
 
 An LLM pre-fetch planner that maps a user question to a fetch window ("how many days AHEAD does the question reach?") silently hard-codes the assumption that users only ask about the future. A past-range question ("when was my meeting with X in June?") then fetches [today, today+N], finds nothing, and the grounded answer confidently asserts absence over a span that was never fetched — the worst failure mode, because the reply names the asked range as if it was checked. Rules: (1) extract a symmetric `days_back` alongside `days_ahead`, each clamped independently; (2) any "no results found" answer is only as trustworthy as the fetch window behind it — either make the fetched bounds cover the ASKED bounds, or disclose the span actually checked in the reply. Audit trigger: grep planner/window code for a start bound anchored at "today"/now with no lookback parameter.
+
+## Tiered Disclosure When Grounding on a Human "Funnel" Sheet
+
+A spreadsheet a human maintains as a *pipeline* (nanny/vendor/candidate search, CRM
+stages, applicant tracker) holds two populations in one tab: people you'd act on, and
+people you explicitly ruled out. Grounding an LLM on the whole tab makes the model
+recommend someone who was fired — the rejection is in the notes, but "who could cover
+Saturday?" retrieves on availability, not on status.
+
+Ground in three tiers instead of one list:
+
+1. **Always in context, in full** — the actionable rows (hired, active, won). Usually
+   small enough (~10) to include unconditionally, so open questions never need a match.
+2. **Keyword-matched, capped** — the in-progress rows. Ranked by distinct question-token
+   hits, with a large bonus when the question quotes the section title verbatim, so
+   "under consideration for full time" returns *that* section rather than losing it to
+   the cap behind two sibling sections sharing the same words.
+3. **Reachable only when named** — the rejected rows. Match on NAME or an explicit
+   group-intent phrase ("not a fit", "didn't work out", "who did we fire") — **never on
+   notes**. Notes-matching is what leaks them into open questions.
+
+Two traps worth pre-empting:
+- **Loose section-token matching defeats tier 3.** "Not a Fit" tokenizes to not/a/fit,
+  so an ordinary "who is *not* free on Sunday?" unlocks everyone you rejected. Require a
+  full-phrase match, not a token hit, to unlock the restricted tier.
+- **Stopword the question verbs that also appear in status cells.** A pipeline tab is
+  full of "Call scheduled", "Texted", "Sent text" — so "who should I *call*?" matches
+  every candidate mid-outreach. Stopword call/text/reach alongside the usual ones.
+
+Back the tier rule with a prompt instruction too ("never put forward anyone whose
+section is Not a Fit; mention them only if asked by name, and say why"), but the
+retrieval tier is the real control — the prompt is defence in depth.
+<!-- Source: second-brain #953, 2026-07-31 — Nannies tab: 3 hired + 7 vetted + ~27 in-funnel + 13 ruled out, all in one tab -->
+
+## Section-Stacked Spreadsheet Parsing
+
+One tab holding several stacked sections (banner, header row, rows, blank, next banner)
+breaks the usual "row 0 is the header, stop at the first blank" parser. Walk it statefully:
+
+- A **header row** (any row carrying the key column, e.g. "Name") re-binds the column map.
+  Sections do NOT share a layout — expect "Ref call 1"/"Ref call 2" in one and
+  "Reference Calls" in another, and columns present in one section and absent in the next.
+- A **banner** re-binds the section but must NOT reset the column map: a section with no
+  header row of its own inherits the one above it. This is common and easy to miss.
+- A **blank row** ends a section, not the walk. Several may sit between sections.
+- A banner is **ambiguous with a name-only data row** — both are a single populated cell
+  in column A. Disambiguate by "is the next non-blank row a header row?" OR a
+  section-title word pattern; a bare one-word cell that is neither is a person. Document
+  the contract ("give a new section a header row and it's recognised whatever it's called")
+  so the sheet's owner can extend it without a code change.
+- **Widen the A1 range to the widest section**, not the first one. The hired block ending
+  at column I while the roster runs to J silently truncates a column for every later row.
+<!-- Source: second-brain #953, 2026-07-31 -->
