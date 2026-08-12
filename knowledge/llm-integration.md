@@ -187,3 +187,32 @@ breaks the usual "row 0 is the header, stop at the first blank" parser. Walk it 
 - **Widen the A1 range to the widest section**, not the first one. The hired block ending
   at column I while the roster runs to J silently truncates a column for every later row.
 <!-- Source: second-brain #953, 2026-07-31 -->
+
+## Absence-of-a-field beats a model self-report for "the user didn't specify"
+
+When code needs to apply a default only if the user did NOT specify something, do
+not ask the model to report that ("windowsFromUser: true/false", "userGaveTime").
+A self-report is just another field the model can get wrong, and it fails
+silently: the default gets applied to a request the user made explicitly.
+
+Instead make the ABSENCE of the field carry the meaning. Instruct the model to
+emit the field ONLY when the user actually named the value, drop it from the
+tool schema's `required` list, and have code supply the default when it's
+missing. Explicit-vs-default then becomes a structural fact about the payload
+rather than a claim the model makes about its own reasoning.
+
+Two things this requires, both of which bit on first implementation:
+
+1. **A non-empty-but-unparseable field is NOT "absent."** If the model tried to
+   supply the value and every item failed validation, the user DID specify
+   something — collapsing that to "absent" applies the default to an explicit
+   request, which is the exact failure the design exists to prevent. Treat it as
+   malformed and take the normal fallback path. `[]` (absent) and
+   `[garbage]` (malformed) must diverge. (CodeRabbit CLI caught this as a MAJOR
+   in second-brain #959; the adversarial pass had missed it.)
+2. **Delete the old default from the prompt, not just the schema.** A prompt that
+   still says "with no stated range, use 08:00–20:00" will keep the model
+   inventing the very window the code is now supposed to own. Add an explicit
+   "never invent a default; an omitted field is how you say 'not specified'".
+
+<!-- Source: second-brain #959 (calendar availability working-hours default), 2026-08-06 -->

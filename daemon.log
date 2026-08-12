@@ -147,3 +147,184 @@
 [2026-08-01T07:55:37.276Z] [supervisor] auth: proactive refresh starting
 [2026-08-01T07:55:37.812Z] [supervisor] auth: scheduling proactive refresh in 28560s
 [2026-08-01T07:55:37.812Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-01T15:51:37.733Z] [supervisor] auth: proactive refresh starting
+[2026-08-01T15:51:38.217Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-01T15:51:38.217Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-01T23:47:38.126Z] [supervisor] auth: proactive refresh starting
+[2026-08-01T23:47:38.172Z] [supervisor] auth: scheduling proactive refresh in 28510s
+[2026-08-01T23:47:38.172Z] [supervisor] auth: token still valid (cross-process refresh or not yet due)
+[2026-08-02T07:45:15.529Z] [supervisor] auth: proactive refresh starting
+[2026-08-02T07:45:15.741Z] [supervisor] auth: proactive refresh failed, retrying in ~60s (token still valid)
+[2026-08-02T07:45:15.741Z] [supervisor] auth: scheduling proactive refresh in 60s
+[2026-08-02T08:00:41.557Z] [supervisor] auth: proactive refresh starting
+[2026-08-02T08:00:41.666Z] [supervisor] auth: proactive refresh failed, signalling re-auth required
+[2026-08-02T08:00:41.675Z] [supervisor] auth: headless daemon cannot complete OAuth — run `claude auth login` to refresh
+[2026-08-02T08:00:41.675Z] [supervisor] auth: no token found, will re-check keychain every 30s
+[2026-08-02T10:54:48.098Z] [supervisor] auth: scheduling proactive refresh in 28559s
+[2026-08-02T10:54:48.099Z] [supervisor] auth: token refreshed via keychain re-check retry
+[2026-08-02T18:51:16.076Z] [supervisor] auth: proactive refresh starting
+[2026-08-02T18:51:16.121Z] [supervisor] auth: scheduling proactive refresh in 28493s
+[2026-08-02T18:51:16.121Z] [supervisor] auth: token still valid (cross-process refresh or not yet due)
+[2026-08-03T02:46:42.191Z] [supervisor] auth: proactive refresh starting
+[2026-08-03T02:46:43.826Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-03T02:46:43.826Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-03T10:49:33.077Z] [supervisor] auth: proactive refresh starting
+[2026-08-03T10:49:34.039Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-03T10:49:34.039Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-03T18:46:07.570Z] [supervisor] auth: proactive refresh starting
+[2026-08-03T18:46:08.377Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-03T18:46:08.377Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-04T00:43:10.146Z] [supervisor] binary at /Users/padminipyapali/.local/bin/claude changed (/Users/padminipyapali/.local/share/claude/versions/2.1.220 → /Users/padminipyapali/.local/share/claude/versions/2.1.221) — self-restarting for upgrade
+[2026-08-04T00:43:10.217Z] [supervisor] shutting down (cause=upgrade, uptime=688475s, leases=0, live_workers=1)
+[2026-08-04T00:43:12.675Z] [supervisor] ─── daemon start ─── version=2.1.221 pid=88858 origin=transient
+[2026-08-04T00:43:12.685Z] [supervisor] auth: scheduling proactive refresh in 7136s
+[2026-08-04T00:43:12.685Z] [supervisor] auth: scheduling proactive refresh in 7136s
+[2026-08-04T00:43:12.691Z] [supervisor] workers=0
+[2026-08-04T00:43:12.696Z] [bg] bg: control socket bound at /tmp/cc-daemon-501/c1568d91/control.sock
+[2026-08-04T00:43:12.706Z] [bg] bg adopt: adopted=1 respawned=0 dead=0
+[2026-08-04T00:43:12.707Z] [bg] bg orphan-spare reap: 1
+[2026-08-04T00:43:12.717Z] [bg] bg spare spawned host pid=88866
+[2026-08-04T00:43:27.727Z] [bg] bg: post-takeover prewarm burst — respawned 0/1 stale workers, 1 refused in 0s
+[2026-08-04T02:42:08.296Z] [supervisor] auth: proactive refresh starting
+[2026-08-04T02:42:08.781Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-04T02:42:08.781Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-04T10:41:26.790Z] [supervisor] auth: proactive refresh starting
+[2026-08-04T10:41:27.571Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-04T10:41:27.571Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-04T18:37:27.498Z] [supervisor] auth: proactive refresh starting
+[2026-08-04T18:37:28.040Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-04T18:37:28.040Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-04T22:45:53.886Z] [supervisor] binary at /Users/padminipyapali/.local/bin/claude changed (/Users/padminipyapali/.local/share/claude/versions/2.1.221 → /Users/padminipyapali/.local/share/claude/versions/2.1.222) — self-restarting for upgrade
+[2026-08-04T22:45:53.893Z] [supervisor] shutting down (cause=upgrade, uptime=79361s, leases=0, live_workers=1)
+[2026-08-04T22:45:56.391Z] [supervisor] ─── daemon start ─── version=2.1.222 pid=59389 origin=transient
+[2026-08-04T22:45:56.396Z] [supervisor] auth: scheduling proactive refresh in 13652s
+[2026-08-04T22:45:56.397Z] [supervisor] auth: scheduling proactive refresh in 13652s
+[2026-08-04T22:45:56.402Z] [supervisor] workers=0
+[2026-08-04T22:45:56.405Z] [bg] bg: control socket bound at /tmp/cc-daemon-501/c1568d91/control.sock
+[2026-08-04T22:45:56.414Z] [bg] bg adopt: adopted=1 respawned=0 dead=0
+[2026-08-04T22:45:56.415Z] [bg] bg orphan-spare reap: 1
+[2026-08-04T22:45:56.425Z] [bg] bg spare spawned host pid=59398
+[2026-08-04T22:48:45.432Z] [bg] bg: post-takeover prewarm burst — respawned 0/1 stale workers, 1 refused in 0s
+[2026-08-05T02:46:19.765Z] [supervisor] auth: proactive refresh starting
+[2026-08-05T02:46:20.534Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-05T02:46:20.534Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-05T10:43:52.024Z] [supervisor] auth: proactive refresh starting
+[2026-08-05T10:43:52.797Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-05T10:43:52.797Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-05T18:39:58.159Z] [supervisor] auth: proactive refresh starting
+[2026-08-05T18:39:58.630Z] [supervisor] auth: proactive refresh failed, retrying in ~60s (token still valid)
+[2026-08-05T18:39:58.630Z] [supervisor] auth: scheduling proactive refresh in 60s
+[2026-08-05T18:40:58.633Z] [supervisor] auth: proactive refresh starting
+[2026-08-05T18:40:58.683Z] [supervisor] auth: scheduling proactive refresh in 28517s
+[2026-08-05T18:40:58.683Z] [supervisor] auth: token still valid (cross-process refresh or not yet due)
+[2026-08-06T02:37:43.403Z] [supervisor] auth: proactive refresh starting
+[2026-08-06T02:37:44.237Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-06T02:37:44.237Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-06T03:43:43.467Z] [supervisor] binary at /Users/padminipyapali/.local/bin/claude changed (/Users/padminipyapali/.local/share/claude/versions/2.1.222 → /Users/padminipyapali/.local/share/claude/versions/2.1.223) — self-restarting for upgrade
+[2026-08-06T03:43:43.482Z] [supervisor] shutting down (cause=upgrade, uptime=104267s, leases=0, live_workers=1)
+[2026-08-06T03:43:45.881Z] [supervisor] ─── daemon start ─── version=2.1.223 pid=17126 origin=transient
+[2026-08-06T03:43:45.892Z] [supervisor] auth: scheduling proactive refresh in 24598s
+[2026-08-06T03:43:45.892Z] [supervisor] auth: scheduling proactive refresh in 24598s
+[2026-08-06T03:43:45.897Z] [supervisor] workers=0
+[2026-08-06T03:43:45.906Z] [bg] bg: control socket bound at /tmp/cc-daemon-501/c1568d91/control.sock
+[2026-08-06T03:43:45.913Z] [bg] bg adopt: adopted=1 respawned=0 dead=0
+[2026-08-06T03:43:45.914Z] [bg] bg orphan-spare reap: 1
+[2026-08-06T03:43:45.924Z] [bg] bg spare spawned host pid=17137
+[2026-08-06T03:44:00.931Z] [bg] bg: post-takeover prewarm burst — respawned 0/1 stale workers, 1 refused in 0s
+[2026-08-06T10:36:12.267Z] [supervisor] auth: proactive refresh starting
+[2026-08-06T10:36:13.365Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-06T10:36:13.365Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-06T18:32:13.277Z] [supervisor] auth: proactive refresh starting
+[2026-08-06T18:32:13.778Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-06T18:32:13.778Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-07T02:28:13.671Z] [supervisor] auth: proactive refresh starting
+[2026-08-07T02:28:14.134Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-07T02:28:14.134Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-07T04:07:23.280Z] [supervisor] binary at /Users/padminipyapali/.local/bin/claude changed (/Users/padminipyapali/.local/share/claude/versions/2.1.223 → /Users/padminipyapali/.local/share/claude/versions/2.1.224) — self-restarting for upgrade
+[2026-08-07T04:07:23.284Z] [supervisor] shutting down (cause=upgrade, uptime=87817s, leases=0, live_workers=1)
+[2026-08-07T04:07:25.768Z] [supervisor] ─── daemon start ─── version=2.1.224 pid=75986 origin=transient
+[2026-08-07T04:07:25.774Z] [supervisor] auth: scheduling proactive refresh in 22608s
+[2026-08-07T04:07:25.774Z] [supervisor] auth: scheduling proactive refresh in 22608s
+[2026-08-07T04:07:25.780Z] [supervisor] workers=0
+[2026-08-07T04:07:25.783Z] [bg] bg: control socket bound at /tmp/cc-daemon-501/c1568d91/control.sock
+[2026-08-07T04:07:25.793Z] [bg] bg adopt: adopted=1 respawned=0 dead=0
+[2026-08-07T04:07:25.794Z] [bg] bg orphan-spare reap: 1
+[2026-08-07T04:07:25.804Z] [bg] bg spare spawned host pid=76010
+[2026-08-07T04:07:40.810Z] [bg] bg: post-takeover prewarm burst — respawned 0/1 stale workers, 1 refused in 0s
+[2026-08-07T10:24:13.986Z] [supervisor] auth: proactive refresh starting
+[2026-08-07T10:24:14.563Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-07T10:24:14.563Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-07T18:20:14.411Z] [supervisor] auth: proactive refresh starting
+[2026-08-07T18:20:14.537Z] [supervisor] auth: proactive refresh failed, retrying in ~60s (token still valid)
+[2026-08-07T18:20:14.537Z] [supervisor] auth: scheduling proactive refresh in 60s
+[2026-08-07T18:21:14.537Z] [supervisor] auth: proactive refresh starting
+[2026-08-07T18:21:14.667Z] [supervisor] auth: proactive refresh failed, retrying in ~60s (token still valid)
+[2026-08-07T18:21:14.667Z] [supervisor] auth: scheduling proactive refresh in 60s
+[2026-08-07T18:22:14.669Z] [supervisor] auth: proactive refresh starting
+[2026-08-07T18:22:14.794Z] [supervisor] auth: proactive refresh failed, retrying in ~60s (token still valid)
+[2026-08-07T18:22:14.794Z] [supervisor] auth: scheduling proactive refresh in 60s
+[2026-08-07T18:23:14.795Z] [supervisor] auth: proactive refresh starting
+[2026-08-07T18:23:14.929Z] [supervisor] auth: proactive refresh failed, retrying in ~60s (token still valid)
+[2026-08-07T18:23:14.929Z] [supervisor] auth: scheduling proactive refresh in 60s
+[2026-08-07T18:24:14.931Z] [supervisor] auth: proactive refresh starting
+[2026-08-07T18:24:15.057Z] [supervisor] auth: proactive refresh failed, signalling re-auth required
+[2026-08-07T18:24:15.063Z] [supervisor] auth: headless daemon cannot complete OAuth — run `claude auth login` to refresh
+[2026-08-07T18:24:15.063Z] [supervisor] auth: no token found, will re-check keychain every 30s
+[2026-08-07T18:43:45.151Z] [supervisor] auth: scheduling proactive refresh in 28557s
+[2026-08-07T18:43:45.151Z] [supervisor] auth: token found via keychain re-check
+[2026-08-08T02:39:42.337Z] [supervisor] auth: proactive refresh starting
+[2026-08-08T02:39:42.807Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-08T02:39:42.807Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-08T10:45:56.832Z] [supervisor] auth: proactive refresh starting
+[2026-08-08T10:45:57.687Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-08T10:45:57.687Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-08T18:44:14.157Z] [supervisor] auth: proactive refresh starting
+[2026-08-08T18:44:14.870Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-08T18:44:14.870Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-09T02:46:48.474Z] [supervisor] auth: proactive refresh starting
+[2026-08-09T02:46:49.239Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-09T02:46:49.239Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-09T10:54:00.432Z] [supervisor] auth: proactive refresh starting
+[2026-08-09T10:54:01.376Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-09T10:54:01.376Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-09T18:53:19.333Z] [supervisor] auth: proactive refresh starting
+[2026-08-09T18:53:19.373Z] [supervisor] auth: scheduling proactive refresh in 28334s
+[2026-08-09T18:53:19.373Z] [supervisor] auth: token still valid (cross-process refresh or not yet due)
+[2026-08-10T02:57:53.229Z] [supervisor] auth: proactive refresh starting
+[2026-08-10T02:57:54.038Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-10T02:57:54.038Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-10T10:57:07.181Z] [supervisor] auth: proactive refresh starting
+[2026-08-10T10:57:09.417Z] [supervisor] auth: scheduling proactive refresh in 28559s
+[2026-08-10T10:57:09.417Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-10T18:54:46.943Z] [supervisor] auth: proactive refresh starting
+[2026-08-10T18:54:47.863Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-10T18:54:47.863Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-11T02:50:47.756Z] [supervisor] auth: proactive refresh starting
+[2026-08-11T02:50:48.205Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-11T02:50:48.205Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-11T10:47:02.111Z] [supervisor] auth: proactive refresh starting
+[2026-08-11T10:47:02.846Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-11T10:47:02.846Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-11T18:43:02.812Z] [supervisor] auth: proactive refresh starting
+[2026-08-11T18:43:03.299Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-11T18:43:03.300Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-12T02:44:05.969Z] [supervisor] auth: proactive refresh starting
+[2026-08-12T02:44:06.788Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-12T02:44:06.788Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-12T10:47:19.196Z] [supervisor] auth: proactive refresh starting
+[2026-08-12T10:47:20.015Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-12T10:47:20.015Z] [supervisor] auth: proactive refresh succeeded
+[2026-08-12T16:57:07.775Z] [supervisor] binary at /Users/padminipyapali/.local/bin/claude changed (/Users/padminipyapali/.local/share/claude/versions/2.1.224 → /Users/padminipyapali/.local/share/claude/versions/2.1.228) — self-restarting for upgrade
+[2026-08-12T16:57:07.786Z] [supervisor] shutting down (cause=upgrade, uptime=478182s, leases=0, live_workers=1)
+[2026-08-12T16:57:10.380Z] [supervisor] ─── daemon start ─── version=2.1.228 pid=86118 origin=transient
+[2026-08-12T16:57:10.386Z] [supervisor] auth: scheduling proactive refresh in 6370s
+[2026-08-12T16:57:10.386Z] [supervisor] auth: scheduling proactive refresh in 6370s
+[2026-08-12T16:57:10.393Z] [supervisor] workers=0
+[2026-08-12T16:57:10.396Z] [bg] bg: control socket bound at /tmp/cc-daemon-501/c1568d91/control.sock
+[2026-08-12T16:57:10.406Z] [bg] bg adopt: adopted=1 respawned=0 dead=0
+[2026-08-12T16:57:10.407Z] [bg] bg orphan-spare reap: 1
+[2026-08-12T16:57:10.418Z] [bg] bg spare spawned host pid=86129
+[2026-08-12T16:57:25.424Z] [bg] bg: post-takeover prewarm burst — respawned 0/1 stale workers, 1 refused in 0s
+[2026-08-12T18:43:19.899Z] [supervisor] auth: proactive refresh starting
+[2026-08-12T18:43:20.403Z] [supervisor] auth: scheduling proactive refresh in 28560s
+[2026-08-12T18:43:20.403Z] [supervisor] auth: proactive refresh succeeded

@@ -45,6 +45,10 @@
     "defaultMode": "auto"
   },
   "model": "opus[1m]",
+  "skillOverrides": {
+    "review-fix": "off",
+    "review-fix-loop": "off"
+  },
   "hooks": {
     "PreToolUse": [
       {
@@ -109,9 +113,5 @@
   "effortLevel": "medium",
   "skipWorkflowUsageWarning": true,
   "theme": "light",
-  "remoteControlAtStartup": false,
-  "skillOverrides": {
-    "review-fix": "off",
-    "review-fix-loop": "off"
-  }
+  "remoteControlAtStartup": false
 }
