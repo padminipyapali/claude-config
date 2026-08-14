@@ -7,6 +7,28 @@ Cross-project learnings for testing strategy, mocking, and assertions.
 - **"Include tests" means flow-level tests.** Pure-function tests on extracted helpers cannot catch missing code paths.
 - **Byte-identity anchoring for engines that wrap proven artifacts.** When building an engine whose job is to reproduce already-proven outputs (a template renderer over proven prompts, a build script over a frozen dataset), the highest-value tests are golden-master replays (template + original slot values → byte-identical proven output) plus parse/serialize round-trips on the real repo files. This doubles as a data audit: plush-press #15's strict parser surfaced two latent data bugs in existing files (`../`-prefixed attachment paths; invalid YAML in `story-page.md`) that no unit test would have found. <!-- Source: post-mortem, plush-press #15, 2026-06-10 -->
 
+## Invariant Tests
+
+- **Write a test for each product invariant that can be expressed as one.** Not "does this
+  function return the right value" but "does this rule still hold across the codebase" — e.g.
+  no surface displays a count of X; no provenance column exists on Y; the selection has no
+  memory. Invariants without tests decay: they live in a spec nobody rereads, and the person
+  who violates one in eight months will be doing something locally reasonable. A failing test
+  makes them go read *why* the rule exists before deleting it. <!-- Source: lasya, 2026-08-14 -->
+- **A source-scanning invariant test must strip comments and must assert behaviour where it
+  can.** Two failure modes, both observed on the same project: (1) a regex over the file's own
+  source matched the forbidden words in the *doc comment explaining the invariant*, so the
+  test failed on correct code; (2) the corrected version — "the exported function names do not
+  match /count|total|tally/" — is a spelling check wearing an invariant's name, and passes for
+  a module that does nothing, or one that spells the forbidden thing differently. Use source
+  scanning only for properties genuinely not observable at runtime (e.g. "this column does not
+  exist in the DDL"), and prefer a behavioural assertion everywhere else. <!-- Source: lasya, adversarial review 2026-08-14 -->
+- **Cross-language duplicated constants need a test that reads both files.** An App Group id,
+  a notification name, a JSON field name, or a palette hex duplicated between TypeScript and
+  Swift has nothing enforcing agreement, and a typo means data written to a container nobody
+  reads — silent, with no error. A test that reads the real files and asserts every site
+  agrees is a few lines and catches an entire class of invisible failure. <!-- Source: lasya, 2026-08-14 -->
+
 ## Test Design
 
 - **MUTATION-VERIFY any test written to pin a specific line: break the line, watch the test go RED, restore it. A green run only proves the test PASSES, never that it TESTS anything.** plush-press #312 deleted a Variations suite that held the only SceneCanvas-level assertion pinning `busy = renderBusy || tuneBusy || savingBackdrop` (`SceneCanvas.tsx:643`) and replaced it with a focused test in the render-flow suite. The implementer didn't stop at a green run: it **dropped `tuneBusy` from the composition, confirmed the new test FAILED, then restored it** — proving the test actually pins the seam rather than passing vacuously. This matters most in exactly the situation that produced it: a replacement test written to close a coverage gap left by a deletion, where a vacuous pass restores the *appearance* of coverage while the gap stays open — strictly worse than no test, because it stops anyone from looking again. Cheap protocol (seconds, no tooling): invert/delete the condition under test → run the single test → require RED → `git checkout` the file. Do it whenever a test's whole purpose is to guard ONE expression, and assert **both edges** of a boolean gate (the block raising AND lifting), since a test that only asserts the busy state passes against a permanently-stuck-busy component. <!-- Source: post-mortem, plush-press #312, 2026-07-16 -->

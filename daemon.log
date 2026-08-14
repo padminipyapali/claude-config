@@ -371,3 +371,14 @@
 [2026-08-14T19:21:58.504Z] [supervisor] auth: proactive refresh starting
 [2026-08-14T19:21:58.562Z] [supervisor] auth: scheduling proactive refresh in 28505s
 [2026-08-14T19:21:58.562Z] [supervisor] auth: token still valid (cross-process refresh or not yet due)
+[2026-08-14T22:21:10.656Z] [supervisor] binary at /Users/padminipyapali/.local/bin/claude changed (/Users/padminipyapali/.local/share/claude/versions/2.1.232 → /Users/padminipyapali/.local/share/claude/versions/2.1.233) — self-restarting for upgrade
+[2026-08-14T22:21:10.704Z] [supervisor] shutting down (cause=upgrade, uptime=83212s, leases=0, live_workers=1)
+[2026-08-14T22:21:13.362Z] [supervisor] ─── daemon start ─── version=2.1.233 pid=45451 origin=transient
+[2026-08-14T22:21:13.368Z] [supervisor] auth: scheduling proactive refresh in 17750s
+[2026-08-14T22:21:13.369Z] [supervisor] auth: scheduling proactive refresh in 17750s
+[2026-08-14T22:21:13.373Z] [supervisor] workers=0
+[2026-08-14T22:21:13.377Z] [bg] bg: control socket bound at /tmp/cc-daemon-501/c1568d91/control.sock
+[2026-08-14T22:21:13.383Z] [bg] bg adopt: adopted=1 respawned=0 dead=0
+[2026-08-14T22:21:13.384Z] [bg] bg orphan-spare reap: 1
+[2026-08-14T22:21:13.388Z] [bg] bg spare spawned host pid=45465
+[2026-08-14T22:21:28.397Z] [bg] bg: post-takeover prewarm burst — respawned 0/1 stale workers, 1 refused in 0s

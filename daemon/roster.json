@@ -1,7 +1,7 @@
 {
   "proto": 1,
-  "supervisorPid": 35569,
-  "updatedAt": 1786662858749,
+  "supervisorPid": 45451,
+  "updatedAt": 1786746073384,
   "workers": {
     "76109862": {
       "pid": 60414,
