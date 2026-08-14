@@ -18,7 +18,7 @@
     "enter-to-steer-in-relatime": 586,
     "todo-list": 586,
     "install-github-app": 594,
-    "install-slack-app": 584,
+    "install-slack-app": 594,
     "drag-and-drop-images": 584,
     "paste-images-mac": 584,
     "double-esc-code-restore": 584,
@@ -35,7 +35,7 @@
     "agent-flag": 413,
     "overage-promo": 100,
     "default-permission-mode-config": 570,
-    "permissions": 584,
+    "permissions": 594,
     "rename-conversation": 586,
     "custom-commands": 422,
     "git-worktrees": 588,
@@ -64,7 +64,7 @@
     "artifact-duplicate": 594,
     "c4e-remote-sessions": 594
   },
-  "promptQueueUseCount": 279609,
+  "promptQueueUseCount": 279611,
   "btwUseCount": 27,
   "cachedGrowthBookFeatures": {
     "tengu_auto_mode_config": {
@@ -2772,8 +2772,8 @@
       "lastUsedAt": 1782576947055
     },
     "adversarial-review": {
-      "usageCount": 157,
-      "lastUsedAt": 1786075290825
+      "usageCount": 158,
+      "lastUsedAt": 1786680957639
     },
     "review": {
       "usageCount": 4,
@@ -2820,8 +2820,8 @@
       "lastUsedAt": 1771516140979
     },
     "project-setup": {
-      "usageCount": 8,
-      "lastUsedAt": 1776869164415
+      "usageCount": 9,
+      "lastUsedAt": 1786680281243
     },
     "statusline": {
       "usageCount": 2,
@@ -3134,7 +3134,7 @@
   "seenNotifications": {},
   "hasResetAutoModeOptInForDefaultOffer": true,
   "routineFiredWatermark": "2026-05-10T17:03:42.514Z",
-  "cachedGrowthBookFeaturesAt": 1786677573213,
+  "cachedGrowthBookFeaturesAt": 1786678490544,
   "tipLifetimeShownCounts": {
     "theme-command": 6,
     "paste-images-mac": 11,
@@ -3156,8 +3156,8 @@
     "color-when-multi-clauding": 11,
     "default-permission-mode-config": 9,
     "install-github-app": 11,
-    "install-slack-app": 10,
-    "permissions": 10,
+    "install-slack-app": 11,
+    "permissions": 11,
     "vercel-plugin": 2,
     "agents-view-multiclauding": 5,
     "drag-and-drop-images": 10,

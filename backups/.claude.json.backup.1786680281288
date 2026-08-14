@@ -18,7 +18,7 @@
     "enter-to-steer-in-relatime": 586,
     "todo-list": 586,
     "install-github-app": 594,
-    "install-slack-app": 584,
+    "install-slack-app": 594,
     "drag-and-drop-images": 584,
     "paste-images-mac": 584,
     "double-esc-code-restore": 584,
@@ -35,7 +35,7 @@
     "agent-flag": 413,
     "overage-promo": 100,
     "default-permission-mode-config": 570,
-    "permissions": 584,
+    "permissions": 594,
     "rename-conversation": 586,
     "custom-commands": 422,
     "git-worktrees": 588,
@@ -64,7 +64,7 @@
     "artifact-duplicate": 594,
     "c4e-remote-sessions": 594
   },
-  "promptQueueUseCount": 279609,
+  "promptQueueUseCount": 279610,
   "btwUseCount": 27,
   "cachedGrowthBookFeatures": {
     "tengu_auto_mode_config": {
@@ -3156,8 +3156,8 @@
     "color-when-multi-clauding": 11,
     "default-permission-mode-config": 9,
     "install-github-app": 11,
-    "install-slack-app": 10,
-    "permissions": 10,
+    "install-slack-app": 11,
+    "permissions": 11,
     "vercel-plugin": 2,
     "agents-view-multiclauding": 5,
     "drag-and-drop-images": 10,

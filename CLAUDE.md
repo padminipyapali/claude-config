@@ -111,7 +111,7 @@ Every feature/fix follows these steps. The orchestrator announces step transitio
 
 **What's intentionally NOT in this flow:** Separate hardening pass (2b), internal line-by-line review, GitHub CodeRabbit reviews, CI verification loop, hardening checklist artifact. These were over-engineered for solo development. The local review (Step 4) catches the same issues faster.
 
-**Step 4 detail:** Run sequentially: (4a) `/simplify` on changed files, (4b) `coderabbit review --plain -t all --base main` via CLI, (4c) adversarial review checklist. Fix all findings between each. If CodeRabbit CLI times out, retry once with 2-min backoff — don't skip.
+**Step 4 detail:** Run sequentially: (4a) `/simplify` on changed files, (4b) `coderabbit review --committed --base main` via CLI (the older `--plain -t all` flags were removed from the CLI; plain text is now the default mode), (4c) adversarial review checklist. Fix all findings between each. If CodeRabbit CLI times out, retry once with 2-min backoff — don't skip.
 
 > **Details:** See `~/.claude/knowledge/development-steps.md` for full sub-step procedures and PR body templates.
 
