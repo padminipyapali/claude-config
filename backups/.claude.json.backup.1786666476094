@@ -7,7 +7,7 @@
   "tipsHistory": {
     "new-user-warmup": 9,
     "plan-mode-for-complex-tasks": 587,
-    "memory-command": 576,
+    "memory-command": 594,
     "theme-command": 584,
     "colorterm-truecolor": 1,
     "status-line": 201,
@@ -26,7 +26,7 @@
     "shift-tab": 584,
     "image-paste": 586,
     "desktop-app": 409,
-    "web-app": 576,
+    "web-app": 594,
     "mobile-app": 411,
     "frontend-design-plugin": 346,
     "guest-passes": 589,
@@ -60,7 +60,8 @@
     "c4e-desktop": 556,
     "auto-copy-config-hint": 573,
     "ultrareview-awareness": 590,
-    "ultrareview-post-commit": 590
+    "ultrareview-post-commit": 590,
+    "artifact-duplicate": 594
   },
   "promptQueueUseCount": 279609,
   "btwUseCount": 27,
@@ -3146,8 +3147,8 @@
     "enter-to-steer-in-relatime": 6,
     "todo-list": 6,
     "image-paste": 6,
-    "memory-command": 7,
-    "web-app": 7,
+    "memory-command": 8,
+    "web-app": 8,
     "custom-agents": 7,
     "git-worktrees": 10,
     "color-when-multi-clauding": 11,
@@ -3170,7 +3171,8 @@
     "c4e-desktop": 1,
     "auto-copy-config-hint": 1,
     "ultrareview-awareness": 1,
-    "ultrareview-post-commit": 1
+    "ultrareview-post-commit": 1,
+    "artifact-duplicate": 1
   },
   "pluginUsage": {
     "frontend-design@claude-plugins-official": {
@@ -3189,8 +3191,8 @@
       "lastUsedNumStartups": 525
     },
     "playwright@claude-plugins-official": {
-      "usageCount": 2859,
-      "lastUsedAt": 1786665169105,
+      "usageCount": 2868,
+      "lastUsedAt": 1786666097338,
       "lastUsedNumStartups": 594
     },
     "feature-dev@claude-plugins-official": {
