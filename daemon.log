@@ -359,3 +359,9 @@
 [2026-08-13T23:14:18.748Z] [bg] bg orphan-spare reap: 1
 [2026-08-13T23:14:18.753Z] [bg] bg spare spawned host pid=35580
 [2026-08-13T23:14:33.762Z] [bg] bg: post-takeover prewarm burst — respawned 0/1 stale workers, 1 refused in 0s
+[2026-08-14T02:35:58.072Z] [supervisor] auth: proactive refresh starting
+[2026-08-14T02:35:58.492Z] [supervisor] auth: proactive refresh failed, signalling re-auth required
+[2026-08-14T02:35:58.496Z] [supervisor] auth: headless daemon cannot complete OAuth — run `claude auth login` to refresh
+[2026-08-14T02:35:58.496Z] [supervisor] auth: no token found, will re-check keychain every 30s
+[2026-08-14T03:19:58.655Z] [supervisor] auth: scheduling proactive refresh in 28534s
+[2026-08-14T03:19:58.655Z] [supervisor] auth: token found via keychain re-check

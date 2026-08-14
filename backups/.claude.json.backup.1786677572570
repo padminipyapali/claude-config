@@ -31,7 +31,7 @@
     "frontend-design-plugin": 346,
     "guest-passes": 589,
     "ide-upsell-external-terminal": 554,
-    "custom-agents": 577,
+    "custom-agents": 594,
     "agent-flag": 413,
     "overage-promo": 100,
     "default-permission-mode-config": 570,
@@ -56,12 +56,13 @@
     "dynamic-workflows": 589,
     "no-flicker": 590,
     "artifact-publish-plan": 561,
-    "workflow-size-prompting-ambient": 582,
+    "workflow-size-prompting-ambient": 594,
     "c4e-desktop": 556,
     "auto-copy-config-hint": 573,
     "ultrareview-awareness": 590,
     "ultrareview-post-commit": 590,
-    "artifact-duplicate": 594
+    "artifact-duplicate": 594,
+    "c4e-remote-sessions": 594
   },
   "promptQueueUseCount": 279609,
   "btwUseCount": 27,
@@ -3149,7 +3150,7 @@
     "image-paste": 6,
     "memory-command": 8,
     "web-app": 8,
-    "custom-agents": 7,
+    "custom-agents": 8,
     "git-worktrees": 10,
     "color-when-multi-clauding": 11,
     "default-permission-mode-config": 9,
@@ -3167,12 +3168,13 @@
     "dynamic-workflows": 21,
     "no-flicker": 7,
     "artifact-publish-plan": 5,
-    "workflow-size-prompting-ambient": 4,
+    "workflow-size-prompting-ambient": 5,
     "c4e-desktop": 1,
     "auto-copy-config-hint": 1,
     "ultrareview-awareness": 1,
     "ultrareview-post-commit": 1,
-    "artifact-duplicate": 1
+    "artifact-duplicate": 1,
+    "c4e-remote-sessions": 1
   },
   "pluginUsage": {
     "frontend-design@claude-plugins-official": {
@@ -3191,8 +3193,8 @@
       "lastUsedNumStartups": 525
     },
     "playwright@claude-plugins-official": {
-      "usageCount": 2868,
-      "lastUsedAt": 1786666097338,
+      "usageCount": 2873,
+      "lastUsedAt": 1786666700134,
       "lastUsedNumStartups": 594
     },
     "feature-dev@claude-plugins-official": {
