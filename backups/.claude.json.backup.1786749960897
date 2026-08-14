@@ -64,7 +64,7 @@
     "artifact-duplicate": 594,
     "c4e-remote-sessions": 594
   },
-  "promptQueueUseCount": 279651,
+  "promptQueueUseCount": 279653,
   "btwUseCount": 27,
   "cachedGrowthBookFeatures": {
     "tengu_frame_publish_context": true,
@@ -2954,8 +2954,8 @@
       "lastUsedAt": 1785346495364
     },
     "security-review": {
-      "usageCount": 1,
-      "lastUsedAt": 1786737982965
+      "usageCount": 2,
+      "lastUsedAt": 1786749756093
     },
     "claude-in-chrome": {
       "usageCount": 1,
