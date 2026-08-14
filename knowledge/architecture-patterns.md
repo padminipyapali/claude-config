@@ -138,3 +138,16 @@ Cross-project learnings for service design, error handling, and system architect
 
 ---
 *Sources: second-brain, lexica, command-center, family-digest*
+
+## Save-before-offer beats short-circuit-and-restore for confirm flows
+
+**Pattern (second-brain #961 PR-B, 2026-08-14).** When a detected message triggers a "do you want X?" confirmation with inline buttons, there are two ways to keep the user's text safe:
+
+1. **Short-circuit and restore** (the earlier source-connect flow): skip the normal save, stash the original text in the pending record, and re-save it if the user cancels. This has a hole — *if the user never taps anything, the message is never saved at all* — which is usually patched with an expiry sweep job.
+2. **Save first, then offer**: persist the message exactly as it would have been persisted without the feature, THEN send the offer. On accept, delete the auto-saved copy.
+
+Prefer (2). There is no window in which the text exists nowhere, an ignored offer costs nothing, and **the sweep job disappears entirely** — the sweep in (1) is pure accidental complexity created by the short-circuit.
+
+The cost is the mirror image and worth naming: on accept you must clean up the auto-saved copy, or the feature leaves a duplicate behind. Make that cleanup best-effort and *report it honestly* — if the delete fails, say "the original note is still in your feed" rather than claiming a tidiness you didn't achieve. A failed cleanup is untidy; a failed save is data loss. Never trade the second for the first.
+
+**Corollary — don't stamp an idempotency marker on a condition that will resolve itself.** These flows stamp `confirmedAt` so a repeat tap is a no-op. But if the failure was "the table doesn't exist yet" (hand-applied migration pending), stamping makes the offer permanently terminal: the user can never tap Save again once the migration lands. Stamp on *decisions*, not on *transient infrastructure states*. Same rule for a thrown DB error.

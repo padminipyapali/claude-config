@@ -216,3 +216,36 @@ Two things this requires, both of which bit on first implementation:
    "never invent a default; an omitted field is how you say 'not specified'".
 
 <!-- Source: second-brain #959 (calendar availability working-hours default), 2026-08-06 -->
+
+## The "I don't know" gate: using an LLM where a lookup API was the alternative
+
+**Pattern (second-brain #961, 2026-08-13).** When you replace a factual lookup API (dictionary, geocoder, reference DB) with an LLM because the API's coverage is too narrow, you inherit a failure mode the API did not have: the API returns 404 for an unknown input, while the LLM returns a confident, well-formed, invented answer. On surfaces where the user cannot independently verify the result — a dictionary definition, a translation, a citation — that invented answer is indistinguishable from a real one and gets stored as fact.
+
+**The fix is to make "I don't know" a first-class, structured output, and check it before anything else:**
+
+```ts
+// The model MUST return these, and they are validated FIRST — before any
+// content field is inspected, so a low-confidence answer can never leak
+// through on the strength of its other fields looking well-formed.
+if (raw.isRealWord !== true || (typeof raw.confidence === "number" ? raw.confidence : 0) < 0.5) {
+  return { status: "unknown" };   // caller says so; nothing is stored
+}
+```
+
+Three details that make it actually work:
+
+1. **Strict `=== true`**, not truthiness — models return `"yes"` and `1`, and a truthy check silently passes the gate it exists to enforce.
+2. **A missing field is a failure, not a default.** Treat absent `confidence` as 0. A model that omits the field is not a model that is confident.
+2b. **RANGE-check the confidence, never floor-check it.** `if (conf < MIN) reject` has a hole that is easy to miss and impossible to see in passing tests: **every comparison with `NaN` is false**, so `NaN < 0.5` is `false` and a `confidence: NaN` payload sails straight through the gate that exists to stop it. `confidence: 7` passes too, and a model returning 7 for a documented 0-1 field has ignored the schema — its self-report is not evidence of anything. Write the positive assertion instead:
+```ts
+const valid = typeof c === "number" && Number.isFinite(c) && c >= MIN && c <= 1;
+if (!isReal || !valid) return { status: "unknown" };
+```
+This generalizes past LLM gates: any numeric threshold check on parsed external JSON should assert the number is finite and in range, not merely on the right side of one bound.
+3. **The prompt must give it an out.** "NEVER invent a definition for a word you do not know; set isRealWord to false" — without an explicit sanctioned escape, a model asked to fill a JSON schema will fill it.
+
+**Related gate — echo the input back and compare.** Models silently "correct" typos and answer about a different input than the one asked (`"lucubrait"` → an entry about `lucubrate`). Require the model to echo the input, compare it (normalized) to what you sent, and treat a mismatch as a SUGGESTION the user must accept, never a silent substitution. Store the user's spelling, not the model's.
+
+**Discriminated result, not an empty fallback.** Suggestion-style services in this codebase degrade to `[]` on failure, which is right when the output is a convenience. It is wrong here: a blank definition would be persisted as a row the user believes is real. Return `{status: "ok" | "unknown" | "mismatch" | "error"}` and force the caller to branch.
+
+See also: `architecture-patterns.md` — validate LLM structured output against the source of truth before persisting or displaying it.

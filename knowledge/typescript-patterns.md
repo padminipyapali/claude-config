@@ -171,3 +171,31 @@ Extracting inline logic into a shared helper can silently DROP an invariant a ca
 ## A shared cap carries the donor caller's horizon assumptions (second-brain #907 PR-B, 2026-07-19)
 
 Follow-up to the "port the strongest guard" rule: when a cap/threshold moves into a shared helper, re-derive its VALUE against every NEW consumer's range — a 60-day span cap valid for a weekly scheduler silently truncated multi-month absences once the same helper fed a 365-day scan, reintroducing the false-negative the guard family exists to prevent. Size runaway guards to the widest legitimate horizon any consumer can query (here MAX_QUERY_WINDOW_DAYS), not to the donor's domain.
+
+## Two functions that must agree about an input need one shared fold
+
+**Bug class (second-brain #961, 2026-08-13; caught by CodeRabbit pre-merge).** A dedupe key (`normalizeWord`) and an input validity gate (`isPlausibleWord`) each did their own character handling:
+
+```ts
+// normalizeWord — folds curly apostrophes and composes to NFC.
+word.normalize("NFC").replace(/[’]/g, "'").trim().toLowerCase()
+
+// isPlausibleWord — did NOT, and tested tokens with /^\p{L}[\p{L}'-]*\p{L}$/u
+word.trim()
+```
+
+They disagreed on two inputs a phone keyboard produces by default:
+- `ne’er-do-well` (U+2019) — normalized fine, but failed the token regex, which only allows the straight `'`.
+- A decomposed `résumé` (`e` + U+0301) — the combining mark is not `\p{L}`, so the gate rejected a word whose dedupe key was perfectly valid.
+
+Net effect: the feature rejected real words *before* the expensive path ever ran, and the rejection was invisible — it looked like "the bot doesn't know that word."
+
+**Rule.** When two functions must agree about the same input, extract the agreement into one private helper both call. Parallel implementations that merely *look* similar drift on exactly the inputs you didn't think to test.
+
+```ts
+function foldWord(w: string) { return w.normalize("NFC").replace(/[’]/g, "'"); }
+export const normalizeWord = (w: string) => foldWord(w).replace(/\s+/g," ").trim().toLowerCase();
+export const isPlausibleWord = (w: string) => { const t = foldWord(w).trim(); /* … */ };
+```
+
+**Test smell this also fixed:** a unicode test written with plain literals (`expect(normalizeWord("résumé")).toBe(normalizeWord("résumé"))`) is vacuous — both forms are visually identical and an editor save can precompose both. Write the escapes (`"résumé"` vs `"résumé"`) and assert the two raw strings differ before asserting their folds match.
