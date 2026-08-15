@@ -382,3 +382,6 @@
 [2026-08-14T22:21:13.384Z] [bg] bg orphan-spare reap: 1
 [2026-08-14T22:21:13.388Z] [bg] bg spare spawned host pid=45465
 [2026-08-14T22:21:28.397Z] [bg] bg: post-takeover prewarm burst — respawned 0/1 stale workers, 1 refused in 0s
+[2026-08-15T03:17:03.326Z] [supervisor] auth: proactive refresh starting
+[2026-08-15T03:17:03.392Z] [supervisor] auth: scheduling proactive refresh in 28508s
+[2026-08-15T03:17:03.392Z] [supervisor] auth: token still valid (cross-process refresh or not yet due)
