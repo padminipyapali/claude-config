@@ -573,3 +573,51 @@ enumerate every channel — status, body, headers, redirect, next UI state,
 timing — and verify each. Treat security claims in comments as assertions to
 test, not documentation to trust.
 
+## An absence assertion must be mutation-verified against the specific defect
+
+`expect(output).not.toContain(secret)` looks like proof that a redaction works.
+It is not. The normal failure mode for an off-by-N redaction is a **partial**
+leak — and a partial leak satisfies the assertion, because the intact string is
+no longer present.
+
+Ojas PR-1, 2026-08-16: a scrubber found offsets in a `toLowerCase()` copy of a
+third-party response body and indexed into the original. `toLowerCase()` is not
+length-preserving (U+0130 becomes two code units), so one such character shifted
+every later index and the redaction cut in the wrong place. The first test — a
+two-character shift plus `not.toContain(EMAIL)` — **passed against the broken
+implementation**, because the shift split the address rather than preserving it:
+the output still leaked its first characters and was corrupted around them, and
+the assertion could see neither. Only re-running against the unfixed code
+exposed that the test proved nothing.
+
+**Why:** an absence assertion tests for one exact string. Off-by-N, truncation,
+partial masking, encoding changes and case folding all produce output that
+contains the secret in a form the assertion misses.
+
+**How to apply:** for any test whose job is "the sensitive value does not
+appear" — (1) assert the **exact expected output**, not merely the absence of
+the input; (2) include a case where the corruption is large enough that the
+whole value survives intact; (3) **run it against the unfixed code and watch it
+fail.** A redaction test that has never failed has not been tested.
+
+## "The documentation only mentions X" is evidence about the documentation
+
+When a security property depends on **call ordering inside a dependency**, read
+the dependency and cite file and line. A reviewer — human or automated — that
+restates the library's docs can be confidently wrong about the library's code.
+
+Ojas PR-1, 2026-08-16: an automated review asserted that an auth library's
+`createOrUpdateUser` callback runs only *after* code verification, so an
+allowlist there could not prevent an email being sent to a disallowed address.
+The installed source showed the opposite — the callback is reached from
+`createVerificationCode`, and `sendVerificationRequest` is not called until
+nineteen lines later — and the deployment logs showed the callback throwing
+inside `createVerificationCodeImpl` on a real attempt. The claim appears to
+restate the published docs, which describe only the later call.
+
+**How to apply:** rejecting a review finding is legitimate, but record it —
+the finding, why it is wrong, citations with versions, and the date — where the
+next reader will look. Otherwise the same finding returns every cycle and is
+eventually "fixed" by someone with less evidence. Runtime evidence (a stack
+trace from the real deployment) outranks a static reading of code or docs.
+
