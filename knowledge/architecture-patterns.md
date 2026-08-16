@@ -151,3 +151,29 @@ Prefer (2). There is no window in which the text exists nowhere, an ignored offe
 The cost is the mirror image and worth naming: on accept you must clean up the auto-saved copy, or the feature leaves a duplicate behind. Make that cleanup best-effort and *report it honestly* — if the delete fails, say "the original note is still in your feed" rather than claiming a tidiness you didn't achieve. A failed cleanup is untidy; a failed save is data loss. Never trade the second for the first.
 
 **Corollary — don't stamp an idempotency marker on a condition that will resolve itself.** These flows stamp `confirmedAt` so a repeat tap is a no-op. But if the failure was "the table doesn't exist yet" (hand-applied migration pending), stamping makes the offer permanently terminal: the user can never tap Save again once the migration lands. Stamp on *decisions*, not on *transient infrastructure states*. Same rule for a thrown DB error.
+
+## Validation guarantees expire when the value is clock-derived
+
+A field validated on write stays valid forever *only if nothing outside the
+system changes it*. A value **derived from the clock** breaks that assumption
+with nobody touching the data.
+
+Ojas PR-1, 2026-08-16: `profile.birthYear` was bounds-checked on save, and a
+seeding query derived `age` from it and passed it to a calculator that throws
+outside 13–120. Every other input to that calculator was re-validated at the
+call (weight arrived as an argument, height was re-checked on every save), so
+age was the only one that could drift out of range while the stored document
+stayed byte-identical. A profile saved at 120 becomes invalid the following
+January, and the throw escaped a query whose entire design was to never throw —
+taking the section to its error boundary on the first keystroke.
+
+**Why:** a CHECK constraint or a save-time validator bounds the value *as
+stored*, not the value *as computed later*. Age, "days since", tenure, expiry
+windows and trial countdowns all have this shape.
+
+**How to apply:** for any value derived from `now`, bounds-check it at the point
+of USE, not only at the point of write — and if the consumer is a query with a
+no-throw contract, return the discriminated failure rather than letting the
+calculator throw. Grep for date arithmetic against the current time feeding a
+validated calculation.
+

@@ -527,3 +527,49 @@ PROJECT_HASH=$(echo -n "$PWD" | md5 -q 2>/dev/null || echo -n "$PWD" | md5sum 2>
 mkdir -p "$HOME/.claude/review-markers"
 git rev-parse HEAD > "$HOME/.claude/review-markers/$PROJECT_HASH"
 ```
+
+## A grep over source cannot audit an interface
+
+A Tier 0 grep that scans source text is necessary but never sufficient for
+"is every public function guarded?" — because a language can create public
+surface without matching your pattern.
+
+Ojas PR-1, 2026-08-16: the check was
+`grep -rnE "^export const [A-Za-z0-9_]+ = (query|mutation|action)\("`, which
+returned zero hits and looked like a pass. Four public functions existed anyway,
+arriving as `export const { auth, signIn, signOut, store, isAuthenticated } =
+convexAuth({...})` — a destructured export the regex cannot see. The reviewer
+caught it by enumerating the deployed surface instead.
+
+**Why:** the grep audits how code was *written*; the question is what the
+platform actually *exposes*. Those diverge through destructuring, re-exports,
+barrel files, code generation, decorators, and framework conventions.
+
+**How to apply:** whenever a checklist item is really "what is publicly
+reachable?", enumerate the interface from the platform, not the source —
+`convex function-spec`, the generated API/route table, `gh api`, an OpenAPI
+dump. Keep the grep as a cheap first pass and state in the checklist that a
+clean result does not clear the item.
+
+## "Same wording" is not "indistinguishable" — compare the whole response
+
+When closing an information leak, the observable is everything the caller can
+see: status, body, headers, timing, **and navigation**. Matching one of them
+while another still differs leaves the leak open.
+
+Ojas PR-1, 2026-08-16: a sign-in form documented that its failure message was
+deliberately identical either way so the form could not be used to probe which
+address was allowed. Making both catch branches share a string would not have
+fixed it — success advanced to the code-entry screen and failure did not, so the
+*screen transition* was the oracle regardless of copy. The fix was to advance in
+both cases.
+
+A related smell worth grepping for on its own: **a comment asserting a security
+property the code does not implement.** Neither the code nor the comment reads
+as wrong alone; only checking one against the other finds it.
+
+**How to apply:** for any "responses must be indistinguishable" requirement,
+enumerate every channel — status, body, headers, redirect, next UI state,
+timing — and verify each. Treat security claims in comments as assertions to
+test, not documentation to trust.
+
