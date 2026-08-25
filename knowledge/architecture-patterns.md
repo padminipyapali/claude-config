@@ -238,3 +238,45 @@ worst case the comparison went through a carefully-built bounds type *precisely*
 so a reading sitting on a threshold would be judged by the sentence it came from,
 and a rounding one line earlier defeated all of it. **Careful at the comparison,
 careless at the input.**
+
+## A permanent failure wearing a transient failure's message
+
+Ojas, 2026-08-25. Every nutrition lookup was failing in production — six of six
+items — and the app reported five as `model_error` and one as `usda_unavailable`.
+Both classes mean *try again later*. Neither was true; all six were permanent and
+would have failed identically forever.
+
+**Three distinct instances in one investigation, all the same shape: the code
+worked exactly as written, and the classification was the bug.**
+
+1. **`model_error`** came from `} catch { return { failure: "model_error" } }` —
+   a bare catch discarding the error. The real cause was a **400**: the
+   structured-output schema had 18 union-typed parameters against a limit of 16,
+   and then, after that was fixed, 36 properties against a compile ceiling of
+   ~30. A fleet-wide permanent rejection and a network blip produced the same
+   class name and the same reassuring sentence.
+2. **`usda_unavailable`** on one item was a **400 from a parenthesis**. USDA
+   FoodData Central parses `query` as Lucene, so `Soft-boiled eggs (3)` was
+   rejected every time — recorded as an outage to retry.
+3. The **schema was valid the whole time.** Nothing was malformed, no assertion
+   could have called it wrong. It was simply too big, and it failed at a boundary
+   in a request. **That class is invisible to every local check** — typecheck,
+   lint, and unit tests all pass on a schema the API will refuse.
+
+**What to do about each:**
+
+- **Never write a bare `catch`** on a call to a third party. Classify on status:
+  4xx that will never succeed must not share a class with 5xx and 429 that might.
+  Log the class and the status code — never the SDK message, which typically
+  echoes the request and can therefore carry user content.
+- **A failure class is a sentence to the user.** "Try again later" on a permanent
+  400 is worse than no message, because it forecloses the investigation.
+- **When a limit is discovered empirically, pin the measured number with its
+  provenance**, not a comment saying "keep this small". The Ojas fix records
+  ≤30 properties and ≤16 unions, measured against the live API, in a test — so
+  the next field added fails in CI rather than in the user's food log.
+- **Escaping is not sanitising for a query DSL.** A third-party search parameter
+  may be a query language; find out which characters it reserves and strip them.
+
+**The general rule:** a fallback path is a claim about the future. Any code that
+says *retry* must know that retrying could work.
