@@ -177,3 +177,64 @@ no-throw contract, return the discriminated failure rather than letting the
 calculator throw. Grep for date arithmetic against the current time feeding a
 validated calculation.
 
+
+## A verdict must never be contradicted by a figure printed beside it
+
+Established 2026-08-25 in the Ojas health app, after **nine instances of one bug
+class in a single project**, each found before a user saw it, each arriving
+through a different channel:
+
+1. Two computations of the same day disagreeing.
+2. A stale baseline accepted as a parameter (`before` supplied independently of
+   the entries `after` was computed from).
+3. A duplicated day reducer in a second module.
+4. The model narrating a number over a correct computation — controls inspected
+   *structured claims*, and nothing inspected the free-text headline rendered
+   above them.
+5. The model exempting itself from a check by labelling its own output
+   (`kind: "handoff"` short-circuited the medical detector before it read a word).
+6. The app's own formatter: `toFixed` half-up printed "120 g of 120 g" beside
+   "1 g would close it".
+7. A threshold comparison run on a **rounded** input: 29.96 → 30.0 → "adequate"
+   rather than "low", suppressing the app's highest-priority output.
+8. The fix for #7 manufacturing a new one inside the same commit — the compared
+   value was exact, the *displayed* value still rounded half-up, printing "30.0"
+   beside the word `low`.
+9. A ceiling applied to the figure but not the target, so an off-grid target
+   (protein = weight × g/kg is off-grid by construction) reproduced #6 exactly.
+
+**The general rule, which would have prevented all nine:**
+
+> Wherever a number is compared against a boundary **and also displayed**, the
+> comparison takes the **exact** value and the display **rounds away from the
+> boundary**.
+
+Flooring a figure judged against a floor, or ceiling a target, can only move it
+*away* from the threshold it was judged against — never across it. Half-up
+rounding has no such guarantee, which is how every display instance survived.
+
+**Structural defences, in increasing order of strength:**
+
+- **Bind the verdict to its figure in one value.** A caller must not be able to
+  construct a verdict independently of the total and target it is about. Then a
+  renderer cannot show one without the other.
+- **Derive, never accept, the baseline.** No parameter for a value that can be
+  computed from the inputs already present.
+- **One renderer returning figure + target + unit together**, with the
+  open/closed branch inside it. Two bare-number renderers leave a caller making
+  two choices and both have a wrong answer.
+- **A source scan over component props** forbidding half-of-a-pair prop names and
+  asserting the positive — every verdict-rendering component receives its whole
+  value. Types stop *constructing* a wrong pair; only a scan stops a renderer
+  taking a correct pair apart and re-pairing a half with another's.
+- **Give the failure its own control id**, not folded into a related rule. A
+  control findable only by reading the second half of a differently-named rule is
+  one that gets removed by whoever refactors next.
+
+**Why it kept recurring:** each fix closed one channel and the class reappeared
+in a new one — types, then data flow, then prose, then the formatter, then a
+threshold comparison. A guard is only as good as the value handed to it: in the
+worst case the comparison went through a carefully-built bounds type *precisely*
+so a reading sitting on a threshold would be judged by the sentence it came from,
+and a rounding one line earlier defeated all of it. **Careful at the comparison,
+careless at the input.**
